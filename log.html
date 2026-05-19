@@ -4283,9 +4283,9 @@ async function levelUpPoke(idx) {
 /* Build the pending-learn queue for `idx`. Pulls the learnset for `species`,
    filters to either (a) moves with lv === atLevel (single-level pickups,
    for levelUpPoke) or (b) every evo-tagged move (for evolvePoke), drops
-   any move already in the current moveset, and stashes the survivors on
-   _pendingLearnMoves[idx]. Caller should `await` so the prompt shows on
-   the next render. */
+   any move already in the current moveset OR previously dismissed, and
+   stashes the survivors on _pendingLearnMoves[idx]. Caller should `await`
+   so the prompt shows on the next render. */
 async function queueLearnableMoves(idx, species, opts) {
   const p = curRun().team[idx];
   if (!p) return;
@@ -4295,6 +4295,10 @@ async function queueLearnableMoves(idx, species, opts) {
     ? p.moves.split(',').map(s=>s.trim()).filter(Boolean)
     : (Array.isArray(p.moves) ? p.moves.filter(Boolean) : []);
   const owned = new Set(currentMoves.map(m => (resolveMove(m) || m).toLowerCase()));
+  // dismissedMoves persists a "user clicked Skip" decision so the same
+  // evo/level-up move doesn't keep re-prompting forever (e.g. Watchog's
+  // Confuse Ray on evolve still appearing several levels later).
+  const dismissed = new Set((p.dismissedMoves || []).map(s => s.toLowerCase()));
   let candidates;
   if (opts.atLevel != null) {
     candidates = ls.filter(m => m.lv === opts.atLevel && !m.isEvo);
@@ -4303,7 +4307,7 @@ async function queueLearnableMoves(idx, species, opts) {
   } else {
     candidates = [];
   }
-  const queue = candidates.filter(m => !owned.has(m.name.toLowerCase()));
+  const queue = candidates.filter(m => !owned.has(m.name.toLowerCase()) && !dismissed.has(m.name.toLowerCase()));
   if (queue.length) _pendingLearnMoves.set(idx, queue);
 }
 
@@ -4352,7 +4356,18 @@ function learnMoveReplace(idx, slot) {
   save(); render(); openEdit(idx);
 }
 function learnMoveSkip(idx) {
+  const p = curRun().team[idx];
+  // Pre-shift, so we know WHICH move the user dismissed.
+  const q = _pendingLearnMoves.get(idx);
+  const skipped = q && q.length ? q[0] : null;
   _shiftPendingMove(idx);
+  if (p && skipped) {
+    p.dismissedMoves = p.dismissedMoves || [];
+    const nm = skipped.name.toLowerCase();
+    if (!p.dismissedMoves.some(s => s.toLowerCase() === nm)) {
+      p.dismissedMoves.push(skipped.name);
+    }
+  }
   save(); render(); openEdit(idx);
 }
 
@@ -8723,6 +8738,10 @@ async function renderPokeViewLearnset(idx) {
     ? p.moves.split(',').map(s=>s.trim()).filter(Boolean)
     : (Array.isArray(p.moves) ? p.moves.filter(Boolean) : []);
   const ownedCanon = new Set(currentMoves.map(m => (resolveMove(m)||m).toLowerCase()));
+  // Moves the user explicitly skipped via the inline learn-prompt. Treated
+  // as "handled" for suggestion/prompt purposes — still shown in the chart
+  // as historical reference (with a "skipped" flag), but never re-suggested.
+  const dismissedCanon = new Set((p.dismissedMoves || []).map(s => s.toLowerCase()));
   const lv = p.level || 0;
   // Evo moves bypass the level-gate — they're available the instant the
   // Pokémon becomes this species, regardless of its current level. Splitting
@@ -8768,6 +8787,7 @@ async function renderPokeViewLearnset(idx) {
   // moves are worth surfacing.
   for (const u of evoMoves) {
     if (ownedCanon.has(u.name.toLowerCase())) continue;
+    if (dismissedCanon.has(u.name.toLowerCase())) continue; // user clicked Skip
     const upScore = scoreMove(u.name, ownTypes, ownStats);
     if (upScore.score < 35) continue;
     const { swap, delta } = findBestSwap(u.name, upScore, 10);
@@ -8775,6 +8795,7 @@ async function renderPokeViewLearnset(idx) {
   }
   for (const u of upcoming.slice(0, 12)) {
     if (ownedCanon.has(u.name.toLowerCase())) continue; // already known
+    if (dismissedCanon.has(u.name.toLowerCase())) continue; // user clicked Skip
     const upScore = scoreMove(u.name, ownTypes, ownStats);
     // Only consider clearly worthwhile additions (score > 50) OR clear STAB
     if (upScore.score < 45) continue;
@@ -8796,13 +8817,22 @@ async function renderPokeViewLearnset(idx) {
   // — the move is actually only available because the species evolved.
   for (const m of evoMoves) {
     const owned = ownedCanon.has(m.name.toLowerCase());
+    const dismissed = !owned && dismissedCanon.has(m.name.toLowerCase());
     const t = getMoveType(m.name);
-    lsRows.push(`<div class="pv-ls-row${owned?' already owned':' next'}">
+    // "next" highlight only when the move is still actionable (not owned and
+    // not dismissed). Skipped evo moves render greyed-out like already-known
+    // ones so they stop visually dominating the chart several levels later.
+    const rowCls = owned ? ' already owned' : (dismissed ? ' already' : ' next');
+    let flag;
+    if (owned) flag = '<span class="pv-ls-flag owned">✓ known</span>';
+    else if (dismissed) flag = '<span class="pv-ls-flag">skipped</span>';
+    else flag = '<span class="pv-ls-flag next">on evolve</span>';
+    lsRows.push(`<div class="pv-ls-row${rowCls}">
       <span class="pv-ls-lv">Evo</span>
       ${t?`<span class="type-badge t-${t}">${t}</span>`:''}
       <span class="pv-ls-name">${m.name}</span>
       ${stabBadge(m.name)}
-      ${owned ? '<span class="pv-ls-flag owned">✓ known</span>' : '<span class="pv-ls-flag next">on evolve</span>'}
+      ${flag}
     </div>`);
   }
   for (const m of recentAlready) {
@@ -8820,8 +8850,12 @@ async function renderPokeViewLearnset(idx) {
     const m = upcoming[i];
     const t = getMoveType(m.name);
     // Only highlight the first upcoming row as "next" if there's no
-    // unowned evo move above it — the evo move is the more immediate ask.
-    const evoPending = evoMoves.some(em => !ownedCanon.has(em.name.toLowerCase()));
+    // unowned, undismissed evo move above it — the evo move is the more
+    // immediate ask, but a dismissed one no longer counts.
+    const evoPending = evoMoves.some(em => {
+      const k = em.name.toLowerCase();
+      return !ownedCanon.has(k) && !dismissedCanon.has(k);
+    });
     const isNext = i === 0 && !evoPending;
     lsRows.push(`<div class="pv-ls-row${isNext?' next':''}">
       <span class="pv-ls-lv">L${m.lv}</span>
@@ -9159,7 +9193,11 @@ function submitPoke() {
     causeOfDeath:prev.causeOfDeath,
     caughtAt: prev.caughtAt || Date.now(),
     deathAt: prev.deathAt,
-    events: prev.events || []
+    events: prev.events || [],
+    // Preserve per-Pokemon skipped-move tracking — submitPoke rebuilds the
+    // object from form fields, so without this the dismissal state would
+    // be lost every time the user opened Edit and clicked Save.
+    dismissedMoves: prev.dismissedMoves || []
   };
   if (editIdx!==null) team[editIdx]=obj;
   else team.push(obj);
