@@ -3,7 +3,7 @@
   "short_name": "NuzTracker",
   "id": "./",
   "description": "Track Pokemon Nuzlocke runs across every mainline game and major ROM hack.",
-  "start_url": "tracker.html",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "any",

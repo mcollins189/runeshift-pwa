@@ -25,14 +25,21 @@
 // handler will sweep any older nuz-* cache. Keep the `nuz-` prefix so the
 // sweep matches.
 
-const SHELL_CACHE = 'nuz-shell-v2';
+// v3 — renamed primary HTML from tracker.html to index.html so the app
+// serves at the bare poke.runeshift.xyz/ root. tracker.html is kept as a
+// tiny redirect stub for existing installed PWAs (their cached manifest
+// still references tracker.html) and old bookmarks. Bumping the cache
+// version forces the activate sweep to evict the old v2 shell so users
+// get the new SHELL_URLS list on next visit.
+const SHELL_CACHE = 'nuz-shell-v3';
 const POKEAPI_CACHE = 'nuz-pokeapi-v1';
 
 // Same-origin shell URLs use relative paths so the PWA works at any subpath
 // (e.g. github.io/runeshift-pwa/) — they resolve against self.location, which
 // is the directory the SW was served from. Cross-origin URLs stay absolute.
 const SHELL_URLS = [
-  'tracker.html',
+  'index.html',
+  'tracker.html',       // redirect stub for legacy installs / bookmarks
   'data.bundle.js',
   'manifest.json',
   'icons/icon-192.png',
@@ -48,7 +55,7 @@ const SHELL_PATHS = new Set(SHELL_URLS.map((u) => {
   try { return new URL(u, self.location).pathname; }
   catch (e) { return u; }
 }));
-const LOG_HTML_PATH = new URL('tracker.html', self.location).pathname;
+const APP_HTML_PATH = new URL('index.html', self.location).pathname;
 const SW_BASE_PATH = new URL('./', self.location).pathname;
 
 // --- Install: pre-cache the shell -------------------------------------------
@@ -127,7 +134,7 @@ self.addEventListener('fetch', (event) => {
 
 function isShellHtml(req, url) {
   if (req.mode === 'navigate') return true;
-  if (url.pathname === LOG_HTML_PATH || url.pathname === SW_BASE_PATH) return true;
+  if (url.pathname === APP_HTML_PATH || url.pathname === SW_BASE_PATH) return true;
   return false;
 }
 
@@ -155,7 +162,7 @@ async function networkFirst(req, cacheName) {
     if (res && res.ok) cache.put(req, res.clone());
     return res;
   } catch (e) {
-    const hit = await cache.match(req) || await cache.match('/tracker.html');
+    const hit = await cache.match(req) || await cache.match('index.html') || await cache.match('/index.html');
     if (hit) return hit;
     throw e;
   }
