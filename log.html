@@ -607,6 +607,24 @@
      so two-letter SwSh badges read as clearly different from older games. */
   .enc-poke-name .ver-tag.Sw{background:rgba(220,38,38,.18);color:#fca5a5}
   .enc-poke-name .ver-tag.Sh{background:rgba(6,182,212,.18);color:#67e8f9}
+  /* Single-letter game versions. Some letters are reused across game-pairs
+     (B = Blue/Black/Black2, R = Red/Ruby, S = Silver/Sapphire/Sun, etc.) —
+     we pick the color that fits the most common interpretation, which is
+     fine because the user only sees one game's encounters at a time. */
+  .enc-poke-name .ver-tag.R{background:rgba(239,68,68,.18);color:#fca5a5}   /* Red / Ruby */
+  .enc-poke-name .ver-tag.G{background:rgba(251,191,36,.18);color:#fcd34d}  /* Gold */
+  .enc-poke-name .ver-tag.D{background:rgba(165,243,252,.16);color:#a5f3fc} /* Diamond */
+  .enc-poke-name .ver-tag.P{background:rgba(244,114,182,.18);color:#f9a8d4} /* Pearl */
+  .enc-poke-name .ver-tag.F{background:rgba(248,113,113,.18);color:#fda4af} /* FireRed */
+  .enc-poke-name .ver-tag.L{background:rgba(74,222,128,.18);color:#86efac}  /* LeafGreen */
+  .enc-poke-name .ver-tag.O{background:rgba(251,146,60,.20);color:#fdba74}  /* Omega Ruby */
+  .enc-poke-name .ver-tag.A{background:rgba(59,130,246,.18);color:#93c5fd}  /* Alpha Sapphire */
+  .enc-poke-name .ver-tag.X{background:rgba(96,165,250,.18);color:#bfdbfe}  /* X */
+  .enc-poke-name .ver-tag.Y{background:rgba(239,68,68,.16);color:#fda4a4}   /* Y */
+  .enc-poke-name .ver-tag.W{background:rgba(226,232,240,.18);color:#e2e8f0} /* White */
+  .enc-poke-name .ver-tag.E{background:rgba(34,197,94,.18);color:#86efac}   /* Emerald */
+  .enc-poke-name .ver-tag.C{background:rgba(167,243,208,.16);color:#a7f3d0} /* Crystal */
+  .enc-poke-name .ver-tag.H{background:rgba(251,113,133,.18);color:#fda4af} /* HeartGold */
   .enc-poke-meta{font-size:10px;color:var(--text3);margin-top:1px;display:flex;align-items:center;gap:4px;flex-wrap:wrap}
   .enc-poke-rate{font-size:10px;color:var(--text2);font-weight:600;background:var(--bg4);padding:1px 5px;border-radius:3px}
   .enc-flag{font-size:9px;font-weight:600;padding:1px 5px;border-radius:3px;letter-spacing:.04em;text-transform:uppercase}
@@ -4446,6 +4464,7 @@ async function doLogin() {
   let data = null;
   let usedOfflineCache = false;
   let createdOffline = false;
+  let usedNewerLocal = false;
   try {
     // Short-circuit when the browser reports offline so we don't eat a fetch
     // timeout before falling back to the local mirror.
@@ -4462,7 +4481,21 @@ async function doLogin() {
         createdOffline = true;
       }
     } else {
-      data = await cloudLoad(key);
+      const cloudData = await cloudLoad(key);
+      // Local cache may have unsynced offline edits from a previous session
+      // (e.g. user went offline on key X, made changes, logged into a
+      // different key, came back to X). If the local copy is newer than what
+      // cloud has, prefer it and queue a push — otherwise those edits get
+      // silently overwritten by stale cloud state.
+      const localCache = loadLocalSaveCache(key);
+      const cloudTs = (cloudData && typeof cloudData.lastModified === 'number') ? cloudData.lastModified : 0;
+      const localTs = (localCache && typeof localCache.lastModified === 'number') ? localCache.lastModified : 0;
+      if (localCache && localTs > cloudTs) {
+        data = localCache;
+        usedNewerLocal = true;
+      } else {
+        data = cloudData;
+      }
     }
   } catch(e) {
     const cached = loadLocalSaveCache(key);
@@ -4548,11 +4581,17 @@ async function doLogin() {
       saveLocalSaveCache(saveKey, buildPayload());
       setSaveStatus('offline', `New save (offline) — will sync`);
       showToast('Created offline save. When you reconnect, we\'ll check the cloud and ask for a different key if this one is taken.', 'warn', 7000);
+    } else if (usedNewerLocal) {
+      // Local cache had unsynced edits newer than cloud — surface this so the
+      // user knows their offline work is being pushed (not lost). cloudSave
+      // call below handles the actual push.
+      setSaveStatus('saving', 'Syncing offline edits…');
+      showToast('Restored your unsynced offline edits — syncing to cloud now.', 'success', 4000);
     } else {
       setSaveStatus(usedOfflineCache ? 'offline' : 'saved', `Loaded ${fmtTime(loadedAt)}${usedOfflineCache ? ' (offline)' : ''}`);
     }
     render();
-    if (!usedOfflineCache && !createdOffline && (inlineMigrationsChanged || structuralChange)) cloudSave(false);
+    if (!usedOfflineCache && !createdOffline && (inlineMigrationsChanged || structuralChange || usedNewerLocal)) cloudSave(false);
   } catch(e) {
     showLoginError('Save data looks corrupted — try Import on the login screen, or contact support.');
     btn.disabled = false; btn.textContent = 'Load save →';
@@ -9248,10 +9287,12 @@ function _collectPrefetchUrlsForGame(gameKey, urls) {
   for (const name of speciesNames) {
     const slug = speciesSlug(name);
     if (!slug) continue;
-    urls.add(`https://pokeapi.co/api/v2/pokemon-species/${slug}`);
-    // /pokemon/<slug> is what fetchLearnset hits to get the per-VG move list.
-    // Without it, learnsets show empty + move suggestions don't populate offline.
-    urls.add(`https://pokeapi.co/api/v2/pokemon/${slug}`);
+    // Trailing slash matches PokeAPI's canonical URL convention + what the
+    // runtime fetches use. Without it the SW cache key mismatches the
+    // request URL and offline fetches fall through to a "show everything"
+    // fallback (no version filtering, no percentages).
+    urls.add(`https://pokeapi.co/api/v2/pokemon-species/${slug}/`);
+    urls.add(`https://pokeapi.co/api/v2/pokemon/${slug}/`);
   }
 
   // Moves: every move on every boss team across every leagues file for this game.
@@ -9264,7 +9305,7 @@ function _collectPrefetchUrlsForGame(gameKey, urls) {
       for (const member of (t.team || [])) {
         for (const mv of (member.moves || [])) {
           const slug = (mv || '').toLowerCase().trim().replace(/[''’]/g,'').replace(/\s+/g,'-');
-          if (slug) urls.add(`https://pokeapi.co/api/v2/move/${slug}`);
+          if (slug) urls.add(`https://pokeapi.co/api/v2/move/${slug}/`);
         }
       }
     }
@@ -9335,7 +9376,8 @@ async function buildPrefetchUrlsAllGamesWithRegions(progressFn) {
       if (res.ok) {
         const data = await res.json();
         for (const loc of (data.locations || [])) {
-          if (loc.url) locationUrls.add(loc.url);
+          // Normalize to trailing-slash form to match runtime fetch URLs.
+          if (loc.url) locationUrls.add(loc.url.endsWith('/') ? loc.url : loc.url + '/');
         }
       }
     } catch(e) {}
@@ -9352,7 +9394,7 @@ async function buildPrefetchUrlsAllGamesWithRegions(progressFn) {
       if (res.ok) {
         const data = await res.json();
         for (const a of (data.areas || [])) {
-          if (a.url) areaUrls.add(a.url);
+          if (a.url) areaUrls.add(a.url.endsWith('/') ? a.url : a.url + '/');
         }
       }
     } catch(e) {}

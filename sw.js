@@ -162,12 +162,21 @@ async function networkFirst(req, cacheName) {
 
 async function staleWhileRevalidate(req, cacheName) {
   const cache = await caches.open(cacheName);
-  const hit = await cache.match(req);
+  let hit = await cache.match(req);
+  // Trailing-slash-tolerant lookup. Earlier pre-cache versions stored some
+  // PokeAPI URLs without a trailing slash while the runtime always fetches
+  // with one (or vice versa). Without this, mismatched entries become
+  // permanent cache misses and the renderer falls through to a "show
+  // everything" fallback that loses version filtering + percentages.
+  if (!hit) {
+    const url = new URL(req.url);
+    const altPath = url.pathname.endsWith('/') ? url.pathname.slice(0, -1) : url.pathname + '/';
+    hit = await cache.match(url.origin + altPath + url.search);
+  }
   const fetchPromise = fetch(req).then((res) => {
     if (res && (res.ok || res.type === 'opaque')) cache.put(req, res.clone());
     return res;
   }).catch((e) => {
-    // Swallow network errors when we have a cache hit; rethrow otherwise.
     if (!hit) throw e;
     return hit;
   });
