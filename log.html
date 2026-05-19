@@ -4261,13 +4261,41 @@ function migrateLegacyLocationNames(data) {
 async function cloudLoad(key) {
   const r = await fetch(`${API}/${encodeURIComponent(key)}`);
   if (!r.ok) throw new Error('Load failed');
-  return await r.json();
+  const data = await r.json();
+  saveLocalSaveCache(key, data);
+  return data;
 }
 async function cloudPush(key, data) {
   const r = await fetch(`${API}/${encodeURIComponent(key)}`, {
     method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data)
   });
   if (!r.ok) throw new Error('Save failed');
+}
+
+// Per-save-key local mirror of the last known cloud payload. Lets the app boot
+// fully offline (PWA installed, cold launch with no network) without needing
+// to hit the Worker just to recover the user's runs. Keyed by save key so
+// multiple keys on one device don't clobber each other.
+function saveLocalSaveCache(key, data) {
+  if (!key || !data) return;
+  try {
+    localStorage.setItem('nuz-save-cache-' + key, JSON.stringify({
+      runs: data.runs || {},
+      currentRunId: data.currentRunId || null,
+      lastModified: data.lastModified || Date.now(),
+      cachedAt: Date.now()
+    }));
+  } catch(e) { /* quota / private-mode — best-effort */ }
+}
+function loadLocalSaveCache(key) {
+  if (!key) return null;
+  try {
+    const raw = localStorage.getItem('nuz-save-cache-' + key);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== 'object' || !parsed.runs) return null;
+    return parsed;
+  } catch(e) { return null; }
 }
 
 function buildPayload() {
@@ -4373,8 +4401,33 @@ async function doLogin() {
   const btn = document.getElementById('login-btn');
   btn.disabled = true; btn.textContent = 'Loading…';
   document.getElementById('login-error').style.display = 'none';
+  let data = null;
+  let usedOfflineCache = false;
   try {
-    const data = await cloudLoad(key);
+    // Short-circuit when the browser reports offline so we don't eat a fetch
+    // timeout before falling back to the local mirror.
+    if (!navigator.onLine) {
+      const cached = loadLocalSaveCache(key);
+      if (!cached) {
+        showLoginError("Can't reach cloud. Connect to the internet for first login on this device.");
+        return;
+      }
+      data = cached;
+      usedOfflineCache = true;
+    } else {
+      data = await cloudLoad(key);
+    }
+  } catch(e) {
+    const cached = loadLocalSaveCache(key);
+    if (cached) {
+      data = cached;
+      usedOfflineCache = true;
+    } else {
+      showLoginError("Can't reach cloud. Connect to the internet for first login on this device.");
+      return;
+    }
+  }
+  try {
     // Detect whether the in-place migrations actually mutate anything, so we
     // only push back when there's a real change. A no-op login shouldn't
     // overwrite the cloud's lastModified — the user expects "Loaded HH:MM"
@@ -4403,6 +4456,10 @@ async function doLogin() {
       };
       currentRunId = runId;
       structuralChange = true;
+    } else if (data.runs && Object.keys(data.runs).length) {
+      // Local cache shape (no version field) — treat as v3.
+      runs = data.runs;
+      currentRunId = data.currentRunId || Object.keys(data.runs)[0] || null;
     } else {
       // Brand new save
       const game = chosenGame || 'shining_pearl';
@@ -4426,11 +4483,11 @@ async function doLogin() {
     document.getElementById('app').style.display = 'block';
     document.getElementById('key-display').textContent = key;
     loadedAt = (typeof data?.lastModified === 'number') ? data.lastModified : Date.now();
-    setSaveStatus('saved',`Loaded ${fmtTime(loadedAt)}`);
+    setSaveStatus('saved', `Loaded ${fmtTime(loadedAt)}${usedOfflineCache ? ' (offline)' : ''}`);
     render();
-    if (inlineMigrationsChanged || structuralChange) cloudSave(false);
+    if (!usedOfflineCache && (inlineMigrationsChanged || structuralChange)) cloudSave(false);
   } catch(e) {
-    showLoginError('Could not connect. Check your internet connection and try again.');
+    showLoginError('Save data looks corrupted — try Import on the login screen, or contact support.');
     btn.disabled = false; btn.textContent = 'Load save →';
   }
 }
@@ -4748,6 +4805,7 @@ async function cloudSave(manual) {
   try {
     const payload = buildPayload();
     await cloudPush(saveKey, payload);
+    saveLocalSaveCache(saveKey, payload);
     savedAt = payload.lastModified;
     loadedAt = payload.lastModified;
     pendingOfflineSave = false;
@@ -6207,7 +6265,8 @@ function renderRules() {
       <div class="offline-info-row"><span class="check">✓</span><span>App shell cached automatically</span></div>
       <div class="offline-info-row"><span class="check">✓</span><span>PokeAPI data cached as you browse</span></div>
       <div class="offline-actions">
-        <button class="offline-btn" id="prefetch-btn" onclick="startPrefetchAll()">Download all sprites + data (~15MB)</button>
+        <button class="offline-btn" id="prefetch-btn" onclick="startPrefetchAll()">Download for ${(()=>{const g=currentRunId&&runs[currentRunId]?runs[currentRunId].game:null;return g&&GAMES[g]?GAMES[g].name:'current game';})()} only (~15MB)</button>
+        <button class="offline-btn" id="prefetch-all-games-btn" onclick="startPrefetchAllGames()">Download for all games (~50MB)</button>
         <div id="prefetch-progress-wrap" style="display:none">
           <div class="offline-progress"><div class="offline-progress-bar" id="prefetch-progress-bar"></div></div>
           <div class="offline-progress-label" id="prefetch-progress-label">Preparing…</div>
@@ -6228,6 +6287,8 @@ function renderRules() {
     updatePrefetchProgress(_prefetchDone, _prefetchTotal);
     const btn = document.getElementById('prefetch-btn');
     if (btn) btn.disabled = true;
+    const btnAll = document.getElementById('prefetch-all-games-btn');
+    if (btnAll) btnAll.disabled = true;
   }
 }
 
@@ -8970,33 +9031,34 @@ function showPrefetchDone(cached, failed) {
   if (bar) bar.style.width = '100%';
   if (lbl) lbl.textContent = `Pre-cache complete: ${cached} items cached${failed ? ` (${failed} failed)` : ''}`;
   if (btn) { btn.disabled = false; btn.textContent = 'Re-run pre-cache'; }
+  const btnAll = document.getElementById('prefetch-all-games-btn');
+  if (btnAll) btnAll.disabled = false;
   showToast(`Pre-cache complete: ${cached} cached${failed?`, ${failed} failed`:''}`, 'success');
   requestCacheStatus();
   // Auto-hide the progress block after a beat so the next render starts fresh.
   setTimeout(() => { if (wrap && !_prefetchInFlight) wrap.style.display = 'none'; }, 4000);
 }
 
-// Walk the current run's game data and collect a deduped URL list to pre-cache.
-// Capped at 500 URLs to keep the user from accidentally queueing a multi-thousand
-// URL flood on a shared PokeAPI rate limit. We queue /pokemon-species/<slug>
-// (NOT /pokemon/<slug>) because species is cheaper, returns the sprite ID we
-// can derive sprite URLs from at first use, and avoids the expensive /pokemon
-// payload until something actually needs stats.
-function buildPrefetchUrls() {
-  const r = curRun();
-  if (!r) return [];
-  const game = GAMES[r.game];
-  if (!game) return [];
-  const urls = new Set();
-  const ver = curVersion();
-  const variant = curVariant();
-
-  // Species: from encounter-tables if the game has them, else from routes.
+// Walk a game's data and accumulate species + move URLs into the shared set.
+// Pulled out so the per-game and all-games callers can union into one Set
+// (most species/moves are shared across games — Pikachu, Tackle, etc.) for
+// real dedupe rather than concatenating per-game lists.
+function _collectPrefetchUrlsForGame(gameKey, urls) {
+  const game = GAMES[gameKey];
+  if (!game) return;
   const speciesNames = new Set();
-  const encSrc = peelVariant(game.dataSources?.encounterTables, game, variant);
-  const encFiles = typeof encSrc === 'string' ? [encSrc] : Object.values(encSrc || {});
+
+  // Encounter-tables walker: every version-keyed file (or single string).
+  const encSrcAll = game.dataSources?.encounterTables;
+  const encFiles = new Set();
+  const collectFiles = (src) => {
+    if (!src) return;
+    if (typeof src === 'string') { encFiles.add(src); return; }
+    for (const v of Object.values(src)) collectFiles(v);
+  };
+  collectFiles(encSrcAll);
   for (const file of encFiles) {
-    const td = file && window.NUZ_DATA?.encounterTables?.[file];
+    const td = window.NUZ_DATA?.encounterTables?.[file];
     if (!td || !td.byName) continue;
     for (const loc of Object.values(td.byName)) {
       const pools = Array.isArray(loc) ? loc : (loc.pools || []);
@@ -9009,29 +9071,32 @@ function buildPrefetchUrls() {
       }
     }
   }
-  // Fallback / supplement: routes file species lists.
-  const routeSrc = resolveDataSource(game.dataSources?.routes, game, ver, variant);
-  const routeData = routeSrc && window.NUZ_DATA?.routes?.[routeSrc];
-  if (routeData && routeData.locations) {
+
+  // Routes walker: every version/variant routes file for this game.
+  const routeFiles = new Set();
+  collectFilesInto(game.dataSources?.routes, routeFiles);
+  for (const file of routeFiles) {
+    const routeData = window.NUZ_DATA?.routes?.[file];
+    if (!routeData || !routeData.locations) continue;
     for (const loc of routeData.locations) {
       for (const sp of (loc.species || [])) {
-        // Routes-file species is a flat string array (NUZ-only games like SV
-        // and hack ROMs). Encounter-tables games may also have species here
-        // but typically the table walker above catches them first.
         if (typeof sp === 'string' && sp) speciesNames.add(sp);
         else if (sp && sp.name) speciesNames.add(sp.name);
       }
     }
   }
+
   for (const name of speciesNames) {
     const slug = speciesSlug(name);
     if (slug) urls.add(`https://pokeapi.co/api/v2/pokemon-species/${slug}`);
   }
 
-  // Moves: every move on every boss team for this game's leagues.
-  const leagueSrc = resolveDataSource(game.dataSources?.leagues, game, ver, variant);
-  const leagueData = leagueSrc && window.NUZ_DATA?.leagues?.[leagueSrc];
-  if (leagueData && leagueData.trainers) {
+  // Moves: every move on every boss team across every leagues file for this game.
+  const leagueFiles = new Set();
+  collectFilesInto(game.dataSources?.leagues, leagueFiles);
+  for (const file of leagueFiles) {
+    const leagueData = window.NUZ_DATA?.leagues?.[file];
+    if (!leagueData || !leagueData.trainers) continue;
     for (const t of Object.values(leagueData.trainers)) {
       for (const member of (t.team || [])) {
         for (const mv of (member.moves || [])) {
@@ -9041,10 +9106,33 @@ function buildPrefetchUrls() {
       }
     }
   }
+}
+function collectFilesInto(src, out) {
+  if (!src) return;
+  if (typeof src === 'string') { out.add(src); return; }
+  for (const v of Object.values(src)) collectFilesInto(v, out);
+}
 
-  const list = [...urls];
-  // Cap at 500. Species first (more user-facing), moves filling the rest.
-  return list.slice(0, 500);
+// Walk the current run's game data and collect a deduped URL list to pre-cache.
+// Capped at 500 URLs to keep the user from accidentally queueing a multi-thousand
+// URL flood on a shared PokeAPI rate limit. We queue /pokemon-species/<slug>
+// (NOT /pokemon/<slug>) because species is cheaper, returns the sprite ID we
+// can derive sprite URLs from at first use, and avoids the expensive /pokemon
+// payload until something actually needs stats.
+function buildPrefetchUrls(opts) {
+  const allGames = !!(opts && opts.allGames);
+  const urls = new Set();
+  if (allGames) {
+    // Union across every game definition. Dedupe matters a lot here: Pikachu
+    // appears in ~15 games, Tackle in ~all of them. Set semantics collapse
+    // it to one URL.
+    for (const k of Object.keys(GAMES)) _collectPrefetchUrlsForGame(k, urls);
+    return [...urls].slice(0, 2000);
+  }
+  const r = curRun();
+  if (!r) return [];
+  _collectPrefetchUrlsForGame(r.game, urls);
+  return [...urls].slice(0, 500);
 }
 
 function startPrefetchAll() {
@@ -9060,6 +9148,27 @@ function startPrefetchAll() {
   _prefetchTotal = urls.length;
   const btn = document.getElementById('prefetch-btn');
   if (btn) btn.disabled = true;
+  const btnAll = document.getElementById('prefetch-all-games-btn');
+  if (btnAll) btnAll.disabled = true;
+  updatePrefetchProgress(0, urls.length);
+  postToSW({ type: 'prefetch-all', urls });
+}
+
+function startPrefetchAllGames() {
+  if (_prefetchInFlight) { showToast('Pre-cache already running','info'); return; }
+  if (!_swRegistration && !(navigator.serviceWorker && navigator.serviceWorker.controller)) {
+    showToast('Service worker not ready — reload the page first','error');
+    return;
+  }
+  const urls = buildPrefetchUrls({ allGames: true });
+  if (!urls.length) { showToast('No species/move data to pre-cache','info'); return; }
+  _prefetchInFlight = true;
+  _prefetchDone = 0;
+  _prefetchTotal = urls.length;
+  const btn = document.getElementById('prefetch-btn');
+  if (btn) btn.disabled = true;
+  const btnAll = document.getElementById('prefetch-all-games-btn');
+  if (btnAll) btnAll.disabled = true;
   updatePrefetchProgress(0, urls.length);
   postToSW({ type: 'prefetch-all', urls });
 }
