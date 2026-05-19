@@ -32,7 +32,7 @@ const POKEAPI_CACHE = 'nuz-pokeapi-v1';
 // (e.g. github.io/runeshift-pwa/) — they resolve against self.location, which
 // is the directory the SW was served from. Cross-origin URLs stay absolute.
 const SHELL_URLS = [
-  'log.html',
+  'tracker.html',
   'data.bundle.js',
   'manifest.json',
   'icons/icon-192.png',
@@ -48,7 +48,7 @@ const SHELL_PATHS = new Set(SHELL_URLS.map((u) => {
   try { return new URL(u, self.location).pathname; }
   catch (e) { return u; }
 }));
-const LOG_HTML_PATH = new URL('log.html', self.location).pathname;
+const LOG_HTML_PATH = new URL('tracker.html', self.location).pathname;
 const SW_BASE_PATH = new URL('./', self.location).pathname;
 
 // --- Install: pre-cache the shell -------------------------------------------
@@ -155,7 +155,7 @@ async function networkFirst(req, cacheName) {
     if (res && res.ok) cache.put(req, res.clone());
     return res;
   } catch (e) {
-    const hit = await cache.match(req) || await cache.match('/log.html');
+    const hit = await cache.match(req) || await cache.match('/tracker.html');
     if (hit) return hit;
     throw e;
   }
