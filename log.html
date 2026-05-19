@@ -3201,7 +3201,10 @@ function pokeInfo(name) {
   // PokeAPI backfill is the next fallback (for Gen 5+ species not in local DB).
   if (!base) {
     const bf = (typeof backfilledPokemon !== 'undefined') ? getBackfilledPokemon(n) : null;
-    if (bf) base = { id: bf.id, t: bf.types, s: bf.stats, a: bf.abilities };
+    if (bf) {
+      base = { id: bf.id, t: bf.types, s: bf.stats, a: bf.abilities };
+      if (bf.e) base.e = bf.e;
+    }
   }
   // ROM-hack patches: fakemon get registered as new entries; stat overrides
   // shadow positions of the base entry (null in patch = keep base stat).
@@ -3209,7 +3212,9 @@ function pokeInfo(name) {
   if (patches) {
     const fk = patches.fakemon.get(lower);
     if (fk && !base) {
-      return { id: fk.id, t: fk.types, s: fk.stats.length ? fk.stats : null, a: [], baseForm: fk.baseForm };
+      const out = { id: fk.id, t: fk.types, s: fk.stats.length ? fk.stats : null, a: [], baseForm: fk.baseForm };
+      if (fk.e) out.e = fk.e;
+      return out;
     }
     if (base) {
       const so = patches.stats.get(lower);
@@ -3346,13 +3351,44 @@ function getEvoChainSet(species) {
         if (t && !out.has(t.toLowerCase())) queue.push(t);
       }
     }
-    // Backward: scan POKEMON_DB for entries whose evolution target is `cur`.
+    // Backward: scan POKEMON_DB + backfilled species + fakemon for entries
+    // whose evolution target is `cur`. POKEMON_DB only covers Gen 1-4; the
+    // backfilled scan picks up Gen 5+ (Snivy→Servine→Serperior is invisible
+    // to POKEMON_DB) and the fakemon scan picks up Insurgence delta-lines.
     if (typeof POKEMON_DB === 'object' && POKEMON_DB) {
       for (const k in POKEMON_DB) {
         const e = POKEMON_DB[k]?.e;
         if (!e) continue;
         const targets = String(e[0] || '').split('/');
         if (targets.includes(cur) && !out.has(k.toLowerCase())) queue.push(k);
+      }
+    }
+    if (typeof backfilledPokemon === 'object' && backfilledPokemon) {
+      for (const k in backfilledPokemon) {
+        const v = backfilledPokemon[k];
+        const e = (v && typeof v === 'object' && !isErrorRecord(v)) ? v.e : null;
+        if (!e) continue;
+        const targets = String(e[0] || '').split('/');
+        // backfilled keys are lowercase slugs; targets are PascalCase display
+        // names. Match in either direction so `cur` (which may be either form
+        // depending on call site) resolves.
+        if ((targets.includes(cur) || targets.map(t=>t.toLowerCase()).includes(cur.toLowerCase())) && !out.has(k.toLowerCase())) {
+          // Convert the slug back to a display name so downstream lookups via
+          // pokeInfo still hit (pokeInfo accepts either, but display form is
+          // the standard the rest of the app uses).
+          queue.push(speciesFromApi(k));
+        }
+      }
+    }
+    const patches = (typeof getActivePatches === 'function') ? getActivePatches() : null;
+    if (patches && patches.fakemon) {
+      for (const [fkKey, fkData] of patches.fakemon) {
+        const e = fkData?.e;
+        if (!e) continue;
+        const targets = String(e[0] || '').split('/');
+        if ((targets.includes(cur) || targets.map(t=>t.toLowerCase()).includes(cur.toLowerCase())) && !out.has(fkKey)) {
+          queue.push(fkKey);
+        }
       }
     }
   }
@@ -3493,6 +3529,75 @@ function moveSlug(name) {
     .replace(/[^a-z0-9-]/g, '');
 }
 
+// In-memory cache for /evolution-chain/<id>/ responses. Keyed by numeric chain
+// id. Chains are shared across siblings (whole Eevee line = 1 chain), so
+// caching here avoids re-fetching when each backfilled species in a chain runs
+// through fetchEvolutionForSlug.
+const _evoChainCache = {};
+
+// Look up `targetSlug` inside a parsed chain.species tree; return the parent
+// node whose `evolves_to` contains it, plus the evolves_to[] entry itself.
+// Returns null if not found. Used by both the "find direct evo from species
+// X" walker and the backward walk in getEvoChainSet.
+function _findInChain(node, targetSlug) {
+  for (const child of (node.evolves_to || [])) {
+    if (child.species?.name === targetSlug) return { parent: node, child };
+    const deeper = _findInChain(child, targetSlug);
+    if (deeper) return deeper;
+  }
+  return null;
+}
+
+// Fetch /pokemon-species/<slug>/ + /evolution-chain/<id>/ for `slug`, walk
+// the chain to find this species' direct evolution target, and return
+// `[PascalCaseTarget, levelOrMethodString]` matching POKEMON_DB's .e shape.
+// Returns null when the species has no evolutions OR any fetch fails (a missing
+// .e is graceful — the evolve button just doesn't render, matching the
+// behavior for terminal-evo species in POKEMON_DB).
+async function fetchEvolutionForSlug(slug) {
+  try {
+    const sr = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${slug}/`);
+    if (!sr.ok) return null;
+    const sd = await sr.json();
+    const chainUrl = sd.evolution_chain?.url;
+    if (!chainUrl) return null;
+    const cm = chainUrl.match(/\/evolution-chain\/(\d+)\/?$/);
+    const chainId = cm ? cm[1] : null;
+    if (!chainId) return null;
+    let chain = _evoChainCache[chainId];
+    if (!chain) {
+      const cr = await fetch(`https://pokeapi.co/api/v2/evolution-chain/${chainId}/`);
+      if (!cr.ok) return null;
+      const cd = await cr.json();
+      chain = cd.chain;
+      _evoChainCache[chainId] = chain;
+    }
+    // Find this species' node in the chain tree.
+    let node = null;
+    if (chain.species?.name === slug) node = chain;
+    else {
+      const f = _findInChain(chain, slug);
+      if (f) node = f.child;
+    }
+    if (!node || !node.evolves_to?.length) return null;
+    const branch = node.evolves_to[0];
+    const targetName = branch.species?.name;
+    if (!targetName) return null;
+    const det = (branch.evolution_details || [])[0] || {};
+    // Match POKEMON_DB's shape: a number = level, a string = description.
+    // Trade/stone/friendship/etc. have null min_level — use a short label.
+    let method;
+    if (det.min_level != null) method = det.min_level;
+    else if (det.trigger?.name === 'trade') method = det.held_item ? `trade:${capFirst(det.held_item.name.replace(/-/g,' '))}` : 'trade';
+    else if (det.trigger?.name === 'use-item' && det.item) method = capFirst(det.item.name.replace(/-/g,' '));
+    else if (det.min_happiness != null) method = 'friendship';
+    else method = det.trigger?.name?.replace(/-/g,' ') || 'evolves';
+    return [speciesFromApi(targetName), method];
+  } catch (e) {
+    return null;
+  }
+}
+
 async function fetchPokemonFromApi(species, gen) {
   const slug = speciesSlug(species);
   if (!slug) return null;
@@ -3532,7 +3637,12 @@ async function fetchPokemonFromApi(species, gen) {
     const stats = statNames.map(n => data.stats.find(s => s.stat.name === n)?.base_stat || 0);
     const abilities = (data.abilities || []).map(a => capFirst(a.ability.name.replace(/-/g, ' ')));
 
-    const result = { id: data.id, types, stats, abilities, slug };
+    // Evolution chain fetch — runs in sequence after the main /pokemon/ fetch
+    // succeeds. Failure here doesn't fail the whole backfill (species is still
+    // usable for types/stats/abilities); just leaves .e absent.
+    const e = await fetchEvolutionForSlug(slug);
+
+    const result = { id: data.id, types, stats, abilities, slug, e };
     backfilledPokemon[slug] = result;
     // fireBackfill on every success — fine on first fetch, and crucial on
     // recovery from a prior error so the matchup/roster/encounters tabs
@@ -3840,12 +3950,31 @@ function getActivePatches() {
     if (!f.key) continue;
     // sprite source like "/base/10034" → PokeAPI numeric id we can sprite-load.
     const m = (f.spriteSource || '').match(/\/base\/(\d+)/);
+    // baseForm has two shapes in the txt source:
+    //   "delta-bulbasaur"                       → only the chain's base form
+    //   "delta-bulbasaur>delta-ivysaur"         → base form + direct evolution
+    // Split on '>' to extract the evolution target (right side). Left side is
+    // kept as baseForm for sprite-fallback purposes. Level isn't carried in
+    // the file format — use 'evolves' as the method display string.
+    const bfRaw = f.baseForm || '';
+    let baseFormOnly = bfRaw, evo = null;
+    const gt = bfRaw.indexOf('>');
+    if (gt >= 0) {
+      baseFormOnly = bfRaw.slice(0, gt).trim() || null;
+      const tgt = bfRaw.slice(gt + 1).trim();
+      // Store the raw slug (not prettified). pokeInfo's fakemon lookup keys
+      // are hyphenated lowercase (`delta-ivysaur`); prettifying to
+      // "Delta Ivysaur" would break the lookup downstream after evolvePoke
+      // sets p.species = target.
+      if (tgt) evo = [tgt, 'evolves'];
+    }
     result.fakemon.set(f.key.toLowerCase(), {
       id: m ? parseInt(m[1], 10) : null,
       name: f.displayName,
       types: (f.types || []).map(t => t.charAt(0).toUpperCase() + t.slice(1)),
       stats: f.stats || [],
-      baseForm: f.baseForm || null
+      baseForm: baseFormOnly || null,
+      e: evo
     });
   }
   for (const it of (raw.item || [])) {
@@ -4090,7 +4219,14 @@ async function evolvePoke(idx) {
     if (!match) { showToast('Unknown evolution target','error'); return; }
     finalTarget = match;
   }
-  const targetInfo = pokeInfo(finalTarget);
+  let targetInfo = pokeInfo(finalTarget);
+  // Target may be a backfill-only species (e.g. Servine — Snivy's evolve target
+  // in BW). Kick off a fetch + wait briefly so we can populate type/ability
+  // without bailing on the user.
+  if (!targetInfo) {
+    await fetchPokemonFromApi(finalTarget, getGameGen());
+    targetInfo = pokeInfo(finalTarget);
+  }
   if (!targetInfo) { showToast('Missing data for ' + finalTarget, 'error'); return; }
   const oldSpecies = p.species;
   p.species = finalTarget;
@@ -9378,12 +9514,12 @@ function buildPrefetchUrls(opts) {
 // offline use of vanilla games that drive encounters off the PokeAPI region
 // path (RBY, GSC, RSE, FRLG, DPPt, HGSS, ORAS, XY fallback).
 // Retry-with-backoff wrapper for enumeration fetches. PokeAPI / its CDN
-// occasionally returns 5xx or drops connections during a long pre-cache run;
-// without this, a single blip silently truncates the chain (region → location
-// → area) and the user ends up with a partial cache and no idea why.
-// 3 attempts total: immediate, +1s, +3s. 4xx don't retry (likely permanent).
+// occasionally rate-limits during a long pre-cache run; without this, a single
+// blip silently truncates the chain (region → location → area) and the user
+// ends up with a partial cache. 5 attempts with growing backoff (1s/3s/10s/30s)
+// covers most transient rate-limit windows. 4xx don't retry (likely permanent).
 async function _fetchWithRetry(url, opts) {
-  const delays = [1000, 3000];
+  const delays = [1000, 3000, 10000, 30000];
   let lastErr = null;
   for (let attempt = 0; attempt <= delays.length; attempt++) {
     try {
@@ -9403,6 +9539,12 @@ async function buildPrefetchUrlsAllGamesWithRegions(progressFn) {
   for (let id = 1; id <= 1025; id++) {
     urls.add(`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`);
   }
+  // Evolution chains drive the backfill's .e lookup. PokeAPI has ~549 chains
+  // total (as of Gen 9); 560 gives a safe margin. Unused IDs 404 — the SW
+  // prefetcher counts those as failed and moves on (same as sprite enumeration).
+  for (let id = 1; id <= 560; id++) {
+    urls.add(`https://pokeapi.co/api/v2/evolution-chain/${id}/`);
+  }
   const regionSlugs = new Set();
   for (const k of Object.keys(GAMES)) {
     const r = GAMES[k]?.dataSources?.pokeapiRegion;
@@ -9421,55 +9563,88 @@ async function buildPrefetchUrlsAllGamesWithRegions(progressFn) {
   // as permanent misses offline → "using static list" fallback.
   const locationUrls = new Set();
   const locationSlugByUrl = new Map();
-  let regionsDone = 0, regionsSucceeded = 0;
-  await _runWithConcurrency([...regionSlugs], 4, async (slug) => {
-    try {
+  // Phase-level auto-retry: after a pass completes, any items that failed get
+  // re-run in a second pass. Up to 3 passes total. Combined with per-fetch
+  // retries (5 attempts each), this should survive any realistic rate-limit
+  // window without the user having to manually re-cache.
+  const regionsFailed = await _runPhaseWithRetry(
+    [...regionSlugs], 3, progressFn, 'regions',
+    async (slug) => {
       const res = await _fetchWithRetry(`https://pokeapi.co/api/v2/region/${slug}/`);
-      if (res.ok) {
-        const data = await res.json();
-        for (const loc of (data.locations || [])) {
-          if (!loc.name) continue;
-          const slugUrl = `https://pokeapi.co/api/v2/location/${loc.name}/`;
-          locationUrls.add(slugUrl);
-          locationSlugByUrl.set(slugUrl, loc.name);
-        }
-        regionsSucceeded++;
+      if (!res.ok) throw new Error(`region ${slug} HTTP ${res.status}`);
+      const data = await res.json();
+      // Shape validation: every real region has 30-80 locations. An empty
+      // response means PokeAPI rate-limited us with a 200 OK + empty body
+      // (silent failure mode that our 5xx retry doesn't catch). Throw to
+      // trigger phase retry so we re-fetch this region after a cooldown.
+      if (!Array.isArray(data.locations) || data.locations.length === 0) {
+        throw new Error(`region ${slug} returned empty locations (likely rate-limited)`);
       }
-    } catch(e) {}
-    regionsDone++;
-    if (progressFn) progressFn(`Enumerating regions (${regionsDone}/${regionSlugs.size})…`);
-  });
+      for (const loc of data.locations) {
+        if (!loc.name) continue;
+        const slugUrl = `https://pokeapi.co/api/v2/location/${loc.name}/`;
+        locationUrls.add(slugUrl);
+        locationSlugByUrl.set(slugUrl, loc.name);
+      }
+    }
+  );
   for (const u of locationUrls) urls.add(u);
   if (progressFn) progressFn(`Enumerating locations (0/${locationUrls.size})…`);
   const areaUrls = new Set();
-  let locsDone = 0, locsSucceeded = 0;
-  await _runWithConcurrency([...locationUrls], 4, async (locUrl) => {
-    try {
+  const locsFailed = await _runPhaseWithRetry(
+    [...locationUrls], 3, progressFn, 'locations',
+    async (locUrl) => {
       const res = await _fetchWithRetry(locUrl);
-      if (res.ok) {
-        const data = await res.json();
-        for (const a of (data.areas || [])) {
-          if (a.name) areaUrls.add(`https://pokeapi.co/api/v2/location-area/${a.name}/`);
-        }
-        locsSucceeded++;
+      if (!res.ok) throw new Error(`location HTTP ${res.status}`);
+      const data = await res.json();
+      // Some locations genuinely have 0 areas (transition rooms, story zones)
+      // so we don't throw on empty areas. But we do require a `name` field to
+      // confirm the response shape is correct (rate-limit responses sometimes
+      // come back as `{}` with no fields at all).
+      if (!data || typeof data.name !== 'string') {
+        throw new Error(`location response malformed (likely rate-limited)`);
       }
-    } catch(e) {}
-    locsDone++;
-    if (progressFn && locsDone % 5 === 0) progressFn(`Enumerating locations (${locsDone}/${locationUrls.size})…`);
-  });
+      for (const a of (data.areas || [])) {
+        if (a.name) areaUrls.add(`https://pokeapi.co/api/v2/location-area/${a.name}/`);
+      }
+    }
+  );
   for (const u of areaUrls) urls.add(u);
-  // Loud warning if enumeration was partial — the chain is silent on failure
-  // (catch+swallow), so without this the user has no way to know the cache
-  // is incomplete until they go offline and find missing data.
-  const regionsMissing = regionSlugs.size - regionsSucceeded;
-  const locsMissing = locationUrls.size - locsSucceeded;
-  if (regionsMissing > 0 || locsMissing > 0) {
+  // After all retry passes — only warn if STILL partial. Most flakes are
+  // healed silently by the phase-retry mechanism.
+  if (regionsFailed.length > 0 || locsFailed.length > 0) {
     const parts = [];
-    if (regionsMissing > 0) parts.push(`${regionsSucceeded}/${regionSlugs.size} regions`);
-    if (locsMissing > 0) parts.push(`${locsSucceeded}/${locationUrls.size} locations`);
-    showToast(`Partial enumeration: only ${parts.join(' + ')} fetched. Click Re-cache to retry.`, 'warn', 10000);
+    if (regionsFailed.length > 0) parts.push(`${regionsFailed.length} regions`);
+    if (locsFailed.length > 0) parts.push(`${locsFailed.length} locations`);
+    showToast(`Couldn't enumerate ${parts.join(' + ')} after retries. Try Re-cache later.`, 'warn', 10000);
   }
   return [...urls];
+}
+
+// Run `worker(item)` over `items` with concurrency 4. Any item whose worker
+// throws is collected and retried in a second pass (up to `maxPasses` total).
+// Returns the list of items that still failed after all passes. Progress text
+// updates each completion so the user sees movement during retry passes too.
+async function _runPhaseWithRetry(items, maxPasses, progressFn, label, worker) {
+  let pending = items.slice();
+  for (let pass = 1; pass <= maxPasses; pass++) {
+    if (!pending.length) break;
+    const failed = [];
+    const total = pending.length;
+    let done = 0;
+    const passLabel = pass > 1 ? ` (retry ${pass}/${maxPasses})` : '';
+    await _runWithConcurrency(pending, 4, async (item) => {
+      try { await worker(item); }
+      catch (e) { failed.push(item); }
+      done++;
+      if (progressFn && (done % 5 === 0 || done === total)) {
+        progressFn(`Enumerating ${label} (${done}/${total})${passLabel}…`);
+      }
+    });
+    if (!failed.length) return [];
+    pending = failed;
+  }
+  return pending;
 }
 
 async function _runWithConcurrency(items, n, worker) {
