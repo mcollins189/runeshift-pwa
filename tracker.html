@@ -631,6 +631,21 @@
   .enc-flag.dupe{background:rgba(255,255,255,.06);color:var(--text3)}
   .enc-flag.dead{background:rgba(248,113,113,.12);color:var(--red)}
   .enc-flag.caught{background:rgba(74,222,128,.12);color:var(--green)}
+  .enc-flag.reco{background:rgba(251,191,36,.18);color:#fcd34d;cursor:help}
+  .enc-flag.reco.rare{background:rgba(168,85,247,.18);color:#c4b5fd}
+  .enc-flag.reco.strong{background:rgba(96,165,250,.16);color:#93c5fd}
+  .enc-flag.reco.decent{background:rgba(148,163,184,.14);color:var(--text2)}
+  .enc-flag.reco.reduced{padding:1px 5px;font-size:11px;opacity:.72;letter-spacing:0;text-transform:none}
+  .enc-section.locked-method{opacity:.5;filter:saturate(.6)}
+  .enc-section.locked-method::before{content:"locked — toggle the tool above";display:block;font-size:10px;color:var(--text3);font-style:italic;padding:4px 0;text-align:center}
+  .tools-pill-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .tools-prefix{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.04em}
+  .tools-pill{flex-wrap:wrap}
+  .tools-pill button{font-size:11px;padding:5px 10px;display:inline-flex;align-items:center;gap:4px}
+  .tools-pill button .tools-emoji{font-size:13px;line-height:1}
+  .tools-pill button:not(.active){opacity:.5}
+  .rod-group{display:inline-flex;align-items:center;gap:4px;padding:0 6px 0 8px;border-left:1px solid var(--border);border-right:1px solid var(--border)}
+  .rod-group .rod-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;font-weight:600}
   .enc-empty{text-align:center;padding:32px 16px;color:var(--text3);font-size:13px;line-height:1.8}
   .enc-log-btn{margin-top:6px;width:100%}
 
@@ -3213,6 +3228,507 @@ function pokeBaseSpeed(name) { const i = pokeInfo(name); return i ? i.s[5] : nul
 function pokeTypes(name) { const i = pokeInfo(name); return i ? i.t : null; }
 function pokeAbilities(name) { const i = pokeInfo(name); return i ? i.a : []; }
 
+// Sum of base stats. Returns null when any slot is missing — partial fakemon
+// data shouldn't produce misleading scores.
+function calcBST(name) {
+  const s = pokeStats(name);
+  if (!s || !Array.isArray(s) || s.length !== 6) return null;
+  let total = 0;
+  for (let i = 0; i < 6; i++) {
+    if (s[i] == null) return null;
+    total += s[i];
+  }
+  return total;
+}
+// Walk the .e chain to the final form. Cycle-guarded for malformed fakemon data.
+function getFinalEvo(name) {
+  let cur = name, guard = 0;
+  while (guard++ < 6) {
+    const info = pokeInfo(cur);
+    if (!info || !info.e) return cur;
+    const next = info.e[0];
+    if (!next || next === cur) return cur;
+    // Warm the chain offline-safely: kick a backfill if the next link is missing.
+    if (!pokeInfo(next) && typeof ensurePokemonBackfilled === 'function') {
+      ensurePokemonBackfilled(next);
+    }
+    cur = next;
+  }
+  return cur;
+}
+function getFinalEvoBST(name) {
+  const fe = getFinalEvo(name);
+  return calcBST(fe);
+}
+
+/* === Encounter recommendation system ===
+   Highlights catch targets worth prioritizing. Final-evo BST is the dominant
+   signal; trap-list penalties tame famous BST-overstaters (Truant, Slow Start,
+   gimmick mons). Type-gap and boss-coverage are secondary bonuses. Locked
+   methods (no Surf yet, etc.) suppress recommendations for those pools. */
+// Single rod state — selecting a higher level implies access to lower-level
+// rod pools too (you don't lose the old rod when you get the super rod).
+const DEFAULT_TOOLS = {
+  surf: false, rod: 'none', rockSmash: false, honey: false
+};
+const ROD_LEVELS = { none:0, old:1, good:2, super:3 };
+const ROD_OPTIONS = [
+  { key:'none',  label:'No rod' },
+  { key:'old',   label:'Old rod' },
+  { key:'good',  label:'Good rod' },
+  { key:'super', label:'Super rod' }
+];
+// Per-region static method availability. Used by gameHasMethod for PokeAPI
+// region path games (where async location-area scan isn't viable at UI time).
+const REGION_METHODS = {
+  kanto:  { surf:1, oldRod:1, goodRod:1, superRod:1 },
+  johto:  { surf:1, oldRod:1, goodRod:1, superRod:1, rockSmash:1, honey:1 },
+  hoenn:  { surf:1, oldRod:1, goodRod:1, superRod:1, rockSmash:1 },
+  sinnoh: { surf:1, oldRod:1, goodRod:1, superRod:1, honey:1 },
+  unova:  { surf:1, oldRod:1, goodRod:1, superRod:1 },
+  kalos:  { surf:1, oldRod:1, goodRod:1, superRod:1, rockSmash:1 }
+};
+// Final-evo BST tier cutoffs. Picked so genuinely-strong fully-evolved
+// rosters (Heracross 500, Alakazam 500, Magnezone 535) land in 'strong'.
+const REC_TIER_THRESHOLDS = { top:580, strong:500, decent:440 };
+// Penalize species whose final-evo BST overstates their effective power
+// (broken signature ability, no movepool, gimmick mechanics). Applied to
+// the score but NOT used for tier — trap species never reach 'top'.
+const BST_TRAP_LIST = {
+  'Slaking':     -180,   // Truant: every other turn = effectively half BST
+  'Regigigas':   -180,   // Slow Start: 5 turns at half Atk/Speed
+  'Shuckle':     -120,   // 230 BST with 1 HP; massive Def but no offensive role
+  'Wishiwashi':  -150,   // Solo form 175 BST; only school form usable, fragile
+  'Delibird':    -100,   // 330 BST, no evolution, movepool worse than stats
+  'Luvdisc':     -120,   // 330 BST, no evolution, no competitive role
+  'Unown':       -200,   // 336 BST, single weak move; novelty-only
+  'Smeargle':    -200,   // 250 BST; Sketch requires deep prep most players skip
+  'Ditto':       -150,   // 288 BST; Transform niche, needs Imposter
+  'Spinda':      -100    // 360 BST, no evolution, mediocre everything
+};
+// Long-grind pre-evolutions — final form is genuinely strong but the path
+// is painful enough that most players skip catching the pre-evo. Penalty
+// applies ONLY when catching the pre-evo; a wild adult catch (e.g. Lake of
+// Rage Gyarados in GS/HGSS) bypasses the penalty entirely. Tier-caps to
+// filler so no ★ appears for the pre-evo catch.
+const BST_GRIND_PRE_LIST = {
+  'Gyarados':  -180,  // Magikarp Splash-only until L20 — most playthroughs skip
+  'Milotic':   -120   // Feebas requires Beauty (Gen 3) or Prism Scale (Gen 5+)
+};
+
+function curTools() {
+  const r = curRun();
+  const raw = r?.toolsUnlocked || {};
+  // Lazy-migrate legacy boolean rod fields → single 'rod' field, taking the
+  // highest unlocked rod tier as the current state.
+  let rod = raw.rod;
+  if (!rod) {
+    if (raw.superRod) rod = 'super';
+    else if (raw.goodRod) rod = 'good';
+    else if (raw.oldRod) rod = 'old';
+    else rod = 'none';
+  }
+  return {
+    surf: !!raw.surf,
+    rod: ROD_LEVELS[rod] != null ? rod : 'none',
+    rockSmash: !!raw.rockSmash,
+    honey: !!raw.honey
+  };
+}
+function setTool(toolName, val) {
+  const r = curRun(); if (!r) return;
+  if (!r.toolsUnlocked) r.toolsUnlocked = {};
+  r.toolsUnlocked[toolName] = !!val;
+  save();
+  renderEncounters();
+}
+function setRod(level) {
+  const r = curRun(); if (!r) return;
+  if (!r.toolsUnlocked) r.toolsUnlocked = {};
+  r.toolsUnlocked.rod = ROD_LEVELS[level] != null ? level : 'none';
+  // Wipe legacy boolean fields so they don't shadow the new state on next load.
+  delete r.toolsUnlocked.oldRod;
+  delete r.toolsUnlocked.goodRod;
+  delete r.toolsUnlocked.superRod;
+  save();
+  renderEncounters();
+}
+
+// Cache per-game method availability to avoid re-scanning encounter-tables
+// every render. Busted when a new run is created (key changes).
+const _gameMethodsCache = {};
+function gameHasMethod(gameKey, method) {
+  if (!gameKey) return false;
+  const game = GAMES[gameKey]; if (!game) return false;
+  const ds = game.dataSources || {};
+  // NUZ_DATA-only games (SV + hack ROMs) have no method tagging at all.
+  if (!ds.encounterTables && !ds.pokeapiRegion) return false;
+
+  if (_gameMethodsCache[gameKey]) return !!_gameMethodsCache[gameKey][method];
+  const methods = {};
+
+  // Encounter-tables games: scan pool methods across every version + variant.
+  if (ds.encounterTables) {
+    const collect = (file) => {
+      const bundle = window.NUZ_DATA?.encounterTables?.[file];
+      if (!bundle?.byName) return;
+      for (const locName in bundle.byName) {
+        const loc = bundle.byName[locName];
+        for (const pool of (loc.pools || [])) {
+          if (pool.method) methods[pool.method] = 1;
+        }
+      }
+    };
+    const seen = new Set();
+    const walk = (cfg) => {
+      if (!cfg) return;
+      if (typeof cfg === 'string') { if (!seen.has(cfg)) { seen.add(cfg); collect(cfg); } return; }
+      for (const k in cfg) walk(cfg[k]);
+    };
+    walk(ds.encounterTables);
+  }
+
+  // PokeAPI region path: use static fallback. PokeAPI location-area scans
+  // are async and not all data is fetched at render time.
+  if (ds.pokeapiRegion) {
+    const regions = Array.isArray(ds.pokeapiRegion) ? ds.pokeapiRegion : [ds.pokeapiRegion];
+    for (const region of regions) {
+      const rm = REGION_METHODS[region];
+      if (rm) for (const m in rm) methods[m] = 1;
+    }
+  }
+
+  // XY sub-methods all gate behind grass (walking) — they're not separate tools.
+  // Honey covers both Sinnoh honey trees and Gen 2/HGSS headbutt trees (same tag).
+  _gameMethodsCache[gameKey] = methods;
+  return !!methods[method];
+}
+
+// Map method tag → which rod tier unlocks it. Strict exclusivity — Super
+// only unlocks superRod, not Old/Good. Reflects the user's mental model of
+// "fishing with one rod at a time"; you only see encounters from the rod
+// you actually have selected.
+const ROD_METHOD_FOR = { oldRod:'old', goodRod:'good', superRod:'super' };
+function isMethodLocked(method) {
+  if (!method) return false;
+  const tools = curTools();
+  if (method === 'surf') return !tools.surf;
+  if (method === 'rockSmash') return !tools.rockSmash;
+  if (method === 'honey') return !tools.honey;
+  const requiredRod = ROD_METHOD_FOR[method];
+  if (requiredRod) return tools.rod !== requiredRod;
+  return false;  // grass / tallGrass / shallowWater / flowers / horde / walking / rustling / flying / berry / special
+}
+
+// Build the tools-pill row HTML for the encounters tab header.
+// Returns '' for NUZ_DATA-only games (no method tagging available).
+function buildToolsPillHtml(gameKey) {
+  if (!gameKey) return '';
+  const tools = curTools();
+  const hasSurf      = gameHasMethod(gameKey, 'surf');
+  const hasRockSmash = gameHasMethod(gameKey, 'rockSmash');
+  const hasHoney     = gameHasMethod(gameKey, 'honey');
+  const hasAnyRod    = gameHasMethod(gameKey, 'oldRod') || gameHasMethod(gameKey, 'goodRod') || gameHasMethod(gameKey, 'superRod');
+  if (!hasSurf && !hasRockSmash && !hasHoney && !hasAnyRod) return '';
+
+  const pill = (id, label, emoji, active, onclick, tip) =>
+    `<button class="${active?'active':''}" onclick="${onclick}" title="${tip}"><span class="tools-emoji">${emoji}</span>${label}</button>`;
+
+  let parts = [];
+  if (hasSurf) {
+    parts.push(pill('surf','Surf','🌊', tools.surf, `setTool('surf', ${!tools.surf})`,
+      tools.surf ? 'Surf unlocked — surf pools are active' : 'Surf locked — surf pools are dimmed and skip recommendations'));
+  }
+  if (hasAnyRod) {
+    // Strict exclusivity — only the selected rod is active. Click an active
+    // rod again to clear (rod='none'). Selecting Super does NOT imply Old/Good
+    // pools are unlocked; users only see the encounter pool for the rod they'd
+    // actually fish with.
+    const rodBtn = (key, label) => {
+      const isCurrent = tools.rod === key;
+      const next = isCurrent ? 'none' : key;
+      const tip = isCurrent
+        ? `${label} selected — click again to deselect`
+        : `Switch to ${label} (only ${label.toLowerCase()} pools will be active)`;
+      return `<button class="${isCurrent?'active':''}" onclick="setRod('${next}')" title="${tip}">${label}</button>`;
+    };
+    parts.push(`<span class="rod-group" title="Pick the rod you're fishing with. One at a time — switching rods changes which pool is active.">
+      <span class="rod-label">Rod:</span>
+      ${rodBtn('old','Old')}
+      ${rodBtn('good','Good')}
+      ${rodBtn('super','Super')}
+    </span>`);
+  }
+  if (hasRockSmash) {
+    parts.push(pill('rockSmash','Rock Smash','🪨', tools.rockSmash, `setTool('rockSmash', ${!tools.rockSmash})`,
+      tools.rockSmash ? 'Rock Smash unlocked' : 'Rock Smash locked — those pools are dimmed and skip recommendations'));
+  }
+  if (hasHoney) {
+    parts.push(pill('honey','Headbutt / Honey','🍯', tools.honey, `setTool('honey', ${!tools.honey})`,
+      tools.honey ? 'Headbutt/Honey unlocked' : 'Headbutt/Honey locked — those pools are dimmed and skip recommendations'));
+  }
+  return `<div class="tools-pill-row" title="Mark which tools you have unlocked. Locked methods are dimmed and skip recommendation flags.">
+    <span class="tools-prefix">Tools:</span>
+    <div class="ver-pill tools-pill">${parts.join('')}</div>
+  </div>`;
+}
+
+/* === Location-wide recommendation pipeline ===
+   The encounters tab builds HTML in two passes:
+   1. First pass: build pool HTML normally. renderEncList sees the
+      `_recoBuffer` is non-null, stashes its args, and emits a placeholder
+      comment in place of each pool's grid.
+   2. Second pass: after all pools are buffered, computeLocationWinners
+      sees every species across every unlocked method, picks up to 4
+      winners (top pick / rare gem / strong / decent), then we re-call
+      renderEncListInternal for each buffered pool with the winners map.
+   This way the ★ badges are location-wide rather than per-pool.            */
+let _recoBuffer = null;
+let _recoPlaceholderCounter = 0;
+function startLocationRecoPass() {
+  _recoBuffer = [];
+  _recoPlaceholderCounter = 0;
+}
+function finishLocationRecoPass(html) {
+  if (_recoBuffer === null) return html;
+  const buffered = _recoBuffer;
+  _recoBuffer = null;
+  if (!buffered.length) return html;
+  // Aggregate every visible encounter across unlocked methods.
+  const _rules = (typeof curRules === 'function') ? curRules() : {};
+  const enforceDupes = _rules.nuzlockeMode !== false && (_rules.dupesClause || _rules.speciesClause);
+  const allEntries = [];
+  for (const dp of buffered) {
+    if (dp.method && isMethodLocked(dp.method)) continue;
+    const season = selectedEncSeason;
+    for (const e of dp.list) {
+      if (!e.p) continue;
+      // Skip dupe/dead/caught — they can't be a fresh catch target.
+      const lc = e.p.toLowerCase();
+      if (dp.deadSpecies && dp.deadSpecies.has(lc)) continue;
+      if (dp.caughtAtThisLoc && dp.caughtAtThisLoc.has(lc)) continue;
+      if (enforceDupes && dp.teamLineSet && dp.teamLineSet.has(lc)) continue;
+      const rate = (season && season !== 'all' && e.chanceBySeason && e.chanceBySeason[season])
+        ? e.chanceBySeason[season] : (e.r || 0);
+      allEntries.push({ species: e.p, chancePct: rate, method: dp.method });
+    }
+  }
+  const winners = computeLocationWinners(allEntries);
+  let result = html;
+  for (let i = 0; i < buffered.length; i++) {
+    const dp = buffered[i];
+    const rendered = renderEncListInternal(
+      dp.list, dp.teamLineSet, dp.deadSpecies, dp.caughtAtThisLoc,
+      dp.ver, dp.loc, dp.method, winners
+    );
+    result = result.replace(dp.placeholder, rendered);
+  }
+  return result;
+}
+
+/* Choose up to 4 winning species at a location: best top-tier common, best
+   top-tier rare (gem), best strong-tier, best decent-tier. Each is keyed by
+   "method:::species" so the badge attaches to a specific pool instance —
+   if the same species appears in multiple pools (e.g. Magikarp in old/good
+   rod), only the winning pool gets the badge. */
+function computeLocationWinners(entries) {
+  const RARE_RATE = 5;
+  const byTier = { top: [], strong: [], decent: [] };
+  // Pre-score every entry once. We'll filter into buckets and pick winners.
+  const scored = [];
+  for (const e of entries) {
+    const rec = getRecommendation(e.species, { chancePct: e.chancePct });
+    if (!rec || !byTier[rec.tier]) continue;
+    scored.push({ ...e, rec });
+    byTier[rec.tier].push(scored[scored.length - 1]);
+  }
+  const winners = new Map();
+  const keyOf = (e) => `${e.method || ''}:::${e.species}`;
+  // Generic picker: highest-rate first (more reliably catchable),
+  // then highest score, then alphabetical for determinism.
+  const pickBest = (arr) => arr.slice().sort((a,b) =>
+    (b.chancePct || 0) - (a.chancePct || 0) ||
+    b.rec.score - a.rec.score ||
+    a.species.localeCompare(b.species)
+  )[0];
+
+  // ★ Rare gem — top tier mons at ≤5%. Always pick the best, even if no common top exists.
+  const rareTop = byTier.top.filter(e => e.chancePct > 0 && e.chancePct <= RARE_RATE);
+  if (rareTop.length) {
+    const w = pickBest(rareTop);
+    winners.set(keyOf(w), { label:'★ rare gem', tierClass:'reco rare', reasons:w.rec.reasons });
+  }
+  // ★ Top pick — top tier mons at >5% (or with unknown rate=0).
+  const commonTop = byTier.top.filter(e => e.chancePct === 0 || e.chancePct > RARE_RATE);
+  if (commonTop.length) {
+    const w = pickBest(commonTop);
+    winners.set(keyOf(w), { label:'★ top pick', tierClass:'reco top', reasons:w.rec.reasons });
+  }
+  // ★ Strong — best strong tier. Append (rare) to label if winner is ≤5%.
+  if (byTier.strong.length) {
+    const w = pickBest(byTier.strong);
+    const isRare = w.chancePct > 0 && w.chancePct <= RARE_RATE;
+    winners.set(keyOf(w), {
+      label: isRare ? '★ strong (rare)' : '★ strong',
+      tierClass: isRare ? 'reco strong rare-modifier' : 'reco strong',
+      reasons: w.rec.reasons
+    });
+  }
+  // ★ Decent — best decent tier. Same rare-suffix rule.
+  if (byTier.decent.length) {
+    const w = pickBest(byTier.decent);
+    const isRare = w.chancePct > 0 && w.chancePct <= RARE_RATE;
+    winners.set(keyOf(w), {
+      label: isRare ? '★ decent (rare)' : '★ decent',
+      tierClass: isRare ? 'reco decent rare-modifier' : 'reco decent',
+      reasons: w.rec.reasons
+    });
+  }
+  return winners;
+}
+
+// Defensive holes: types that ≥half (and ≥3) of your alive ROSTER takes 2×
+// from. Uses the full roster (party + bench), not just the active 6 — bench
+// matters because you'll swap them in for matchups. Boosts candidates that
+// resist hole types since one SE move could otherwise wipe multiple mons.
+// Returns [] when the roster is too small to meaningfully audit (<3 alive).
+function getRosterDefensiveHoles() {
+  const team = curRun()?.team || [];
+  const alive = team.filter(p => p.alive !== false && p.species);
+  if (alive.length < 3) return [];
+  const ALL_TYPES = ['Normal','Fire','Water','Electric','Grass','Ice','Fighting','Poison','Ground','Flying','Psychic','Bug','Rock','Ghost','Dragon','Dark','Steel','Fairy'];
+  const weakCount = {};
+  for (const p of alive) {
+    const types = pokeTypes(p.species) || [];
+    if (!types.length) continue;
+    for (const atk of ALL_TYPES) {
+      const eff = effectiveness(atk, types[0], types[1] || null);
+      if (eff >= 2) weakCount[atk] = (weakCount[atk] || 0) + 1;
+    }
+  }
+  const threshold = Math.max(3, Math.ceil(alive.length / 2));
+  return Object.keys(weakCount).filter(t => weakCount[t] >= threshold);
+}
+
+/* Score a single encounter for "should I prioritize catching this?".
+   Returns { tier, score, reasons[] } or null when species data isn't available.
+   - tier: 'top' | 'strong' | 'decent' | 'filler' (set from raw final-evo BST,
+     never from adjusted score, so rare-slot weak mons can't get the star).
+   - score: adjusted total used for ranking within a pool.
+   - reasons: human-readable lines for the tooltip. */
+function getRecommendation(species, ctx) {
+  if (!species) return null;
+  // Backfill kickoff — null here means "ask again after onBackfill fires".
+  if (!pokeInfo(species)) {
+    if (typeof ensurePokemonBackfilled === 'function') ensurePokemonBackfilled(species);
+    return null;
+  }
+  const fe = getFinalEvo(species);
+  const feBST = calcBST(fe);
+  if (feBST == null) return null;
+
+  const reasons = [];
+  let score = feBST;
+  const isFinal = fe === species;
+  reasons.push(isFinal ? `BST ${feBST}` : `Evolves into ${fe} (BST ${feBST})`);
+
+  const trap = BST_TRAP_LIST[fe];
+  if (trap) { score += trap; reasons.push(`Gimmick penalty ${trap}`); }
+
+  // Long-grind pre-evo penalty (Magikarp → Gyarados, Feebas → Milotic).
+  // Only applies when catching the pre-evo; wild adult catches bypass.
+  const grind = BST_GRIND_PRE_LIST[fe];
+  const isCatchingPreEvo = species !== fe;
+  if (grind && isCatchingPreEvo) {
+    score += grind;
+    reasons.push(`Long-grind to ${fe} ${grind}`);
+  }
+
+  // Rare-slot multiplier — small bonus, never the dominant factor.
+  const rate = ctx?.chancePct || 0;
+  let rateMult = 1.00;
+  if (rate > 0 && rate <= 5) rateMult = 1.10;
+  else if (rate > 0 && rate <= 15) rateMult = 1.05;
+  if (rateMult !== 1) {
+    score = score * rateMult;
+    reasons.push(`Rare slot (${rate}%) bonus ×${rateMult.toFixed(2)}`);
+  }
+
+  // Type-gap bonus — +25 per final-evo type your alive party doesn't already cover.
+  const teamTypes = new Set();
+  for (const p of (curRun()?.team || [])) {
+    if (p.alive === false) continue;
+    (pokeTypes(p.species) || []).forEach(t => teamTypes.add(t));
+  }
+  const feTypes = pokeTypes(fe) || [];
+  const missing = feTypes.filter(t => !teamTypes.has(t));
+  if (missing.length) {
+    const bonus = missing.length * 25;
+    score += bonus;
+    reasons.push(`Fills ${missing.join('/')} gap +${bonus}`);
+  }
+
+  // Defensive-hole bonus — if your roster shares a 2× weakness (3+ alive
+  // mons weak to the same type, party + bench combined), favor candidates
+  // whose final-evo types RESIST that type. Plugs the biggest "one SE move
+  // wipes multiple teammates" risk.
+  if (feTypes.length) {
+    const holes = getRosterDefensiveHoles();
+    if (holes.length) {
+      const filled = [];
+      let holeBonus = 0;
+      for (const hole of holes) {
+        const eff = effectiveness(hole, feTypes[0], feTypes[1] || null);
+        if (eff < 1) {
+          holeBonus += 35;
+          filled.push(hole);
+        }
+      }
+      if (holeBonus) {
+        score += holeBonus;
+        reasons.push(`Plugs roster ${filled.join('/')} weakness +${holeBonus}`);
+      }
+    }
+  }
+
+  // Boss-coverage bonus — only when a cap is selected.
+  const cap = (typeof curCap === 'function') ? curCap() : null;
+  if (cap) {
+    const bosses = (typeof getBosses === 'function') ? getBosses(curGame()) : [];
+    const boss = bosses.find(b => b.name === cap);
+    if (boss && (boss.team || []).length) {
+      let bossBonus = 0;
+      const hits = [];
+      for (const ace of boss.team) {
+        const aceTypes = (ace.types || []).flatMap(t => String(t).split('/'));
+        const def1 = aceTypes[0], def2 = aceTypes[1];
+        let best = 1;
+        for (const t of feTypes) {
+          const e = (typeof effectiveness === 'function') ? effectiveness(t, def1, def2) : 1;
+          if (e > best) best = e;
+        }
+        if (best >= 2) { bossBonus += 30; hits.push(ace.species || ace.name || '?'); }
+      }
+      if (bossBonus) reasons.push(`SE vs ${cap} (${hits.slice(0,3).join(', ')}${hits.length>3?'…':''}) +${bossBonus}`);
+      score += bossBonus;
+    }
+  }
+
+  // Tier from raw final-evo BST so rare-slot Wurmples never get ★.
+  let tier = 'filler';
+  if (feBST >= REC_TIER_THRESHOLDS.top) tier = 'top';
+  else if (feBST >= REC_TIER_THRESHOLDS.strong) tier = 'strong';
+  else if (feBST >= REC_TIER_THRESHOLDS.decent) tier = 'decent';
+  if (trap) tier = 'filler';  // Slaking/Regigigas never reach top.
+  if (grind && isCatchingPreEvo) tier = 'filler';  // Magikarp catches don't earn a ★.
+
+  // "Rare gem" flag: top tier in a slot ≤5% chance. Distinguishes
+  // "definitely catchable strong pick" from "great mon if RNG cooperates".
+  const isRareGem = tier === 'top' && rate > 0 && rate <= 5;
+
+  return { tier, score, reasons, isRareGem, feBST };
+}
+
 // Gen 3+ nature multipliers: [hp, atk, def, spa, spd, spe]. HP is never modified.
 // Five neutral natures (Hardy/Docile/Bashful/Quirky/Serious) are 1.0 across the board.
 const NATURE_MODS = {
@@ -4874,7 +5390,7 @@ function submitNewRun() {
   const version = versionInput ? versionInput.value : (gameDef?.defaultVersion || null);
   const variant = variantInput ? variantInput.value : (gameDef?.defaultVariant || null);
   const runId = makeRunId();
-  runs[runId] = { name, game, team:[], routes:[], cap:null, created: Date.now(), version, variant };
+  runs[runId] = { name, game, team:[], routes:[], cap:null, created: Date.now(), version, variant, toolsUnlocked: {} };
   currentRunId = runId;
   save();
   closeModal();
@@ -6982,7 +7498,8 @@ function renderEncountersByRegion(el, gameKey, game) {
     if (!POKEAPI_AREA_MAP[selectedEncLocation]) {
       ensureLocationAreasLoaded(regionSlugs, selectedEncLocation);
     }
-    mainHtml = buildEncounterMain(selectedEncLocation, ver);
+    startLocationRecoPass();
+    mainHtml = finishLocationRecoPass(buildEncounterMain(selectedEncLocation, ver));
   }
 
   let versionPillHtml = '';
@@ -7026,7 +7543,7 @@ function renderEncountersByRegion(el, gameKey, game) {
   el.innerHTML = `
     <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap">
       <p class="slabel" style="margin-bottom:0">${game.name} wild encounter reference</p>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">${versionPillHtml}${seasonPillHtml}</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">${versionPillHtml}${seasonPillHtml}${buildToolsPillHtml(gameKey)}</div>
     </div>
     <div class="enc-layout">
       <div class="enc-rail">
@@ -7118,7 +7635,8 @@ function renderEncountersFromTables(el, gameKey, game) {
       <span style="font-size:11px">Currently viewing: <strong>${verLabel}</strong></span>
     </div>`;
   } else {
-    mainHtml = buildEncounterMainFromTables(selectedEncLocation, ver, game);
+    startLocationRecoPass();
+    mainHtml = finishLocationRecoPass(buildEncounterMainFromTables(selectedEncLocation, ver, game));
   }
 
   let versionPillHtml = '';
@@ -7131,7 +7649,7 @@ function renderEncountersFromTables(el, gameKey, game) {
   el.innerHTML = `
     <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap">
       <p class="slabel" style="margin-bottom:0">${game.name} wild encounter reference</p>
-      ${versionPillHtml}
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">${versionPillHtml}${buildToolsPillHtml(gameKey)}</div>
     </div>
     <div class="enc-layout">
       <div class="enc-rail">
@@ -7496,9 +8014,10 @@ function buildEncounterMainFromTables(locName, ver, game) {
         if (!entries.length) return '';
         const total = entries.reduce((s,e) => s + e.r, 0);
         const lvLabel = p.lvMin === p.lvMax ? `Lv ${p.lvMin}` : `Lv ${p.lvMin}–${p.lvMax}`;
-        return `<div style="margin-top:${i?6:0}px">
+        const lockedCls = isMethodLocked(method) ? ' locked-method' : '';
+        return `<div class="enc-section${lockedCls}" style="margin-top:${i?6:0}px">
           <div style="font-size:11px;color:var(--text3);margin-bottom:4px">${lvLabel}${tag(p, i)} · ${entries.length} species · ${total}%</div>
-          ${renderEncList(entries, teamLineSet, deadSpecies, caughtAtThisLoc, ver, locName)}
+          ${renderEncList(entries, teamLineSet, deadSpecies, caughtAtThisLoc, ver, locName, method)}
         </div>`;
       }).filter(Boolean).join('');
     };
@@ -7701,7 +8220,8 @@ function renderEncountersFromNuzData(el, gameKey, game) {
       <span style="font-size:11px">Currently viewing: <strong>${verLabel}</strong></span>
     </div>`;
   } else {
-    mainHtml = buildEncounterMainNuzData(selectedEncLocation, merged, ver, game);
+    startLocationRecoPass();
+    mainHtml = finishLocationRecoPass(buildEncounterMainNuzData(selectedEncLocation, merged, ver, game));
   }
 
   let versionPillHtml = '';
@@ -7714,7 +8234,7 @@ function renderEncountersFromNuzData(el, gameKey, game) {
   el.innerHTML = `
     <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap">
       <p class="slabel" style="margin-bottom:0">${game.name} wild encounter reference</p>
-      ${versionPillHtml}
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">${versionPillHtml}${buildToolsPillHtml(gameKey)}</div>
     </div>
     <div class="enc-layout">
       <div class="enc-rail">
@@ -8164,12 +8684,13 @@ function buildEncounterMain(loc, ver) {
         const isGift = pool.method === 'special';
         const totalLabel = isGift ? 'pick 1 of N — each guaranteed' : `${list.length} species · ${lvLabel} · ${pool.total}%`;
         const renderList = isGift ? list.map(e => ({ ...e, r: 0 })) : list;
-        html += `<div class="enc-section">
+        const lockedCls = isMethodLocked(pool.method) ? ' locked-method' : '';
+        html += `<div class="enc-section${lockedCls}">
           <div class="enc-section-hdr">
             <span class="enc-method-label">${pool.methodLabel}${areaSuffix}${condSuffix}</span>
             <span style="font-size:10px;color:var(--text3);margin-left:8px">${totalLabel}</span>
           </div>
-          ${renderEncList(renderList, teamLineSet, deadSpecies, caughtAtThisLoc, ver, loc)}
+          ${renderEncList(renderList, teamLineSet, deadSpecies, caughtAtThisLoc, ver, loc, pool.method)}
         </div>`;
       }
     }
@@ -8212,12 +8733,13 @@ function buildEncounterMain(loc, ver) {
       } else {
         list = (grass.all || []).filter(matchesVer);
       }
-      html += `<div class="enc-section">
+      const lockedCls = isMethodLocked(method) ? ' locked-method' : '';
+      html += `<div class="enc-section${lockedCls}">
         <div class="enc-section-hdr">
           <span class="enc-method-label">${methodLabel}</span>
           ${tabsHtml}
         </div>
-        ${renderEncList(list, teamLineSet, deadSpecies, caughtAtThisLoc, ver, loc)}
+        ${renderEncList(list, teamLineSet, deadSpecies, caughtAtThisLoc, ver, loc, method)}
       </div>`;
     } else if (method === 'special') {
       // 'special' is PokeAPI's gift/gift-egg/only-one — guaranteed one-time
@@ -8231,21 +8753,34 @@ function buildEncounterMain(loc, ver) {
           <span class="enc-method-label">Gift / one-time</span>
           <span style="font-size:10px;color:var(--text3);margin-left:8px">each is guaranteed — typically mutually exclusive (e.g. starter pick)</span>
         </div>
-        ${renderEncList(list, teamLineSet, deadSpecies, caughtAtThisLoc, ver, loc)}
+        ${renderEncList(list, teamLineSet, deadSpecies, caughtAtThisLoc, ver, loc, 'special')}
       </div>`;
     } else {
       const list = (methods[method] || []).filter(matchesVer);
       if (!list.length) continue;
-      html += `<div class="enc-section">
+      const lockedCls = isMethodLocked(method) ? ' locked-method' : '';
+      html += `<div class="enc-section${lockedCls}">
         <div class="enc-section-hdr"><span class="enc-method-label">${methodLabel}</span></div>
-        ${renderEncList(list, teamLineSet, deadSpecies, caughtAtThisLoc, ver, loc)}
+        ${renderEncList(list, teamLineSet, deadSpecies, caughtAtThisLoc, ver, loc, method)}
       </div>`;
     }
   }
   return html;
 }
 
-function renderEncList(list, teamLineSet, deadSpecies, caughtAtThisLoc, ver, loc) {
+// Buffer-aware wrapper: when inside a location reco pass, defer the actual
+// render and stash params so finishLocationRecoPass can re-render with the
+// winners map. Outside a pass (defensive fallback) renders without badges.
+function renderEncList(list, teamLineSet, deadSpecies, caughtAtThisLoc, ver, loc, method) {
+  if (_recoBuffer !== null) {
+    const placeholder = `<!--RENC_${_recoPlaceholderCounter++}-->`;
+    _recoBuffer.push({ list, teamLineSet, deadSpecies, caughtAtThisLoc, ver, loc, method, placeholder });
+    return placeholder;
+  }
+  return renderEncListInternal(list, teamLineSet, deadSpecies, caughtAtThisLoc, ver, loc, method, null);
+}
+
+function renderEncListInternal(list, teamLineSet, deadSpecies, caughtAtThisLoc, ver, loc, method, winners) {
   if (!list.length) return `<div class="enc-empty" style="padding:12px;font-size:12px">No encounters of this method in your version.</div>`;
   // Season filter: drop entries locked to a different season; surface the
   // selected season's rate when available.
@@ -8257,6 +8792,65 @@ function renderEncList(list, teamLineSet, deadSpecies, caughtAtThisLoc, ver, loc
   // of the dupes/species toggles is set. Both are conceptually the same here.
   const _rules = curRules();
   const enforceDupes = _rules.nuzlockeMode !== false && (_rules.dupesClause || _rules.speciesClause);
+
+  const methodLocked = isMethodLocked(method);
+  const winnerKey = (sp) => `${method || ''}:::${sp}`;
+
+  // Reduced-badge pre-pass — surfaces "still worth a look" picks that didn't
+  // earn the location-wide title:
+  //  (a) pool-local best per tier when the global winner for that tier is in
+  //      a different pool — so users know this pool has something too.
+  //  (b) evo-line siblings of any badged species in the same pool — so e.g.
+  //      Graveler shows alongside Geodude (saves grind levels if you see it).
+  // Renders as a small star-only marker in the relevant tier color.
+  const reducedBadges = new Map();  // species → { tier }
+  if (!methodLocked && winners) {
+    const scoredByTier = { top: [], strong: [], decent: [] };
+    const speciesRec = new Map();
+    for (const e of list) {
+      const lc = e.p.toLowerCase();
+      if (deadSpecies.has(lc) || caughtAtThisLoc.has(lc)) continue;
+      if (enforceDupes && teamLineSet.has(lc)) continue;
+      const rec = getRecommendation(e.p, { chancePct: e.r });
+      if (!rec || !scoredByTier[rec.tier]) continue;
+      scoredByTier[rec.tier].push({ species: e.p, rec, chance: e.r || 0 });
+      speciesRec.set(e.p, rec);
+    }
+    // Which species in THIS pool already have a full global badge — used to
+    // skip them in both passes (so we don't downgrade their label).
+    const fullBadged = new Set();
+    for (const e of list) {
+      if (winners.has(winnerKey(e.p))) fullBadged.add(e.p);
+    }
+    // (a) Pool-local best per tier.
+    for (const tier of ['top','strong','decent']) {
+      const arr = scoredByTier[tier];
+      if (!arr.length) continue;
+      arr.sort((a,b) => b.chance - a.chance || b.rec.score - a.rec.score || a.species.localeCompare(b.species));
+      const localBest = arr[0];
+      if (!fullBadged.has(localBest.species)) {
+        reducedBadges.set(localBest.species, { tier });
+      }
+    }
+    // (b) Evo-line siblings of any badged species in this pool.
+    // getEvoChainSet returns lowercase slugs (line 3839), so compare against
+    // e.p.toLowerCase() — otherwise "Noctowl" never matches the {hoothoot,
+    // noctowl} chain set and the evo-line branch silently misses.
+    const allBadged = new Set([...fullBadged, ...reducedBadges.keys()]);
+    if (typeof getEvoChainSet === 'function') {
+      for (const badged of allBadged) {
+        const chain = getEvoChainSet(badged) || new Set();
+        for (const e of list) {
+          if (fullBadged.has(e.p) || reducedBadges.has(e.p)) continue;
+          if (!chain.has(e.p.toLowerCase())) continue;
+          const rec = speciesRec.get(e.p);
+          if (!rec) continue;  // not scored (dupe/dead/caught/filler) — leave alone
+          reducedBadges.set(e.p, { tier: rec.tier });
+        }
+      }
+    }
+  }
+
   return `<div class="enc-grid">` + list.map(e => {
     const speciesLc = e.p.toLowerCase();
     const isDupe = enforceDupes && teamLineSet.has(speciesLc);
@@ -8270,6 +8864,25 @@ function renderEncList(list, teamLineSet, deadSpecies, caughtAtThisLoc, ver, loc
     if (isCaught) flag = '<span class="enc-flag caught">caught</span>';
     else if (isDead) flag = '<span class="enc-flag dead">fallen</span>';
     else if (isDupe) flag = '<span class="enc-flag dupe">dupe</span>';
+    else if (!methodLocked && winners) {
+      const w = winners.get(winnerKey(e.p));
+      if (w) {
+        // Boss names + species in reasons can contain ROM-hack apostrophes, &,
+        // <, etc. — escape fully so the title attribute never breaks.
+        const tip = (w.reasons || []).join(' · ')
+          .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        flag = `<span class="enc-flag ${w.tierClass}" title="${tip}">${w.label}</span>`;
+      } else {
+        const rb = reducedBadges.get(e.p);
+        if (rb) {
+          // Tier='top' uses the default .reco (amber); strong/decent override.
+          const tierMod = rb.tier === 'top' ? '' : ' ' + rb.tier;
+          const tip = `Tier ${rb.tier} pick — open Details for the full reasoning`;
+          flag = `<span class="enc-flag reco${tierMod} reduced" title="${tip}">★</span>`;
+        }
+      }
+    }
     const verTag = e.v !== 'both' ? `<span class="ver-tag ${e.v}">${e.v}</span>` : '';
     // Only show a level string if it's a meaningful range (not the 1-100 placeholder)
     const hasRealLv = e.lv && !(e.lv[0] === 1 && e.lv[1] === 100);
@@ -8445,6 +9058,33 @@ function speciesView(species) {
     ? `<div class="pv-row"><span class="pv-label">Abilities</span><span class="pv-val">${abilities.join(', ')}</span></div>`
     : '';
 
+  // Team-fit recommendation — surfaces the reasoning behind the ★ badge so
+  // it's visible without hovering. Rate context isn't passed here (location
+  // isn't threaded to speciesView), so the rare-slot multiplier is omitted —
+  // BST / type-gap / boss-coverage reasoning is still shown.
+  let recoHtml = '';
+  if (info && typeof getRecommendation === 'function') {
+    const rec = getRecommendation(species, { chancePct: 0 });
+    if (rec) {
+      const tierLabel = rec.tier === 'top' ? '★ Top pick' :
+        rec.tier === 'strong' ? '★ Strong' :
+        rec.tier === 'decent' ? '★ Decent' : 'Filler tier';
+      const tierClass = rec.tier === 'top' ? 'top' :
+        rec.tier === 'strong' ? 'strong' :
+        rec.tier === 'decent' ? 'decent' : 'filler';
+      const tierColor = rec.tier === 'top' ? '#fcd34d' :
+        rec.tier === 'strong' ? '#93c5fd' :
+        rec.tier === 'decent' ? 'var(--text2)' : 'var(--text3)';
+      const reasonRows = rec.reasons.map(r => `<li style="margin:2px 0">${r}</li>`).join('');
+      recoHtml = `<div class="pv-section">
+        <div class="pv-section-title">Team fit</div>
+        <div style="font-size:13px;font-weight:600;color:${tierColor};margin-bottom:4px">${tierLabel}</div>
+        <ul class="reco-reasons" style="margin:0;padding-left:18px;font-size:11px;color:var(--text2);line-height:1.6">${reasonRows}</ul>
+        <div style="font-size:10px;color:var(--text3);font-style:italic;margin-top:6px">Tier reflects final-evo BST. The ★ badge on the encounter grid also factors in rare-slot bonus.</div>
+      </div>`;
+    }
+  }
+
   return `
     <div class="pv-header">
       <div class="pv-sprite">${sprite}</div>
@@ -8456,6 +9096,8 @@ function speciesView(species) {
     </div>
 
     ${abilitiesHtml ? `<div class="pv-section">${abilitiesHtml}</div>` : ''}
+
+    ${recoHtml}
 
     ${statsHtml ? `<div class="pv-section"><div class="pv-section-title">Base stats</div>${statsHtml}</div>` : ''}
 
@@ -8693,7 +9335,7 @@ function pokeView(p, idx) {
           : `<button class="btn-party-add" onclick="toggleParty(${idx},true);openEdit(${idx})">+ Add to party</button>`
         ) : ''}
         ${isAlive?`<button onclick="markDead(${idx})">☠ Mark dead</button>`:''}
-        <button onclick="if(confirm('Remove ${p.nickname} entirely?'))deletePoke(${idx})">🗑</button>
+        <button onclick="deletePoke(${idx})">🗑</button>
       </div>
     </div>
 
@@ -8928,7 +9570,7 @@ function pokeForm(p, isEdit) {
     <div class="faction">
       <button class="btn-save" onclick="submitPoke()">${isEdit?'Save changes':'Add'}</button>
       <button class="btn-cancel" onclick="${isEdit?`openEdit(${editIdx})`:'closeModal()'}">Cancel</button>
-      ${isEdit?`<button class="btn-danger" onclick="if(confirm('Remove this Pokémon entirely?'))deletePoke(${editIdx})" style="margin-left:auto">🗑 Delete</button>`:''}
+      ${isEdit?`<button class="btn-danger" onclick="deletePoke(${editIdx})" style="margin-left:auto">🗑 Delete</button>`:''}
     </div>`;
 }
 
@@ -9262,8 +9904,24 @@ function markDead(idx) {
   showToast(`${team[idx].nickname} moved to graveyard`,'error');
 }
 function deletePoke(idx) {
-  if (!confirm('Remove this Pokémon entirely?')) return;
-  curRun().team.splice(idx,1); save(); render(); closeModal();
+  const run = curRun(); if (!run) return;
+  const p = run.team[idx]; if (!p) return;
+  const label = p.nickname ? `${p.nickname} (${p.species})` : p.species;
+  if (!confirm(`Remove ${label} entirely? This also clears the matching encounter-log entry.`)) return;
+  // Drop the auto-linked encounter-log entry so the species doesn't keep
+  // showing as caught/dupe in the Encounters tab after deletion.
+  const routes = run.routes || [];
+  for (let i = routes.length - 1; i >= 0; i--) {
+    const r = routes[i];
+    if (r.linkedTeamIdx === idx) {
+      routes.splice(i, 1);
+    } else if (typeof r.linkedTeamIdx === 'number' && r.linkedTeamIdx > idx) {
+      // The remaining indices shift down by 1 when we splice team[idx].
+      r.linkedTeamIdx -= 1;
+    }
+  }
+  run.team.splice(idx, 1);
+  save(); render(); closeModal();
 }
 function deleteRoute(idx) { curRun().routes.splice(idx,1); save(); renderRoutes(); }
 
