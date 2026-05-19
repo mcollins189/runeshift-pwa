@@ -9363,6 +9363,26 @@ function buildPrefetchUrls(opts) {
 // one-time cost (~30-60s for ~10 regions) and the result is what unblocks
 // offline use of vanilla games that drive encounters off the PokeAPI region
 // path (RBY, GSC, RSE, FRLG, DPPt, HGSS, ORAS, XY fallback).
+// Retry-with-backoff wrapper for enumeration fetches. PokeAPI / its CDN
+// occasionally returns 5xx or drops connections during a long pre-cache run;
+// without this, a single blip silently truncates the chain (region → location
+// → area) and the user ends up with a partial cache and no idea why.
+// 3 attempts total: immediate, +1s, +3s. 4xx don't retry (likely permanent).
+async function _fetchWithRetry(url, opts) {
+  const delays = [1000, 3000];
+  let lastErr = null;
+  for (let attempt = 0; attempt <= delays.length; attempt++) {
+    try {
+      const res = await fetch(url, opts);
+      if (res.ok) return res;
+      if (res.status >= 400 && res.status < 500) return res;
+      lastErr = new Error(`HTTP ${res.status}`);
+    } catch (e) { lastErr = e; }
+    if (attempt < delays.length) await new Promise(r => setTimeout(r, delays[attempt]));
+  }
+  throw lastErr || new Error('fetch failed after retries');
+}
+
 async function buildPrefetchUrlsAllGamesWithRegions(progressFn) {
   const urls = new Set();
   for (const k of Object.keys(GAMES)) _collectPrefetchUrlsForGame(k, urls);
@@ -9387,10 +9407,10 @@ async function buildPrefetchUrlsAllGamesWithRegions(progressFn) {
   // as permanent misses offline → "using static list" fallback.
   const locationUrls = new Set();
   const locationSlugByUrl = new Map();
-  let regionsDone = 0;
+  let regionsDone = 0, regionsSucceeded = 0;
   await _runWithConcurrency([...regionSlugs], 4, async (slug) => {
     try {
-      const res = await fetch(`https://pokeapi.co/api/v2/region/${slug}/`);
+      const res = await _fetchWithRetry(`https://pokeapi.co/api/v2/region/${slug}/`);
       if (res.ok) {
         const data = await res.json();
         for (const loc of (data.locations || [])) {
@@ -9399,6 +9419,7 @@ async function buildPrefetchUrlsAllGamesWithRegions(progressFn) {
           locationUrls.add(slugUrl);
           locationSlugByUrl.set(slugUrl, loc.name);
         }
+        regionsSucceeded++;
       }
     } catch(e) {}
     regionsDone++;
@@ -9407,21 +9428,33 @@ async function buildPrefetchUrlsAllGamesWithRegions(progressFn) {
   for (const u of locationUrls) urls.add(u);
   if (progressFn) progressFn(`Enumerating locations (0/${locationUrls.size})…`);
   const areaUrls = new Set();
-  let locsDone = 0;
+  let locsDone = 0, locsSucceeded = 0;
   await _runWithConcurrency([...locationUrls], 4, async (locUrl) => {
     try {
-      const res = await fetch(locUrl);
+      const res = await _fetchWithRetry(locUrl);
       if (res.ok) {
         const data = await res.json();
         for (const a of (data.areas || [])) {
           if (a.name) areaUrls.add(`https://pokeapi.co/api/v2/location-area/${a.name}/`);
         }
+        locsSucceeded++;
       }
     } catch(e) {}
     locsDone++;
     if (progressFn && locsDone % 5 === 0) progressFn(`Enumerating locations (${locsDone}/${locationUrls.size})…`);
   });
   for (const u of areaUrls) urls.add(u);
+  // Loud warning if enumeration was partial — the chain is silent on failure
+  // (catch+swallow), so without this the user has no way to know the cache
+  // is incomplete until they go offline and find missing data.
+  const regionsMissing = regionSlugs.size - regionsSucceeded;
+  const locsMissing = locationUrls.size - locsSucceeded;
+  if (regionsMissing > 0 || locsMissing > 0) {
+    const parts = [];
+    if (regionsMissing > 0) parts.push(`${regionsSucceeded}/${regionSlugs.size} regions`);
+    if (locsMissing > 0) parts.push(`${locsSucceeded}/${locationUrls.size} locations`);
+    showToast(`Partial enumeration: only ${parts.join(' + ')} fetched. Click Re-cache to retry.`, 'warn', 10000);
+  }
   return [...urls];
 }
 
