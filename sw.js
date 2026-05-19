@@ -58,8 +58,9 @@ self.addEventListener('install', (event) => {
     // Use individual adds so one failed cross-origin fetch doesn't nuke install.
     await Promise.all(SHELL_URLS.map(async (url) => {
       try {
-        // `no-cache` to dodge HTTP cache and get a fresh shell on first install.
-        const req = new Request(url, { cache: 'no-cache' });
+        // `no-store` to dodge HTTP cache entirely — only Cache Storage holds
+        // the shell asset, so we don't double-store. Halves disk footprint.
+        const req = new Request(url, { cache: 'no-store' });
         const res = await fetch(req);
         if (res && (res.ok || res.type === 'opaque')) {
           await cache.put(url, res.clone());
@@ -115,7 +116,7 @@ self.addEventListener('fetch', (event) => {
   // Everything else: try network, fall back to whatever's cached (no put).
   event.respondWith((async () => {
     try {
-      return await fetch(req);
+      return await fetch(req, { cache: 'no-store' });
     } catch (e) {
       const hit = await caches.match(req);
       if (hit) return hit;
@@ -142,7 +143,7 @@ async function cacheFirst(req, cacheName) {
   const cache = await caches.open(cacheName);
   const hit = await cache.match(req, { ignoreSearch: false });
   if (hit) return hit;
-  const res = await fetch(req);
+  const res = await fetch(req, { cache: 'no-store' });
   if (res && (res.ok || res.type === 'opaque')) cache.put(req, res.clone());
   return res;
 }
@@ -150,7 +151,7 @@ async function cacheFirst(req, cacheName) {
 async function networkFirst(req, cacheName) {
   const cache = await caches.open(cacheName);
   try {
-    const res = await fetch(req);
+    const res = await fetch(req, { cache: 'no-store' });
     if (res && res.ok) cache.put(req, res.clone());
     return res;
   } catch (e) {
@@ -173,7 +174,12 @@ async function staleWhileRevalidate(req, cacheName) {
     const altPath = url.pathname.endsWith('/') ? url.pathname.slice(0, -1) : url.pathname + '/';
     hit = await cache.match(url.origin + altPath + url.search);
   }
-  const fetchPromise = fetch(req).then((res) => {
+  // `cache: 'no-store'` bypasses the browser's HTTP cache entirely so we don't
+  // double-store responses (once here in Cache Storage, once in HTTP cache).
+  // Halves the on-disk footprint at the cost of revalidation always hitting
+  // the network — but we serve from `hit` immediately, so user-visible speed
+  // is unchanged. Applied across all strategies for consistency.
+  const fetchPromise = fetch(req, { cache: 'no-store' }).then((res) => {
     if (res && (res.ok || res.type === 'opaque')) cache.put(req, res.clone());
     return res;
   }).catch((e) => {
@@ -240,7 +246,7 @@ async function handlePrefetchAll(event, urls) {
         if (existing) {
           cached++;
         } else {
-          const res = await fetch(url);
+          const res = await fetch(url, { cache: 'no-store' });
           if (res && (res.ok || res.type === 'opaque')) {
             await cache.put(url, res.clone());
             cached++;
