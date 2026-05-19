@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
-<script src="data.bundle.js?v=1779208623445" onerror="window.__NUZ_BUNDLE_MISSING=true"></script>
+<script src="data.bundle.js?v=1779209796935" onerror="window.__NUZ_BUNDLE_MISSING=true"></script>
 <style>
   :root {
     --bg:#0f0f10;--bg2:#18181b;--bg3:#222228;--bg4:#2a2a32;
@@ -1171,18 +1171,6 @@ function getAbilityEffect(name) {
 // Z-Moves and Max/G-Max moves are also excluded (not encountered in Nuzlockes).
 const STATUS_MOVES = new Set(["Acid Armor","Acupressure","After You","Agility","Ally Switch","Amnesia","Aqua Ring","Aromatherapy","Aromatic Mist","Assist","Attract","Aurora Veil","Autotomize","Baby-Doll Eyes","Baneful Bunker","Barrier","Baton Pass","Belly Drum","Bestow","Block","Bulk Up","Burning Bulwark","Calm Mind","Camouflage","Captivate","Celebrate","Charge","Charm","Chilly Reception","Clangorous Soul","Coaching","Coil","Confide","Confuse Ray","Conversion","Conversion 2","Copycat","Corrosive Gas","Cosmic Power","Cotton Guard","Cotton Spore","Court Change","Crafty Shield","Curse","Dark Void","Decorate","Defend Order","Defense Curl","Defog","Destiny Bond","Detect","Disable","Doodle","Double Team","Dragon Cheer","Dragon Dance","Eerie Impulse","Electric Terrain","Electrify","Embargo","Encore","Endure","Entrainment","Extreme Evoboost","Fairy Lock","Fake Tears","Feather Dance","Fillet Away","Flash","Flatter","Floral Healing","Flower Shield","Focus Energy","Follow Me","Foresight","Forest's Curse","Gastro Acid","Gear Up","Geomancy","Glare","Grass Whistle","Grassy Terrain","Gravity","Growl","Growth","Grudge","Guard Split","Guard Swap","Hail","Happy Hour","Harden","Haze","Heal Bell","Heal Block","Heal Order","Heal Pulse","Healing Wish","Heart Swap","Helping Hand","Hold Hands","Hone Claws","Howl","Hypnosis","Imprison","Ingrain","Instruct","Ion Deluge","Iron Defense","Jungle Healing","Kinesis","King's Shield","Laser Focus","Leech Seed","Leer","Life Dew","Light Screen","Lock-On","Lovely Kiss","Lucky Chant","Lunar Blessing","Lunar Dance","Magic Coat","Magic Powder","Magic Room","Magnet Rise","Magnetic Flux","Mat Block","Me First","Mean Look","Meditate","Memento","Metal Sound","Metronome","Milk Drink","Mimic","Mind Reader","Minimize","Miracle Eye","Mirror Move","Mist","Misty Terrain","Moonlight","Morning Sun","Mud Sport","Nasty Plot","Nature Power","Nightmare","No Retreat","Noble Roar","Obstruct","Octolock","Odor Sleuth","Pain Split","Parting Shot","Perish Song","Play Nice","Poison Gas","Poison Powder","Power Shift","Power Split","Power Swap","Power Trick","Powder","Protect","Psych Up","Psychic Terrain","Psycho Shift","Psyshield Bash","Purify","Quash","Quick Guard","Quiver Dance","Rage Powder","Rain Dance","Recover","Recycle","Reflect","Reflect Type","Refresh","Rest","Revival Blessing","Roar","Rock Polish","Role Play","Rototiller","Safeguard","Sand Attack","Sandstorm","Scary Face","Screech","Shed Tail","Shelter","Shift Gear","Shore Up","Silk Trap","Simple Beam","Sing","Sketch","Skill Swap","Slack Off","Sleep Powder","Sleep Talk","Smokescreen","Snatch","Snowscape","Soak","Soft-Boiled","Speed Swap","Spicy Extract","Spider Web","Spikes","Spiky Shield","Spite","Splash","Spore","Spotlight","Stealth Rock","Sticky Web","Stockpile","Strength Sap","String Shot","Stuff Cheeks","Stun Spore","Substitute","Sunny Day","Supersonic","Swagger","Swallow","Sweet Kiss","Sweet Scent","Switcheroo","Swords Dance","Synthesis","Tail Glow","Tail Whip","Tailwind","Take Heart","Tar Shot","Taunt","Tearful Look","Teatime","Teeter Dance","Telekinesis","Teleport","Thunder Wave","Tickle","Tidy Up","Topsy-Turvy","Torment","Toxic","Toxic Spikes","Toxic Thread","Transform","Trick","Trick Room","Trick-or-Treat","Venom Drench","Victory Dance","Wide Guard","Will-O-Wisp","Wish","Withdraw","Wonder Room","Work Up","Worry Seed","Yawn"]);
 
-// Returns true if this move is a status move (doesn't deal damage)
-function isStatusMove(name) {
-  const canonical = resolveMove(name);
-  return canonical ? STATUS_MOVES.has(canonical) : false;
-}
-
-// Returns true if this move deals damage (Physical or Special). Unknown moves default to damaging.
-function isDamagingMove(name) {
-  const canonical = resolveMove(name);
-  if (!canonical) return true; // unknown move — assume it's damaging to be safe
-  return !STATUS_MOVES.has(canonical);
-}
 
 
 
@@ -2830,14 +2818,6 @@ const POKEAPI_GAME_VERSIONS = {
   'shining_pearl':       { BD: ['brilliant-diamond'], SP: ['shining-pearl'] }
 };
 
-// Returns the priority list for the user's currently-selected version.
-function pokeApiVersionFor(gameKey, versionLetter) {
-  const game = POKEAPI_GAME_VERSIONS[gameKey];
-  if (!game) return [];
-  return game[versionLetter] || [];
-}
-
-function encCacheKey(version, locName) { return `pae:${version}:${locName}`; }
 // Caching disabled — every session/tab does fresh fetches from PokeAPI.
 // In-memory `encounterCache` still de-dups within a single session, but nothing
 // persists across reloads.

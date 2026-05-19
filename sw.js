@@ -1,4 +1,4 @@
-// sw.js — Nuzlocke Tracker service worker (PWA v1.0)
+// sw.js — NuzTracker service worker (PWA v1.0)
 //
 // Three cache layers:
 //   1. Shell cache  (nuz-shell-v1)   — pre-cached on install, app boots offline.
