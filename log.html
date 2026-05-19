@@ -68,6 +68,7 @@
   .save-dot{width:6px;height:6px;border-radius:50%;background:var(--text3)}
   .save-dot.saving{background:var(--amber);animation:pulse 1s infinite}
   .save-dot.saved{background:var(--green)}
+  .save-dot.offline{background:#3b82f6}
   .save-dot.error{background:var(--red)}
   #online-indicator{font-size:12px;line-height:1;margin-left:4px;cursor:default;user-select:none}
   .online-dot{color:var(--green)}
@@ -80,7 +81,12 @@
   .offline-btn:hover{border-color:var(--accent);background:var(--bg4)}
   .offline-btn.danger{border-color:rgba(248,113,113,0.3);color:var(--red)}
   .offline-btn.danger:hover{background:var(--red-bg)}
-  .offline-btn:disabled{opacity:0.5;cursor:not-allowed}
+  .offline-btn:disabled{opacity:1;cursor:default;border-color:rgba(74,222,128,0.35);background:var(--green-bg);color:var(--text2)}
+  .offline-btn:disabled .check{color:var(--green);font-weight:700;margin-right:4px}
+  .offline-btn-row{display:flex;align-items:stretch;gap:6px}
+  .offline-btn-row .offline-btn{flex:1}
+  .offline-btn-recache{padding:6px 10px;font-size:11px;font-family:'Outfit',sans-serif;border:1px solid var(--border2);background:transparent;color:var(--text3);border-radius:var(--radius-sm);cursor:pointer;transition:all .15s;white-space:nowrap}
+  .offline-btn-recache:hover{color:var(--accent);border-color:var(--accent);background:var(--accent-bg)}
   .offline-progress{height:6px;background:var(--bg3);border-radius:3px;overflow:hidden;margin-top:8px}
   .offline-progress-bar{height:100%;background:var(--accent);width:0%;transition:width .2s}
   .offline-progress-label{font-size:11px;color:var(--text3);margin-top:4px}
@@ -2192,7 +2198,12 @@ let isOnline = navigator.onLine;
 let pendingOfflineSave = false;
 // Pre-cache UI state — tracks the in-flight prefetch so progress events from
 // the SW can paint into whichever rules-card render is currently mounted.
+// _prefetchScope records what was queued ({kind:'current',gameKey} or
+// {kind:'all'}) so the prefetch-done handler can persist the right "done"
+// marker to localStorage (drives the checkmark + disabled state on the
+// Rules-tab buttons).
 let _prefetchInFlight = false;
+let _prefetchScope = null;
 let _prefetchTotal = 0;
 let _prefetchDone = 0;
 let toastTimer = null;
@@ -4483,7 +4494,7 @@ async function doLogin() {
     document.getElementById('app').style.display = 'block';
     document.getElementById('key-display').textContent = key;
     loadedAt = (typeof data?.lastModified === 'number') ? data.lastModified : Date.now();
-    setSaveStatus('saved', `Loaded ${fmtTime(loadedAt)}${usedOfflineCache ? ' (offline)' : ''}`);
+    setSaveStatus(usedOfflineCache ? 'offline' : 'saved', `Loaded ${fmtTime(loadedAt)}${usedOfflineCache ? ' (offline)' : ''}`);
     render();
     if (!usedOfflineCache && (inlineMigrationsChanged || structuralChange)) cloudSave(false);
   } catch(e) {
@@ -4797,7 +4808,10 @@ async function cloudSave(manual) {
   // every time the user edits anything on a plane / subway / etc.
   if (!isOnline) {
     pendingOfflineSave = true;
-    setSaveStatus('saving','Offline — will sync');
+    // Persist immediately so closing/reopening the PWA while offline keeps edits.
+    // The 'online' listener will flush to cloud and overwrite this mirror.
+    saveLocalSaveCache(saveKey, buildPayload());
+    setSaveStatus('offline',`Saved offline ${fmtTime(Date.now())}`);
     if (manual) showToast('Offline — change saved locally, will sync when back online','info');
     return;
   }
@@ -6265,8 +6279,28 @@ function renderRules() {
       <div class="offline-info-row"><span class="check">✓</span><span>App shell cached automatically</span></div>
       <div class="offline-info-row"><span class="check">✓</span><span>PokeAPI data cached as you browse</span></div>
       <div class="offline-actions">
-        <button class="offline-btn" id="prefetch-btn" onclick="startPrefetchAll()">Download for ${(()=>{const g=currentRunId&&runs[currentRunId]?runs[currentRunId].game:null;return g&&GAMES[g]?GAMES[g].name:'current game';})()} only (~15MB)</button>
-        <button class="offline-btn" id="prefetch-all-games-btn" onclick="startPrefetchAllGames()">Download for all games (~50MB)</button>
+        ${(() => {
+          const done = loadPrefetchDone();
+          const g = currentRunId && runs[currentRunId] ? runs[currentRunId].game : null;
+          const gameName = g && GAMES[g] ? GAMES[g].name : 'current game';
+          const curDone = !!(g && done.current === g);
+          const allDone = done.allGames;
+          const curLabel = curDone
+            ? `<span class="check">✓</span> Cached for ${gameName}`
+            : `Download for ${gameName} only (~15MB)`;
+          const allLabel = allDone
+            ? `<span class="check">✓</span> Cached for all games (sprites + regions)`
+            : `Download for all games (~60MB — sprites + regions)`;
+          return `
+        <div class="offline-btn-row">
+          <button class="offline-btn" id="prefetch-btn" onclick="startPrefetchAll()" ${curDone?'disabled':''}>${curLabel}</button>
+          ${curDone ? `<button class="offline-btn-recache" onclick="recachePrefetchCurrent()" title="Re-download species + moves for ${gameName}">Re-cache</button>` : ''}
+        </div>
+        <div class="offline-btn-row">
+          <button class="offline-btn" id="prefetch-all-games-btn" onclick="startPrefetchAllGames()" ${allDone?'disabled':''}>${allLabel}</button>
+          ${allDone ? `<button class="offline-btn-recache" onclick="recachePrefetchAllGames()" title="Re-download species + moves + sprites + region data for every game">Re-cache</button>` : ''}
+        </div>`;
+        })()}
         <div id="prefetch-progress-wrap" style="display:none">
           <div class="offline-progress"><div class="offline-progress-bar" id="prefetch-progress-bar"></div></div>
           <div class="offline-progress-label" id="prefetch-progress-label">Preparing…</div>
@@ -8994,8 +9028,11 @@ if (navigator.serviceWorker) {
     else if (m.type === 'prefetch-done') showPrefetchDone(m.cached, m.failed);
     else if (m.type === 'cache-status-result') updateCacheStatusDisplay(m.shell, m.pokeapi);
     else if (m.type === 'caches-cleared') {
+      clearPrefetchDone();
       showToast('Caches cleared — refresh to repopulate','success');
       updateCacheStatusDisplay(0, 0);
+      const rulesTab = document.getElementById('tab-rules');
+      if (rulesTab && rulesTab.classList.contains('active') && typeof renderRules === 'function') renderRules();
     }
   });
 }
@@ -9024,20 +9061,54 @@ function updatePrefetchProgress(done, total) {
 
 function showPrefetchDone(cached, failed) {
   _prefetchInFlight = false;
+  // Persist the deterministic "done" marker so the Rules-tab buttons can
+  // show a checkmark + disable themselves until the user explicitly re-caches
+  // or clears all caches. Heuristics on cacheCounts.pokeapi were considered
+  // but break down across games (a small-roster game might never hit any
+  // threshold even when fully cached). The marker is keyed by which scope
+  // was queued — recorded in _prefetchScope at startPrefetch* time.
+  const scope = _prefetchScope;
+  _prefetchScope = null;
+  if (scope) markPrefetchDone(scope);
   const wrap = document.getElementById('prefetch-progress-wrap');
   const lbl = document.getElementById('prefetch-progress-label');
   const bar = document.getElementById('prefetch-progress-bar');
-  const btn = document.getElementById('prefetch-btn');
   if (bar) bar.style.width = '100%';
   if (lbl) lbl.textContent = `Pre-cache complete: ${cached} items cached${failed ? ` (${failed} failed)` : ''}`;
-  if (btn) { btn.disabled = false; btn.textContent = 'Re-run pre-cache'; }
-  const btnAll = document.getElementById('prefetch-all-games-btn');
-  if (btnAll) btnAll.disabled = false;
   showToast(`Pre-cache complete: ${cached} cached${failed?`, ${failed} failed`:''}`, 'success');
   requestCacheStatus();
+  // Re-render the Rules tab if it's currently mounted so the checkmark +
+  // disabled state appear without needing a tab switch.
+  const rulesTab = document.getElementById('tab-rules');
+  if (rulesTab && rulesTab.classList.contains('active') && typeof renderRules === 'function') renderRules();
   // Auto-hide the progress block after a beat so the next render starts fresh.
   setTimeout(() => { if (wrap && !_prefetchInFlight) wrap.style.display = 'none'; }, 4000);
 }
+
+// Persisted across PWA launches; the user's signal of "yes, I've already
+// pre-cached this." Schema: { current: <gameKey>|null, allGames: bool }.
+const PREFETCH_DONE_KEY = 'nuz-prefetch-done';
+function loadPrefetchDone() {
+  try {
+    const raw = localStorage.getItem(PREFETCH_DONE_KEY);
+    if (!raw) return { current: null, allGames: false };
+    const parsed = JSON.parse(raw);
+    return {
+      current: typeof parsed?.current === 'string' ? parsed.current : null,
+      allGames: !!parsed?.allGames
+    };
+  } catch(e) { return { current: null, allGames: false }; }
+}
+function savePrefetchDone(state) {
+  try { localStorage.setItem(PREFETCH_DONE_KEY, JSON.stringify(state)); } catch(e) {}
+}
+function markPrefetchDone(scope) {
+  const state = loadPrefetchDone();
+  if (scope.kind === 'all') state.allGames = true;
+  else if (scope.kind === 'current' && scope.gameKey) state.current = scope.gameKey;
+  savePrefetchDone(state);
+}
+function clearPrefetchDone() { savePrefetchDone({ current: null, allGames: false }); }
 
 // Walk a game's data and accumulate species + move URLs into the shared set.
 // Pulled out so the per-game and all-games callers can union into one Set
@@ -9114,11 +9185,13 @@ function collectFilesInto(src, out) {
 }
 
 // Walk the current run's game data and collect a deduped URL list to pre-cache.
-// Capped at 500 URLs to keep the user from accidentally queueing a multi-thousand
-// URL flood on a shared PokeAPI rate limit. We queue /pokemon-species/<slug>
-// (NOT /pokemon/<slug>) because species is cheaper, returns the sprite ID we
-// can derive sprite URLs from at first use, and avoids the expensive /pokemon
-// payload until something actually needs stats.
+// Per-game mode: queues species + moves only. We deliberately skip sprites
+// (would need a fetch-per-species to derive the ID) and skip region/location/
+// area endpoints (the runtime stale-while-revalidate cache will catch those
+// as the user browses). All-games mode: also queues sprite IDs 1..1025 in
+// bulk (the 6MB sprite set; some IDs 404, the SW tolerates that) and live-
+// enumerates every region's locations + areas so PokeAPI-region games like
+// ORAS / RBY / GSC load offline without "loading from PokeAPI" cache misses.
 function buildPrefetchUrls(opts) {
   const allGames = !!(opts && opts.allGames);
   const urls = new Set();
@@ -9135,15 +9208,92 @@ function buildPrefetchUrls(opts) {
   return [...urls].slice(0, 500);
 }
 
+// All-games variant: builds the species/moves URL set, appends sprite IDs
+// 1..1025 (covers Gen 1 through Gen 9; some IDs in the National Dex are
+// unused and 404 — the SW prefetcher counts those as `failed` and moves on),
+// then live-fetches every unique pokeapiRegion across GAMES to enumerate
+// region → location → area URLs. Live enumeration is a 3-deep dependency
+// chain (region → locations → areas) so we can't statically derive it; we
+// limit concurrency to 4 to avoid hammering PokeAPI. The whole pass is a
+// one-time cost (~30-60s for ~10 regions) and the result is what unblocks
+// offline use of vanilla games that drive encounters off the PokeAPI region
+// path (RBY, GSC, RSE, FRLG, DPPt, HGSS, ORAS, XY fallback).
+async function buildPrefetchUrlsAllGamesWithRegions(progressFn) {
+  const urls = new Set();
+  for (const k of Object.keys(GAMES)) _collectPrefetchUrlsForGame(k, urls);
+  for (let id = 1; id <= 1025; id++) {
+    urls.add(`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`);
+  }
+  const regionSlugs = new Set();
+  for (const k of Object.keys(GAMES)) {
+    const r = GAMES[k]?.dataSources?.pokeapiRegion;
+    if (!r) continue;
+    if (Array.isArray(r)) for (const s of r) regionSlugs.add(s);
+    else regionSlugs.add(r);
+  }
+  for (const slug of regionSlugs) {
+    urls.add(`https://pokeapi.co/api/v2/region/${slug}/`);
+  }
+  if (progressFn) progressFn(`Enumerating regions (0/${regionSlugs.size})…`);
+  const locationUrls = new Set();
+  let regionsDone = 0;
+  await _runWithConcurrency([...regionSlugs], 4, async (slug) => {
+    try {
+      const res = await fetch(`https://pokeapi.co/api/v2/region/${slug}/`);
+      if (res.ok) {
+        const data = await res.json();
+        for (const loc of (data.locations || [])) {
+          if (loc.url) locationUrls.add(loc.url);
+        }
+      }
+    } catch(e) {}
+    regionsDone++;
+    if (progressFn) progressFn(`Enumerating regions (${regionsDone}/${regionSlugs.size})…`);
+  });
+  for (const u of locationUrls) urls.add(u);
+  if (progressFn) progressFn(`Enumerating locations (0/${locationUrls.size})…`);
+  const areaUrls = new Set();
+  let locsDone = 0;
+  await _runWithConcurrency([...locationUrls], 4, async (locUrl) => {
+    try {
+      const res = await fetch(locUrl);
+      if (res.ok) {
+        const data = await res.json();
+        for (const a of (data.areas || [])) {
+          if (a.url) areaUrls.add(a.url);
+        }
+      }
+    } catch(e) {}
+    locsDone++;
+    if (progressFn && locsDone % 5 === 0) progressFn(`Enumerating locations (${locsDone}/${locationUrls.size})…`);
+  });
+  for (const u of areaUrls) urls.add(u);
+  return [...urls];
+}
+
+async function _runWithConcurrency(items, n, worker) {
+  let cursor = 0;
+  async function run() {
+    while (cursor < items.length) {
+      const i = cursor++;
+      await worker(items[i]);
+    }
+  }
+  await Promise.all(Array.from({ length: Math.min(n, items.length || 1) }, run));
+}
+
 function startPrefetchAll() {
   if (_prefetchInFlight) { showToast('Pre-cache already running','info'); return; }
   if (!_swRegistration && !(navigator.serviceWorker && navigator.serviceWorker.controller)) {
     showToast('Service worker not ready — reload the page first','error');
     return;
   }
+  const r = curRun();
+  if (!r) { showToast('No active run','info'); return; }
   const urls = buildPrefetchUrls();
   if (!urls.length) { showToast('No species/move data to pre-cache for this game','info'); return; }
   _prefetchInFlight = true;
+  _prefetchScope = { kind: 'current', gameKey: r.game };
   _prefetchDone = 0;
   _prefetchTotal = urls.length;
   const btn = document.getElementById('prefetch-btn');
@@ -9154,28 +9304,73 @@ function startPrefetchAll() {
   postToSW({ type: 'prefetch-all', urls });
 }
 
-function startPrefetchAllGames() {
+async function startPrefetchAllGames() {
   if (_prefetchInFlight) { showToast('Pre-cache already running','info'); return; }
   if (!_swRegistration && !(navigator.serviceWorker && navigator.serviceWorker.controller)) {
     showToast('Service worker not ready — reload the page first','error');
     return;
   }
-  const urls = buildPrefetchUrls({ allGames: true });
-  if (!urls.length) { showToast('No species/move data to pre-cache','info'); return; }
   _prefetchInFlight = true;
-  _prefetchDone = 0;
-  _prefetchTotal = urls.length;
+  _prefetchScope = { kind: 'all' };
   const btn = document.getElementById('prefetch-btn');
   if (btn) btn.disabled = true;
   const btnAll = document.getElementById('prefetch-all-games-btn');
   if (btnAll) btnAll.disabled = true;
+  const wrap = document.getElementById('prefetch-progress-wrap');
+  if (wrap) wrap.style.display = 'block';
+  const lbl = document.getElementById('prefetch-progress-label');
+  if (lbl) lbl.textContent = 'Enumerating region data…';
+  let urls = [];
+  try {
+    urls = await buildPrefetchUrlsAllGamesWithRegions((msg) => {
+      const l = document.getElementById('prefetch-progress-label');
+      if (l) l.textContent = msg;
+    });
+  } catch(e) {
+    _prefetchInFlight = false;
+    _prefetchScope = null;
+    if (btn) btn.disabled = false;
+    if (btnAll) btnAll.disabled = false;
+    showToast('Pre-cache enumeration failed — check connection','error');
+    return;
+  }
+  if (!urls.length) {
+    _prefetchInFlight = false;
+    _prefetchScope = null;
+    if (btn) btn.disabled = false;
+    if (btnAll) btnAll.disabled = false;
+    showToast('No data to pre-cache','info');
+    return;
+  }
+  _prefetchDone = 0;
+  _prefetchTotal = urls.length;
   updatePrefetchProgress(0, urls.length);
   postToSW({ type: 'prefetch-all', urls });
 }
 
 function clearAllCaches() {
   if (!confirm('Clear all offline caches? You\'ll need to be online to repopulate them.')) return;
+  clearPrefetchDone();
   postToSW({ type: 'clear-caches' });
+}
+
+// Re-cache helpers wipe the marker for the relevant scope and re-run the
+// prefetch so the SW refetches everything (overwriting stale cache entries).
+// renderRules is called first so the Cached/Re-cache pair flips back to the
+// active button before startPrefetch* re-disables it for the in-progress run.
+function recachePrefetchCurrent() {
+  const state = loadPrefetchDone();
+  state.current = null;
+  savePrefetchDone(state);
+  if (typeof renderRules === 'function') renderRules();
+  startPrefetchAll();
+}
+function recachePrefetchAllGames() {
+  const state = loadPrefetchDone();
+  state.allGames = false;
+  savePrefetchDone(state);
+  if (typeof renderRules === 'function') renderRules();
+  startPrefetchAllGames();
 }
 
 // Initial paint of the indicator so it reflects state before any event fires.
