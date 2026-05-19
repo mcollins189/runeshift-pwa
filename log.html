@@ -4272,6 +4272,10 @@ function migrateLegacyLocationNames(data) {
 /* ── API ── */
 async function cloudLoad(key) {
   const r = await fetch(`${API}/${encodeURIComponent(key)}`);
+  // 404 = key doesn't exist yet in cloud → legitimate new save online.
+  // Return empty object so doLogin falls through to "Brand new save" without
+  // tripping the offline-created marker (which would fire the rename prompt).
+  if (r.status === 404) return {};
   if (!r.ok) throw new Error('Load failed');
   const data = await r.json();
   saveLocalSaveCache(key, data);
@@ -4465,11 +4469,16 @@ async function doLogin() {
     if (cached) {
       data = cached;
       usedOfflineCache = true;
+    } else if (navigator.onLine) {
+      // Browser says we're online but cloudLoad still threw — Worker outage
+      // or transient blip. Don't blindly create an offline save here, that
+      // would mark the key offline-pending and fire the rename prompt on the
+      // next change. Surface the error and let the user retry.
+      showLoginError("Couldn't reach the save server. Try again in a moment.");
+      return;
     } else {
-      // cloudLoad threw with no local mirror — could be a real new key or a
-      // cloud reachability issue. Treat as brand-new offline save and let the
-      // user proceed; first online save will push it (with collision risk if
-      // the key turns out to already exist in the cloud).
+      // Genuinely offline + no local mirror → first-time fresh start on this
+      // device. Mark for pre-flight check before the first cloud push.
       data = {};
       createdOffline = true;
     }
