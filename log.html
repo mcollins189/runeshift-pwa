@@ -9368,7 +9368,13 @@ async function buildPrefetchUrlsAllGamesWithRegions(progressFn) {
     urls.add(`https://pokeapi.co/api/v2/region/${slug}/`);
   }
   if (progressFn) progressFn(`Enumerating regions (0/${regionSlugs.size})…`);
+  // Build slug-based URLs (e.g. /location/kanto-route-1/) NOT numeric-ID URLs
+  // (/location/4/). PokeAPI's NamedAPIResource.url uses numeric IDs, but the
+  // runtime renderer fetches by slug (ensureLocationAreasLoaded + fetchPokeApiEncounters
+  // both construct `${slug}/`). Caching by numeric ID leaves the runtime fetches
+  // as permanent misses offline → "using static list" fallback.
   const locationUrls = new Set();
+  const locationSlugByUrl = new Map();
   let regionsDone = 0;
   await _runWithConcurrency([...regionSlugs], 4, async (slug) => {
     try {
@@ -9376,8 +9382,10 @@ async function buildPrefetchUrlsAllGamesWithRegions(progressFn) {
       if (res.ok) {
         const data = await res.json();
         for (const loc of (data.locations || [])) {
-          // Normalize to trailing-slash form to match runtime fetch URLs.
-          if (loc.url) locationUrls.add(loc.url.endsWith('/') ? loc.url : loc.url + '/');
+          if (!loc.name) continue;
+          const slugUrl = `https://pokeapi.co/api/v2/location/${loc.name}/`;
+          locationUrls.add(slugUrl);
+          locationSlugByUrl.set(slugUrl, loc.name);
         }
       }
     } catch(e) {}
@@ -9394,7 +9402,7 @@ async function buildPrefetchUrlsAllGamesWithRegions(progressFn) {
       if (res.ok) {
         const data = await res.json();
         for (const a of (data.areas || [])) {
-          if (a.url) areaUrls.add(a.url.endsWith('/') ? a.url : a.url + '/');
+          if (a.name) areaUrls.add(`https://pokeapi.co/api/v2/location-area/${a.name}/`);
         }
       }
     } catch(e) {}
