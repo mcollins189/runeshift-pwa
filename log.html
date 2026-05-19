@@ -340,6 +340,7 @@
   .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
   .toast.success{border-color:rgba(74,222,128,.3);color:var(--green)}
   .toast.error{border-color:rgba(248,113,113,.3);color:var(--red)}
+  .toast.warn{border-color:rgba(245,158,11,.4);color:#fbbf24}
 
   .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:100;align-items:flex-start;justify-content:center;padding:60px 16px 16px;overflow-y:auto}
   .overlay.open{display:flex}
@@ -4309,6 +4310,32 @@ function loadLocalSaveCache(key) {
   } catch(e) { return null; }
 }
 
+// "Offline-created pending" marker: set when a brand-new save is created
+// while offline; cleared after the first successful cloud-push (or after a
+// rename when the user resolves a key collision). Keyed by save key so it
+// survives PWA close/reopen and only fires the pre-flight check once.
+function markOfflineCreated(key) { try { localStorage.setItem('nuz-offline-pending', key); } catch(e) {} }
+function clearOfflineCreated()    { try { localStorage.removeItem('nuz-offline-pending'); } catch(e) {} }
+function isOfflineCreatedPending(key) { try { return localStorage.getItem('nuz-offline-pending') === key; } catch(e) { return false; } }
+
+// Pre-flight check: does the cloud already hold a non-empty save for this key?
+// Used before the first push of an offline-created save so we don't blindly
+// overwrite someone else's data (or our own old runs under the same key).
+async function cloudKeyExists(key) {
+  try {
+    const r = await fetch(`${API}/${encodeURIComponent(key)}`);
+    if (r.status === 404) return false;
+    if (!r.ok) return false; // 5xx — let the push attempt itself raise the error
+    const data = await r.json();
+    if (!data || typeof data !== 'object') return false;
+    if (data.runs && Object.keys(data.runs).length) return true;
+    if (data.team !== undefined || data.routes !== undefined) return true; // legacy single-run
+    return false;
+  } catch(e) {
+    return false; // network blip — defer to the push to surface the error
+  }
+}
+
 function buildPayload() {
   return { runs, currentRunId, version: 3, lastModified: Date.now() };
 }
@@ -4414,17 +4441,22 @@ async function doLogin() {
   document.getElementById('login-error').style.display = 'none';
   let data = null;
   let usedOfflineCache = false;
+  let createdOffline = false;
   try {
     // Short-circuit when the browser reports offline so we don't eat a fetch
     // timeout before falling back to the local mirror.
     if (!navigator.onLine) {
       const cached = loadLocalSaveCache(key);
-      if (!cached) {
-        showLoginError("Can't reach cloud. Connect to the internet for first login on this device.");
-        return;
+      if (cached) {
+        data = cached;
+        usedOfflineCache = true;
+      } else {
+        // No local cache for this key while offline → treat as a brand-new
+        // save. Empty `data` falls through to the "Brand new save" branch
+        // below; we mark for sync so the first online cloudSave pushes it.
+        data = {};
+        createdOffline = true;
       }
-      data = cached;
-      usedOfflineCache = true;
     } else {
       data = await cloudLoad(key);
     }
@@ -4434,8 +4466,12 @@ async function doLogin() {
       data = cached;
       usedOfflineCache = true;
     } else {
-      showLoginError("Can't reach cloud. Connect to the internet for first login on this device.");
-      return;
+      // cloudLoad threw with no local mirror — could be a real new key or a
+      // cloud reachability issue. Treat as brand-new offline save and let the
+      // user proceed; first online save will push it (with collision risk if
+      // the key turns out to already exist in the cloud).
+      data = {};
+      createdOffline = true;
     }
   }
   try {
@@ -4494,9 +4530,20 @@ async function doLogin() {
     document.getElementById('app').style.display = 'block';
     document.getElementById('key-display').textContent = key;
     loadedAt = (typeof data?.lastModified === 'number') ? data.lastModified : Date.now();
-    setSaveStatus(usedOfflineCache ? 'offline' : 'saved', `Loaded ${fmtTime(loadedAt)}${usedOfflineCache ? ' (offline)' : ''}`);
+    if (createdOffline) {
+      // Persist immediately so closing the PWA before reconnecting doesn't lose
+      // the new save. The 'online' listener will flush to cloud later, after a
+      // pre-flight collision check (see cloudSave for the rename loop).
+      pendingOfflineSave = true;
+      markOfflineCreated(saveKey);
+      saveLocalSaveCache(saveKey, buildPayload());
+      setSaveStatus('offline', `New save (offline) — will sync`);
+      showToast('Created offline save. When you reconnect, we\'ll check the cloud and ask for a different key if this one is taken.', 'warn', 7000);
+    } else {
+      setSaveStatus(usedOfflineCache ? 'offline' : 'saved', `Loaded ${fmtTime(loadedAt)}${usedOfflineCache ? ' (offline)' : ''}`);
+    }
     render();
-    if (!usedOfflineCache && (inlineMigrationsChanged || structuralChange)) cloudSave(false);
+    if (!usedOfflineCache && !createdOffline && (inlineMigrationsChanged || structuralChange)) cloudSave(false);
   } catch(e) {
     showLoginError('Save data looks corrupted — try Import on the login screen, or contact support.');
     btn.disabled = false; btn.textContent = 'Load save →';
@@ -4815,6 +4862,37 @@ async function cloudSave(manual) {
     if (manual) showToast('Offline — change saved locally, will sync when back online','info');
     return;
   }
+  // Pre-flight rename loop for offline-created saves on their first push.
+  // Prevents silently overwriting a cloud entry that already exists for the
+  // same key. Loops until the user picks a free key or cancels (data stays
+  // local). Skipped entirely once the save has synced once successfully.
+  if (isOfflineCreatedPending(saveKey)) {
+    setSaveStatus('saving','Checking cloud…');
+    let attemptKey = saveKey;
+    let attempt = 0;
+    while (await cloudKeyExists(attemptKey)) {
+      attempt++;
+      const msg = attempt === 1
+        ? `The save key "${attemptKey}" already exists in the cloud. Pick a different key for your offline save:`
+        : `"${attemptKey}" is also taken in the cloud. Try another key:`;
+      const next = prompt(msg, attemptKey + '-' + attempt);
+      if (next === null) {
+        setSaveStatus('offline','Sync paused — pick a unique key to push');
+        return;
+      }
+      const trimmed = String(next).trim();
+      if (!trimmed) continue;
+      attemptKey = trimmed;
+    }
+    if (attemptKey !== saveKey) {
+      // Adopt the new key. Old localStorage cache under the previous key is
+      // orphaned (harmless); the new key gets persisted on the next save call.
+      saveKey = attemptKey;
+      localStorage.setItem('nuzlocke_key', saveKey);
+      const disp = document.getElementById('key-display');
+      if (disp) disp.textContent = saveKey;
+    }
+  }
   setSaveStatus('saving','Saving…');
   try {
     const payload = buildPayload();
@@ -4823,6 +4901,7 @@ async function cloudSave(manual) {
     savedAt = payload.lastModified;
     loadedAt = payload.lastModified;
     pendingOfflineSave = false;
+    clearOfflineCreated();
     setSaveStatus('saved',`Saved ${fmtTime(savedAt)}`);
     if (manual) showToast('Saved ✓','success');
   } catch(e) {
@@ -8973,11 +9052,11 @@ function copyTeamSummary() {
     .catch(()=>showToast('Copy failed','error'));
 }
 
-function showToast(msg, type) {
+function showToast(msg, type, durationMs) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.className = 'toast show'+(type?' '+type:'');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(()=>{ t.className='toast'; }, 2800);
+  toastTimer = setTimeout(()=>{ t.className='toast'; }, durationMs || 2800);
 }
 
 /* ── PWA / offline support ── */
@@ -9159,7 +9238,11 @@ function _collectPrefetchUrlsForGame(gameKey, urls) {
 
   for (const name of speciesNames) {
     const slug = speciesSlug(name);
-    if (slug) urls.add(`https://pokeapi.co/api/v2/pokemon-species/${slug}`);
+    if (!slug) continue;
+    urls.add(`https://pokeapi.co/api/v2/pokemon-species/${slug}`);
+    // /pokemon/<slug> is what fetchLearnset hits to get the per-VG move list.
+    // Without it, learnsets show empty + move suggestions don't populate offline.
+    urls.add(`https://pokeapi.co/api/v2/pokemon/${slug}`);
   }
 
   // Moves: every move on every boss team across every leagues file for this game.
@@ -9205,7 +9288,7 @@ function buildPrefetchUrls(opts) {
   const r = curRun();
   if (!r) return [];
   _collectPrefetchUrlsForGame(r.game, urls);
-  return [...urls].slice(0, 500);
+  return [...urls].slice(0, 1000);
 }
 
 // All-games variant: builds the species/moves URL set, appends sprite IDs
