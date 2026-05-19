@@ -780,6 +780,15 @@
     .matchup-grid { grid-template-columns: 1fr; }
     .party-strip { grid-template-columns: repeat(2, 1fr); gap: 6px; }
     .enc-rail { max-height: 180px; }
+    /* Matchup table: 5 columns + a sprite overflow at 420px. Stack so the
+       detail wraps to its own row underneath, name shrinks, sprite stays
+       small. Verdict keeps its right-edge anchor via margin-left:auto. */
+    .analysis-row { flex-wrap: wrap; gap: 8px; padding: 10px 0; }
+    .analysis-row .sprite-wrap.sprite-sm { width: 28px; height: 28px; }
+    .analysis-row .sprite-wrap.sprite-sm .sprite-img { width: 28px; height: 28px; }
+    .ar-name { min-width: 0; flex: 1; font-size: 12px; }
+    .ar-verdict { font-size: 11px; padding: 3px 8px; }
+    .ar-detail { flex-basis: 100%; margin-left: 0; }
   }
   /* Compact-label rule shared across breakpoints — on wide screens the full
      label shows; on phones we collapse to "🚪 Switch" via the .hdr-btn-full-label
@@ -3961,7 +3970,12 @@ async function fetchLearnset(species) {
   if (!info) { learnsetCache[species] = []; return []; }
   learnsetCache[species] = 'loading';
   try {
-    const r = await fetch(`https://pokeapi.co/api/v2/pokemon/${info.id}`);
+    // Use slug + trailing slash so the URL matches what the all-games pre-cache
+    // stores (https://pokeapi.co/api/v2/pokemon/<slug>/). Numeric ID URLs work
+    // online but are a permanent cache miss offline — was the root cause of
+    // "upcoming moves don't load offline" even after pre-caching.
+    const slug = speciesSlug(species);
+    const r = await fetch(`https://pokeapi.co/api/v2/pokemon/${slug}/`);
     if (!r.ok) throw new Error('fetch failed');
     const data = await r.json();
     // Pick the chosen version group — preference order is roughly newest →
