@@ -6414,10 +6414,10 @@ function renderRules() {
           const allDone = done.allGames;
           const curLabel = curDone
             ? `<span class="check">✓</span> Cached for ${gameName}`
-            : `Download for ${gameName} only (~15MB)`;
+            : `Download for ${gameName} only (~30MB)`;
           const allLabel = allDone
             ? `<span class="check">✓</span> Cached for all games (sprites + regions)`
-            : `Download for all games (~60MB — sprites + regions)`;
+            : `Download for all games (~250MB — sprites + regions)`;
           return `
         <div class="offline-btn-row">
           <button class="offline-btn" id="prefetch-btn" onclick="startPrefetchAll()" ${curDone?'disabled':''}>${curLabel}</button>
@@ -9173,6 +9173,18 @@ function updateCacheStatusDisplay(shell, pokeapi) {
   if (!el) return;
   const shellTxt = shell > 0 ? 'Shell cached' : 'Shell not yet cached';
   el.textContent = `${shellTxt} • ${pokeapi || 0} PokeAPI items cached`;
+  // Tack on actual storage usage from the browser. navigator.storage.estimate()
+  // returns combined Cache Storage + IndexedDB + localStorage usage for the
+  // origin, which is closer to what Chrome's site-data view shows than what
+  // the per-cache item counts imply (since each cached JSON varies wildly).
+  if (navigator.storage && typeof navigator.storage.estimate === 'function') {
+    navigator.storage.estimate().then((est) => {
+      if (!est || typeof est.usage !== 'number') return;
+      const mb = (est.usage / (1024*1024)).toFixed(0);
+      const quotaMb = est.quota ? (est.quota / (1024*1024*1024)).toFixed(1) + ' GB' : null;
+      el.textContent = `${shellTxt} • ${pokeapi || 0} PokeAPI items • ${mb} MB used${quotaMb ? ' of ~' + quotaMb + ' available' : ''}`;
+    }).catch(()=>{});
+  }
 }
 
 function updatePrefetchProgress(done, total) {
