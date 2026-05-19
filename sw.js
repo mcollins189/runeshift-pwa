@@ -28,20 +28,28 @@
 const SHELL_CACHE = 'nuz-shell-v2';
 const POKEAPI_CACHE = 'nuz-pokeapi-v1';
 
+// Same-origin shell URLs use relative paths so the PWA works at any subpath
+// (e.g. github.io/runeshift-pwa/) — they resolve against self.location, which
+// is the directory the SW was served from. Cross-origin URLs stay absolute.
 const SHELL_URLS = [
-  '/log.html',
-  '/data.bundle.js',
-  '/manifest.json',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png',
-  '/icons/icon-1024.png',
+  'log.html',
+  'data.bundle.js',
+  'manifest.json',
+  'icons/icon-192.png',
+  'icons/icon-512.png',
+  'icons/icon-1024.png',
   'https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js',
   'https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap'
 ];
 
-// Cache bumped from v1 → v2 when the icons switched from the programmatic
-// Pokeball placeholders to the real designed artwork. Old shell entries with
-// the SVG reference would otherwise stick around.
+// Resolved once at SW init so isShellAsset can pathname-compare against the
+// actual absolute path (which the runtime sees on the fetch event).
+const SHELL_PATHS = new Set(SHELL_URLS.map((u) => {
+  try { return new URL(u, self.location).pathname; }
+  catch (e) { return u; }
+}));
+const LOG_HTML_PATH = new URL('log.html', self.location).pathname;
+const SW_BASE_PATH = new URL('./', self.location).pathname;
 
 // --- Install: pre-cache the shell -------------------------------------------
 self.addEventListener('install', (event) => {
@@ -118,18 +126,15 @@ self.addEventListener('fetch', (event) => {
 
 function isShellHtml(req, url) {
   if (req.mode === 'navigate') return true;
-  if (url.pathname === '/' || url.pathname === '/log.html') return true;
+  if (url.pathname === LOG_HTML_PATH || url.pathname === SW_BASE_PATH) return true;
   return false;
 }
 
 function isShellAsset(url) {
-  // Match by full URL string against SHELL_URLS, with same-origin shortcut.
-  const sameOrigin = url.origin === self.location.origin;
-  if (sameOrigin) {
-    return SHELL_URLS.includes(url.pathname);
+  if (url.origin === self.location.origin) {
+    return SHELL_PATHS.has(url.pathname);
   }
-  const full = url.href;
-  return SHELL_URLS.includes(full);
+  return SHELL_URLS.includes(url.href);
 }
 
 // --- Caching strategies -----------------------------------------------------

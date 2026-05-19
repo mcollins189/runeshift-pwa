@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
-<link rel="manifest" href="/manifest.json">
-<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Nuzlocke">
+<meta name="apple-mobile-web-app-title" content="NuzTracker">
 <meta name="theme-color" content="#0f0f10">
-<title>Nuzlocke Tracker</title>
+<title>NuzTracker</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
@@ -769,7 +769,7 @@
 
 <div id="login-screen" class="login-screen">
   <div class="login-box">
-    <div class="login-title">Nuzlocke Tracker</div>
+    <div class="login-title">NuzTracker</div>
     <div class="login-sub">Cloud-synced runs across all your devices. One save key can hold multiple runs across different games.</div>
     <div class="login-hint">
       <strong>New here?</strong> Make up any key you'll remember, pick your first game, and your save is created.<br><br>
@@ -788,7 +788,7 @@
   <div class="header">
     <div class="header-left">
       <div class="header-row">
-        <div class="header-title">Nuzlocke Tracker</div>
+        <div class="header-title">NuzTracker</div>
         <div class="run-selector">
           <select id="run-select" onchange="switchRun(this.value)"></select>
         </div>
@@ -8906,7 +8906,7 @@ window.addEventListener('offline', () => {
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').then(reg => {
+    navigator.serviceWorker.register('sw.js').then(reg => {
       _swRegistration = reg;
       // Initial cache-status request so the Rules tab can populate even on
       // first open. Wait a tick for the SW to be 'active' before posting.
