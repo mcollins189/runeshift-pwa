@@ -638,6 +638,8 @@
   .enc-flag.reco.reduced{padding:1px 5px;font-size:11px;opacity:.72;letter-spacing:0;text-transform:none}
   .enc-section.locked-method{opacity:.5;filter:saturate(.6)}
   .enc-section.locked-method::before{content:"locked — toggle the tool above";display:block;font-size:10px;color:var(--text3);font-style:italic;padding:4px 0;text-align:center}
+  .enc-section.legendary-section{border:1px solid rgba(251,191,36,.22);background:linear-gradient(180deg, rgba(251,191,36,.04), transparent 60%)}
+  .enc-section.legendary-section .enc-method-label{color:#fcd34d}
   .tools-pill-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
   .tools-prefix{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.04em}
   .tools-pill{flex-wrap:wrap}
@@ -3316,6 +3318,68 @@ const BST_GRIND_PRE_LIST = {
   'Milotic':   -120   // Feebas requires Beauty (Gen 3) or Prism Scale (Gen 5+)
 };
 
+// One-time / legendary species across all generations. Three downstream uses:
+//   (1) Split flat encounter pools (SV + ROM hacks) into "Standard" and
+//       "Legendaries" subsections so the regular catchable spawns aren't
+//       buried alongside one-shot story battles like Wo-Chien or Koraidon.
+//   (2) Exclude from recommendation winners — a single 1-time legendary
+//       shouldn't beat out a 30%-rate regular catch for the ★ slot.
+//   (3) Honor the no-legendaries Nuzlocke clause — when toggled on, the
+//       legendary subsection is hidden entirely.
+// Keys are PokeAPI slugs (lowercase + hyphens) so they match the raw form
+// stored in NUZ_DATA. isLegendary() normalizes either display or slug input.
+const LEGENDARY_SPECIES = new Set([
+  // Gen 1
+  'articuno','zapdos','moltres','mewtwo','mew',
+  // Gen 2 — Beasts, Tower duo, mythical
+  'raikou','entei','suicune','lugia','ho-oh','celebi',
+  // Gen 3 — Regis, Eon duo, weather trio, mythicals
+  'regirock','regice','registeel','latias','latios','kyogre','groudon','rayquaza','jirachi','deoxys',
+  // Gen 4 — Lake trio, Creation, Heatran/Cresselia/Regigigas, mythicals
+  'uxie','mesprit','azelf','dialga','palkia','heatran','regigigas','giratina','cresselia',
+  'phione','manaphy','darkrai','shaymin','arceus',
+  // Gen 5 — Swords, Forces of Nature, Tao trio, mythicals
+  'victini','cobalion','terrakion','virizion','tornadus','thundurus','reshiram','zekrom',
+  'landorus','kyurem','keldeo','meloetta','genesect',
+  // Gen 6 — Aura trio, mythicals
+  'xerneas','yveltal','zygarde','diancie','hoopa','volcanion',
+  // Gen 7 — Type:Null line, Cosmog line, Necrozma, Tapus, Ultra Beasts, mythicals
+  'type-null','silvally','cosmog','cosmoem','solgaleo','lunala','necrozma',
+  'tapu-koko','tapu-lele','tapu-bulu','tapu-fini',
+  'nihilego','buzzwole','pheromosa','xurkitree','celesteela','kartana','guzzlord',
+  'poipole','naganadel','stakataka','blacephalon',
+  'magearna','marshadow','zeraora','meltan','melmetal',
+  // Gen 8 — Galarian birds, Hero duo + Eternatus, Isle of Armor/Crown Tundra, mythical
+  'articuno-galar','zapdos-galar','moltres-galar',
+  'zacian','zamazenta','eternatus',
+  'kubfu','urshifu',
+  'regieleki','regidrago','glastrier','spectrier','calyrex',
+  'zarude',
+  // Gen 9 — Treasures of Ruin, Paradox (Past + Future), Box, DLC, Loyal Three
+  'wo-chien','chien-pao','ting-lu','chi-yu',
+  'great-tusk','scream-tail','brute-bonnet','flutter-mane','slither-wing','sandy-shocks',
+  'iron-treads','iron-bundle','iron-hands','iron-jugulis','iron-moth','iron-thorns',
+  'roaring-moon','iron-valiant',
+  'koraidon','miraidon',
+  'walking-wake','iron-leaves','gouging-fire','raging-bolt','iron-boulder','iron-crown',
+  'okidogi','munkidori','fezandipiti','ogerpon','terapagos','pecharunt'
+]);
+
+function isLegendary(species) {
+  if (!species) return false;
+  // Accept either an already-lowercased slug or a display name. We normalize
+  // by trying both: the raw lowercase form (covers slugs that come straight
+  // from NUZ_DATA), then via speciesSlug() (covers display names like
+  // "Wo-Chien" or "Tapu Koko" → "wo-chien" / "tapu-koko").
+  const direct = String(species).toLowerCase();
+  if (LEGENDARY_SPECIES.has(direct)) return true;
+  if (typeof speciesSlug === 'function') {
+    const slug = speciesSlug(species);
+    if (slug && LEGENDARY_SPECIES.has(slug)) return true;
+  }
+  return false;
+}
+
 function curTools() {
   const r = curRun();
   const raw = r?.toolsUnlocked || {};
@@ -3508,6 +3572,10 @@ function finishLocationRecoPass(html) {
       if (dp.deadSpecies && dp.deadSpecies.has(lc)) continue;
       if (dp.caughtAtThisLoc && dp.caughtAtThisLoc.has(lc)) continue;
       if (enforceDupes && dp.teamLineSet && dp.teamLineSet.has(lc)) continue;
+      // Legendaries are 1-time story battles, not free-catchable spawns. Excluding
+      // them from winner contention keeps ★ pointing at "what should I catch on
+      // this route" rather than "the strongest mon in the data list".
+      if (isLegendary(e.p)) continue;
       const rate = (season && season !== 'all' && e.chanceBySeason && e.chanceBySeason[season])
         ? e.chanceBySeason[season] : (e.r || 0);
       allEntries.push({ species: e.p, chancePct: rate, method: dp.method });
@@ -5435,20 +5503,41 @@ function populateRunSelect() {
 }
 
 /* ── Save ── */
+// Cloud push debounce. 30s coalesces drag bursts and rapid-edit sessions into
+// a single Cloudflare PUT (the Worker plan caps daily writes), while still
+// short enough that switching devices feels close to real-time. localStorage
+// mirror is written separately on every save() call below — crash-safe even
+// inside the 30s window.
+const CLOUD_SAVE_DEBOUNCE_MS = 30000;
 function save() {
   setSaveStatus('saving','Saving…');
+  // Always update the local mirror IMMEDIATELY so a tab crash inside the
+  // cloud-push window can't lose work. localStorage is fast + free; the
+  // cloud push is the expensive operation we coalesce.
+  if (saveKey) {
+    try { saveLocalSaveCache(saveKey, buildPayload()); } catch(e) {}
+  }
   clearTimeout(saveTimer);
-  // 500ms debounce collapses a flurry of field edits (e.g. editing 5 fields
-  // on one card in rapid succession) into a single cloud push. Short enough
-  // that the user perceives the save as immediate; long enough to coalesce.
-  saveTimer = setTimeout(()=>{ saveTimer = null; cloudSave(false); }, 500);
+  saveTimer = setTimeout(()=>{ saveTimer = null; cloudSave(false); }, CLOUD_SAVE_DEBOUNCE_MS);
 }
 
-// Defensive push when the tab is backgrounded / closed. The 5-min autosave
-// window is long enough that a refresh or accidental close can lose changes;
-// visibilitychange fires reliably on both desktop and mobile when the tab
-// goes hidden, so we squeeze in a save attempt before the browser potentially
-// freezes/kills the page. cloudSave is async but we don't await — best-effort.
+// Defensive push when the tab is backgrounded / closed. With the 30-second
+// cloud-push window, a refresh or accidental close can drop the in-flight
+// push if we don't flush. visibilitychange fires reliably on desktop AND
+// mobile when the tab goes hidden; beforeunload covers explicit tab closes
+// and refreshes that some browsers don't surface via visibilitychange.
+// cloudSave is async but we don't await — best-effort.
+if (typeof window !== 'undefined') {
+  window.addEventListener('beforeunload', () => {
+    if (saveTimer && saveKey) {
+      clearTimeout(saveTimer);
+      saveTimer = null;
+      // localStorage mirror is already current (save() wrote it sync) — this
+      // is purely to give the cloud PUT a chance to start before the unload.
+      try { cloudSave(false); } catch(e) {}
+    }
+  });
+}
 if (typeof document !== 'undefined') {
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'hidden' && saveKey) {
@@ -7071,7 +7160,7 @@ function renderRules() {
       ${toggle('dupesClause',        'Dupes clause', 'Grey out species in the Encounters tab that share an evo line with something already on your team.')}
       ${toggle('speciesClause',      'Species clause', 'Treat species/family duplication the same way as dupes clause for encounter display.')}
       ${toggle('shinyClause',        'Shiny clause', 'Allow a shiny encounter to be caught even if it would normally be skipped.', '<em>(stored only — needs a shiny flag on caught entries to fully wire)</em>')}
-      ${toggle('noLegendaries',      'No legendaries', 'Skip legendary encounters entirely.', '<em>(stored only — needs a legendary species list to mark them in the encounters view)</em>')}
+      ${toggle('noLegendaries',      'No legendaries', 'Skip legendary encounters entirely — the Legendaries subsection on each location is hidden, and legendary species never earn a ★ recommendation badge.')}
     </div>
 
     <p class="slabel" style="margin-top:20px">Notes / custom rules</p>
@@ -8362,12 +8451,43 @@ function buildEncounterMainNuzData(locName, merged, ver, game) {
   const matchesVer = e => !ver || e.v === 'both' || e.v === ver;
   const filtered = entries.filter(matchesVer);
 
-  const speciesHtml = filtered.length
-    ? `<div class="enc-section">
-        <div class="enc-section-hdr"><span class="enc-method-label">Wild Pokémon</span></div>
-        ${renderEncList(filtered, teamLineSet, deadSpecies, caughtAtThisLoc, ver, locName)}
-      </div>`
-    : `<div class="enc-empty" style="padding:16px">No wild Pokémon listed for this location${ver?` on ${game.versions?.[ver]||ver}`:''}.</div>`;
+  // Split into Standard vs Legendaries. Solves the SV "Koraidon hides next
+  // to Lechonk in Poco Path" UX where 100+ standard species and a handful
+  // of one-time legends are mashed together. The no-legendaries Nuzlocke
+  // clause (when on) hides the Legendaries section entirely.
+  const standardEntries = [];
+  const legendaryEntries = [];
+  for (const e of filtered) {
+    if (isLegendary(e.p)) legendaryEntries.push(e);
+    else standardEntries.push(e);
+  }
+  const _rulesForFilter = (typeof curRules === 'function') ? curRules() : {};
+  const hideLegendaries = _rulesForFilter.nuzlockeMode !== false && _rulesForFilter.noLegendaries;
+
+  let speciesHtml = '';
+  if (standardEntries.length) {
+    speciesHtml += `<div class="enc-section">
+      <div class="enc-section-hdr">
+        <span class="enc-method-label">Standard spawns</span>
+        <span style="font-size:10px;color:var(--text3);margin-left:8px">${standardEntries.length} species</span>
+      </div>
+      ${renderEncList(standardEntries, teamLineSet, deadSpecies, caughtAtThisLoc, ver, locName)}
+    </div>`;
+  }
+  if (legendaryEntries.length && !hideLegendaries) {
+    speciesHtml += `<div class="enc-section legendary-section">
+      <div class="enc-section-hdr">
+        <span class="enc-method-label">Legendaries &amp; one-time</span>
+        <span style="font-size:10px;color:var(--text3);margin-left:8px">${legendaryEntries.length} species · usually a single battle / fixed encounter</span>
+      </div>
+      ${renderEncList(legendaryEntries, teamLineSet, deadSpecies, caughtAtThisLoc, ver, locName)}
+    </div>`;
+  }
+  if (!speciesHtml) {
+    speciesHtml = `<div class="enc-empty" style="padding:16px">No wild Pokémon listed for this location${ver?` on ${game.versions?.[ver]||ver}`:''}.</div>`;
+  } else if (legendaryEntries.length && hideLegendaries) {
+    speciesHtml += `<div style="margin-top:6px;font-size:10px;color:var(--text3);font-style:italic;text-align:center">${legendaryEntries.length} legendary / one-time encounter${legendaryEntries.length===1?'':'s'} hidden by the no-legendaries rule.</div>`;
+  }
 
   const trainerHtml = (loc.trainers || []).length
     ? `<div style="margin-top:14px">
@@ -8811,6 +8931,9 @@ function renderEncListInternal(list, teamLineSet, deadSpecies, caughtAtThisLoc, 
       const lc = e.p.toLowerCase();
       if (deadSpecies.has(lc) || caughtAtThisLoc.has(lc)) continue;
       if (enforceDupes && teamLineSet.has(lc)) continue;
+      // Match the global-winner pass — legendaries don't earn ★ markers, even
+      // pool-local reduced ones. They get their own subsection visually.
+      if (isLegendary(e.p)) continue;
       const rec = getRecommendation(e.p, { chancePct: e.r });
       if (!rec || !scoredByTier[rec.tier]) continue;
       scoredByTier[rec.tier].push({ species: e.p, rec, chance: e.r || 0 });
