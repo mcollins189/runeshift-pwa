@@ -1,0 +1,1530 @@
+==========
+Map: 001 - Striaton City
+Tables: 4
+Table 4 [surf] (All):
+Encounters (Levels 35-45): Marill (100%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 40-50): Azumarill (100%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-17): Psyduck (40%), Slowpoke (40%), Staryu (20%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 15-20): Staryu (60%), Basculin (40%)
+Additional SOS encounters: (None)
+==========
+Map: 002 - Castelia City
+Tables: 4
+Table 4 [surf] (All):
+Encounters (Levels 35-45): Frillish (60%), Tentacool (30%), Staryu (10%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 40-50): Staryu (60%), Tentacruel (30%), Lapras (10%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 29-32): Horsea (40%), Wailmer (40%), Mantyke (20%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 33-35): Seadra (40%), Wailmer (40%), Mantyke (20%)
+Additional SOS encounters: (None)
+==========
+Map: 003 - Moor of Icirrus (Spring)
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 46-51): Palpitoad (20%), Stunfisk (20%), Grimer (10%), Koffing (10%), Gulpin (10%), Croagunk (10%), Quagsire (5%), Gastrodon (5%), Swalot (4%), Toxicroak (4%), Muk (1%), Weezing (1%)
+Additional SOS encounters: (None)
+Table 4 [surf] (All):
+Encounters (Levels 46-51): Stunfisk (60%), Barboach (40%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 46-51): Whiscash (60%), Seismitoad (40%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 46-51): Barboach (60%), Stunfisk (40%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 46-51): Barboach (40%), Stunfisk (40%), Whiscash (20%)
+Additional SOS encounters: (None)
+==========
+Map: 004 - Moor of Icirrus (Spring)
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 48-52): Quagsire (20%), Stunfisk (20%), Muk (10%), Weezing (10%), Swalot (10%), Gastrodon (10%), Toxicroak (10%), Palpitoad (10%)
+Additional SOS encounters: (None)
+Table 4 [surf] (All):
+Encounters (Levels 46-51): Stunfisk (60%), Barboach (40%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 46-51): Whiscash (60%), Seismitoad (40%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 46-51): Barboach (60%), Stunfisk (40%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 46-51): Barboach (40%), Stunfisk (40%), Whiscash (20%)
+Additional SOS encounters: (None)
+==========
+Map: 005 - Moor of Icirrus (Summer)
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 46-51): Palpitoad (20%), Stunfisk (20%), Grimer (10%), Koffing (10%), Gulpin (10%), Croagunk (10%), Quagsire (5%), Gastrodon (5%), Swalot (4%), Toxicroak (4%), Muk (1%), Weezing (1%)
+Additional SOS encounters: (None)
+Table 4 [surf] (All):
+Encounters (Levels 46-51): Stunfisk (60%), Barboach (40%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 46-51): Whiscash (60%), Seismitoad (40%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 46-51): Barboach (60%), Stunfisk (40%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 46-51): Barboach (40%), Stunfisk (40%), Whiscash (20%)
+Additional SOS encounters: (None)
+==========
+Map: 006 - Moor of Icirrus (Summer)
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 48-52): Quagsire (20%), Stunfisk (20%), Muk (10%), Weezing (10%), Swalot (10%), Gastrodon (10%), Toxicroak (10%), Palpitoad (10%)
+Additional SOS encounters: (None)
+Table 4 [surf] (All):
+Encounters (Levels 46-51): Stunfisk (60%), Barboach (40%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 46-51): Whiscash (60%), Seismitoad (40%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 46-51): Barboach (60%), Stunfisk (40%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 46-51): Barboach (40%), Stunfisk (40%), Whiscash (20%)
+Additional SOS encounters: (None)
+==========
+Map: 007 - Moor of Icirrus (Autumn)
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 46-51): Palpitoad (20%), Stunfisk (20%), Grimer (10%), Koffing (10%), Gulpin (10%), Croagunk (10%), Quagsire (5%), Gastrodon (5%), Swalot (4%), Toxicroak (4%), Muk (1%), Weezing (1%)
+Additional SOS encounters: (None)
+Table 4 [surf] (All):
+Encounters (Levels 46-51): Stunfisk (60%), Barboach (40%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 46-51): Whiscash (60%), Seismitoad (40%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 46-51): Barboach (60%), Stunfisk (40%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 46-51): Barboach (40%), Stunfisk (40%), Whiscash (20%)
+Additional SOS encounters: (None)
+==========
+Map: 008 - Moor of Icirrus (Autumn)
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 48-56): Quagsire (20%), Stunfisk (20%), Muk (10%), Weezing (10%), Swalot (10%), Gastrodon (10%), Toxicroak (10%), Palpitoad (9%), Keldeo (1%)
+Additional SOS encounters: (None)
+Table 4 [surf] (All):
+Encounters (Levels 46-51): Stunfisk (60%), Barboach (40%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 46-51): Whiscash (60%), Seismitoad (40%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 46-51): Barboach (60%), Stunfisk (40%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 46-51): Barboach (40%), Stunfisk (40%), Whiscash (20%)
+Additional SOS encounters: (None)
+==========
+Map: 009 - Moor of Icirrus (Winter)
+Tables: 4
+Table 4 [surf] (All):
+Encounters (Levels 15-35): Stunfisk (100%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 15-40): Stunfisk (95%), Seismitoad (5%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 46-51): Barboach (60%), Stunfisk (40%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 46-51): Barboach (40%), Stunfisk (40%), Whiscash (20%)
+Additional SOS encounters: (None)
+==========
+Map: 010 - Dreamyard
+Tables: 3
+Table 1 [grass] (All):
+Encounters (Levels 10-12): Drowzee (20%), Munna (20%), Venonat (10%), Natu (10%), Ralts (10%), Spinda (10%), Nidoran♀ (5%), Nidoran♂ (5%), Clefairy (5%), Jigglypuff (5%)
+Additional SOS encounters: (None)
+Table 2 [darkGrass] (All):
+Encounters (Levels 65-70): Hypno (20%), Munna (20%), Clefairy (10%), Jigglypuff (10%), Venomoth (10%), Xatu (10%), Kirlia (10%), Spinda (10%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 10-30): Audino (40%), Togepi (20%), Cleffa (10%), Igglybuff (10%), Chingling (10%), Lunatone (5%), Solrock (4%), Jirachi (1%)
+Additional SOS encounters: (None)
+==========
+Map: 011 - Dreamyard (Basement)
+Tables: 1
+Table 2 [darkGrass] (All):
+Encounters (Levels 65-70): Hypno (20%), Musharna (20%), Clefable (10%), Wigglytuff (10%), Venomoth (10%), Xatu (10%), Gardevoir (10%), Gallade (10%)
+Additional SOS encounters: (None)
+==========
+Map: 012 - Pinwheel Forest (Outside)
+Tables: 3
+Table 1 [grass] (All):
+Encounters (Levels 15-17): Timburr (20%), Tympole (20%), Machop (10%), Ledyba (10%), Spinarak (10%), Makuhita (10%), Meditite (10%), Slakoth (5%), Croagunk (5%)
+Additional SOS encounters: (None)
+Table 2 [darkGrass] (All):
+Encounters (Levels 16-18): Throh (20%), Sawk (20%), Doduo (10%), Aipom (10%), Dunsparce (10%), Snubbull (10%), Cubone (9%), Burmy (9%), Heracross (2%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 13-18): Audino (50%), Tyrogue (10%), Riolu (10%), Tepig (10%), Charmander (5%), Cyndaquil (5%), Torchic (5%), Chimchar (5%)
+Additional SOS encounters: (None)
+==========
+Map: 013 - Pinwheel Forest (Inside)
+Tables: 7
+Table 1 [grass] (All):
+Encounters (Levels 18-21): Cottonee (20%), Petilil (20%), Oddish (10%), Bellsprout (10%), Sewaddle (10%), Venipede (10%), Exeggcute (5%), Murkrow (5%), Misdreavus (5%), Shroomish (5%)
+Additional SOS encounters: (None)
+Table 2 [darkGrass] (All):
+Encounters (Levels 28-32): Tangela (20%), Roselia (20%), Gloom (10%), Weepinbell (10%), Swadloon (10%), Whirlipede (10%), Scyther (5%), Pinsir (5%), Vigoroth (5%), Carnivine (5%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 18-21): Audino (40%), Snivy (10%), Pansage (10%), Pansear (10%), Panpour (10%), Bulbasaur (5%), Chikorita (5%), Treecko (5%), Turtwig (5%)
+Additional SOS encounters: (None)
+Table 4 [surf] (All):
+Encounters (Levels 35-45): Surskit (100%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 40-50): Masquerain (100%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 18-21): Poliwag (60%), Psyduck (40%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 25-26): Poliwhirl (95%), Politoed (5%)
+Additional SOS encounters: (None)
+==========
+Map: 014 - Desert Resort (Outer)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 24-28): Sandshrew (20%), Sandile (20%), Trapinch (10%), Cacnea (10%), Baltoy (10%), Darumaka (10%), Dwebble (10%), Scraggy (10%)
+Additional SOS encounters: (None)
+==========
+Map: 015 - Desert Resort (Inner)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 25-29): Trapinch (20%), Darumaka (20%), Gligar (10%), Cacnea (10%), Hippopotas (10%), Dwebble (10%), Skarmory (5%), Maractus (5%), Sigilyph (5%), Mandibuzz (5%)
+Additional SOS encounters: (None)
+==========
+Map: 016 - Relic Castle (1F)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 26-29): Sandshrew (20%), Sandile (20%), Onix (10%), Rhyhorn (10%), Numel (10%), Trapinch (10%), Bronzor (10%), Golett (10%)
+Additional SOS encounters: (None)
+==========
+Map: 017 - Relic Castle (1F)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 26-29): Gastly (20%), Yamask (20%), Shuppet (10%), Duskull (10%), Bronzor (10%), Elgyem (10%), Litwick (10%), Larvitar (4%), Beldum (4%), Larvesta (2%)
+Additional SOS encounters: (None)
+==========
+Map: 018 - Relic Castle (1F)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 26-29): Sandile (20%), Yamask (20%), Sandslash (10%), Onix (10%), Rhyhorn (10%), Numel (10%), Shuppet (5%), Duskull (5%), Bronzor (5%), Golett (5%)
+Additional SOS encounters: (None)
+==========
+Map: 019 - Relic Castle (B1F)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 48-52): Krokorok (20%), Cofagrigus (20%), Sandslash (10%), Vibrava (10%), Claydol (10%), Hippowdon (10%), Camerupt (5%), Darmanitan (5%), Crustle (5%), Sigilyph (5%)
+Additional SOS encounters: (None)
+==========
+Map: 020 - Relic Castle (B1F)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 48-52): Krokorok (20%), Cofagrigus (20%), Sandslash (10%), Vibrava (10%), Claydol (10%), Hippowdon (10%), Crustle (5%), Sigilyph (5%), Camerupt (4%), Darmanitan (4%), Regirock (1%), Registeel (1%)
+Additional SOS encounters: (None)
+==========
+Map: 021 - Relic Castle (B1F)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 58-65): Krokorok (20%), Cofagrigus (20%), Sandslash (10%), Vibrava (10%), Claydol (10%), Hippowdon (10%), Camerupt (5%), Darmanitan (5%), Crustle (5%), Sigilyph (5%)
+Additional SOS encounters: (None)
+==========
+Map: 022 - Relic Castle (B2F)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 58-65): Krokorok (20%), Cofagrigus (20%), Sandslash (10%), Vibrava (10%), Claydol (10%), Hippowdon (10%), Camerupt (5%), Darmanitan (5%), Crustle (5%), Sigilyph (5%)
+Additional SOS encounters: (None)
+==========
+Map: 023 - Relic Castle (B5F)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 58-65): Unown (100%)
+Additional SOS encounters: (None)
+==========
+Map: 024 - Relic Castle (B5F)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 58-70): Unown (99%), Regigigas (1%)
+Additional SOS encounters: (None)
+==========
+Map: 025 - Cold Storage
+Tables: 3
+Table 1 [grass] (All):
+Encounters (Levels 29-32): Herdier (20%), Vanillite (20%), Swinub (10%), Taillow (10%), Snorunt (10%), Buizel (10%), Cubchoo (10%), Mienfoo (10%)
+Additional SOS encounters: (None)
+Table 2 [darkGrass] (All):
+Encounters (Levels 33-35): Herdier (20%), Vanillish (20%), Sneasel (10%), Piloswine (10%), Delibird (10%), Smoochum (10%), Swellow (10%), Floatzel (10%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 29-32): Audino (80%), Emolga (10%), Mienshao (10%)
+Additional SOS encounters: (None)
+==========
+Map: 026 - Chargestone Cave (1F)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 33-37): Joltik (20%), Klink (20%), Magnemite (10%), Voltorb (10%), Elekid (10%), Nosepass (10%), Lairon (10%), Ferroseed (10%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 33-37): Diglett (50%), Drilbur (50%)
+Additional SOS encounters: (None)
+==========
+Map: 027 - Chargestone Cave (1F)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 35-37): Joltik (20%), Klink (20%), Nosepass (10%), Sableye (10%), Mawile (10%), Tynamo (10%), Durant (10%), Deino (10%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 35-37): Diglett (50%), Drilbur (50%)
+Additional SOS encounters: (None)
+==========
+Map: 028 - Chargestone Cave (B1F)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 39-50): Galvantula (20%), Klang (20%), Magneton (10%), Electrode (10%), Electabuzz (10%), Ferrothorn (10%), Porygon (5%), Eelektrik (5%), Durant (5%), Rotom (4%), Zapdos (1%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 39-41): Dugtrio (50%), Excadrill (50%)
+Additional SOS encounters: (None)
+==========
+Map: 029 - Twist Mountain (1F, Spring)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 44-50): Teddiursa (20%), Phanpy (20%), Sneasel (10%), Swinub (10%), Delibird (10%), Cubchoo (10%), Graveler (5%), Boldore (5%), Gurdurr (5%), Cryogonal (5%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 44-50): Dugtrio (50%), Excadrill (50%)
+Additional SOS encounters: (None)
+==========
+Map: 030 - Twist Mountain (1F, Spring)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 44-52): Ursaring (20%), Donphan (20%), Sneasel (10%), Piloswine (10%), Delibird (10%), Beartic (10%), Sableye (5%), Mawile (5%), Cryogonal (5%), Durant (5%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 44-52): Dugtrio (50%), Excadrill (50%)
+Additional SOS encounters: (None)
+==========
+Map: 031 - Twist Mountain (1F, Summer)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 44-50): Teddiursa (20%), Phanpy (20%), Sneasel (10%), Swinub (10%), Delibird (10%), Cubchoo (10%), Graveler (5%), Boldore (5%), Gurdurr (5%), Cryogonal (5%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 44-50): Dugtrio (50%), Excadrill (50%)
+Additional SOS encounters: (None)
+==========
+Map: 032 - Twist Mountain (1F, Summer)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 44-52): Ursaring (20%), Donphan (20%), Sneasel (10%), Piloswine (10%), Delibird (10%), Beartic (10%), Sableye (5%), Mawile (5%), Cryogonal (5%), Durant (5%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 44-52): Dugtrio (50%), Excadrill (50%)
+Additional SOS encounters: (None)
+==========
+Map: 033 - Twist Mountain (1F, Autumn)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 44-50): Teddiursa (20%), Phanpy (20%), Sneasel (10%), Swinub (10%), Delibird (10%), Cubchoo (10%), Graveler (5%), Boldore (5%), Gurdurr (5%), Cryogonal (5%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 44-50): Dugtrio (50%), Excadrill (50%)
+Additional SOS encounters: (None)
+==========
+Map: 034 - Twist Mountain (1F, Autumn)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 44-52): Ursaring (20%), Donphan (20%), Sneasel (10%), Piloswine (10%), Delibird (10%), Beartic (10%), Sableye (5%), Mawile (5%), Cryogonal (5%), Durant (5%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 44-52): Dugtrio (50%), Excadrill (50%)
+Additional SOS encounters: (None)
+==========
+Map: 035 - Twist Mountain (1F, Winter)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 44-50): Teddiursa (20%), Phanpy (20%), Sneasel (10%), Swinub (10%), Delibird (10%), Cubchoo (10%), Graveler (5%), Boldore (5%), Gurdurr (5%), Cryogonal (5%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 44-50): Dugtrio (50%), Excadrill (50%)
+Additional SOS encounters: (None)
+==========
+Map: 036 - Twist Mountain (1F, Winter)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 44-52): Ursaring (20%), Donphan (20%), Sneasel (10%), Piloswine (10%), Delibird (10%), Beartic (10%), Sableye (5%), Mawile (5%), Cryogonal (5%), Durant (5%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 44-52): Dugtrio (50%), Excadrill (50%)
+Additional SOS encounters: (None)
+==========
+Map: 037 - Twist Mountain (1F, Winter)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 44-52): Ursaring (20%), Donphan (20%), Sneasel (10%), Piloswine (10%), Delibird (10%), Beartic (10%), Sableye (5%), Mawile (5%), Cryogonal (5%), Durant (4%), Regice (1%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 44-52): Dugtrio (50%), Excadrill (50%)
+Additional SOS encounters: (None)
+==========
+Map: 038 - Dragonspiral Tower (Outside, Spring)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 44-48): Kadabra (20%), Swablu (20%), Deerling (20%), Mienfoo (20%), Druddigon (20%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 44-50): Audino (90%), Alakazam (10%)
+Additional SOS encounters: (None)
+==========
+Map: 039 - Dragonspiral Tower (Outside, Summer)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 44-48): Kadabra (20%), Swablu (20%), Deerling (20%), Mienfoo (20%), Druddigon (20%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 44-50): Audino (90%), Alakazam (10%)
+Additional SOS encounters: (None)
+==========
+Map: 040 - Dragonspiral Tower (Outside, Autumn)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 44-48): Kadabra (20%), Swablu (20%), Deerling (20%), Mienfoo (20%), Druddigon (20%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 44-50): Audino (90%), Alakazam (10%)
+Additional SOS encounters: (None)
+==========
+Map: 041 - Dragonspiral Tower (Outside, Winter)
+Tables: 3
+Table 1 [grass] (All):
+Encounters (Levels 44-48): Kadabra (20%), Snover (20%), Vanillite (20%), Cubchoo (20%), Mienfoo (20%)
+Additional SOS encounters: (None)
+Table 2 [darkGrass] (All):
+Encounters (Levels 48-54): Kadabra (20%), Abomasnow (20%), Vanillish (20%), Beartic (20%), Mienshao (20%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 44-50): Audino (90%), Alakazam (10%)
+Additional SOS encounters: (None)
+==========
+Map: 042 - Dragonspiral Tower (1F, Spring)
+Tables: 7
+Table 1 [grass] (All):
+Encounters (Levels 44-48): Kadabra (20%), Swablu (20%), Deerling (20%), Mienfoo (20%), Druddigon (20%)
+Additional SOS encounters: (None)
+Table 2 [darkGrass] (All):
+Encounters (Levels 48-54): Kadabra (20%), Altaria (20%), Sawsbuck (20%), Mienshao (20%), Druddigon (20%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 44-50): Audino (90%), Alakazam (10%)
+Additional SOS encounters: (None)
+Table 4 [surf] (All):
+Encounters (Levels 44-48): Horsea (60%), Dratini (40%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 48-54): Seadra (60%), Dragonair (39%), Suicune (1%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 44-48): Horsea (40%), Basculin (40%), Dratini (20%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 48-55): Seadra (40%), Dragonair (40%), Kingdra (19%), Dragonite (1%)
+Additional SOS encounters: (None)
+==========
+Map: 043 - Dragonspiral Tower (1F, Summer)
+Tables: 7
+Table 1 [grass] (All):
+Encounters (Levels 44-48): Kadabra (20%), Swablu (20%), Deerling (20%), Mienfoo (20%), Druddigon (20%)
+Additional SOS encounters: (None)
+Table 2 [darkGrass] (All):
+Encounters (Levels 48-54): Kadabra (20%), Altaria (20%), Sawsbuck (20%), Mienshao (20%), Druddigon (20%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 44-50): Audino (90%), Alakazam (10%)
+Additional SOS encounters: (None)
+Table 4 [surf] (All):
+Encounters (Levels 44-48): Horsea (60%), Dratini (40%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 48-54): Seadra (60%), Dragonair (39%), Suicune (1%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 44-48): Horsea (40%), Basculin (40%), Dratini (20%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 48-55): Seadra (40%), Dragonair (40%), Kingdra (19%), Dragonite (1%)
+Additional SOS encounters: (None)
+==========
+Map: 044 - Dragonspiral Tower (1F, Autumn)
+Tables: 7
+Table 1 [grass] (All):
+Encounters (Levels 44-48): Kadabra (20%), Swablu (20%), Deerling (20%), Mienfoo (20%), Druddigon (20%)
+Additional SOS encounters: (None)
+Table 2 [darkGrass] (All):
+Encounters (Levels 48-54): Kadabra (20%), Altaria (20%), Sawsbuck (20%), Mienshao (20%), Druddigon (20%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 44-50): Audino (90%), Alakazam (10%)
+Additional SOS encounters: (None)
+Table 4 [surf] (All):
+Encounters (Levels 44-48): Horsea (60%), Dratini (40%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 48-54): Seadra (60%), Dragonair (39%), Suicune (1%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 44-48): Horsea (40%), Basculin (40%), Dratini (20%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 48-55): Seadra (40%), Dragonair (40%), Kingdra (19%), Dragonite (1%)
+Additional SOS encounters: (None)
+==========
+Map: 045 - Dragonspiral Tower (1F, Winter)
+Tables: 7
+Table 1 [grass] (All):
+Encounters (Levels 44-48): Kadabra (20%), Snover (20%), Vanillite (20%), Cubchoo (20%), Mienfoo (20%)
+Additional SOS encounters: (None)
+Table 2 [darkGrass] (All):
+Encounters (Levels 48-54): Abomasnow (20%), Vanillish (20%), Beartic (20%), Mienshao (20%), Kadabra (19%), Articuno (1%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 44-50): Audino (90%), Alakazam (10%)
+Additional SOS encounters: (None)
+Table 4 [surf] (All):
+Encounters (Levels 44-48): Horsea (60%), Dratini (39%), Quilava (1%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 48-54): Seadra (60%), Dragonair (40%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 44-48): Horsea (40%), Basculin (40%), Dratini (20%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 48-55): Seadra (40%), Dragonair (40%), Kingdra (19%), Dragonite (1%)
+Additional SOS encounters: (None)
+==========
+Map: 046 - Dragonspiral Tower (2F)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 46-52): Druddigon (40%), Baltoy (30%), Golett (30%)
+Additional SOS encounters: (None)
+==========
+Map: 047 - Dragonspiral Tower (3F)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 50-54): Claydol (50%), Golurk (50%)
+Additional SOS encounters: (None)
+==========
+Map: 048 - Victory Road (Entrance)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 50-60): Torkoal (20%), Heatmor (20%), Skarmory (10%), Pupitar (10%), Gliscor (10%), Braviary (10%), Mandibuzz (10%), Fraxure (9%), Moltres (1%)
+Additional SOS encounters: (None)
+==========
+Map: 049 - Victory Road (Area 1)
+Tables: 6
+Table 1 [grass] (All):
+Encounters (Levels 55-60): Ursaring (20%), Donphan (20%), Azumarill (10%), Hariyama (10%), Aggron (10%), Medicham (10%), Swoobat (10%), Zweilous (10%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 55-60): Sandslash (25%), Dugtrio (25%), Steelix (25%), Excadrill (25%)
+Additional SOS encounters: (None)
+Table 4 [surf] (All):
+Encounters (Levels 55-60): Dewgong (60%), Lapras (40%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 55-60): Lapras (60%), Dewgong (40%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 55-60): Gyarados (40%), Basculin (40%), Whiscash (20%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 60-60): Gyarados (40%), Basculin (40%), Whiscash (20%)
+Additional SOS encounters: (None)
+==========
+Map: 050 - Victory Road (Area 1)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 55-60): Loudred (20%), Durant (20%), Golbat (10%), Rhydon (10%), Boldore (10%), Woobat (10%), Gurdurr (10%), Klang (10%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 55-60): Sandslash (25%), Dugtrio (25%), Steelix (25%), Excadrill (25%)
+Additional SOS encounters: (None)
+==========
+Map: 051 - Victory Road (Area 1)
+Tables: 6
+Table 1 [grass] (All):
+Encounters (Levels 55-60): Ursaring (20%), Donphan (20%), Azumarill (10%), Hariyama (10%), Aggron (10%), Medicham (10%), Woobat (10%), Zweilous (10%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 55-60): Sandslash (25%), Dugtrio (25%), Steelix (25%), Excadrill (25%)
+Additional SOS encounters: (None)
+Table 4 [surf] (All):
+Encounters (Levels 55-60): Dewgong (60%), Lapras (40%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 55-60): Lapras (60%), Dewgong (40%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 55-60): Gyarados (40%), Basculin (40%), Whiscash (20%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 60-60): Gyarados (40%), Basculin (40%), Whiscash (20%)
+Additional SOS encounters: (None)
+==========
+Map: 052 - Victory Road (Area 2)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 55-60): Loudred (20%), Durant (20%), Golbat (10%), Rhydon (10%), Boldore (10%), Woobat (10%), Gurdurr (10%), Klang (10%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 55-60): Sandslash (25%), Dugtrio (25%), Steelix (25%), Excadrill (25%)
+Additional SOS encounters: (None)
+==========
+Map: 053 - Victory Road (Area 2)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 55-60): Loudred (20%), Durant (20%), Golbat (10%), Rhydon (10%), Boldore (10%), Woobat (10%), Klang (10%), Gurdurr (5%), Conkeldurr (5%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 55-60): Sandslash (25%), Dugtrio (25%), Steelix (25%), Excadrill (25%)
+Additional SOS encounters: (None)
+==========
+Map: 054 - Victory Road (Area 2)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 55-60): Loudred (20%), Durant (20%), Golbat (10%), Rhydon (10%), Woobat (10%), Gurdurr (10%), Klang (10%), Boldore (9%), Heatran (1%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 55-60): Sandslash (25%), Dugtrio (25%), Steelix (25%), Excadrill (25%)
+Additional SOS encounters: (None)
+==========
+Map: 055 - Giant Chasm (Outside)
+Tables: 3
+Table 1 [grass] (All):
+Encounters (Levels 58-60): Absol (20%), Drifblim (20%), Swellow (10%), Pelipper (10%), Lunatone (10%), Solrock (10%), Wormadam (10%), Mothim (10%)
+Additional SOS encounters: (None)
+Table 2 [darkGrass] (All):
+Encounters (Levels 63-70): Golbat (20%), Tangela (20%), Nidorina (10%), Nidorino (10%), Gloom (10%), Weepinbell (10%), Yanma (10%), Skiploom (9%), Deoxys (1%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 58-66): Audino (80%), Nidoqueen (5%), Nidoking (5%), Crobat (5%), Tangrowth (5%)
+Additional SOS encounters: (None)
+==========
+Map: 056 - Giant Chasm (Cave)
+Tables: 6
+Table 1 [grass] (All):
+Encounters (Levels 58-70): Jynx (20%), Woobat (20%), Graveler (10%), Slowbro (10%), Piloswine (10%), Glalie (10%), Beartic (10%), Boldore (8%), Dialga (1%), Palkia (1%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 58-60): Excadrill (100%)
+Additional SOS encounters: (None)
+Table 4 [surf] (All):
+Encounters (Levels 58-60): Seel (60%), Dewgong (40%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 58-60): Walrein (100%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 58-60): Poliwag (45%), Basculin (40%), Poliwhirl (15%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 63-65): Poliwhirl (55%), Basculin (40%), Poliwrath (5%)
+Additional SOS encounters: (None)
+==========
+Map: 057 - Giant Chasm (Cave)
+Tables: 6
+Table 1 [grass] (All):
+Encounters (Levels 63-65): Jynx (20%), Woobat (20%), Graveler (10%), Slowbro (10%), Piloswine (10%), Glalie (10%), Boldore (10%), Beartic (10%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 63-65): Excadrill (100%)
+Additional SOS encounters: (None)
+Table 4 [surf] (All):
+Encounters (Levels 63-65): Seel (60%), Dewgong (40%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 63-65): Walrein (100%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 35-55): Poliwag (45%), Basculin (40%), Poliwhirl (15%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 35-70): Poliwhirl (55%), Basculin (40%), Poliwrath (5%)
+Additional SOS encounters: (None)
+==========
+Map: 058 - Giant Chasm (Inner Cave)
+Tables: 3
+Table 1 [grass] (All):
+Encounters (Levels 58-60): Clefairy (20%), Jigglypuff (20%), Golbat (10%), Porygon (10%), Sneasel (10%), Skitty (10%), Metang (10%), Vanillish (10%)
+Additional SOS encounters: (None)
+Table 2 [darkGrass] (All):
+Encounters (Levels 63-70): Piloswine (20%), Abomasnow (20%), Ditto (10%), Skiploom (10%), Lunatone (10%), Solrock (10%), Bouffalant (10%), Metang (8%), Giratina (1%), Zekrom (1%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 63-65): Audino (80%), Clefable (5%), Wigglytuff (5%), Metagross (5%), Mamoswine (5%)
+Additional SOS encounters: (None)
+==========
+Map: 059 - Driftveil City
+Tables: 6
+Table 1 [grass] (All):
+Encounters (Levels 43-46): Magneton (20%), Electrode (20%), Porygon (20%), Klang (20%), Kingler (10%), Shuckle (10%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 43-46): Audino (95%), Porygon2 (5%)
+Additional SOS encounters: (None)
+Table 4 [surf] (All):
+Encounters (Levels 35-45): Wingull (60%), Tentacool (30%), Pelipper (10%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 40-50): Tentacruel (60%), Frillish (30%), Jellicent (10%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 43-46): Corphish (60%), Krabby (40%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 43-46): Crawdaunt (60%), Kingler (40%)
+Additional SOS encounters: (None)
+==========
+Map: 060 - Undella Bay (Spring)
+Tables: 4
+Table 4 [surf] (All):
+Encounters (Levels 58-60): Mantyke (60%), Wailmer (40%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 63-65): Mantine (60%), Wailord (40%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 58-60): Remoraid (55%), Shellder (40%), Luvdisc (5%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 63-65): Shellder (40%), Luvdisc (40%), Octillery (15%), Cloyster (5%)
+Additional SOS encounters: (None)
+==========
+Map: 061 - Undella Bay (Spring)
+Tables: 4
+Table 4 [surf] (All):
+Encounters (Levels 35-45): Wailmer (60%), Corsola (30%), Mantyke (10%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 30-50): Wailord (60%), Corsola (30%), Mantine (9%), Manaphy (1%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 35-45): Luvdisc (100%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 40-50): Corsola (60%), Alomomola (40%)
+Additional SOS encounters: (None)
+==========
+Map: 062 - Undella Bay (Summer)
+Tables: 4
+Table 4 [surf] (All):
+Encounters (Levels 58-60): Mantyke (60%), Wailmer (40%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 63-70): Mantine (60%), Wailord (39%), Kyogre (1%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 58-60): Remoraid (55%), Shellder (40%), Luvdisc (5%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 63-65): Shellder (40%), Luvdisc (40%), Octillery (15%), Cloyster (5%)
+Additional SOS encounters: (None)
+==========
+Map: 063 - Undella Bay (Summer)
+Tables: 4
+Table 4 [surf] (All):
+Encounters (Levels 35-45): Wailmer (60%), Corsola (30%), Mantyke (10%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 30-50): Wailord (60%), Corsola (30%), Mantine (9%), Manaphy (1%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 35-45): Luvdisc (100%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 40-50): Corsola (60%), Alomomola (40%)
+Additional SOS encounters: (None)
+==========
+Map: 064 - Undella Bay (Autumn)
+Tables: 4
+Table 4 [surf] (All):
+Encounters (Levels 58-60): Mantyke (60%), Wailmer (40%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 63-65): Mantine (60%), Wailord (40%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 58-60): Remoraid (55%), Shellder (40%), Luvdisc (5%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 63-65): Shellder (40%), Luvdisc (40%), Octillery (15%), Cloyster (5%)
+Additional SOS encounters: (None)
+==========
+Map: 065 - Undella Bay (Autumn)
+Tables: 4
+Table 4 [surf] (All):
+Encounters (Levels 35-45): Wailmer (60%), Corsola (30%), Mantyke (10%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 30-50): Wailord (60%), Corsola (30%), Mantine (9%), Manaphy (1%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 35-45): Luvdisc (100%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 40-50): Corsola (60%), Alomomola (40%)
+Additional SOS encounters: (None)
+==========
+Map: 066 - Undella Bay (Winter)
+Tables: 4
+Table 4 [surf] (All):
+Encounters (Levels 58-60): Mantyke (60%), Wailmer (40%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 63-65): Mantine (60%), Wailord (40%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 58-60): Remoraid (55%), Shellder (40%), Luvdisc (5%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 63-65): Shellder (40%), Luvdisc (40%), Octillery (15%), Cloyster (5%)
+Additional SOS encounters: (None)
+==========
+Map: 067 - Undella Bay (Winter)
+Tables: 4
+Table 4 [surf] (All):
+Encounters (Levels 35-45): Wailmer (60%), Corsola (30%), Mantyke (10%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 30-50): Wailord (60%), Corsola (30%), Mantine (9%), Manaphy (1%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 35-45): Luvdisc (100%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 40-50): Corsola (60%), Alomomola (40%)
+Additional SOS encounters: (None)
+==========
+Map: 068 - Driftveil Drawbridge
+Tables: 1
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 28-32): Spearow (20%), Hoppip (20%), Wingull (20%), Swablu (20%), Ducklett (20%)
+Additional SOS encounters: (None)
+==========
+Map: 069 - Village Bridge
+Tables: 7
+Table 1 [grass] (All):
+Encounters (Levels 58-60): Exeggcute (20%), Bibarel (20%), Farfetch’d (10%), Volbeat (10%), Illumise (10%), Zangoose (10%), Seviper (10%), Chatot (10%)
+Additional SOS encounters: (None)
+Table 2 [darkGrass] (All):
+Encounters (Levels 50-65): Kadabra (20%), Flaaffy (20%), Lombre (20%), Nuzleaf (20%), Roselia (10%), Togetic (8%), Shaymin (1%), Meloetta (1%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 58-66): Chansey (75%), Emolga (10%), Exeggutor (5%), Togetic (5%), Roserade (5%)
+Additional SOS encounters: (None)
+Table 4 [surf] (All):
+Encounters (Levels 58-60): Tentacruel (60%), Sharpedo (40%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 63-65): Sharpedo (60%), Jellicent (40%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 58-60): Carvanha (60%), Basculin (40%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 63-65): Carvanha (40%), Basculin (40%), Sharpedo (20%)
+Additional SOS encounters: (None)
+==========
+Map: 070 - Marvelous Bridge
+Tables: 1
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 58-70): Fearow (20%), Pelipper (20%), Altaria (20%), Swanna (20%), Skiploom (19%), Rayquaza (1%)
+Additional SOS encounters: (None)
+==========
+Map: 071 - Route 1
+Tables: 7
+Table 1 [grass] (All):
+Encounters (Levels 3-6): Pidgey (20%), Lillipup (20%), Rattata (10%), Sentret (10%), Hoothoot (10%), Zigzagoon (10%), Starly (10%), Bidoof (10%)
+Additional SOS encounters: (None)
+Table 2 [darkGrass] (All):
+Encounters (Levels 42-47): Watchog (20%), Herdier (20%), Raticate (10%), Furret (10%), Linoone (10%), Bibarel (10%), Pidgeotto (5%), Noctowl (5%), Mightyena (5%), Staravia (5%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 10-11): Audino (80%), Azurill (10%), Happiny (10%)
+Additional SOS encounters: (None)
+Table 4 [surf] (All):
+Encounters (Levels 35-45): Basculin (60%), Marill (30%), Feebas (10%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 40-50): Basculin (60%), Azumarill (30%), Feebas (10%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-17): Goldeen (40%), Magikarp (40%), Feebas (20%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 16-18): Dratini (40%), Basculin (40%), Milotic (15%), Gyarados (5%)
+Additional SOS encounters: (None)
+==========
+Map: 072 - Route 2
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 5-8): Patrat (20%), Purrloin (20%), Caterpie (10%), Weedle (10%), Wurmple (10%), Kricketot (10%), Spearow (5%), Meowth (5%), Mankey (5%), Poochyena (5%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 8-10): Audino (60%), Nincada (10%), Skitty (10%), Butterfree (5%), Beedrill (5%), Beautifly (5%), Dustox (5%)
+Additional SOS encounters: (None)
+==========
+Map: 073 - Route 3
+Tables: 7
+Table 1 [grass] (All):
+Encounters (Levels 12-14): Mareep (20%), Taillow (20%), Sunkern (10%), Lotad (10%), Seedot (10%), Shinx (10%), Shellos (10%), Abra (5%), Phanpy (5%)
+Additional SOS encounters: (None)
+Table 2 [darkGrass] (All):
+Encounters (Levels 15-17): Pidove (20%), Blitzle (20%), Vulpix (10%), Growlithe (10%), Hoppip (10%), Budew (10%), Marill (5%), Houndour (5%), Volbeat (4%), Illumise (4%), Lombre (1%), Nuzleaf (1%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 12-14): Audino (70%), Oshawott (10%), Squirtle (5%), Totodile (5%), Mudkip (5%), Piplup (5%)
+Additional SOS encounters: (None)
+Table 4 [surf] (All):
+Encounters (Levels 35-45): Slowpoke (60%), Psyduck (30%), Marill (10%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 40-50): Golduck (60%), Azumarill (30%), Slowbro (5%), Slowking (5%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-17): Poliwag (40%), Slowpoke (40%), Chinchou (15%), Remoraid (5%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 15-20): Chinchou (40%), Qwilfish (40%), Remoraid (20%)
+Additional SOS encounters: (None)
+==========
+Map: 074 - Wellspring Cave (1F)
+Tables: 6
+Table 1 [grass] (All):
+Encounters (Levels 13-16): Zubat (20%), Woobat (20%), Geodude (10%), Whismur (10%), Aron (10%), Roggenrola (10%), Wooper (5%), Teddiursa (5%), Bronzor (5%), Axew (5%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 14-16): Diglett (40%), Drilbur (40%), Gible (20%)
+Additional SOS encounters: (None)
+Table 4 [surf] (All):
+Encounters (Levels 35-45): Wooper (60%), Shellos (40%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 40-50): Whiscash (60%), Gastrodon (36%), Quagsire (4%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-17): Tentacool (40%), Barboach (40%), Shellder (20%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 15-20): Shellder (100%)
+Additional SOS encounters: (None)
+==========
+Map: 075 - Wellspring Cave (B1F)
+Tables: 6
+Table 1 [grass] (All):
+Encounters (Levels 43-45): Golbat (20%), Woobat (20%), Graveler (10%), Quagsire (10%), Steelix (10%), Loudred (10%), Lairon (10%), Boldore (10%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 43-45): Dugtrio (50%), Excadrill (50%)
+Additional SOS encounters: (None)
+Table 4 [surf] (All):
+Encounters (Levels 35-45): Quagsire (60%), Gastrodon (40%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 40-50): Quagsire (60%), Gastrodon (40%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 35-45): Whiscash (100%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 40-50): Cloyster (100%)
+Additional SOS encounters: (None)
+==========
+Map: 076 - Route 4
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 20-23): Sandshrew (20%), Sandile (20%), Trapinch (10%), Cacnea (10%), Darumaka (10%), Scraggy (10%), Vullaby (10%), Hippopotas (5%), Elgyem (5%)
+Additional SOS encounters: (None)
+Table 4 [surf] (All):
+Encounters (Levels 35-45): Frillish (60%), Clamperl (30%), Relicanth (10%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 40-50): Jellicent (60%), Relicanth (30%), Huntail (5%), Gorebyss (5%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 20-23): Krabby (40%), Corphish (40%), Clamperl (20%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 20-25): Clamperl (40%), Frillish (40%), Relicanth (20%)
+Additional SOS encounters: (None)
+==========
+Map: 077 - Route 5
+Tables: 3
+Table 1 [grass] (All):
+Encounters (Levels 26-29): Gothita (20%), Solosis (20%), Grimer (10%), Koffing (10%), Gulpin (10%), Trubbish (10%), Ditto (5%), Pachirisu (5%), Bonsly (5%), Mime Jr. (5%)
+Additional SOS encounters: (None)
+Table 2 [darkGrass] (All):
+Encounters (Levels 29-31): Nidorina (20%), Nidorino (20%), Lickitung (10%), Smeargle (10%), Minccino (10%), Rufflet (10%), Tauros (5%), Miltank (5%), Bagon (5%), Munchlax (5%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 26-29): Audino (40%), Emolga (20%), Nidoqueen (10%), Nidoking (10%), Cinccino (10%), Braviary (10%)
+Additional SOS encounters: (None)
+==========
+Map: 078 - Route 6 (Spring)
+Tables: 7
+Table 1 [grass] (All):
+Encounters (Levels 29-32): Cherubi (20%), Deerling (20%), Pidgeotto (10%), Natu (10%), Stantler (10%), Foongus (10%), Plusle (5%), Minun (5%), Bonsly (5%), Mime Jr. (5%)
+Additional SOS encounters: (None)
+Table 2 [darkGrass] (All):
+Encounters (Levels 34-36): Cherrim (20%), Sawsbuck (20%), Pidgeotto (10%), Xatu (10%), Stantler (10%), Foongus (10%), Mr. Mime (5%), Sudowoodo (5%), Plusle (5%), Minun (5%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 29-32): Chansey (80%), Emolga (10%), Unfezant (5%), Leavanny (5%)
+Additional SOS encounters: (None)
+Table 4 [surf] (All):
+Encounters (Levels 35-45): Finneon (60%), Goldeen (30%), Chinchou (10%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 40-50): Lumineon (60%), Lanturn (30%), Seaking (10%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 29-32): Chinchou (60%), Finneon (40%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 34-36): Lanturn (60%), Lumineon (40%)
+Additional SOS encounters: (None)
+==========
+Map: 079 - Route 6 (Summer)
+Tables: 7
+Table 1 [grass] (All):
+Encounters (Levels 29-32): Cherubi (20%), Deerling (20%), Pidgeotto (10%), Natu (10%), Stantler (10%), Foongus (10%), Plusle (5%), Minun (5%), Bonsly (5%), Mime Jr. (5%)
+Additional SOS encounters: (None)
+Table 2 [darkGrass] (All):
+Encounters (Levels 34-36): Cherrim (20%), Sawsbuck (20%), Pidgeotto (10%), Xatu (10%), Stantler (10%), Foongus (10%), Mr. Mime (5%), Sudowoodo (5%), Plusle (5%), Minun (5%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 29-32): Chansey (80%), Emolga (10%), Unfezant (5%), Leavanny (5%)
+Additional SOS encounters: (None)
+Table 4 [surf] (All):
+Encounters (Levels 35-45): Finneon (60%), Goldeen (30%), Chinchou (10%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 40-50): Lumineon (60%), Lanturn (30%), Seaking (10%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 29-32): Chinchou (60%), Finneon (40%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 34-36): Lanturn (60%), Lumineon (40%)
+Additional SOS encounters: (None)
+==========
+Map: 080 - Route 6 (Autumn)
+Tables: 7
+Table 1 [grass] (All):
+Encounters (Levels 29-32): Cherubi (20%), Deerling (20%), Pidgeotto (10%), Natu (10%), Stantler (10%), Foongus (10%), Plusle (5%), Minun (5%), Bonsly (5%), Mime Jr. (5%)
+Additional SOS encounters: (None)
+Table 2 [darkGrass] (All):
+Encounters (Levels 34-36): Cherrim (20%), Sawsbuck (20%), Pidgeotto (10%), Xatu (10%), Stantler (10%), Foongus (10%), Mr. Mime (5%), Sudowoodo (5%), Plusle (5%), Minun (5%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 29-32): Chansey (80%), Emolga (10%), Unfezant (5%), Leavanny (5%)
+Additional SOS encounters: (None)
+Table 4 [surf] (All):
+Encounters (Levels 35-45): Finneon (60%), Goldeen (30%), Chinchou (10%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 40-50): Lumineon (60%), Lanturn (30%), Seaking (10%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 29-32): Chinchou (60%), Finneon (40%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 34-36): Lanturn (60%), Lumineon (40%)
+Additional SOS encounters: (None)
+==========
+Map: 081 - Route 6 (Winter)
+Tables: 7
+Table 1 [grass] (All):
+Encounters (Levels 29-32): Snover (20%), Deerling (20%), Pidgeotto (10%), Natu (10%), Stantler (10%), Foongus (10%), Plusle (5%), Minun (5%), Bonsly (5%), Mime Jr. (5%)
+Additional SOS encounters: (None)
+Table 2 [darkGrass] (All):
+Encounters (Levels 34-36): Snover (20%), Sawsbuck (20%), Pidgeotto (10%), Xatu (10%), Stantler (10%), Foongus (10%), Mr. Mime (5%), Sudowoodo (5%), Plusle (5%), Minun (5%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 29-32): Chansey (80%), Emolga (10%), Unfezant (5%), Leavanny (5%)
+Additional SOS encounters: (None)
+Table 4 [surf] (All):
+Encounters (Levels 35-45): Seel (60%), Spheal (30%), Chinchou (10%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 40-50): Dewgong (60%), Sealeo (30%), Lanturn (10%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 29-32): Seel (40%), Spheal (40%), Chinchou (20%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 34-36): Dewgong (40%), Sealeo (40%), Lanturn (20%)
+Additional SOS encounters: (None)
+==========
+Map: 082 - Mistralton Cave (1F)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 43-50): Onix (20%), Rhyhorn (20%), Larvitar (10%), Bagon (10%), Beldum (10%), Gible (10%), Axew (10%), Deino (9%), Uxie (1%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 43-45): Diglett (50%), Drilbur (50%)
+Additional SOS encounters: (None)
+==========
+Map: 083 - Mistralton Cave (1F)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 43-50): Onix (20%), Rhyhorn (20%), Larvitar (10%), Bagon (10%), Beldum (10%), Gible (10%), Axew (10%), Deino (9%), Mesprit (1%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 43-45): Diglett (50%), Drilbur (50%)
+Additional SOS encounters: (None)
+==========
+Map: 084 - Mistralton Cave (B1F)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 50-51): Rhydon (20%), Steelix (20%), Pupitar (10%), Shelgon (10%), Metang (10%), Gabite (10%), Fraxure (10%), Zweilous (9%), Azelf (1%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 50-51): Dugtrio (50%), Excadrill (50%)
+Additional SOS encounters: (None)
+==========
+Map: 085 - Route 7 (Spring)
+Tables: 3
+Table 1 [grass] (All):
+Encounters (Levels 36-39): Ponyta (20%), Aipom (20%), Doduo (10%), Cubone (10%), Magby (10%), Nincada (10%), Gligar (5%), Skarmory (5%), Torkoal (5%), Pachirisu (5%)
+Additional SOS encounters: (None)
+Table 2 [darkGrass] (All):
+Encounters (Levels 40-42): Rapidash (20%), Ambipom (20%), Dodrio (10%), Marowak (10%), Magmar (10%), Ninjask (10%), Tauros (5%), Miltank (5%), Bouffalant (5%), Heatmor (5%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 36-39): Audino (60%), Emolga (30%), Gliscor (10%)
+Additional SOS encounters: (None)
+==========
+Map: 086 - Route 7 (Summer)
+Tables: 3
+Table 1 [grass] (All):
+Encounters (Levels 36-39): Ponyta (20%), Aipom (20%), Doduo (10%), Cubone (10%), Magby (10%), Nincada (10%), Gligar (5%), Skarmory (5%), Torkoal (5%), Pachirisu (5%)
+Additional SOS encounters: (None)
+Table 2 [darkGrass] (All):
+Encounters (Levels 40-42): Rapidash (20%), Ambipom (20%), Dodrio (10%), Marowak (10%), Magmar (10%), Ninjask (10%), Tauros (5%), Miltank (5%), Bouffalant (5%), Heatmor (5%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 36-39): Audino (60%), Emolga (30%), Gliscor (10%)
+Additional SOS encounters: (None)
+==========
+Map: 087 - Route 7 (Autumn)
+Tables: 3
+Table 1 [grass] (All):
+Encounters (Levels 36-39): Ponyta (20%), Aipom (20%), Doduo (10%), Cubone (10%), Magby (10%), Nincada (10%), Gligar (5%), Skarmory (5%), Torkoal (5%), Pachirisu (5%)
+Additional SOS encounters: (None)
+Table 2 [darkGrass] (All):
+Encounters (Levels 40-42): Rapidash (20%), Ambipom (20%), Dodrio (10%), Marowak (10%), Magmar (10%), Ninjask (10%), Tauros (5%), Miltank (5%), Bouffalant (5%), Heatmor (5%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 36-39): Audino (60%), Emolga (30%), Gliscor (10%)
+Additional SOS encounters: (None)
+==========
+Map: 088 - Route 7 (Winter)
+Tables: 3
+Table 1 [grass] (All):
+Encounters (Levels 36-39): Ponyta (20%), Aipom (20%), Doduo (10%), Cubone (10%), Magby (10%), Nincada (10%), Gligar (5%), Skarmory (5%), Torkoal (5%), Pachirisu (5%)
+Additional SOS encounters: (None)
+Table 2 [darkGrass] (All):
+Encounters (Levels 40-42): Rapidash (20%), Ambipom (20%), Dodrio (10%), Marowak (10%), Magmar (10%), Ninjask (10%), Tauros (5%), Miltank (5%), Bouffalant (5%), Heatmor (5%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 36-39): Audino (60%), Emolga (30%), Gliscor (10%)
+Additional SOS encounters: (None)
+==========
+Map: 089 - Celestial Tower (1F)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 37-39): Elgyem (20%), Litwick (20%), Gastly (10%), Shuppet (10%), Duskull (10%), Wynaut (10%), Chingling (10%), Bronzor (10%)
+Additional SOS encounters: (None)
+==========
+Map: 090 - Celestial Tower (2F)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 37-39): Elgyem (20%), Litwick (20%), Gastly (10%), Shuppet (10%), Duskull (10%), Wynaut (10%), Chingling (10%), Bronzor (10%)
+Additional SOS encounters: (None)
+==========
+Map: 091 - Celestial Tower (3F)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 42-44): Beheeyem (20%), Lampent (20%), Haunter (10%), Wobbuffet (10%), Banette (10%), Dusclops (10%), Chimecho (10%), Bronzong (10%)
+Additional SOS encounters: (None)
+==========
+Map: 092 - Celestial Tower (Top)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 42-50): Noctowl (20%), Murkrow (20%), Misdreavus (20%), Drifblim (20%), Absol (10%), Spiritomb (9%), Cresselia (1%)
+Additional SOS encounters: (None)
+==========
+Map: 093 - Route 8 (Spring)
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 46-51): Palpitoad (20%), Stunfisk (20%), Grimer (10%), Koffing (10%), Gulpin (10%), Croagunk (10%), Quagsire (5%), Gastrodon (5%), Swalot (4%), Toxicroak (4%), Muk (1%), Weezing (1%)
+Additional SOS encounters: (None)
+Table 4 [surf] (All):
+Encounters (Levels 46-51): Stunfisk (60%), Barboach (40%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 46-51): Whiscash (60%), Seismitoad (40%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 46-51): Barboach (60%), Stunfisk (40%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 46-51): Barboach (40%), Stunfisk (40%), Whiscash (20%)
+Additional SOS encounters: (None)
+==========
+Map: 094 - Route 8 (Summer)
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 46-51): Palpitoad (20%), Stunfisk (20%), Grimer (10%), Koffing (10%), Gulpin (10%), Croagunk (10%), Quagsire (5%), Gastrodon (5%), Swalot (4%), Toxicroak (4%), Muk (1%), Weezing (1%)
+Additional SOS encounters: (None)
+Table 4 [surf] (All):
+Encounters (Levels 46-51): Stunfisk (60%), Barboach (40%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 46-51): Whiscash (60%), Seismitoad (40%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 46-51): Barboach (60%), Stunfisk (40%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 46-51): Barboach (40%), Stunfisk (40%), Whiscash (20%)
+Additional SOS encounters: (None)
+==========
+Map: 095 - Route 8 (Autumn)
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 46-51): Palpitoad (20%), Stunfisk (20%), Grimer (10%), Koffing (10%), Gulpin (10%), Croagunk (10%), Quagsire (5%), Gastrodon (5%), Swalot (4%), Toxicroak (4%), Muk (1%), Weezing (1%)
+Additional SOS encounters: (None)
+Table 4 [surf] (All):
+Encounters (Levels 46-51): Stunfisk (60%), Barboach (40%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 46-51): Whiscash (60%), Seismitoad (40%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 46-51): Barboach (60%), Stunfisk (40%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 46-51): Barboach (40%), Stunfisk (40%), Whiscash (20%)
+Additional SOS encounters: (None)
+==========
+Map: 096 - Route 8 (Winter)
+Tables: 4
+Table 4 [surf] (All):
+Encounters (Levels 15-35): Stunfisk (100%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 15-40): Stunfisk (95%), Seismitoad (5%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 46-51): Barboach (60%), Stunfisk (40%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 46-51): Barboach (40%), Stunfisk (40%), Whiscash (20%)
+Additional SOS encounters: (None)
+==========
+Map: 097 - Route 9
+Tables: 3
+Table 1 [grass] (All):
+Encounters (Levels 44-50): Gothorita (20%), Duosion (20%), Persian (10%), Kirlia (10%), Skitty (10%), Liepard (10%), Minccino (10%), Pawniard (10%)
+Additional SOS encounters: (None)
+Table 2 [darkGrass] (All):
+Encounters (Levels 52-55): Flaaffy (20%), Luxio (20%), Hypno (10%), Granbull (10%), Houndoom (10%), Garbodor (10%), Cinccino (10%), Bisharp (10%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 44-50): Audino (88%), Gothitelle (5%), Reuniclus (5%), Raikou (1%), Entei (1%)
+Additional SOS encounters: (None)
+==========
+Map: 098 - Challenger's Cave (1F)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 63-75): Sableye (20%), Mawile (20%), Graveler (10%), Marowak (10%), Lickitung (10%), Boldore (10%), Woobat (10%), Hariyama (9%), Genesect (1%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 63-65): Dugtrio (50%), Excadrill (50%)
+Additional SOS encounters: (None)
+==========
+Map: 099 - Challenger's Cave (B1F)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 63-75): Sableye (20%), Mawile (20%), Golbat (10%), Parasect (10%), Magneton (10%), Wobbuffet (10%), Electrode (9%), Marowak (9%), Mewtwo (1%), Darkrai (1%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 63-65): Dugtrio (50%), Excadrill (50%)
+Additional SOS encounters: (None)
+==========
+Map: 100 - Challenger's Cave (B2F)
+Tables: 6
+Table 1 [grass] (All):
+Encounters (Levels 63-80): Sableye (20%), Mawile (20%), Golbat (10%), Kadabra (10%), Ursaring (10%), Medicham (10%), Zweilous (10%), Donphan (9%), Arceus (1%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 63-65): Dugtrio (50%), Excadrill (50%)
+Additional SOS encounters: (None)
+Table 4 [surf] (All):
+Encounters (Levels 58-60): Psyduck (90%), Tentacool (10%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 63-65): Tentacruel (60%), Golduck (30%), Starmie (10%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 58-60): Goldeen (80%), Poliwhirl (20%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 63-65): Seaking (40%), Gyarados (40%), Poliwrath (15%), Politoed (5%)
+Additional SOS encounters: (None)
+==========
+Map: 101 - Route 10 (Area 1)
+Tables: 3
+Table 1 [grass] (All):
+Encounters (Levels 45-50): Pidgeotto (20%), Herdier (20%), Primeape (10%), Machoke (10%), Tranquill (10%), Amoonguss (10%), Rufflet (10%), Vullaby (10%)
+Additional SOS encounters: (None)
+Table 2 [darkGrass] (All):
+Encounters (Levels 50-56): Braviary (20%), Mandibuzz (20%), Heracross (10%), Manectric (10%), Grumpig (10%), Drapion (10%), Scrafty (10%), Bouffalant (10%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 40-50): Audino (99%), Thundurus (1%)
+Additional SOS encounters: (None)
+==========
+Map: 102 - Route 10 (Area 2)
+Tables: 3
+Table 1 [grass] (All):
+Encounters (Levels 52-55): Linoone (20%), Bibarel (20%), Arbok (10%), Sandslash (10%), Dodrio (10%), Zangoose (10%), Seviper (10%), Gabite (10%)
+Additional SOS encounters: (None)
+Table 2 [darkGrass] (All):
+Encounters (Levels 56-60): Scyther (20%), Pinsir (20%), Fearow (10%), Rapidash (10%), Tropius (10%), Cherrim (10%), Herdier (10%), Girafarig (8%), Latias (1%), Latios (1%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 52-55): Chansey (90%), Blissey (10%)
+Additional SOS encounters: (None)
+==========
+Map: 103 - Route 11
+Tables: 7
+Table 1 [grass] (All):
+Encounters (Levels 58-60): Golduck (20%), Bisharp (20%), Marowak (10%), Gligar (10%), Purugly (10%), Skuntank (10%), Braviary (10%), Mandibuzz (10%)
+Additional SOS encounters: (None)
+Table 2 [darkGrass] (All):
+Encounters (Levels 63-65): Loudred (20%), Staravia (20%), Rhydon (10%), Electabuzz (10%), Magmar (10%), Slaking (10%), Vibrava (10%), Boldore (10%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 58-66): Audino (70%), Emolga (10%), Staraptor (5%), Electivire (5%), Magmortar (5%), Gliscor (5%)
+Additional SOS encounters: (None)
+Table 4 [surf] (All):
+Encounters (Levels 58-60): Buizel (60%), Floatzel (40%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 63-65): Dratini (60%), Dragonair (35%), Dragonite (5%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 58-60): Goldeen (60%), Basculin (40%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 63-65): Goldeen (40%), Basculin (40%), Seaking (20%)
+Additional SOS encounters: (None)
+==========
+Map: 104 - Route 12
+Tables: 3
+Table 1 [grass] (All):
+Encounters (Levels 58-60): Combee (20%), Cherrim (20%), Rapidash (10%), Scyther (10%), Pinsir (10%), Sunkern (10%), Heracross (10%), Zebstrika (10%)
+Additional SOS encounters: (None)
+Table 2 [darkGrass] (All):
+Encounters (Levels 63-65): Tranquill (40%), Butterfree (10%), Beedrill (10%), Beautifly (10%), Dustox (10%), Swadloon (10%), Whirlipede (10%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 58-60): Emolga (90%), Sunflora (5%), Vespiquen (5%)
+Additional SOS encounters: (None)
+==========
+Map: 105 - Route 13
+Tables: 7
+Table 1 [grass] (All):
+Encounters (Levels 58-60): Absol (20%), Drifblim (20%), Swellow (10%), Pelipper (10%), Lunatone (10%), Solrock (10%), Wormadam (10%), Mothim (10%)
+Additional SOS encounters: (None)
+Table 2 [darkGrass] (All):
+Encounters (Levels 63-65): Golbat (20%), Tangela (20%), Nidorina (10%), Nidorino (10%), Gloom (10%), Weepinbell (10%), Skiploom (10%), Yanma (10%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 58-66): Audino (80%), Nidoqueen (5%), Nidoking (5%), Crobat (5%), Tangrowth (5%)
+Additional SOS encounters: (None)
+Table 4 [surf] (All):
+Encounters (Levels 58-60): Pelipper (60%), Corsola (40%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 63-70): Tentacruel (60%), Starmie (30%), Kingdra (9%), Lugia (1%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 58-60): Krabby (55%), Shellder (40%), Luvdisc (5%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 63-65): Shellder (40%), Luvdisc (40%), Kingler (15%), Cloyster (5%)
+Additional SOS encounters: (None)
+==========
+Map: 106 - Route 14
+Tables: 7
+Table 1 [grass] (All):
+Encounters (Levels 58-60): Gothita (20%), Duosion (20%), Skiploom (10%), Shuckle (10%), Lombre (10%), Kirlia (10%), Luxio (10%), Carnivine (10%)
+Additional SOS encounters: (None)
+Table 2 [darkGrass] (All):
+Encounters (Levels 63-65): Altaria (20%), Mienshao (20%), Breloom (10%), Grumpig (10%), Tropius (10%), Drifblim (10%), Galvantula (10%), Beheeyem (10%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 58-65): Chansey (75%), Blissey (25%)
+Additional SOS encounters: (None)
+Table 4 [surf] (All):
+Encounters (Levels 58-60): Seaking (60%), Lumineon (40%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 63-65): Politoed (60%), Milotic (40%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 58-60): Goldeen (60%), Basculin (40%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 63-65): Goldeen (40%), Basculin (40%), Seaking (20%)
+Additional SOS encounters: (None)
+==========
+Map: 107 - Abundant Shrine
+Tables: 7
+Table 1 [grass] (All):
+Encounters (Levels 58-60): Vulpix (20%), Chimecho (20%), Murkrow (10%), Misdreavus (10%), Stantler (10%), Bronzor (10%), Cottonee (10%), Petilil (10%)
+Additional SOS encounters: (None)
+Table 2 [darkGrass] (All):
+Encounters (Levels 58-65): Eevee (20%), Bronzong (20%), Hypno (10%), Mr. Mime (10%), Sudowoodo (10%), Girafarig (10%), Stantler (10%), Mightyena (10%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 63-70): Audino (70%), Emolga (10%), Ninetales (5%), Arcanine (5%), Whimsicott (5%), Lilligant (4%), Ho-Oh (1%)
+Additional SOS encounters: (None)
+Table 4 [surf] (All):
+Encounters (Levels 58-60): Slowpoke (100%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 63-65): Slowking (60%), Slowbro (40%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 35-55): Goldeen (60%), Basculin (40%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 35-70): Goldeen (40%), Basculin (40%), Seaking (20%)
+Additional SOS encounters: (None)
+==========
+Map: 108 - Route 15
+Tables: 3
+Table 1 [grass] (All):
+Encounters (Levels 58-60): Throh (20%), Sawk (20%), Graveler (10%), Marowak (10%), Kangaskhan (10%), Tyrogue (10%), Pupitar (10%), Gabite (10%)
+Additional SOS encounters: (None)
+Table 2 [darkGrass] (All):
+Encounters (Levels 63-70): Machoke (20%), Gurdurr (20%), Kangaskhan (10%), Gligar (10%), Ursaring (10%), Donphan (10%), Pupitar (10%), Marowak (9%), Groudon (1%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 58-60): Audino (70%), Emolga (10%), Machamp (5%), Tyranitar (5%), Gliscor (5%), Conkeldurr (5%)
+Additional SOS encounters: (None)
+==========
+Map: 109 - Route 16
+Tables: 3
+Table 1 [grass] (All):
+Encounters (Levels 26-29): Ekans (20%), Pineco (20%), Paras (10%), Electrike (10%), Combee (10%), Skorupi (10%), Spoink (5%), Drifloon (5%), Buneary (5%), Pawniard (5%)
+Additional SOS encounters: (None)
+Table 2 [darkGrass] (All):
+Encounters (Levels 29-32): Zangoose (20%), Seviper (20%), Parasect (10%), Slugma (10%), Vespiquen (10%), Glameow (10%), Stunky (10%), Girafarig (5%), Castform (5%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 26-30): Audino (70%), Lopunny (10%), Emolga (10%), Bisharp (10%)
+Additional SOS encounters: (None)
+==========
+Map: 110 - Lostlorn Forest
+Tables: 7
+Table 1 [grass] (All):
+Encounters (Levels 26-29): Karrablast (20%), Shelmet (20%), Psyduck (10%), Pichu (10%), Yanma (10%), Surskit (10%), Farfetch’d (5%), Murkrow (5%), Misdreavus (5%), Chatot (5%)
+Additional SOS encounters: (None)
+Table 2 [darkGrass] (All):
+Encounters (Levels 30-47): Escavalier (20%), Accelgor (20%), Golduck (10%), Masquerain (10%), Wormadam (10%), Mothim (10%), Farfetch’d (5%), Chatot (5%), Swadloon (4%), Whirlipede (4%), Mew (1%), Celebi (1%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 26-29): Audino (40%), Pikachu (10%), Kecleon (10%), Whimsicott (10%), Lilligant (10%), Eevee (5%), Mismagius (5%), Honchkrow (5%), Zorua (5%)
+Additional SOS encounters: (None)
+Table 4 [surf] (All):
+Encounters (Levels 35-45): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 40-50): Gyarados (100%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 26-29): Magikarp (40%), Carvanha (40%), Goldeen (20%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 33-33): Seaking (40%), Sharpedo (40%), Gyarados (20%)
+Additional SOS encounters: (None)
+==========
+Map: 111 - Route 18
+Tables: 7
+Table 1 [grass] (All):
+Encounters (Levels 43-46): Throh (20%), Sawk (20%), Lickitung (10%), Kangaskhan (10%), Heracross (10%), Tropius (10%), Munchlax (10%), Dwebble (10%)
+Additional SOS encounters: (None)
+Table 2 [darkGrass] (All):
+Encounters (Levels 48-50): Throh (20%), Sawk (20%), Lickitung (10%), Kangaskhan (10%), Heracross (10%), Tropius (10%), Munchlax (10%), Crustle (10%)
+Additional SOS encounters: (None)
+Table 3 [rustlingGrass] (All):
+Encounters (Levels 43-46): Audino (90%), Snorlax (5%), Lickilicky (5%)
+Additional SOS encounters: (None)
+Table 4 [surf] (All):
+Encounters (Levels 35-45): Carvanha (60%), Luvdisc (30%), Qwilfish (10%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 30-50): Alomomola (60%), Qwilfish (30%), Sharpedo (9%), Phione (1%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 43-46): Horsea (60%), Tentacool (40%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 43-46): Seadra (40%), Qwilfish (40%), Tentacruel (20%)
+Additional SOS encounters: (None)
+==========
+Map: 112 - Undella Town
+Tables: 4
+Table 4 [surf] (All):
+Encounters (Levels 58-60): Luvdisc (60%), Corsola (40%)
+Additional SOS encounters: (None)
+Table 5 [ripplingWater] (All):
+Encounters (Levels 63-65): Alomomola (100%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 58-60): Remoraid (55%), Shellder (40%), Luvdisc (5%)
+Additional SOS encounters: (None)
+Table 7 [ripplingRod] (All):
+Encounters (Levels 63-65): Shellder (40%), Luvdisc (40%), Octillery (15%), Cloyster (5%)
+Additional SOS encounters: (None)
