@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
-<script src="data.bundle.js?v=1779240738706" onerror="window.__NUZ_BUNDLE_MISSING=true"></script>
+<script src="data.bundle.js?v=1779306102787" onerror="window.__NUZ_BUNDLE_MISSING=true"></script>
 <style>
   :root {
     --bg:#0f0f10;--bg2:#18181b;--bg3:#222228;--bg4:#2a2a32;
@@ -1614,6 +1614,9 @@ const GAMES = {
     defaultVariant: 'N',
     dataSources: {
       routes: { N: 'BlazeBlack2VoltWhite2', C: 'BlazeBlack2VoltWhite2Challenge' },
+      // BB2 and VW2 are byte-identical, so ONE shared encounter table serves both
+      // the Normal and Challenge variants (variant-agnostic, no version axis).
+      encounterTables: 'BlazeBlack2VoltWhite2',
       leagues: 'BlazeVolt2',
       patches: 'BlazeVolt2'
     }
@@ -1628,6 +1631,9 @@ const GAMES = {
     dataSources: {
       // Per-version route files (same shape as BD/SP — exclusives diverge).
       routes: { B: 'BlazeBlack', V: 'VoltWhite' },
+      // Per-version encounter-tables (ROM-extracted; shared mapId/tableN across
+      // versions so the cross-version merge flags only the legendaries).
+      encounterTables: { B: 'BlazeBlack', V: 'VoltWhite' },
       leagues: 'BlazeVolt',
       patches: 'BlazeVolt'
     }
@@ -1758,13 +1764,16 @@ const GAMES = {
     }
   },
   'unbound': {
-    // Pokémon Unbound — Emerald base, Mega + Fairy era content (Gen 6+).
-    // Normal / Expert mode share leagues/patches but routes differ.
+    // Pokémon Unbound — FireRed base (BPRE expansion), Mega + Fairy era content (Gen 6+).
+    // Normal / Expert mode share leagues/patches but routes differ. Wild encounter data
+    // (species + rates + methods) is ROM-extracted into a single shared encounter-tables
+    // file; Normal/Expert have IDENTICAL wild data so one table serves both variants.
     name: 'Unbound', short: 'Unbound', gen: 6, category: 'Other ROM hacks',
     variants: { N: 'Normal', E: 'Expert' },
     defaultVariant: 'N',
     dataSources: {
       routes: { N: 'Unbound', E: 'UnboundExpert' },
+      encounterTables: 'Unbound',
       leagues: 'Unbound',
       patches: 'Unbound'
     }
@@ -1814,6 +1823,7 @@ const GAMES = {
     defaultVersion: 'S',
     dataSources: {
       routes: { S: 'StormSilver', G: 'SacredGold' },
+      encounterTables: { S: 'StormSilver', G: 'SacredGold' },
       leagues: 'StormSilverSacredGold',
       patches: 'StormSilverSacredGold'
     }
@@ -1832,6 +1842,7 @@ const GAMES = {
     name: 'Glazed', short: 'Glazed', gen: 6, category: 'Other ROM hacks',
     dataSources: {
       routes: 'Glazed',
+      encounterTables: 'Glazed',
       leagues: 'Glazed',
       patches: 'Glazed'
     }
@@ -4991,6 +5002,8 @@ const LEGACY_LOCATION_NAME_SUBSTRINGS = [
   ['Routes 219',         'Route 219'],            // DP/Pt singular typo
   ['Thrify Megamart',    'Thrifty Megamart'],     // SM
   ['Dalizapa Passagea',  'Dalizapa Passage'],     // SV
+  ['Driftveil Drawbidge', 'Driftveil Drawbridge'], // BW Driftveil Drawbridge routes-rail typo fix
+  ['Whirl Islandspokemon', 'Whirl Islands'],       // Glazed routes-rail typo fix
 ];
 function rewriteLegacyLocation(s) {
   if (!s || typeof s !== 'string') return s;
@@ -7225,6 +7238,7 @@ let selectedEncTime = 'day';
 let selectedEncSeason = 'spring';  // BW/B2W2 seasons; 'all' = combined view
 let selectedEncConditionals = false; // off = baseline-only (no swarm/radar/slot2); on = include conditional pools
 let selectedEncWeather = 'Normal Weather';  // SwSh Wild Area weather tab; 'Normal Weather' = clear/default
+let selectedEncTableSeason = 'Spring';  // B2W2 encounter-tables season tab (display-case; distinct from the lowercase PokeAPI-path selectedEncSeason)
 let encGroupCollapsed = {}; // groupName → bool
 let encSearchQuery = '';
 
@@ -7247,6 +7261,42 @@ function extractWeather(subZone) {
   return { weather: last, residual: residual || null };
 }
 
+// B2W2 seasons — same sub-zone-suffix mechanism as weather. The bw2 emitter
+// writes "Map: NNN - Location (Spring)" etc., which the parser stores as
+// pool.subZone = "Spring". Block order is ROM-validated (0=Spring..3=Winter).
+const SEASON_NAMES = ['Spring','Summer','Autumn','Winter'];
+const SEASON_SET = new Set(SEASON_NAMES);
+function extractSeason(subZone) {
+  if (!subZone) return null;
+  const parts = subZone.split(',').map(s => s.trim()).filter(Boolean);
+  if (!parts.length) return null;
+  const last = parts[parts.length - 1];
+  if (!SEASON_SET.has(last)) return null;
+  const residual = parts.slice(0, -1).join(', ');
+  return { season: last, residual: residual || null };
+}
+
+// Sort key for floor/sub-area sub-zone labels so dungeon sections read in
+// physical order (Entrance → 1F → 2F → … → B1F → B2F → Summit) instead of by
+// level range. Returns null for labels that aren't floor-like, so sections
+// without floor labels keep their level-range ordering untouched. Matches a
+// LEADING token so compound labels ("1F Outside", "B2F Mahogany Side") order
+// by their floor too.
+function floorRank(subZone) {
+  if (!subZone) return null;
+  const s = subZone.trim();
+  if (/^(entrance|outside)\b/i.test(s)) return -20;
+  if (/^inside\b/i.test(s)) return -10;
+  let m = s.match(/^B(\d+)F\b/i);
+  if (m) return 100 + (+m[1]);           // basements after above-ground floors
+  m = s.match(/^(\d+)F\b/i);
+  if (m) return +m[1];                    // 1F, 2F, …
+  m = s.match(/^Area\s+(\d+)\b/i);
+  if (m) return +m[1];                    // Area 1, Area 2, …
+  if (/^summit\b/i.test(s)) return 999;
+  return null;
+}
+
 function setEncLocation(loc) {
   selectedEncLocation = loc;
   // Pre-warm PokeAPI fetch. For region-driven games we need to ensure the
@@ -7264,6 +7314,7 @@ function setEncLocation(loc) {
 function setEncTime(t) { selectedEncTime = t; renderEncounters(); }
 function setEncSeason(s) { selectedEncSeason = s; renderEncounters(); }
 function setEncWeather(w) { selectedEncWeather = w; renderEncounters(); }
+function setEncTableSeason(s) { selectedEncTableSeason = s; renderEncounters(); }
 function toggleEncConditionals() { selectedEncConditionals = !selectedEncConditionals; renderEncounters(); }
 
 // Strip region/route prefixes from a PokeAPI area slug to leave a friendly
@@ -7812,7 +7863,13 @@ function buildEncounterMainFromTables(locName, ver, game) {
   // version merge so any pure duplicates still collapse.
   const sigOf = (pool) => {
     const enc = arr => [...arr].sort((a,b) => a.species.localeCompare(b.species)).map(e => `${e.species}:${e.chance}:${[...(e._vers||[])].sort().join(',')}`).join('|');
-    return `${pool.lvMin}-${pool.lvMax}#M:${pool.method||''}#Mo:${enc(pool.morning||[])}#D:${enc(pool.day)}#N:${enc(pool.night)}`;
+    // Include ONLY the season component of subZone in the signature so two
+    // seasons with byte-identical encounters (e.g. Spring==Autumn on many B2W2
+    // routes) stay as distinct pools — otherwise a season tab would render
+    // empty. Non-season subZones (SwSh weather, USUM bundled maps) get '' and
+    // dedup exactly as before.
+    const season = extractSeason(pool.subZone)?.season || '';
+    return `S:${season}#${pool.lvMin}-${pool.lvMax}#M:${pool.method||''}#Mo:${enc(pool.morning||[])}#D:${enc(pool.day)}#N:${enc(pool.night)}`;
   };
 
   // Step 1: cross-version merge by structural key. Within each merged pool,
@@ -7924,6 +7981,37 @@ function buildEncounterMainFromTables(locName, ver, game) {
       return w ? { ...p, subZone: w.residual } : p;
     });
   }
+
+  // ── B2W2 season tabs ──
+  // Same mechanism as the weather strip above. B2W2's ~13 seasonal areas emit
+  // four "(Spring)"/"(Summer)"/"(Autumn)"/"(Winter)" sub-zone variants; instead
+  // of stacking them we show a season selector and filter to the active season.
+  const seasonSeen = new Map();
+  for (const p of uniquePools) {
+    const s = extractSeason(p.subZone);
+    if (s && !seasonSeen.has(s.season)) seasonSeen.set(s.season, seasonSeen.size);
+  }
+  const availSeasons = SEASON_NAMES.filter(n => seasonSeen.has(n));
+  let seasonTabsHtml = '';
+  if (availSeasons.length > 1) {
+    const activeSeason = availSeasons.includes(selectedEncTableSeason) ? selectedEncTableSeason : availSeasons[0];
+    uniquePools = uniquePools
+      .map(p => {
+        const s = extractSeason(p.subZone);
+        if (!s) return p;                       // non-season pools pass through
+        if (s.season !== activeSeason) return null;
+        return { ...p, subZone: s.residual };   // peel the season off the label
+      })
+      .filter(Boolean);
+    seasonTabsHtml = `<div class="enc-weather-tabs">${availSeasons.map(s =>
+      `<button class="${s === activeSeason ? 'active' : ''}" onclick="setEncTableSeason('${s}')">${s}</button>`
+    ).join('')}</div>`;
+  } else if (availSeasons.length === 1) {
+    uniquePools = uniquePools.map(p => {
+      const s = extractSeason(p.subZone);
+      return s ? { ...p, subZone: s.residual } : p;
+    });
+  }
   // Bucket by level range so multi-pool ranges (sub-areas) get labeled siblings.
   const groups = new Map();
   for (const p of uniquePools) {
@@ -7977,6 +8065,9 @@ function buildEncounterMainFromTables(locName, ver, game) {
       grass: 'Walking (tall grass)', surf: 'Surfing',
       oldRod: 'Old Rod', goodRod: 'Good Rod', superRod: 'Super Rod',
       honey: 'Honey tree', rockSmash: 'Rock Smash',
+      // Gen 5 (B2W2) methods.
+      darkGrass: 'Dark grass', rustlingGrass: 'Rustling grass',
+      ripplingWater: 'Rippling water', ripplingRod: 'Rippling water (Super Rod)',
       // XY-specific methods. The Kalos slot tables split walking into
       // multiple distinct mechanics (tall grass on certain routes, shallow
       // water wading, three flower-tile color variants, hordes). Each gets
@@ -7990,9 +8081,9 @@ function buildEncounterMainFromTables(locName, ver, game) {
       horde: 'Horde encounter',
     };
     const METHOD_ORDER = [
-      'grass', 'tallGrass', 'shallowWater',
+      'grass', 'darkGrass', 'rustlingGrass', 'tallGrass', 'shallowWater',
       'yellowFlowers', 'redFlowers', 'purpleFlowers',
-      'surf', 'oldRod', 'goodRod', 'superRod',
+      'surf', 'ripplingWater', 'oldRod', 'goodRod', 'superRod', 'ripplingRod',
       'honey', 'rockSmash', 'horde',
     ];
     // Gen-7 (SM/USUM) tall-grass tables actually mix four distinct mechanics
@@ -8072,9 +8163,23 @@ function buildEncounterMainFromTables(locName, ver, game) {
       return `<div class="enc-time-tabs">${tabs.map(([k,label])=>`<button class="${k===activeTime?'active':''}" onclick="setEncTime('${k}')">${label}</button>`).join('')}</div>`;
     };
 
-    const renderPoolSections = (pools, time, method) => {
-      // Sort pools by level range ascending so easier ones surface first.
-      const sortedPools = [...pools].sort((a,b) => a.lvMin - b.lvMin || a.lvMax - b.lvMax);
+    const renderPoolSections = (pools, time, method, sectionLabel) => {
+      // Order sub-pools by physical floor when the section carries floor-style
+      // labels (B2W2 caves/towers: Entrance → 1F → 2F → B1F → …); otherwise
+      // fall back to level range ascending so easier mons surface first.
+      const anyFloor = pools.some(p => floorRank(p.subZone) !== null);
+      const sortedPools = [...pools].sort((a,b) => {
+        if (anyFloor) {
+          const ra = floorRank(a.subZone), rb = floorRank(b.subZone);
+          const ka = ra === null ? 9000 : ra, kb = rb === null ? 9000 : rb;
+          if (ka !== kb) return ka - kb;
+        } else if (a.subZone && b.subZone && a.subZone !== b.subZone) {
+          // Non-floor sub-zone labels (e.g. Glazed's A/B/C map splits): order
+          // them stably by label so they don't read out of order.
+          return a.subZone.localeCompare(b.subZone, undefined, { numeric: true });
+        }
+        return a.lvMin - b.lvMin || a.lvMax - b.lvMax;
+      });
       // Prefer the sub-zone label (Beachfront / 1F Outside / etc.) over the
       // generic A/B/C fallback when the parsed data carries one. When several
       // siblings share the same subZone (Route 1 SM/USUM has 4 distinct grass
@@ -8104,8 +8209,14 @@ function buildEncounterMainFromTables(locName, ver, game) {
         const total = entries.reduce((s,e) => s + e.r, 0);
         const lvLabel = p.lvMin === p.lvMax ? `Lv ${p.lvMin}` : `Lv ${p.lvMin}–${p.lvMax}`;
         const lockedCls = isMethodLocked(method) ? ' locked-method' : '';
-        return `<div class="enc-section${lockedCls}" style="margin-top:${i?6:0}px">
-          <div style="font-size:11px;color:var(--text3);margin-bottom:4px">${lvLabel}${tag(p, i)} · ${entries.length} species · ${total}%</div>
+        // Vanilla-style header: bold uppercase "Method · Sub-area" with the
+        // species/level/rate as small meta — matches buildEncounterMain (the
+        // PokeAPI path used by vanilla BW) so floor/sub-area labels read the same.
+        return `<div class="enc-section${lockedCls}">
+          <div class="enc-section-hdr">
+            <span class="enc-method-label">${sectionLabel || (METHOD_LABELS[method] || method)}${tag(p, i)}</span>
+            <span style="font-size:10px;color:var(--text3);margin-left:8px">${entries.length} species · ${lvLabel} · ${total}%</span>
+          </div>
           ${renderEncList(entries, teamLineSet, deadSpecies, caughtAtThisLoc, ver, locName, method)}
         </div>`;
       }).filter(Boolean).join('');
@@ -8117,7 +8228,13 @@ function buildEncounterMainFromTables(locName, ver, game) {
       // For [grass], try splitting into Alola-style sub-methods. If only one
       // sub-method class shows up (e.g., BDSP / Gen 2 always classify as plain
       // "walking"), this collapses back to the original single Walking section.
-      if (method === 'grass') {
+      // The Alola sub-method split (walking / rustling / flying / berry) is a
+      // Gen-7 SM/USUM mechanic — those games bundle 4 mechanics under one
+      // [grass] tag. Other encounter-tables games (Glazed, Unbound, HGSS, BDSP,
+      // Gen 2, B2W2/BW1) have plain walking grass, so running the classifier on
+      // them mis-splits skewed pools into bogus "Rustling grass" sections. Gate
+      // it to the Alola games (the only encounter-tables games with region 'alola').
+      if (method === 'grass' && game?.dataSources?.pokeapiRegion === 'alola') {
         // Classify each pool, then promote-to-walking if the location lacks a
         // walking baseline. Memorial Hill / Akala Outskirts / Resolution Cave
         // each have a single skewed grass pool that's the *only* encounter
@@ -8168,30 +8285,32 @@ function buildEncounterMainFromTables(locName, ver, game) {
           // Time tabs only on the first grass-style section; selectedEncTime is
           // shared global state so the lower sections re-render in sync.
           const timeTabsHtml = subIdx === 0 ? buildGrassTimeTabs() : '';
-          const inner = renderPoolSections(subPools, activeTime, 'grass');
+          const inner = renderPoolSections(subPools, activeTime, 'grass', subLabel);
           if (!inner) return '';
-          return `<div class="enc-section">
-            <div class="enc-section-hdr">
-              <span class="enc-method-label">${subLabel}</span>
-              ${timeTabsHtml}
-            </div>
-            ${inner}
-          </div>`;
+          // Time tabs (if any) ride above the first grass sub-method's sections;
+          // each pool now renders as its own "Walking · <area>" header section.
+          return `${timeTabsHtml}${inner}`;
         }).filter(Boolean);
       }
 
       const label = METHOD_LABELS[method] || method;
-      const inner = renderPoolSections(pools, 'day', method);
+      // Grass on a non-Alola encounter-tables game (Unbound, BDSP, Gen 2 via tables):
+      // surface the Morning/Day/Night toggle when the pools carry >1 phase, and render
+      // the active phase. buildGrassTimeTabs() returns '' when only one phase exists, so
+      // day-only games (Glazed/XY/SwSh — All→day) are unaffected. Non-grass methods are
+      // always time-invariant → render 'day'.
+      if (method === 'grass') {
+        const timeTabsHtml = buildGrassTimeTabs();
+        const inner = renderPoolSections(pools, activeTime, method, label);
+        if (!inner) return [];
+        return [`${timeTabsHtml}${inner}`];
+      }
+      const inner = renderPoolSections(pools, 'day', method, label);
       if (!inner) return [];
-      return [`<div class="enc-section">
-        <div class="enc-section-hdr">
-          <span class="enc-method-label">${label}</span>
-        </div>
-        ${inner}
-      </div>`];
+      return [inner];
     }).filter(Boolean).join('');
 
-    return `${weatherTabsHtml}${sections || '<div class="enc-empty" style="padding:12px">No species in this time of day.</div>'}`;
+    return `${seasonTabsHtml}${weatherTabsHtml}${sections || '<div class="enc-empty" style="padding:12px">No species in this time of day.</div>'}`;
   }
 
   // METHODLESS RENDERING (USUM and any other source without method tags) — group
@@ -8252,7 +8371,7 @@ function buildEncounterMainFromTables(locName, ver, game) {
     });
   }).filter(Boolean).join('');
 
-  return `${weatherTabsHtml}${globalTabsHtml}${sections || '<div class="enc-empty" style="padding:12px">No species in this time of day.</div>'}`;
+  return `${seasonTabsHtml}${weatherTabsHtml}${globalTabsHtml}${sections || '<div class="enc-empty" style="padding:12px">No species in this time of day.</div>'}`;
 }
 
 function renderEncountersFromNuzData(el, gameKey, game) {
