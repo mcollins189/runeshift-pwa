@@ -50,7 +50,7 @@ Route 5|solosis,gothita,koffing,trubbish,gulpin,grimer,ditto,mime-jr,bonsly,pach
 
 Lostlorn Forest|karrablast,shelmet,yanma,pichu,psyduck,surskit,farfetchd,chatot,misdreavus,murkrow,escavalier,accelgor,wormadam,mothim,masquerain,golduck,swadloon,whirlipede,audino,pikachu,kecleon,whimsicott,lilligant,zorua,eevee,mismagius,honchkrow,magikarp,gyarados,carvanha,goldeen,sharpedo,seaking,mew,celebi
 Cold Storage|vanillite,herdier,snorunt,swinub,cubchoo,buizel,mienfoo,taillow,vanillish,swellow,floatzel,sneasel,delibird,smoochum,piloswine,audino,mienshao
-Driftveil Drawbidge|ducklett,wingull,swablu,spearow,hoppip
+Driftveil Drawbridge|ducklett,wingull,swablu,spearow,hoppip
 Driftveil City|frillish,tentacool,staryu,tentacruel,lapras,horsea,wailmer,mantyke,seadra
 
 --Driftveil Gym|5|gym-leader|Clay

@@ -79,6 +79,7 @@ Magnolia Fields|noctowl,tranquill,furfrou,mudsdale,gogoat,miltank,tauros,quilava
 Redwood Village|magikarp,lampent
 --Redwood Village Gym|8_exp|gym-leader|Leader Benjamin
 
+Route 17|noctowl,pelipper,seviper,zangoose,bagon,skiploom,tropius,pidgeotto
 Route 18|farfetchd,noctowl,skuntank,persian,bouffalant,sudowoodo,happiny,bayleef,stonjourner,tentacool,pelipper,tentacruel,mantine,magikarp,remoraid,corsola,horsea,octillery,seadra,gyarados,binacle,geodude,krabby,kingler
 Victory Road|golbat,boldore,durant,woobat,graveler,magcargo,salazzle,camerupt,excadrill,heatmor,magmar,druddigon,turtonator,drampa,drakloak,roselia,chansey,lurantis,jigglypuff,corvisquire,hakamo-o,abomasnow,glalie,vanillish,beartic,minior,darmanitan-galar,hariyama,sealeo,jynx,avalugg,piloswine,lumineon,golbat,marill,azumarill,magcargo,woobat,floatzel,basculin,dewgong,sealeo,lapras,magikarp,finneon,psyduck,luvdisc,seel,shellder,golduck,gyarados,bruxish
 --Pokémon League|e1_exp|elite-four|Moleman

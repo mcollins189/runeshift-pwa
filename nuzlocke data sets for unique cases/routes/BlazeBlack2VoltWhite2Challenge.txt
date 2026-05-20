@@ -77,6 +77,7 @@ Clay Tunnel|sandshrew,sandslash,woobat,shuckle,golbat,onix,lairon,diglett,golett
 Mistralton Cave|boldore,kangaskhan,aron,wynaut,axew,teddiursa,deino,bagon,larvitar,wobbuffet,lairon,ursaring,shelgon,pupitar
 Chargestone Cave|nosepass,klink,geodude,ferroseed,diglett,boldore,magnemite,joltik,tynamo,durant,heatmor,voltorb,graveler,dugtrio,magneton,electrode,probopass
 Route 7|yanma,zebstrika,deerling,sawsbuck,watchog,phanpy,donphan,aipom,furret,kecleon,zangoose,seviper,spinda,audino,cubchoo,beartic,snorunt,sneasel
+Route 8|
 Celestial Tower|litwick,cubone,elgyem,chingling,shuppet,duskull,bronzor,haunter,murkrow,misdreavus,chimecho,lampent,noctowl,marowak,drifblim,dusclops,beheeyem,banette,bronzong
 
 --Twist Mountain|col2_c|evil-team|Colress
@@ -171,6 +172,9 @@ Dragonspiral Tower|tranquill,mienshao,sawsbuck,druddigon,kadabra,altaria,audino,
 Twist Mountain|boldore,excadrill,woobat,donphan,ursaring,heatmor,durant,graveler,golbat,azumarill,onix,cryogonal,steelix,beartic,glalie,vanillish
 
 Underground Ruins|graveler,excadrill,golbat,onix,sandslash,steelix,lairon,durant,nosepass,lunatone,solrock,claydol,dusclops
+Rock Peak Chamber|
+Iceberg Chamber|
+Guidance Chamber|
 
 Marvellous Bridge|swanna,pelipper,fearow,skiploom,pidgeotto,farfetchd,chatot
 

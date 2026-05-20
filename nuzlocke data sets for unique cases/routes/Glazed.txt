@@ -176,7 +176,7 @@ Route 48|rapidash,gligar,furret,nincada,ninjask,shedinja,noctowl,spinarak
 --Whitewood City Gym|14|gym-leader|Brian
 
 Route 40|tentacool,tentacruel
-Whirl Islandspokemon|gyarados,seadra,mantine,
+Whirl Islands|gyarados,seadra,mantine,
 Cianvine Bridge|wingull,taillow,swellow,pelipper,pidgeotto,pidgeot
 Cianwood City|krabby,shuckle,tentacruel,staryu,starmie
 

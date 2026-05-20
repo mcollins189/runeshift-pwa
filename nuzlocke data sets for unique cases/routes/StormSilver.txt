@@ -131,6 +131,7 @@ Pallet Town|marill,finneon,tentacool,staryu
 Route 21|tangela,mr-mime,raticate,pelipper,gastrodon,wingull,wailmer,tangrowth,floatzel,lickitung,tentacool,chinchou,shellder,tentacruel,lanturn
 Cinnabar Island|tentacool,tentacruel,relicanth,chinchou,shellder,lanturn
 Route 20|tentacool,wingull,pelipper,tentacruel,wailord,magikarp,goldeen,finneon,clamperl,lumineon,seaking,huntail,gorebyss
+Seafoam Islands|golbat,zubat,psyduck,slowpoke,seel,slowbro,dewgong,piloswine,snorunt,kingler,glalie,sealeo,jynx,sneasel,delibird,spheal,tentacool,staryu,lapras,magikarp,horsea,krabby,shellder,seadra,gyarados
 --Cinnabar Island Gym|k7|gym-leader|Blaine
 --Viridian City Gym|k8|gym-leader|Blue
 Route 19|tentacool,wingull,pelipper,mantine,magikarp,goldeen,finneon,clamperl,lumineon,seaking,huntail,gorebyss,krabby,kingler
