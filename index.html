@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
-<script src="data.bundle.js?v=1779209796935" onerror="window.__NUZ_BUNDLE_MISSING=true"></script>
+<script src="data.bundle.js?v=1779240738706" onerror="window.__NUZ_BUNDLE_MISSING=true"></script>
 <style>
   :root {
     --bg:#0f0f10;--bg2:#18181b;--bg3:#222228;--bg4:#2a2a32;
@@ -1576,8 +1576,8 @@ const GAMES = {
     }
   },
   // Gen 8 — Sword / Shield. PokeAPI has galar region but ZERO encounter data,
-  // so we use ROM-equivalent data scraped from Serebii's per-zone Pokearth
-  // pages. Covers main routes, all 17 main Wild Area zones, all 16 Isle of
+  // so we use our own per-zone encounter tables. Covers main routes, all 17
+  // main Wild Area zones, all 16 Isle of
   // Armor zones, and 13 Crown Tundra zones, with weather variants emitted
   // as sub-zones (e.g. "Rolling Fields (Overcast)") on the Wild Area maps.
   'sword_shield': {
@@ -7819,7 +7819,7 @@ function buildEncounterMainFromTables(locName, ver, game) {
   // species accumulate per-species version sets.
   // Key intentionally OMITS pool.lvMin/lvMax. Within one Map block, Table N
   // refers to the same slot table regardless of minor level-range jitter
-  // between versions — most acute in SwSh, where Serebii-scraped Sword and
+  // between versions — most acute in SwSh, where the Sword and
   // Shield tables for the same table # can list slightly different level
   // ranges (e.g. "Lv 7-9" vs "Lv 7-10") for what is conceptually the same
   // table. Including lvRange in the key prevents those from merging, which
@@ -8013,7 +8013,7 @@ function buildEncounterMainFromTables(locName, ver, game) {
     ]);
     // Species that genuinely live under/on berry trees in Alola. Any other
     // 1-species 100% pool (Pikipek piles, Diglett 100% spots, etc.) is closer
-    // to a "rustling" encounter than a berry tree — Serebii splits these too.
+    // to a "rustling" encounter than a berry tree — standard references split these too.
     const ALOLA_BERRY_TREE_SET = new Set(['crabrawler','crabominable','komala']);
     const classifyGrassSubMethod = (pool) => {
       // Pick whichever phase has the richest data to classify on. Berry/flying
@@ -8916,61 +8916,23 @@ function renderEncListInternal(list, teamLineSet, deadSpecies, caughtAtThisLoc, 
   const methodLocked = isMethodLocked(method);
   const winnerKey = (sp) => `${method || ''}:::${sp}`;
 
-  // Reduced-badge pre-pass — surfaces "still worth a look" picks that didn't
-  // earn the location-wide title:
-  //  (a) pool-local best per tier when the global winner for that tier is in
-  //      a different pool — so users know this pool has something too.
-  //  (b) evo-line siblings of any badged species in the same pool — so e.g.
-  //      Graveler shows alongside Geodude (saves grind levels if you see it).
-  // Renders as a small star-only marker in the relevant tier color.
+  // Reduced-badge pre-pass — EVERY top/strong/decent species that didn't earn
+  // the location-wide full label gets a small star in its tier color. This is
+  // a comprehensive "anything worth catching is marked" pass: if a species
+  // shows a tier in its Details, it shows a star here. (Earlier versions only
+  // marked the single pool-local best per tier, which left most good picks
+  // unmarked — confusing when 4 decent mons sit in one pool and only 1 stars.)
   const reducedBadges = new Map();  // species → { tier }
   if (!methodLocked && winners) {
-    const scoredByTier = { top: [], strong: [], decent: [] };
-    const speciesRec = new Map();
     for (const e of list) {
       const lc = e.p.toLowerCase();
       if (deadSpecies.has(lc) || caughtAtThisLoc.has(lc)) continue;
       if (enforceDupes && teamLineSet.has(lc)) continue;
-      // Match the global-winner pass — legendaries don't earn ★ markers, even
-      // pool-local reduced ones. They get their own subsection visually.
-      if (isLegendary(e.p)) continue;
+      if (isLegendary(e.p)) continue;            // legendaries get their own subsection
+      if (winners.has(winnerKey(e.p))) continue; // already gets the full labeled badge
       const rec = getRecommendation(e.p, { chancePct: e.r });
-      if (!rec || !scoredByTier[rec.tier]) continue;
-      scoredByTier[rec.tier].push({ species: e.p, rec, chance: e.r || 0 });
-      speciesRec.set(e.p, rec);
-    }
-    // Which species in THIS pool already have a full global badge — used to
-    // skip them in both passes (so we don't downgrade their label).
-    const fullBadged = new Set();
-    for (const e of list) {
-      if (winners.has(winnerKey(e.p))) fullBadged.add(e.p);
-    }
-    // (a) Pool-local best per tier.
-    for (const tier of ['top','strong','decent']) {
-      const arr = scoredByTier[tier];
-      if (!arr.length) continue;
-      arr.sort((a,b) => b.chance - a.chance || b.rec.score - a.rec.score || a.species.localeCompare(b.species));
-      const localBest = arr[0];
-      if (!fullBadged.has(localBest.species)) {
-        reducedBadges.set(localBest.species, { tier });
-      }
-    }
-    // (b) Evo-line siblings of any badged species in this pool.
-    // getEvoChainSet returns lowercase slugs (line 3839), so compare against
-    // e.p.toLowerCase() — otherwise "Noctowl" never matches the {hoothoot,
-    // noctowl} chain set and the evo-line branch silently misses.
-    const allBadged = new Set([...fullBadged, ...reducedBadges.keys()]);
-    if (typeof getEvoChainSet === 'function') {
-      for (const badged of allBadged) {
-        const chain = getEvoChainSet(badged) || new Set();
-        for (const e of list) {
-          if (fullBadged.has(e.p) || reducedBadges.has(e.p)) continue;
-          if (!chain.has(e.p.toLowerCase())) continue;
-          const rec = speciesRec.get(e.p);
-          if (!rec) continue;  // not scored (dupe/dead/caught/filler) — leave alone
-          reducedBadges.set(e.p, { tier: rec.tier });
-        }
-      }
+      if (!rec || rec.tier === 'filler') continue;
+      reducedBadges.set(e.p, { tier: rec.tier });
     }
   }
 
