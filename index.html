@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
-<script src="data.bundle.js?v=1779306102787" onerror="window.__NUZ_BUNDLE_MISSING=true"></script>
+<script src="data.bundle.js?v=1779311096959" onerror="window.__NUZ_BUNDLE_MISSING=true"></script>
 <style>
   :root {
     --bg:#0f0f10;--bg2:#18181b;--bg3:#222228;--bg4:#2a2a32;
@@ -3187,8 +3187,15 @@ function spriteUrl(idOrName, variant) {
   let id = idOrName;
   if (typeof idOrName === 'string') {
     const info = pokeInfo(idOrName);
-    if (!info) return '';
-    id = info.id;
+    id = info ? info.id : null;
+    // Fallback: resolve the National-Dex id straight from the bundled slug→id
+    // map so sprites show for species not in POKEMON_DB and not yet backfilled
+    // (Gen 5+ like Frillish/Jellicent). Sprite only needs the dex id; stats
+    // still come from backfill. Exact-slug only — form slugs (basculin-*,
+    // regional forms) fall through to the backfilled apiId path.
+    if (!id && typeof NUZ_DATA !== 'undefined' && NUZ_DATA.dexIdBySlug && typeof speciesSlug === 'function') {
+      id = NUZ_DATA.dexIdBySlug[speciesSlug(idOrName)] || null;
+    }
   }
   if (!id) return '';
   if (variant === 'art') return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
