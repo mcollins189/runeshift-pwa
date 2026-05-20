@@ -414,6 +414,11 @@
   .sprite-wrap{flex-shrink:0;width:54px;height:54px;background:var(--bg3);border-radius:50%;display:flex;align-items:center;justify-content:center;overflow:hidden}
   .sprite-img{width:54px;height:54px;image-rendering:pixelated;object-fit:contain}
   .sprite-img.faded{filter:grayscale(1) opacity(0.4)}
+  .sprite-wrap.shiny{box-shadow:inset 0 0 0 2px #ffd54a, 0 0 6px rgba(255,213,74,.5)}
+  .shiny-spark{color:#ffd54a;margin-left:3px;filter:drop-shadow(0 0 2px rgba(255,213,74,.55))}
+  .shiny-check{display:flex;align-items:center;gap:6px;margin-top:10px;font-size:13px;cursor:pointer;user-select:none}
+  .shiny-check input{width:auto;margin:0}
+  .shiny-check .shiny-spark{margin-left:0}
   .sprite-sm{width:32px;height:32px}
   .sprite-sm .sprite-img{width:32px;height:32px}
   .sprite-lg{width:72px;height:72px}
@@ -584,6 +589,9 @@
   .enc-action-menu .eam-btn:hover{border-color:var(--border2)}
   .enc-action-menu .eam-btn.caught{background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.3);color:#86efac}
   .enc-action-menu .eam-btn.caught:hover{background:rgba(34,197,94,.22);border-color:rgba(34,197,94,.5)}
+  .enc-action-menu .eam-btn.caught.shiny{background:rgba(255,213,74,.12);border-color:rgba(255,213,74,.35);color:#ffe08a}
+  .enc-action-menu .eam-btn.caught.shiny:hover{background:rgba(255,213,74,.22);border-color:rgba(255,213,74,.55)}
+  .enc-action-menu .eam-shiny-hint{font-size:11px;color:#ffe08a;background:rgba(255,213,74,.10);border:1px solid rgba(255,213,74,.25);border-radius:var(--radius-sm);padding:6px 8px;margin-bottom:6px;line-height:1.35}
   .enc-action-menu .eam-btn.skipped{background:rgba(168,168,168,.08);color:var(--text2)}
   .enc-action-menu .eam-btn.failed{background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.3);color:#fca5a5}
   .enc-action-menu .eam-btn.failed:hover{background:rgba(239,68,68,.22);border-color:rgba(239,68,68,.5)}
@@ -3199,6 +3207,7 @@ function spriteUrl(idOrName, variant) {
   }
   if (!id) return '';
   if (variant === 'art') return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
+  if (variant === 'shiny') return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${id}.png`;
   return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
 }
 
@@ -3916,6 +3925,17 @@ function getEvolution(name) {
 // Geodude AND Golem should still count as dupes in the encounters view.
 // BFS handles branched evos (Eevee → 8 Eeveelutions) and multi-step lines
 // (Charmander → Charmeleon → Charizard).
+// Lowercase set of every evo-line species across the alive roster — the dupe
+// set the encounters view greys against. Built inline in the render fns; this
+// helper exposes the same set to one-off callers (e.g. the catch action menu).
+function curTeamLineSet() {
+  const set = new Set();
+  for (const p of curTeam()) {
+    if (!p.alive || !p.species) continue;
+    for (const s of getEvoChainSet(p.species)) set.add(s);
+  }
+  return set;
+}
 function getEvoChainSet(species) {
   const out = new Set();
   if (!species) return out;
@@ -3983,16 +4003,17 @@ function spriteImg(species, opts) {
   // Prefer explicit apiId (from PokeAPI fetches) over POKEMON_DB name lookup
   let url;
   if (opts.apiId) {
-    url = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${opts.apiId}.png`;
+    url = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${opts.shiny?'shiny/':''}${opts.apiId}.png`;
   } else {
-    url = spriteUrl(species);
+    url = spriteUrl(species, opts.shiny ? 'shiny' : undefined);
   }
-  if (!url) return `<div class="sprite-wrap${opts.sm?' sprite-sm':''}${opts.lg?' sprite-lg':''}" title="No sprite available"></div>`;
+  const wrapCls = `sprite-wrap${opts.sm?' sprite-sm':''}${opts.lg?' sprite-lg':''}${opts.shiny?' shiny':''}`;
+  if (!url) return `<div class="${wrapCls}" title="No sprite available"></div>`;
   const cls = `sprite-img${opts.faded?' faded':''}`;
   // One-shot retry with a cache-bust query param: dodges the browser HTTP
   // cache for the retry (a transient 5xx/timeout otherwise sticks for the
   // page lifetime). After one retry we give up and hide.
-  return `<div class="sprite-wrap${opts.sm?' sprite-sm':''}${opts.lg?' sprite-lg':''}"><img class="${cls}" src="${url}" alt="${species}" loading="lazy" onerror="if (!this.dataset.retried) { this.dataset.retried='1'; this.src = this.src + (this.src.includes('?') ? '&' : '?') + 'r=' + Date.now(); } else { this.style.display='none'; }"></div>`;
+  return `<div class="${wrapCls}"${opts.shiny?' title="Shiny"':''}><img class="${cls}" src="${url}" alt="${species}" loading="lazy" onerror="if (!this.dataset.retried) { this.dataset.retried='1'; this.src = this.src + (this.src.includes('?') ? '&' : '?') + 'r=' + Date.now(); } else { this.style.display='none'; }"></div>`;
 }
 
 /* ── PokeAPI backfill (gen-aware) ──
@@ -5761,7 +5782,7 @@ function cardInner(p, realIdx) {
   const moveList = (typeof p.moves === 'string')
     ? p.moves.split(',').map(s=>s.trim()).filter(Boolean)
     : (Array.isArray(p.moves) ? p.moves.filter(Boolean) : []);
-  const sprite = spriteImg(p.species, {faded: !p.alive});
+  const sprite = spriteImg(p.species, {faded: !p.alive, shiny: p.isShiny});
   const ownTypes = [p.type1, p.type2].filter(Boolean);
   const movePillsHtml = moveList.map(m => {
     const t = getMoveType(m);
@@ -5779,7 +5800,7 @@ function cardInner(p, realIdx) {
     ${sprite}
     <div class="card-main">
       <div class="card-header">
-        <div><div class="poke-nickname">${p.nickname}</div><div class="poke-species">${p.species||'Unknown'}</div></div>
+        <div><div class="poke-nickname">${p.nickname}${p.isShiny?'<span class="shiny-spark" title="Shiny">✨</span>':''}</div><div class="poke-species">${p.species||'Unknown'}</div></div>
         <div class="card-lv">Lv ${p.level||'?'}</div>
       </div>
       <div class="types">${typeBadge(p.type1)}${typeBadge(p.type2)}</div>
@@ -5952,9 +5973,9 @@ function renderRoster() {
         const lv = p.level ? `Lv ${p.level}` : '';
         const tBadges = [p.type1, p.type2].filter(Boolean).map(t => typeBadge(t)).join('');
         slots.push(`<div class="party-slot" onclick="openEdit(${realIdx})" title="${p.nickname||p.species||''} (click to edit)">
-          ${spriteImg(p.species, {sm:true})}
+          ${spriteImg(p.species, {sm:true, shiny:p.isShiny})}
           <div class="party-slot-info">
-            <div class="party-slot-name">${p.nickname || p.species || '?'}</div>
+            <div class="party-slot-name">${p.nickname || p.species || '?'}${p.isShiny?'<span class="shiny-spark" title="Shiny">✨</span>':''}</div>
             <div class="party-slot-meta"><span>${p.species||'—'}</span>${lv?`<span class="party-slot-lv">${lv}</span>`:''}</div>
             <div class="party-slot-types">${tBadges}</div>
           </div>
@@ -6059,9 +6080,9 @@ function renderGrave() {
   empty.style.display = 'none';
   list.innerHTML = dead.map(p=>`
     <div class="rip-card">
-      ${spriteImg(p.species, {sm:true, faded:true})}
+      ${spriteImg(p.species, {sm:true, faded:true, shiny:p.isShiny})}
       <div class="rip-info">
-        <div class="rip-name">${p.nickname} <span>(${p.species||'?'}, Lv ${p.level||'?'})</span></div>
+        <div class="rip-name">${p.nickname}${p.isShiny?'<span class="shiny-spark" title="Shiny">✨</span>':''} <span>(${p.species||'?'}, Lv ${p.level||'?'})</span></div>
         <div class="rip-detail">${p.causeOfDeath||'Unknown cause'} · ${p.route||'—'}</div>
       </div>
       ${typeBadge(p.type1)}
@@ -7101,10 +7122,10 @@ function switchTab(n) {
 }
 
 /* ── Nuzlocke rules (per-run) ──
-   run.rules holds the user's house-rule choices. Only the cap-ignore toggle
-   currently affects rendering — the rest are documented for reference and
-   stored so the next session sees them. Future toggles can be wired through
-   the same setRule() helper. */
+   run.rules holds the user's house-rule choices. Wired toggles: cap-ignore
+   (matchups), dupes/species clause + shiny clause (encounters), no-legendaries
+   (encounters). Free-form notes are stored only. Future toggles can be wired
+   through the same setRule() helper. */
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -7136,7 +7157,7 @@ function setRule(key, value) {
   } else if (key === 'ignoreCapForMatchups') {
     renderCap();
     renderMatchup();
-  } else if (key === 'dupesClause' || key === 'speciesClause') {
+  } else if (key === 'dupesClause' || key === 'speciesClause' || key === 'shinyClause' || key === 'noLegendaries') {
     renderEncounters();
   }
   renderRules();
@@ -7179,7 +7200,7 @@ function renderRules() {
       ${toggle('ignoreCapForMatchups', 'Ignore level cap in Boss Matchup', 'Show over-cap roster members in the matchup view; suppress the "over cap" warning banner.')}
       ${toggle('dupesClause',        'Dupes clause', 'Grey out species in the Encounters tab that share an evo line with something already on your team.')}
       ${toggle('speciesClause',      'Species clause', 'Treat species/family duplication the same way as dupes clause for encounter display.')}
-      ${toggle('shinyClause',        'Shiny clause', 'Allow a shiny encounter to be caught even if it would normally be skipped.', '<em>(stored only — needs a shiny flag on caught entries to fully wire)</em>')}
+      ${toggle('shinyClause',        'Shiny clause', 'Allow a shiny encounter to be caught even if it would normally be skipped. The catch menu shows a "Caught shiny" option, and dupes get a shiny-exception note. Caught shinies are marked with ✨ across your roster.')}
       ${toggle('noLegendaries',      'No legendaries', 'Skip legendary encounters entirely — the Legendaries subsection on each location is hidden, and legendary species never earn a ★ recommendation badge.')}
     </div>
 
@@ -7200,14 +7221,14 @@ function renderRules() {
           const allDone = done.allGames;
           const curLabel = curDone
             ? `<span class="check">✓</span> Cached for ${gameName}`
-            : `Download for ${gameName} only (~30MB)`;
+            : `Download for ${gameName} (encounters + sprites)`;
           const allLabel = allDone
             ? `<span class="check">✓</span> Cached for all games (sprites + regions)`
             : `Download for all games (~250MB — sprites + regions)`;
           return `
         <div class="offline-btn-row">
           <button class="offline-btn" id="prefetch-btn" onclick="startPrefetchAll()" ${curDone?'disabled':''}>${curLabel}</button>
-          ${curDone ? `<button class="offline-btn-recache" onclick="recachePrefetchCurrent()" title="Re-download species + moves for ${gameName}">Re-cache</button>` : ''}
+          ${curDone ? `<button class="offline-btn-recache" onclick="recachePrefetchCurrent()" title="Re-download species + moves + sprites + region data for ${gameName}">Re-cache</button>` : ''}
         </div>
         <div class="offline-btn-row">
           <button class="offline-btn" id="prefetch-all-games-btn" onclick="startPrefetchAllGames()" ${allDone?'disabled':''}>${allLabel}</button>
@@ -9124,9 +9145,21 @@ function encActionMenu(loc, species, ev) {
   const menu = document.createElement('div');
   menu.className = 'enc-action-menu';
   menu.id = 'enc-action-menu';
+  const _eLoc = loc.replace(/'/g,"\\\\'");
+  const _eSp = species.replace(/'/g,"\\\\'");
+  // Shiny-clause hint: when the clause is on and this species would be a dupe,
+  // remind the player a shiny is a sanctioned exception to the dupes rule.
+  const _r = curRules();
+  const _isDupe = _r.nuzlockeMode !== false && (_r.dupesClause || _r.speciesClause)
+    && curTeamLineSet().has(species.toLowerCase());
+  const shinyHint = (_r.shinyClause && _isDupe)
+    ? `<div class="eam-shiny-hint"><span class="shiny-spark">✨</span> Shiny clause: a shiny is catchable even though this is a dupe.</div>`
+    : '';
   menu.innerHTML = `
     <div class="eam-title">${species} <span class="eam-loc">at ${loc}</span></div>
-    <button class="eam-btn caught" onclick="encActionCaught('${loc.replace(/'/g,"\\\\'")}', '${species.replace(/'/g,"\\\\'")}')">✓ Caught — fill out details</button>
+    ${shinyHint}
+    <button class="eam-btn caught" onclick="encActionCaught('${_eLoc}', '${_eSp}')">✓ Caught — fill out details</button>
+    <button class="eam-btn caught shiny" onclick="encActionCaught('${_eLoc}', '${_eSp}', true)"><span class="shiny-spark">✨</span> Caught shiny — fill out details</button>
     <button class="eam-btn skipped" onclick="encActionLog('${loc.replace(/'/g,"\\\\'")}', '${species.replace(/'/g,"\\\\'")}', 'skipped')">⊘ Skipped (dupe)</button>
     <button class="eam-btn failed" onclick="encActionLog('${loc.replace(/'/g,"\\\\'")}', '${species.replace(/'/g,"\\\\'")}', 'failed')">✗ Missed / fled / KO'd</button>
     <button class="eam-btn details" onclick="encActionDetails('${species.replace(/'/g,"\\\\'")}')">🔍 Details (types, stats, matchups)</button>
@@ -9135,9 +9168,9 @@ function encActionMenu(loc, species, ev) {
   // Position near the click
   const x = ev.clientX, y = ev.clientY;
   menu.style.left = Math.min(window.innerWidth - 260, x) + 'px';
-  // Five buttons + title + dividers come out to ~260px tall; clamp so it
-  // doesn't get cropped at the bottom of short viewports.
-  menu.style.top = Math.min(window.innerHeight - 260, y) + 'px';
+  // Six buttons + title + optional shiny hint come out to ~320px tall; clamp so
+  // it doesn't get cropped at the bottom of short viewports.
+  menu.style.top = Math.min(window.innerHeight - 320, y) + 'px';
   document.body.appendChild(menu);
   // Close on outside-click
   setTimeout(() => document.addEventListener('mousedown', _encMenuOutsideClick), 0);
@@ -9152,10 +9185,10 @@ function closeEncActionMenu() {
   document.removeEventListener('mousedown', _encMenuOutsideClick);
 }
 // "Caught" branch: open the add-Pokemon editor pre-filled with species and route
-function encActionCaught(loc, species) {
+function encActionCaught(loc, species, shiny) {
   closeEncActionMenu();
   editIdx = null; editRouteIdx = null;
-  document.getElementById('modal-title').textContent = `Caught ${species}`;
+  document.getElementById('modal-title').textContent = `Caught ${shiny?'✨ ':''}${species}`;
   // Synthesize a starting object so pokeForm can prefill
   const info = pokeInfo(species);
   const starter = {
@@ -9165,7 +9198,8 @@ function encActionCaught(loc, species) {
     type2: info && info.t[1] ? info.t[1] : null,
     route: loc,
     level: '',
-    ability: info && info.a && info.a.length === 1 ? info.a[0] : ''
+    ability: info && info.a && info.a.length === 1 ? info.a[0] : '',
+    isShiny: !!shiny
   };
   document.getElementById('modal-body').innerHTML = pokeForm(starter, false);
   openModal();
@@ -9384,7 +9418,7 @@ function pokeView(p, idx) {
     ? p.moves.split(',').map(s=>s.trim()).filter(Boolean)
     : (Array.isArray(p.moves) ? p.moves.filter(Boolean) : []);
   const sprite = p.species && pokeId(p.species)
-    ? `<img src="${spriteUrl(p.species)}" alt="${p.species}" onerror="this.style.display='none'">`
+    ? `<img src="${spriteUrl(p.species, p.isShiny?'shiny':undefined)}" alt="${p.species}" onerror="this.style.display='none'">`
     : `<div style="color:var(--text3);font-size:11px">no sprite</div>`;
   // Stats at the actual roster level when known — uses nature + always-on
   // ability modifiers (Huge Power / Pure Power). Conditional abilities (Guts
@@ -9531,7 +9565,7 @@ function pokeView(p, idx) {
     <div class="pv-header">
       <div class="pv-sprite">${sprite}</div>
       <div class="pv-headline">
-        <div class="pv-nick">${p.nickname}${isAlive?'':' <span style="font-size:13px;color:var(--red)">💀</span>'}</div>
+        <div class="pv-nick">${p.nickname}${p.isShiny?'<span class="shiny-spark" title="Shiny">✨</span>':''}${isAlive?'':' <span style="font-size:13px;color:var(--red)">💀</span>'}</div>
         <div class="pv-species">${p.species || 'Unknown'}${info?` · ${info.t.join('/')}`:''}</div>
         <div class="pv-types">${typeBadge(p.type1)}${typeBadge(p.type2)}</div>
         <span class="pv-lv-badge">Lv ${p.level || '?'}</span>
@@ -9539,6 +9573,7 @@ function pokeView(p, idx) {
       </div>
       <div class="pv-actions">
         <button class="btn-edit" onclick="openEditForm(${idx})">✎ Edit</button>
+        <button class="btn-edit" onclick="toggleShiny(${idx})" title="Toggle shiny">${p.isShiny?'✨ Shiny':'☆ Mark shiny'}</button>
         ${levelBtnHtml}
         ${evoBtnHtml}
         ${isAlive ? (p.inParty
@@ -9778,6 +9813,7 @@ function pokeForm(p, isEdit) {
       <div>${searchableDropdown('f-move-3', moveArr[3], 'move')}</div>
     </div>
     <div class="mfone"><div class="flabel">Notes</div><input type="text" id="f-notes" value="${(p.notes||'').replace(/"/g,'&quot;')}"></div>
+    <label class="shiny-check"><input type="checkbox" id="f-shiny" ${p.isShiny?'checked':''}><span class="shiny-spark">✨</span> Shiny</label>
     <div class="faction">
       <button class="btn-save" onclick="submitPoke()">${isEdit?'Save changes':'Add'}</button>
       <button class="btn-cancel" onclick="${isEdit?`openEdit(${editIdx})`:'closeModal()'}">Cancel</button>
@@ -10037,6 +10073,7 @@ function submitPoke() {
     held:document.getElementById('f-held').value.trim(),
     moves: moves.join(', '), // Keep string format for backward compat with cards
     notes:document.getElementById('f-notes').value.trim(),
+    isShiny: !!(document.getElementById('f-shiny') && document.getElementById('f-shiny').checked),
     alive:prev.alive!==undefined?prev.alive:true,
     inParty:prev.inParty||false,
     causeOfDeath:prev.causeOfDeath,
@@ -10105,6 +10142,13 @@ function toggleParty(idx, checked) {
   if (checked&&party.length>=6) { showToast('Active team is full (6/6)','error'); setTimeout(()=>render(),0); return; }
   team[idx].inParty = checked;
   save(); render();
+}
+function toggleShiny(idx) {
+  const team = curRun().team;
+  if (!team[idx]) return;
+  team[idx].isShiny = !team[idx].isShiny;
+  save(); render();
+  openEdit(idx); // re-open detail so sparkle + button label refresh live
 }
 function markDead(idx) {
   const team = curRun().team;
@@ -10306,20 +10350,22 @@ function clearPrefetchDone() { savePrefetchDone({ current: null, allGames: false
 // Pulled out so the per-game and all-games callers can union into one Set
 // (most species/moves are shared across games — Pikachu, Tackle, etc.) for
 // real dedupe rather than concatenating per-game lists.
-function _collectPrefetchUrlsForGame(gameKey, urls) {
-  const game = GAMES[gameKey];
-  if (!game) return;
+// Walk a game's encounter-tables + routes data and return the Set of species
+// names it references. Pulled out of _collectPrefetchUrlsForGame so callers
+// can also derive sprite IDs from the same set (per-game pre-cache).
+function _collectGameSpeciesNames(gameKey) {
   const speciesNames = new Set();
+  const game = GAMES[gameKey];
+  if (!game) return speciesNames;
 
   // Encounter-tables walker: every version-keyed file (or single string).
-  const encSrcAll = game.dataSources?.encounterTables;
   const encFiles = new Set();
   const collectFiles = (src) => {
     if (!src) return;
     if (typeof src === 'string') { encFiles.add(src); return; }
     for (const v of Object.values(src)) collectFiles(v);
   };
-  collectFiles(encSrcAll);
+  collectFiles(game.dataSources?.encounterTables);
   for (const file of encFiles) {
     const td = window.NUZ_DATA?.encounterTables?.[file];
     if (!td || !td.byName) continue;
@@ -10348,6 +10394,25 @@ function _collectPrefetchUrlsForGame(gameKey, urls) {
       }
     }
   }
+  return speciesNames;
+}
+
+// Resolve a species name to its National-Dex sprite ID using only local data
+// (POKEMON_DB → bundled dexIdBySlug map). No network — used to queue sprite
+// PNGs for a single game's pre-cache without a fetch-per-species.
+function _spriteIdForSpecies(name) {
+  const id = (typeof pokeId === 'function') ? pokeId(name) : null;
+  if (id) return id;
+  if (typeof NUZ_DATA !== 'undefined' && NUZ_DATA.dexIdBySlug && typeof speciesSlug === 'function') {
+    return NUZ_DATA.dexIdBySlug[speciesSlug(name)] || null;
+  }
+  return null;
+}
+
+function _collectPrefetchUrlsForGame(gameKey, urls) {
+  const game = GAMES[gameKey];
+  if (!game) return;
+  const speciesNames = _collectGameSpeciesNames(gameKey);
 
   for (const name of speciesNames) {
     const slug = speciesSlug(name);
@@ -10380,30 +10445,6 @@ function collectFilesInto(src, out) {
   if (!src) return;
   if (typeof src === 'string') { out.add(src); return; }
   for (const v of Object.values(src)) collectFilesInto(v, out);
-}
-
-// Walk the current run's game data and collect a deduped URL list to pre-cache.
-// Per-game mode: queues species + moves only. We deliberately skip sprites
-// (would need a fetch-per-species to derive the ID) and skip region/location/
-// area endpoints (the runtime stale-while-revalidate cache will catch those
-// as the user browses). All-games mode: also queues sprite IDs 1..1025 in
-// bulk (the 6MB sprite set; some IDs 404, the SW tolerates that) and live-
-// enumerates every region's locations + areas so PokeAPI-region games like
-// ORAS / RBY / GSC load offline without "loading from PokeAPI" cache misses.
-function buildPrefetchUrls(opts) {
-  const allGames = !!(opts && opts.allGames);
-  const urls = new Set();
-  if (allGames) {
-    // Union across every game definition. Dedupe matters a lot here: Pikachu
-    // appears in ~15 games, Tackle in ~all of them. Set semantics collapse
-    // it to one URL.
-    for (const k of Object.keys(GAMES)) _collectPrefetchUrlsForGame(k, urls);
-    return [...urls].slice(0, 2000);
-  }
-  const r = curRun();
-  if (!r) return [];
-  _collectPrefetchUrlsForGame(r.game, urls);
-  return [...urls].slice(0, 1000);
 }
 
 // All-games variant: builds the species/moves URL set, appends sprite IDs
@@ -10455,21 +10496,29 @@ async function buildPrefetchUrlsAllGamesWithRegions(progressFn) {
     if (Array.isArray(r)) for (const s of r) regionSlugs.add(s);
     else regionSlugs.add(r);
   }
-  for (const slug of regionSlugs) {
-    urls.add(`https://pokeapi.co/api/v2/region/${slug}/`);
-  }
+  await _enumerateRegionUrls(regionSlugs, urls, progressFn);
+  return [...urls];
+}
+
+// Live-enumerate region → location → area URLs for a set of region slugs and
+// add them (plus the bare region endpoints) to `urls`. Shared by the all-games
+// and per-game pre-cache builders so single-region-path games (RBY/GSC/RSE/
+// FRLG/DPPt/HGSS/ORAS) cache their encounter chain offline too.
+//
+// Build slug-based URLs (e.g. /location/kanto-route-1/) NOT numeric-ID URLs
+// (/location/4/). PokeAPI's NamedAPIResource.url uses numeric IDs, but the
+// runtime renderer fetches by slug (ensureLocationAreasLoaded + fetchPokeApiEncounters
+// both construct `${slug}/`). Caching by numeric ID leaves the runtime fetches
+// as permanent misses offline → "using static list" fallback.
+//
+// Phase-level auto-retry (3 passes) + per-fetch retry (5 attempts each) survive
+// realistic rate-limit windows. Surfaces a toast if anything is STILL missing
+// after the retries. Returns { regionsFailed, locsFailed }.
+async function _enumerateRegionUrls(regionSlugs, urls, progressFn) {
+  if (!regionSlugs || !regionSlugs.size) return { regionsFailed: [], locsFailed: [] };
+  for (const slug of regionSlugs) urls.add(`https://pokeapi.co/api/v2/region/${slug}/`);
   if (progressFn) progressFn(`Enumerating regions (0/${regionSlugs.size})…`);
-  // Build slug-based URLs (e.g. /location/kanto-route-1/) NOT numeric-ID URLs
-  // (/location/4/). PokeAPI's NamedAPIResource.url uses numeric IDs, but the
-  // runtime renderer fetches by slug (ensureLocationAreasLoaded + fetchPokeApiEncounters
-  // both construct `${slug}/`). Caching by numeric ID leaves the runtime fetches
-  // as permanent misses offline → "using static list" fallback.
   const locationUrls = new Set();
-  const locationSlugByUrl = new Map();
-  // Phase-level auto-retry: after a pass completes, any items that failed get
-  // re-run in a second pass. Up to 3 passes total. Combined with per-fetch
-  // retries (5 attempts each), this should survive any realistic rate-limit
-  // window without the user having to manually re-cache.
   const regionsFailed = await _runPhaseWithRetry(
     [...regionSlugs], 3, progressFn, 'regions',
     async (slug) => {
@@ -10485,9 +10534,7 @@ async function buildPrefetchUrlsAllGamesWithRegions(progressFn) {
       }
       for (const loc of data.locations) {
         if (!loc.name) continue;
-        const slugUrl = `https://pokeapi.co/api/v2/location/${loc.name}/`;
-        locationUrls.add(slugUrl);
-        locationSlugByUrl.set(slugUrl, loc.name);
+        locationUrls.add(`https://pokeapi.co/api/v2/location/${loc.name}/`);
       }
     }
   );
@@ -10520,6 +10567,27 @@ async function buildPrefetchUrlsAllGamesWithRegions(progressFn) {
     if (regionsFailed.length > 0) parts.push(`${regionsFailed.length} regions`);
     if (locsFailed.length > 0) parts.push(`${locsFailed.length} locations`);
     showToast(`Couldn't enumerate ${parts.join(' + ')} after retries. Try Re-cache later.`, 'warn', 10000);
+  }
+  return { regionsFailed, locsFailed };
+}
+
+// Per-game variant of the region-aware builder. Collects this game's species +
+// move URLs, derives sprite PNGs for those species (IDs resolved locally — no
+// fetch), and live-enumerates the game's own pokeapiRegion(s) so a user who
+// pre-caches just one region-path game (RBY/GSC/RSE/FRLG/DPPt/HGSS/ORAS) can
+// still browse its encounters offline. Region-less games (encounter-tables /
+// NUZ_DATA path) skip the enumeration and resolve instantly.
+async function buildPrefetchUrlsForGameWithRegions(gameKey, progressFn) {
+  const urls = new Set();
+  _collectPrefetchUrlsForGame(gameKey, urls);
+  for (const name of _collectGameSpeciesNames(gameKey)) {
+    const id = _spriteIdForSpecies(name);
+    if (id) urls.add(`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`);
+  }
+  const r = GAMES[gameKey]?.dataSources?.pokeapiRegion;
+  if (r) {
+    const regionSlugs = new Set(Array.isArray(r) ? r : [r]);
+    await _enumerateRegionUrls(regionSlugs, urls, progressFn);
   }
   return [...urls];
 }
@@ -10561,7 +10629,7 @@ async function _runWithConcurrency(items, n, worker) {
   await Promise.all(Array.from({ length: Math.min(n, items.length || 1) }, run));
 }
 
-function startPrefetchAll() {
+async function startPrefetchAll() {
   if (_prefetchInFlight) { showToast('Pre-cache already running','info'); return; }
   if (!_swRegistration && !(navigator.serviceWorker && navigator.serviceWorker.controller)) {
     showToast('Service worker not ready — reload the page first','error');
@@ -10569,16 +10637,45 @@ function startPrefetchAll() {
   }
   const r = curRun();
   if (!r) { showToast('No active run','info'); return; }
-  const urls = buildPrefetchUrls();
-  if (!urls.length) { showToast('No species/move data to pre-cache for this game','info'); return; }
   _prefetchInFlight = true;
   _prefetchScope = { kind: 'current', gameKey: r.game };
-  _prefetchDone = 0;
-  _prefetchTotal = urls.length;
   const btn = document.getElementById('prefetch-btn');
   if (btn) btn.disabled = true;
   const btnAll = document.getElementById('prefetch-all-games-btn');
   if (btnAll) btnAll.disabled = true;
+  // Region-path games (RBY/GSC/RSE/FRLG/DPPt/HGSS/ORAS) need a live region →
+  // location → area enumeration so encounters work offline; that's async, so
+  // surface the progress block. Region-less games resolve instantly.
+  const wrap = document.getElementById('prefetch-progress-wrap');
+  if (wrap) wrap.style.display = 'block';
+  const lbl = document.getElementById('prefetch-progress-label');
+  if (lbl) lbl.textContent = 'Building pre-cache list…';
+  let urls = [];
+  try {
+    urls = await buildPrefetchUrlsForGameWithRegions(r.game, (msg) => {
+      const l = document.getElementById('prefetch-progress-label');
+      if (l) l.textContent = msg;
+    });
+  } catch(e) {
+    _prefetchInFlight = false;
+    _prefetchScope = null;
+    if (btn) btn.disabled = false;
+    if (btnAll) btnAll.disabled = false;
+    if (wrap) wrap.style.display = 'none';
+    showToast('Pre-cache enumeration failed — check connection','error');
+    return;
+  }
+  if (!urls.length) {
+    _prefetchInFlight = false;
+    _prefetchScope = null;
+    if (btn) btn.disabled = false;
+    if (btnAll) btnAll.disabled = false;
+    if (wrap) wrap.style.display = 'none';
+    showToast('No species/move data to pre-cache for this game','info');
+    return;
+  }
+  _prefetchDone = 0;
+  _prefetchTotal = urls.length;
   updatePrefetchProgress(0, urls.length);
   postToSW({ type: 'prefetch-all', urls });
 }
