@@ -353,13 +353,12 @@
 
   /* Reco card score badge */
   .reco-card{position:relative}
-  /* Pin the edit hint to the bottom-left of the reco card's content area (just
-     above the reason bar) regardless of how many details the card has. The
-     reco card keeps its hint in card-body (unlike roster/active cards), so we
-     grow card-top/card-body and push the hint down with margin-top:auto. */
-  .reco-card .card-top.with-sprite{display:flex;flex-direction:column;flex:1;min-height:0}
-  .reco-card .card-body{flex:1}
-  .reco-card .edit-hint{margin-top:auto;padding-top:6px}
+  /* Reco cards render the edit hint as a DIRECT child (between the full-width
+     header/card-top and the reason footer) and pin it to the bottom-left with
+     margin-top:auto. This keeps card-top as display:block so the header still
+     stretches the full card width (making card-top a flex column let the sprite
+     overlap the text). */
+  .reco-card > .edit-hint{margin-top:auto;padding-top:6px}
   /* Verdict + reason are STACKED (not one stretch row) so the verdict pill stays
      a consistent size across cards while the reason wraps to as many lines as
      needed. (Previously align-items:stretch made the verdict band grow with the
@@ -6543,7 +6542,8 @@ function renderMatchup() {
       const reason = getMatchupReason(p, boss);
       // Reuse card layout but with reco-card class for score badge
       return `<div class="poke-card reco-card" onclick="openEdit(${idx})"${p.inParty?' style="border-color:rgba(108,143,255,.4);box-shadow:0 0 0 1px rgba(108,143,255,.1)"':''}>
-        <div class="card-top with-sprite">${cardInner(p, idx)}</div>
+        <div class="card-top with-sprite">${cardInner(p, idx, false)}</div>
+        <div class="edit-hint">✎ tap to view & edit</div>
         <div class="reco-reason"><span class="reco-verdict v-${analysis.verdict}" title="Score: ${score.toFixed(1)}">${analysis.label}</span><span class="reco-reason-text">${reason}</span></div>
       </div>`;
     }).join('');
