@@ -24,9 +24,9 @@ Ilex Forest|caterpie,metapod,butterfree,zubat,oddish,paras,psyduck,golduck,poliw
 Route 34|rattata,abra,tentacool,tentacruel,drowzee,exeggcute,ditto,hoothoot,spinarak,pineco,linoone,ralts,whismur,bidoof,buizel
 Goldenrod City|ekans,abra,dratini
 --Goldenrod City Gym|3|gym-leader|Whitney
-Route 35|pidgey,nidoranf,nidoranm,psyduck,golduck,poliwag,abra,drowzee,exeggcute,magikarp,ditto,hoothoot,spinarak,yanma,pineco,linoone,whismur,bidoof,buizel
+Route 35|pidgey,nidoran-f,nidoran-m,psyduck,golduck,poliwag,abra,drowzee,exeggcute,magikarp,ditto,hoothoot,spinarak,yanma,pineco,linoone,whismur,bidoof,buizel
 National Park|caterpie,metapod,butterfree,weedle,kakuna,beedrill,paras,venonat,scyther,pinsir,wurmple,silcoon,beautifly,cascoon,dustox,nincada,volbeat,illumise,kricketot,kricketune,combee
-Route 36|pidgey,nidoranf,nidoranm,growlithe,exeggcute,hoothoot,spinarak,sudowoodo,pineco,stantler,plusle,minun,shinx
+Route 36|pidgey,nidoran-f,nidoran-m,growlithe,exeggcute,hoothoot,spinarak,sudowoodo,pineco,stantler,plusle,minun,shinx
 Route 37|pidgey,pidgeotto,growlithe,exeggcute,hoothoot,spinarak,pineco,stantler,plusle,minun,shinx
 Ecruteak City|poliwag,poliwhirl,exeggcute,magikarp,spinarak,pineco
 Burned Tower|rattata,zubat,koffing,magmar,zigzagoon,meditite,spinda,chatot
@@ -82,18 +82,18 @@ Indigo Plateau|
 --Champion Fight|c|elite-four|Lance
 Vermilion City|spearow,diglett,tentacool,tentacruel,shellder,magikarp,chinchou,lanturn,shuckle,heracross,wingull,combee
 --Vermilion City Gym|k1|gym-leader|Lt. Surge
-Route 6|pidgey,nidoranf,nidoranm,growlithe,exeggcute,hoothoot,spinarak,sudowoodo,pineco,stantler,plusle,minun,shinx
+Route 6|pidgey,nidoran-f,nidoran-m,growlithe,exeggcute,hoothoot,spinarak,sudowoodo,pineco,stantler,plusle,minun,shinx
 Saffron City|pikachu
 --Saffron City Gym|k2|gym-leader|Sabrina
 Route 7|metapod,butterfree,raticate,spearow,fearow,gloom,tentacool,tentacruel,farfetchd,seel,shellder,exeggcute,staryu,magikarp,ditto,hoothoot,noctowl,spinarak,chinchou,lanturn,pineco,heracross,miltank,linoone,whismur,bidoof,buizel
-Celadon City|mrmime,eevee,porygon
+Celadon City|mr-mime,eevee,porygon
 --Celadon City Gym|k3|gym-leader|Erika
 Route 16|tentacool,tentacruel,shellder,magikarp,chinchou,lanturn,mantine
 Route 17|metapod,butterfree,raticate,spearow,fearow,gloom,tentacool,tentacruel,farfetchd,seel,shellder,exeggcute,staryu,magikarp,ditto,hoothoot,noctowl,spinarak,chinchou,lanturn,pineco,heracross,miltank,linoone,whismur,bidoof,buizel
 Route 18|rattata,raticate,magnemite,farfetchd,exeggcute,tauros,hoothoot,spinarak,pineco,snubbull,miltank,plusle,minun,shinx,burmy
 Fuchsia City|magikarp,gyarados,hoothoot,spinarak,wurmple
 --Fuchsia City Gym|k4|gym-leader|Janine
-Route 15|pidgey,nidoranf,nidoranm,psyduck,golduck,poliwag,abra,drowzee,exeggcute,magikarp,ditto,hoothoot,spinarak,yanma,pineco,linoone,whismur,bidoof,buizel
+Route 15|pidgey,nidoran-f,nidoran-m,psyduck,golduck,poliwag,abra,drowzee,exeggcute,magikarp,ditto,hoothoot,spinarak,yanma,pineco,linoone,whismur,bidoof,buizel
 Route 14|tentacool,tentacruel
 Route 13|rattata,spearow,zubat,hoppip,aipom,heracross,plusle,minun,shinx
 Route 12|pidgey,rattata,exeggcute,sentret,hoothoot,spinarak,pineco,plusle,minun,shinx

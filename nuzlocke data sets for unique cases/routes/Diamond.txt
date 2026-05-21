@@ -1,6 +1,6 @@
 Starter|turtwig,chimchar,piplup
 Twinleaf Town|psyduck,golduck,goldeen,seaking,magikarp,gyarados
-Route 201|nidoranf,nidoranm,growlithe,doduo,starly,bidoof
+Route 201|nidoran-f,nidoran-m,growlithe,doduo,starly,bidoof
 Lake Verity|psyduck,golduck,goldeen,seaking,magikarp,gyarados,wobbuffet,surskit,lunatone,solrock,starly,staravia,bidoof,bibarel
 Route 202|growlithe,sentret,zigzagoon,starly,bidoof,kricketot,shinx
 Route 203|zubat,psyduck,golduck,abra,cubone,goldeen,seaking,magikarp,gyarados,pineco,lotad,seedot,ralts,kirlia,starly,bidoof,kricketot,shinx
@@ -27,14 +27,14 @@ Mt. Coronet|clefairy,zubat,machop,geodude,cleffa,nosepass,meditite,chingling,bro
 Route 208|zubat,psyduck,golduck,machop,magikarp,gyarados,aipom,dunsparce,heracross,tyrogue,wurmple,silcoon,meditite,zangoose,seviper,barboach,whiscash,bidoof,bibarel,burmy,combee,cherubi,munchlax
 Hearthome City|eevee
 --Hearthome City|b2|rival|Barry
-Route 209|vulpix,zubat,psyduck,golduck,gastly,chansey,goldeen,seaking,tauros,magikarp,gyarados,aipom,snubbull,heracross,miltank,wurmple,silcoon,starly,staravia,bibarel,burmy,combee,cherubi,mimejr,spiritomb,munchlax
+Route 209|vulpix,zubat,psyduck,golduck,gastly,chansey,goldeen,seaking,tauros,magikarp,gyarados,aipom,snubbull,heracross,miltank,wurmple,silcoon,starly,staravia,bibarel,burmy,combee,cherubi,mime-jr,spiritomb,munchlax
 The Lost Tower|zubat,golbat,gastly,murkrow
 Solaceon Ruins|unown
-Route 210|geodude,ponyta,chansey,tauros,aipom,pineco,heracross,miltank,wurmple,silcoon,seedot,nuzleaf,kricketune,burmy,combee,cherubi,mimejr,munchlax
+Route 210|geodude,ponyta,chansey,tauros,aipom,pineco,heracross,miltank,wurmple,silcoon,seedot,nuzleaf,kricketune,burmy,combee,cherubi,mime-jr,munchlax
 Route 215|abra,kadabra,geodude,ponyta,drowzee,aipom,gligar,heracross,mightyena,wurmple,silcoon,kricketune,burmy,combee,cherubi,munchlax
 Veilstone City|porygon
 --Veilstone Gym|3|gym-leader|Maylene
-Trophy Garden|clefairy,jigglypuff,meowth,chansey,eevee,porygon,cleffa,igglybuff,marill,azurill,plusle,minun,castform,bonsly,mimejr,happiny
+Trophy Garden|clefairy,jigglypuff,meowth,chansey,eevee,porygon,cleffa,igglybuff,marill,azurill,plusle,minun,castform,bonsly,mime-jr,happiny
 Pastoria City|tentacool,tentacruel,magikarp,gyarados,remoraid,octillery,wingull,pelipper
 Great Marsh|paras,golduck,exeggcute,kangaskhan,yanma,shroomish,roselia,gulpin,staravia,skorupi,drapion,croagunk,toxicroak,carnivine
 --Pastoria Gym|4|gym-leader|Crasher Wake
@@ -52,7 +52,7 @@ Fuego Ironworks|tentacool,tentacruel,magnemite,shellder,magikarp,gyarados,aipom,
 Route 219|tentacool,tentacruel,magikarp,gyarados,wingull,pelipper,clamperl,finneon,lumineon
 Route 220|tentacool,tentacruel,magikarp,gyarados,chinchou,lanturn,wingull,pelipper,finneon,lumineon
 Route 221|nidorina,nidorino,tentacool,tentacruel,farfetchd,magikarp,gyarados,aipom,heracross,wurmple,silcoon,wingull,pelipper,roselia,clamperl,burmy,combee,floatzel,cherubi,shellos,gastrodon,stunky,skuntank,munchlax,finneon,lumineon
-Route 218|tentacool,tentacruel,voltorb,mrmime,magikarp,gyarados,ditto,aipom,heracross,wurmple,silcoon,wingull,pelipper,burmy,combee,floatzel,cherubi,shellos,gastrodon,munchlax,finneon,lumineon
+Route 218|tentacool,tentacruel,voltorb,mr-mime,magikarp,gyarados,ditto,aipom,heracross,wurmple,silcoon,wingull,pelipper,burmy,combee,floatzel,cherubi,shellos,gastrodon,munchlax,finneon,lumineon
 --Route 218|b4|rival|Barry
 Canalave City|tentacool,tentacruel,staryu,magikarp,gyarados,wingull,pelipper,finneon,lumineon
 Iron Island|tentacool,tentacruel,magikarp,gyarados,qwilfish,wingull,pelipper,finneon,lumineon,geodude,graveler,onix,sableye,mawile,steelix,riolu
@@ -70,7 +70,7 @@ Snowpoint Temple|golbat,graveler,steelix,sneasel,regigigas
 --Galactic HQ|sat2|evil-team|Saturn
 --Spear Pillar|mnj|evil-team|Mars & Jupiter
 --Spear Pillar|cyr2|evil-team|Cyrus
-Route 222|tentacool,tentacruel,mrmime,magikarp,gyarados,flaaffy,aipom,heracross,remoraid,octillery,wurmple,silcoon,wingull,pelipper,skitty,sharpedo,burmy,combee,floatzel,cherubi,gastrodon,chatot,munchlax
+Route 222|tentacool,tentacruel,mr-mime,magikarp,gyarados,flaaffy,aipom,heracross,remoraid,octillery,wurmple,silcoon,wingull,pelipper,skitty,sharpedo,burmy,combee,floatzel,cherubi,gastrodon,chatot,munchlax
 Sunyshore City|tentacruel,staryu,magikarp,gyarados,remoraid,octillery,pelipper,mantyke
 --Sunyshore Gym|8|gym-leader|Volkner
 Route 223|tentacruel,magikarp,gyarados,remoraid,octillery,pelipper,wailmer,wailord,mantyke

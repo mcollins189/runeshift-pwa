@@ -3,9 +3,9 @@ Pallet Town|poliwag,tentacool,goldeen,staryu,magikarp
 --Professor Oak's Lab|r1|rival|Blue
 Route 1|pidgey,rattata
 Viridian City|poliwag,goldeen,magikarp
-Route 22|rattata,spearow,nidoranf,nidoranm,mankey,poliwag,poliwhirl,goldeen,magikarp
+Route 22|rattata,spearow,nidoran-f,nidoran-m,mankey,poliwag,poliwhirl,goldeen,magikarp
 --Route 22|r2|rival|Blue (Optional)
-Route 2|pidgey,rattata,nidoranf,nidoranm
+Route 2|pidgey,rattata,nidoran-f,nidoran-m
 Viridian Forest|caterpie,metapod,pidgey,pidgeotto
 --Pewter City Gym|1|gym-leader|Brock
 Route 3|rattata,spearow,sandshrew,mankey
@@ -24,8 +24,8 @@ Vermilion City|poliwag,tentacool,shellder,goldeen,staryu,magikarp
 --Vermilion City Gym|3|gym-leader|Lt. Surge
 Route 11|pidgey,pidgeotto,rattata,raticate,dugtrio,poliwag,tentacool,drowzee,horsea,goldeen,magikarp
 Diglett's Cave|diglett,dugtrio
-Route 9|rattata,raticate,spearow,fearow,nidoranf,nidorina,nidoranm,nidorino
-Route 10|rattata,raticate,nidoranf,nidoranm,poliwag,machop,magnemite,krabby,kingler,horsea,goldeen,magikarp
+Route 9|rattata,raticate,spearow,fearow,nidoran-f,nidorina,nidoran-m,nidorino
+Route 10|rattata,raticate,nidoran-f,nidoran-m,poliwag,machop,magnemite,krabby,kingler,horsea,goldeen,magikarp
 Rock Tunnel|zubat,machop,geodude,onix
 Pokémon Tower|gastly,haunter,cubone
 Route 12|pidgey,pidgeotto,oddish,gloom,poliwag,bellsprout,weepinbell,slowpoke,slowbro,farfetchd,horsea,seadra,goldeen,magikarp,snorlax
@@ -47,7 +47,7 @@ Route 17|fearow,poliwag,tentacool,ponyta,doduo,dodrio,shellder,goldeen,magikarp
 Route 18|rattata,raticate,spearow,fearow,parasect,poliwag,tentacool,doduo,shellder,goldeen,magikarp
 Fuchsia City|poliwag,goldeen,magikarp,gyarados
 --Fuchsia City Gym|5|gym-leader|Koga
-Safari Zone|nidoranf,nidoranm,nidorino,poliwag,exeggcute,cubone,marowak,tangela,goldeen,pinsir,tauros,magikarp,dratini
+Safari Zone|nidoran-f,nidoran-m,nidorino,poliwag,exeggcute,cubone,marowak,tangela,goldeen,pinsir,tauros,magikarp,dratini
 Route 15|pidgeotto,oddish,gloom,venonat,venomoth,bellsprout,weepinbell
 Route 14|pidgeotto,oddish,gloom,venonat,venomoth,bellsprout,weepinbell
 Route 13|pidgey,pidgeotto,oddish,gloom,poliwag,bellsprout,weepinbell,tentacool,slowpoke,slowbro,farfetchd,horsea,seadra,goldeen,magikarp

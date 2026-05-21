@@ -23,8 +23,8 @@ Cyllage City|tentacool,onix,horsea,seadra,magikarp,eevee,steelix,wailmer,relican
 --Cyllage Gym|2|gym-leader|Grant
 Route 10|eevee,yanma,snubbull,houndour,nosepass,sigilyph,emolga,golett,hawlucha
 --Geosenge|3a|rival|Korrina
-Route 11|nidoranf,nidorina,nidoranm,nidorino,hariyama,starly,staravia,chingling,stunky,sawk,dedenne
-Reflection Cave|mrmime,wobbuffet,sableye,chingling,mimejr,roggenrola,woobat,solosis,ferroseed,carbink
+Route 11|nidoran-f,nidorina,nidoran-m,nidorino,hariyama,starly,staravia,chingling,stunky,sawk,dedenne
+Reflection Cave|mr-mime,wobbuffet,sableye,chingling,mime-jr,roggenrola,woobat,solosis,ferroseed,carbink
 Shalour City|tentacool,chinchou,lanturn,remoraid,octillery,luvdisc,mantyke,alomomola
 Tower of Mastery|lucario
 --Tower of Mastery|se1|rival|Serena

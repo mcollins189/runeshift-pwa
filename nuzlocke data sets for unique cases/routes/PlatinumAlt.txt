@@ -1,6 +1,6 @@
 Starter|turtwig,chimchar,piplup
 Twinleaf Town|psyduck,golduck,goldeen,seaking,magikarp,gyarados
-Route 201|nidoranf,nidoranm,growlithe,doduo,turtwig,chimchar,piplup,starly,bidoof,kricketot
+Route 201|nidoran-f,nidoran-m,growlithe,doduo,turtwig,chimchar,piplup,starly,bidoof,kricketot
 --Route 201|b1|rival|Barry
 Lake Verity|psyduck,golduck,goldeen,seaking,magikarp,gyarados,wobbuffet,lunatone,solrock,starly,bidoof
 Route 202|psyduck,golduck,growlithe,goldeen,seaking,magikarp,gyarados,sentret,zigzagoon,starly,bidoof,kricketot,shinx
@@ -52,7 +52,7 @@ Fuego Ironworks|tentacool,tentacruel,magnemite,shellder,magmar,magikarp,gyarados
 Route 219|tentacool,tentacruel,magikarp,gyarados,wingull,pelipper,finneon,lumineon
 Route 220|tentacool,tentacruel,magikarp,gyarados,chinchou,wingull,pelipper,finneon,lumineon
 Route 221|nidorina,nidorino,tentacool,tentacruel,farfetchd,magikarp,gyarados,sudowoodo,aipom,girafarig,heracross,wurmple,wingull,pelipper,roselia,burmy,combee,floatzel,cherubi,munchlax,finneon,lumineon
-Route 218|tentacool,tentacruel,voltorb,mrmime,magikarp,gyarados,aipom,heracross,wurmple,burmy,combee,floatzel,cherubi,shellos,gastrodon,chatot,munchlax,finneon,lumineon
+Route 218|tentacool,tentacruel,voltorb,mr-mime,magikarp,gyarados,aipom,heracross,wurmple,burmy,combee,floatzel,cherubi,shellos,gastrodon,chatot,munchlax,finneon,lumineon
 Canalave City|tentacool,tentacruel,staryu,magikarp,gyarados,shellos,gastrodon,finneon,lumineon
 --Canalave City|b5|rival|Barry
 --Canalave Gym|6|gym-leader|Byron

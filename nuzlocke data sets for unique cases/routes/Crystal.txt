@@ -21,7 +21,7 @@ Ilex Forest|caterpie,metapod,butterfree,weedle,kakuna,beedrill,pidgey,oddish,par
 Route 34|pidgey,rattata,jigglypuff,abra,tentacool,tentacruel,drowzee,krabby,kingler,exeggcute,staryu,magikarp,ditto,hoothoot,ledyba,spinarak,pichu,cleffa,igglybuff,pineco,snubbull,corsola,tyrogue,smoochum,elekid,magby
 Goldenrod City|abra,cubone,wobbuffet
 --Goldenrod City Gym|3|gym-leader|Whitney
-Route 35|pidgey,spearow,nidoranf,nidoranm,jigglypuff,psyduck,golduck,growlithe,poliwag,poliwhirl,abra,drowzee,exeggcute,magikarp,ditto,hoothoot,noctowl,ledyba,spinarak,yanma,pineco,snubbull
+Route 35|pidgey,spearow,nidoran-f,nidoran-m,jigglypuff,psyduck,golduck,growlithe,poliwag,poliwhirl,abra,drowzee,exeggcute,magikarp,ditto,hoothoot,noctowl,ledyba,spinarak,yanma,pineco,snubbull
 National Park|caterpie,metapod,butterfree,weedle,kakuna,beedrill,paras,venonat,scyther,pinsir
 Route 36|pidgey,growlithe,bellsprout,gastly,exeggcute,hoothoot,ledyba,spinarak,sudowoodo,pineco
 Route 37|pidgey,pidgeotto,growlithe,exeggcute,hoothoot,noctowl,ledyba,ledian,spinarak,ariados,pineco,stantler
@@ -92,7 +92,7 @@ Route 17|fearow,grimer,muk,slugma
 Route 18|pidgeotto,rattata,raticate,meowth,magnemite,exeggcute,tauros,hoothoot,noctowl,ledyba,spinarak,pineco,miltank
 Fuchsia City|magikarp,gyarados
 --Fuchsia City Gym|k4|gym-leader|Janine
-Route 15|pidgey,spearow,nidoranf,nidoranm,jigglypuff,psyduck,golduck,growlithe,poliwag,poliwhirl,abra,drowzee,exeggcute,magikarp,ditto,hoothoot,noctowl,ledyba,spinarak,yanma,pineco,snubbull
+Route 15|pidgey,spearow,nidoran-f,nidoran-m,jigglypuff,psyduck,golduck,growlithe,poliwag,poliwhirl,abra,drowzee,exeggcute,magikarp,ditto,hoothoot,noctowl,ledyba,spinarak,yanma,pineco,snubbull
 Route 14|tentacool,tentacruel,krabby,kingler,staryu,magikarp,shuckle,corsola
 Route 13|rattata,spearow,ekans,zubat,geodude,hoppip,aipom,heracross
 Route 12|pidgey,rattata,exeggcute,sentret,hoothoot,ledyba,spinarak,hoppip,pineco

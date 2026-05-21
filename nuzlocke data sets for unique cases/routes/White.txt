@@ -76,7 +76,7 @@ Undella Town|shellder,cloyster,corsola,remoraid,octillery,mantine,wingull,pelipp
 Undella Bay|shellder,cloyster,remoraid,octillery,mantine,wingull,pelipper,wailmer,wailord,spheal,sealeo,walrein,luvdisc,mantyke
 Route 14|jigglypuff,wigglytuff,golduck,goldeen,seaking,yanma,shuckle,altaria,tropius,buizel,floatzel,drifblim,audino,basculin,beheeyem,mienfoo,mienshao
 Abundant Shrine|vulpix,ninetales,slowpoke,slowbro,goldeen,seaking,noctowl,slowking,misdreavus,stantler,chimecho,mismagius,bronzong,audino,petilil,lilligant,basculin,emolga,landorus
-White Forest|pidgey,nidoranf,nidoranm,oddish,abra,machop,bellsprout,magnemite,gastly,rhyhorn,porygon,togepi,mareep,hoppip,wooper,elekid,magby,wurmple,lotad,seedot,ralts,surskit,slakoth,whismur,azurill,aron,trapinch,corphish,bagon,starly,shinx,budew,happiny
+White Forest|pidgey,nidoran-f,nidoran-m,oddish,abra,machop,bellsprout,magnemite,gastly,rhyhorn,porygon,togepi,mareep,hoppip,wooper,elekid,magby,wurmple,lotad,seedot,ralts,surskit,slakoth,whismur,azurill,aron,trapinch,corphish,bagon,starly,shinx,budew,happiny
 Route 15|fearow,mankey,marowak,kangaskhan,gligar,pupitar,tyranitar,gliscor,rotom,watchog,audino,throh,sawk,emolga
 Marvelous Bridge|magikarp,swanna
 Lostlorn Forest|goldeen,seaking,pansage,pansear,panpour,tranquill,unfezant,audino,swadloon,leavanny,venipede,petilil,lilligant,basculin,zoroark,emolga

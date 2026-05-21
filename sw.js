@@ -45,7 +45,11 @@
 // key misses AND the network is unreachable, rescuing the bundle offline while
 // keeping the online ?v= freshness path (exact miss → fetch fresh → re-cache).
 // Bumped to evict the stale/broken v4 cache and force a fresh reinstall.
-const SHELL_CACHE = 'nuz-shell-v5';
+// v6 — precache enumeration now filters against bundled PokeAPI validity sets
+// (skips fakemon / custom moves / form species-endpoints / evo-chain gaps) and
+// the dead raw.githubusercontent sprite route was removed. Bumped so existing
+// clients adopt the new SW + re-cache the fresh data.bundle.js.
+const SHELL_CACHE = 'nuz-shell-v6';
 const POKEAPI_CACHE = 'nuz-pokeapi-v1';
 
 // Same-origin shell URLs use relative paths so the PWA works at any subpath
@@ -116,11 +120,11 @@ self.addEventListener('fetch', (event) => {
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
 
-  // PokeAPI / PokeAPI sprite CDN -> stale-while-revalidate.
-  if (
-    url.hostname === 'pokeapi.co' && url.pathname.startsWith('/api/v2/') ||
-    url.hostname === 'raw.githubusercontent.com' && url.pathname.startsWith('/PokeAPI/sprites/')
-  ) {
+  // PokeAPI data (species/pokemon/move/evolution/region/location) -> stale-
+  // while-revalidate. Sprites are self-hosted under ./sprites/ now (handled
+  // below), so the old raw.githubusercontent PokeAPI/sprites route was dead and
+  // has been removed.
+  if (url.hostname === 'pokeapi.co' && url.pathname.startsWith('/api/v2/')) {
     event.respondWith(staleWhileRevalidate(req, POKEAPI_CACHE));
     return;
   }

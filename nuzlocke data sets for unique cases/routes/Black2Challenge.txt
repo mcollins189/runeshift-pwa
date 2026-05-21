@@ -57,7 +57,7 @@ Route 22|golduck,goldeen,seaking,marill,azumarill,delibird,pelipper,lunatone,sol
 --Command Center|zinz3|evil-team|Zinzolin & grunt
 --Kyurem's Location|zinz4|evil-team|Zinzolin
 --Control Room|col3|evil-team|Colress
-Giant Chasm|clefairy,clefable,poliwag,poliwhirl,poliwrath,seel,dewgong,tangela,ditto,sneasel,piloswine,delibird,pelipper,lunatone,solrock,metang,metagross,tangrowth,mamoswine,excadrill,audino,basculin,vanillish,vanilluxe,kyurem,kyuremblack
+Giant Chasm|clefairy,clefable,poliwag,poliwhirl,poliwrath,seel,dewgong,tangela,ditto,sneasel,piloswine,delibird,pelipper,lunatone,solrock,metang,metagross,tangrowth,mamoswine,excadrill,audino,basculin,vanillish,vanilluxe,kyurem,kyurem-black
 --Giant Chasm|ghetsis|evil-team|Ghetsis
 Route 23|golduck,poliwag,poliwhirl,poliwrath,gligar,buizel,floatzel,gliscor,azelf,audino,throh,sawk,basculin,emolga,amoonguss,mienfoo,mienshao,bouffalant,vullaby
 Victory Road|poliwag,poliwhirl,poliwrath,onix,marill,azumarill,politoed,dunsparce,roselia,altaria,banette,roserade,buizel,floatzel,tranquill,unfezant,boldore,excadrill,audino,gurdurr,throh,sawk,cottonee,whimsicott,basculin,druddigon,golurk,zweilous

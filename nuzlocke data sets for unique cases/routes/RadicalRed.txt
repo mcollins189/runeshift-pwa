@@ -163,7 +163,7 @@ Kindle Road|absol,smeargle,alcremie,centiskorch,gardevoir,seviper,centiskorch-se
 
 --Celadon City Gym|4r|gym-leader|Erika Rematch
 
-Cerulean Cave|magikarp,staryu,carvanha,pyukumuku,krabby,seismitoad,poliwhirl,crawdaunt,golduck,kingler,parasect,golbat,machamp,magneton,duraludon,type-null,conkeldurr,amoonguss,swoobat,primeape,audino,alakazam,typenull,pangoro,reuniclus,feebas,mareanie,corphish,poliwrath,sharpedo,gyarados,slowbro,toxapex,milotic,shiinotic,noivern,medicham,lopunny,gardevoir,excadrill,toxicroak
+Cerulean Cave|magikarp,staryu,carvanha,pyukumuku,krabby,seismitoad,poliwhirl,crawdaunt,golduck,kingler,parasect,golbat,machamp,magneton,duraludon,type-null,conkeldurr,amoonguss,swoobat,primeape,audino,alakazam,type-null,pangoro,reuniclus,feebas,mareanie,corphish,poliwrath,sharpedo,gyarados,slowbro,toxapex,milotic,shiinotic,noivern,medicham,lopunny,gardevoir,excadrill,toxicroak
 
 --Cerulean Cave|ev4|evil-team|Admin Archer
 

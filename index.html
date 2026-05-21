@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
-<script src="data.bundle.js?v=1779326122659" onerror="window.__NUZ_BUNDLE_MISSING=true"></script>
+<script src="data.bundle.js?v=1779337690162" onerror="window.__NUZ_BUNDLE_MISSING=true"></script>
 <style>
   :root {
     --bg:#0f0f10;--bg2:#18181b;--bg3:#222228;--bg4:#2a2a32;
@@ -10513,10 +10513,31 @@ function _spriteIdForSpecies(name) {
   return null;
 }
 
+// Memoized Sets of the slugs/IDs PokeAPI actually serves (bundled by
+// build-data from _converters/_valid-api.json). Used to skip pre-cache URLs
+// that would 404 — fakemon, custom hack moves, form-only species-endpoints,
+// evolution-chain gaps — so the precache "failed" count stays near zero.
+// SAFETY: if the bundle has no validity data (older bundle), `enabled` is false
+// and callers fall back to enqueuing everything — we never skip a real URL.
+let _validApiSets = null;
+function validApi() {
+  if (_validApiSets) return _validApiSets;
+  const v = (typeof NUZ_DATA !== 'undefined' && NUZ_DATA.validApi) ? NUZ_DATA.validApi : {};
+  _validApiSets = {
+    pokemon: new Set(v.pokemon || []),
+    species: new Set(v.species || []),
+    move: new Set(v.move || []),
+    evoChain: new Set(v.evoChain || []),
+  };
+  _validApiSets.enabled = _validApiSets.pokemon.size > 0;
+  return _validApiSets;
+}
+
 function _collectPrefetchUrlsForGame(gameKey, urls) {
   const game = GAMES[gameKey];
   if (!game) return;
   const speciesNames = _collectGameSpeciesNames(gameKey);
+  const v = validApi();
 
   for (const name of speciesNames) {
     const slug = speciesSlug(name);
@@ -10525,8 +10546,10 @@ function _collectPrefetchUrlsForGame(gameKey, urls) {
     // runtime fetches use. Without it the SW cache key mismatches the
     // request URL and offline fetches fall through to a "show everything"
     // fallback (no version filtering, no percentages).
-    urls.add(`https://pokeapi.co/api/v2/pokemon-species/${slug}/`);
-    urls.add(`https://pokeapi.co/api/v2/pokemon/${slug}/`);
+    // Skip URLs PokeAPI doesn't serve: fakemon have no /pokemon/ entry, and
+    // form/regional slugs (meowth-alola) 404 on the base-keyed /pokemon-species/.
+    if (!v.enabled || v.species.has(slug)) urls.add(`https://pokeapi.co/api/v2/pokemon-species/${slug}/`);
+    if (!v.enabled || v.pokemon.has(slug)) urls.add(`https://pokeapi.co/api/v2/pokemon/${slug}/`);
   }
 
   // Moves: every move on every boss team across every leagues file for this game.
@@ -10538,8 +10561,11 @@ function _collectPrefetchUrlsForGame(gameKey, urls) {
     for (const t of Object.values(leagueData.trainers)) {
       for (const member of (t.team || [])) {
         for (const mv of (member.moves || [])) {
-          const slug = (mv || '').toLowerCase().trim().replace(/[''’]/g,'').replace(/\s+/g,'-');
-          if (slug) urls.add(`https://pokeapi.co/api/v2/move/${slug}/`);
+          let slug = (mv || '').toLowerCase().trim().replace(/[''’]/g,'').replace(/\s+/g,'-');
+          // PokeAPI has a single `hidden-power`; data files tag the chosen type.
+          if (slug.startsWith('hidden-power-')) slug = 'hidden-power';
+          if (!slug) continue;
+          if (!v.enabled || v.move.has(slug)) urls.add(`https://pokeapi.co/api/v2/move/${slug}/`);
         }
       }
     }
@@ -10590,11 +10616,14 @@ async function buildPrefetchUrlsAllGamesWithRegions(progressFn) {
     urls.add(`sprites/pixel-shiny/${id}.png`);    // shiny coverage offline too
     urls.add(`sprites/art-shiny/${id}.webp`);
   }
-  // Evolution chains drive the backfill's .e lookup. PokeAPI has ~549 chains
-  // total (as of Gen 9); 560 gives a safe margin. Unused IDs 404 — the SW
-  // prefetcher counts those as failed and moves on (same as sprite enumeration).
-  for (let id = 1; id <= 560; id++) {
-    urls.add(`https://pokeapi.co/api/v2/evolution-chain/${id}/`);
+  // Evolution chains drive the backfill's .e lookup. Enumerate the exact valid
+  // chain IDs from the bundled validity set (PokeAPI's IDs aren't contiguous —
+  // a blind 1..N range 404s on the gaps). Fall back to 1..560 if the bundle
+  // predates the validity data.
+  {
+    const ec = validApi().evoChain;
+    const chainIds = ec.size > 0 ? [...ec] : Array.from({ length: 560 }, (_, i) => i + 1);
+    for (const id of chainIds) urls.add(`https://pokeapi.co/api/v2/evolution-chain/${id}/`);
   }
   const regionSlugs = new Set();
   for (const k of Object.keys(GAMES)) {

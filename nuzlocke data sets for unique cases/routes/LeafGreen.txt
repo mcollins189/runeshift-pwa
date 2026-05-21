@@ -5,10 +5,10 @@ Route 1|pidgey,rattata
 Viridian City|poliwag,poliwhirl,slowpoke,goldeen,magikarp,gyarados
 Route 22|rattata,spearow,mankey,poliwag,poliwhirl,slowpoke,goldeen,magikarp,gyarados
 --Rival|r2|rival|Blue
-Route 2|caterpie,weedle,pidgey,rattata,mrmime
+Route 2|caterpie,weedle,pidgey,rattata,mr-mime
 Viridian Forest|caterpie,metapod,weedle,kakuna,pikachu
 --Pewter City Gym|1|gym-leader|Brock
-Route 3|pidgey,spearow,nidoranf,nidoranm,jigglypuff,mankey
+Route 3|pidgey,spearow,nidoran-f,nidoran-m,jigglypuff,mankey
 Route 4|rattata,spearow,sandshrew,mankey,tentacool,slowpoke,krabby,horsea,magikarp,gyarados
 Mt. Moon|clefairy,zubat,paras,geodude
 Cerulean City|tentacool,slowpoke,krabby,horsea,jynx,magikarp,gyarados
@@ -16,7 +16,7 @@ Cerulean City|tentacool,slowpoke,krabby,horsea,jynx,magikarp,gyarados
 Route 24|caterpie,metapod,weedle,kakuna,pidgey,abra,bellsprout,tentacool,slowpoke,krabby,horsea,magikarp,gyarados
 --Rival|r3|rival|Blue
 Route 25|caterpie,metapod,weedle,kakuna,pidgey,poliwag,poliwhirl,abra,bellsprout,slowpoke,goldeen,magikarp,gyarados
-Route 5|pidgey,nidoranm,meowth,bellsprout
+Route 5|pidgey,nidoran-m,meowth,bellsprout
 Route 6|pidgey,meowth,poliwag,poliwhirl,bellsprout,slowpoke,goldeen,magikarp,gyarados
 Vermilion City|tentacool,slowpoke,krabby,horsea,staryu,magikarp,gyarados
 --S.S. Anne|r4|rival|Blue
@@ -43,7 +43,7 @@ Route 17|rattata,raticate,spearow,fearow,doduo
 Route 18|rattata,raticate,spearow,fearow,doduo,lickitung
 Fuchsia City|poliwag,slowpoke,goldeen,seaking,magikarp,gyarados
 --Fuchsia City Gym|5|gym-leader|Koga
-Safari Zone|nidoranf,nidorina,nidoranm,venonat,venomoth,poliwag,slowpoke,doduo,exeggcute,kangaskhan,goldeen,seaking,tauros,magikarp,dratini,dragonair
+Safari Zone|nidoran-f,nidorina,nidoran-m,venonat,venomoth,poliwag,slowpoke,doduo,exeggcute,kangaskhan,goldeen,seaking,tauros,magikarp,dratini,dragonair
 Route 15|pidgey,pidgeotto,venonat,bellsprout,weepinbell,ditto
 Route 14|pidgey,pidgeotto,venonat,bellsprout,weepinbell,ditto
 Route 13|pidgey,pidgeotto,venonat,bellsprout,weepinbell,tentacool,slowpoke,krabby,horsea,magikarp,gyarados,ditto

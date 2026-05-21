@@ -1,6 +1,6 @@
 Starter|turtwig,chimchar,piplup
 Twinleaf Town|psyduck,golduck,goldeen,seaking,magikarp,gyarados
-Route 201|nidoranf,nidoranm,growlithe,doduo,starly,bidoof
+Route 201|nidoran-f,nidoran-m,growlithe,doduo,starly,bidoof
 Lake Verity|psyduck,golduck,goldeen,seaking,magikarp,gyarados,wobbuffet,surskit,lunatone,solrock,starly,staravia,bidoof,bibarel
 Route 202|growlithe,sentret,zigzagoon,starly,bidoof,kricketot,shinx
 Route 203|zubat,psyduck,golduck,abra,cubone,goldeen,seaking,magikarp,gyarados,pineco,lotad,seedot,ralts,kirlia,starly,bidoof,kricketot,shinx
@@ -34,7 +34,7 @@ Route 210|geodude,ponyta,chansey,tauros,aipom,pineco,heracross,miltank,wurmple,c
 Route 215|abra,kadabra,geodude,ponyta,drowzee,aipom,gligar,heracross,houndoom,wurmple,cascoon,kricketune,burmy,combee,cherubi,munchlax
 Veilstone City|porygon
 --Veilstone Gym|3|gym-leader|Maylene
-Trophy Garden|clefairy,jigglypuff,meowth,chansey,eevee,porygon,cleffa,igglybuff,marill,azurill,plusle,minun,castform,bonsly,mimejr,happiny
+Trophy Garden|clefairy,jigglypuff,meowth,chansey,eevee,porygon,cleffa,igglybuff,marill,azurill,plusle,minun,castform,bonsly,mime-jr,happiny
 Pastoria City|tentacool,tentacruel,magikarp,gyarados,remoraid,octillery,wingull,pelipper
 Great Marsh|paras,golduck,exeggcute,kangaskhan,yanma,shroomish,roselia,gulpin,staravia,skorupi,drapion,croagunk,toxicroak,carnivine
 --Pastoria Gym|4|gym-leader|Crasher Wake
