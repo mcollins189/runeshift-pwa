@@ -109,6 +109,10 @@
   .drag-hint{font-size:11px;color:var(--text3);margin-left:auto;font-weight:400;text-transform:none;letter-spacing:0}
 
   .poke-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px;margin-bottom:16px}
+  /* Boss-matchup recommended-team grid only: equal-height rows so a 2-line
+     matchup reason doesn't make one card taller than its neighbours. The roster
+     grid (#roster-grid) intentionally stays content-height. */
+  #reco-grid{grid-auto-rows:1fr}
   .party-strip{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:14px}
   .party-slot{display:flex;align-items:center;gap:10px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 10px;min-height:64px;cursor:pointer;transition:border-color .12s,background .12s;position:relative}
   .party-slot:hover{border-color:var(--accent);background:var(--bg3)}
@@ -10367,6 +10371,23 @@ if ('serviceWorker' in navigator) {
     }).catch(err => console.warn('[sw] register failed:', err));
   });
 }
+
+// Hard-lock phones to portrait. Android (installed PWA) supports
+// screen.orientation.lock, so the device won't rotate at all — better than just
+// covering the landscape layout. iOS has no orientation-lock API, so the
+// #rotate-guard overlay remains the fallback there. Scoped to phone-sized
+// screens (min dimension <= 500px) so tablets stay free to rotate.
+(function lockPortraitOnPhone() {
+  try {
+    const minDim = Math.min(window.screen.width || 0, window.screen.height || 0);
+    if (!(minDim > 0 && minDim <= 500)) return;            // not a phone — leave free
+    const o = window.screen && window.screen.orientation;
+    if (o && typeof o.lock === 'function') {
+      const res = o.lock('portrait');
+      if (res && typeof res.catch === 'function') res.catch(() => {});  // browser tab / iOS — overlay handles it
+    }
+  } catch (e) { /* unsupported — overlay handles it */ }
+})();
 
 function postToSW(msg) {
   // active is the controlling SW once installed; on first load it may still
