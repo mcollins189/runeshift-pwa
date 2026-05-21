@@ -9896,9 +9896,16 @@ function sdFilter(input, kind) {
   let items;
   if (kind === 'move') items = Object.keys(MOVES);
   else if (kind === 'species') {
-    // Local POKEMON_DB is Sinnoh-focused; union it with species from the active
-    // game's routes + already-logged catches so Gen 5+ mons show up too.
+    // Local POKEMON_DB is Sinnoh-focused (~346 species, no Gen 5+), so on its
+    // own the picker can't find e.g. Gogoat in X/Y (whose wild data lives in
+    // encounterTables, not the routes file). Seed the list with the full
+    // National Dex via the bundled dexIdBySlug map (all 1025 base species,
+    // Gen 1–9), then union the active game's routes species (covers hack-ROM
+    // custom names / fakemon not in the dex map) + team + already-logged catches.
     const set = new Set(Object.keys(POKEMON_DB));
+    if (typeof window !== 'undefined' && window.NUZ_DATA?.dexIdBySlug) {
+      for (const slug of Object.keys(window.NUZ_DATA.dexIdBySlug)) set.add(prettySpecies(slug));
+    }
     const game = GAMES[curGame()];
     if (game?.dataSources?.routes && typeof window !== 'undefined' && window.NUZ_DATA?.routes) {
       // Peel variant layer first so we iterate the right version-set
@@ -9983,24 +9990,39 @@ function sdPick(id, kind, name) {
   sdClose(input);
   // Species pick → autofill type1/type2 and refresh ability options to that species' abilities
   if (kind === 'species' && id === 'f-species') {
-    const info = pokeInfo(name);
-    if (info) {
-      const t1 = info.t[0] || '';
-      const t2 = info.t[1] || '';
+    // force=true (local data on pick): overwrite types, and reset ability when
+    // it doesn't belong to this species. force=false (async backfill landing):
+    // only fill fields the user hasn't already set, so we never clobber edits.
+    const applyInfo = (info, force) => {
       const s1 = document.getElementById('f-type1');
       const s2 = document.getElementById('f-type2');
-      if (s1) s1.value = t1;
-      if (s2) s2.value = t2;
-      // If current ability isn't in this species' abilities, suggest the first one
+      if (s1 && (force || !s1.value)) s1.value = info.t[0] || '';
+      if (s2 && (force || !s2.value)) s2.value = info.t[1] || '';
       const abInput = document.getElementById('f-ability');
       if (abInput) {
         const cur = abInput.value.trim();
-        if (!cur || !info.a.includes(cur)) {
-          abInput.value = info.a[0] || '';
-        }
+        if (!cur || (force && !info.a.includes(cur))) abInput.value = info.a[0] || '';
       }
-      // Re-render the evolve button state
       refreshEvolveBtn();
+    };
+    const info = pokeInfo(name);
+    if (info) {
+      applyInfo(info, true);
+    } else {
+      // Gen 5+ species live outside POKEMON_DB — fetch types/abilities from
+      // PokeAPI and fill the still-empty fields once they land. Self-removing
+      // subscriber (+ 20s safety cleanup for species that 404, e.g. fakemon).
+      refreshEvolveBtn();
+      const fill = () => {
+        const got = pokeInfo(name);
+        if (!got) return;                       // not ready yet — stay subscribed
+        backfillSubscribers.delete(fill);
+        const sp = document.getElementById('f-species');
+        if (sp && sp.value === name) applyInfo(got, false);
+      };
+      onBackfill(fill);
+      setTimeout(() => backfillSubscribers.delete(fill), 20000);
+      ensurePokemonBackfilled(name);
     }
   }
 }
