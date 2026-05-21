@@ -31,7 +31,12 @@
 // still references tracker.html) and old bookmarks. Bumping the cache
 // version forces the activate sweep to evict the old v2 shell so users
 // get the new SHELL_URLS list on next visit.
-const SHELL_CACHE = 'nuz-shell-v3';
+// v4 — self-hosted sprites: the app now serves all sprites from same-origin
+// ./sprites/ (pixel + WebP artwork) instead of raw.githubusercontent / weserv.
+// A cache-first route caches them on view (and the pre-cache pre-fills them);
+// bumping the shell cache evicts the old v3 shell so installed users pick up
+// the self-host index.html.
+const SHELL_CACHE = 'nuz-shell-v4';
 const POKEAPI_CACHE = 'nuz-pokeapi-v1';
 
 // Same-origin shell URLs use relative paths so the PWA works at any subpath
@@ -57,6 +62,9 @@ const SHELL_PATHS = new Set(SHELL_URLS.map((u) => {
 }));
 const APP_HTML_PATH = new URL('index.html', self.location).pathname;
 const SW_BASE_PATH = new URL('./', self.location).pathname;
+// Self-hosted sprite assets live under ./sprites/ — id-keyed and immutable, so
+// they're served cache-first (no revalidation) once fetched.
+const SPRITES_PATH = new URL('sprites/', self.location).pathname;
 
 // --- Install: pre-cache the shell -------------------------------------------
 self.addEventListener('install', (event) => {
@@ -105,6 +113,14 @@ self.addEventListener('fetch', (event) => {
     url.hostname === 'raw.githubusercontent.com' && url.pathname.startsWith('/PokeAPI/sprites/')
   ) {
     event.respondWith(staleWhileRevalidate(req, POKEAPI_CACHE));
+    return;
+  }
+
+  // Self-hosted sprites (same-origin ./sprites/*) -> cache-first; immutable so
+  // never revalidated. Shares POKEAPI_CACHE so pre-cached + on-view entries
+  // resolve from one place offline.
+  if (url.origin === self.location.origin && url.pathname.startsWith(SPRITES_PATH)) {
+    event.respondWith(cacheFirst(req, POKEAPI_CACHE));
     return;
   }
 

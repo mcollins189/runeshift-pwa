@@ -431,6 +431,7 @@
   /* Sprites */
   .sprite-wrap{flex-shrink:0;width:54px;height:54px;background:var(--bg3);border-radius:50%;display:flex;align-items:center;justify-content:center;overflow:hidden}
   .sprite-img{width:54px;height:54px;image-rendering:pixelated;object-fit:contain}
+  .sprite-hq .sprite-img{image-rendering:auto}  /* HOME renders — keep them smooth, not pixelated */
   .sprite-img.faded{filter:grayscale(1) opacity(0.4)}
   .sprite-wrap.shiny{box-shadow:inset 0 0 0 2px #ffd54a, 0 0 6px rgba(255,213,74,.5)}
   .shiny-spark{color:#ffd54a;margin-left:3px;filter:drop-shadow(0 0 2px rgba(255,213,74,.55))}
@@ -473,6 +474,7 @@
   .pv-header{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border)}
   .pv-sprite{width:104px;height:104px;background:var(--bg3);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
   .pv-sprite img{width:134px;height:134px;image-rendering:pixelated;object-fit:contain;flex-shrink:0}
+  .pv-sprite img.pv-hq{width:104px;height:104px;image-rendering:auto}  /* HOME render fills its own frame — don't over-scale/crop */
   .pv-headline{flex:1;min-width:200px}
   .pv-nick{font-family:'Crimson Pro',serif;font-size:22px;font-weight:600;color:var(--text);line-height:1.1}
   .pv-species{font-size:13px;color:var(--text3);margin-top:2px}
@@ -3233,9 +3235,11 @@ function spriteUrl(idOrName, variant) {
     }
   }
   if (!id) return '';
-  if (variant === 'art') return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
-  if (variant === 'shiny') return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${id}.png`;
-  return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
+  // Self-hosted sprite sets under ./sprites/ (no third-party CDN at runtime).
+  if (variant === 'art') return `sprites/art/${id}.webp`;
+  if (variant === 'art-shiny') return `sprites/art-shiny/${id}.webp`;
+  if (variant === 'shiny') return `sprites/pixel-shiny/${id}.png`;
+  return `sprites/pixel/${id}.png`;
 }
 
 // Case-insensitive lookup with light normalization (handles trailing whitespace, exact match preferred)
@@ -4028,19 +4032,25 @@ function getEvoChainSet(species) {
 function spriteImg(species, opts) {
   opts = opts || {};
   // Prefer explicit apiId (from PokeAPI fetches) over POKEMON_DB name lookup
-  let url;
+  let url, fallbackUrl = '';
   if (opts.apiId) {
-    url = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${opts.shiny?'shiny/':''}${opts.apiId}.png`;
+    // Self-hosted sprites keyed by dex id (= apiId for base species).
+    fallbackUrl = `sprites/${opts.shiny?'pixel-shiny':'pixel'}/${opts.apiId}.png`;
+    url = opts.hq ? `sprites/${opts.shiny?'art-shiny':'art'}/${opts.apiId}.webp` : fallbackUrl;
   } else {
-    url = spriteUrl(species, opts.shiny ? 'shiny' : undefined);
+    fallbackUrl = spriteUrl(species, opts.shiny ? 'shiny' : undefined);
+    const variant = opts.hq ? (opts.shiny ? 'art-shiny' : 'art') : (opts.shiny ? 'shiny' : undefined);
+    url = spriteUrl(species, variant);
   }
-  const wrapCls = `sprite-wrap${opts.sm?' sprite-sm':''}${opts.lg?' sprite-lg':''}${opts.shiny?' shiny':''}`;
+  const wrapCls = `sprite-wrap${opts.sm?' sprite-sm':''}${opts.lg?' sprite-lg':''}${opts.hq?' sprite-hq':''}${opts.shiny?' shiny':''}`;
   if (!url) return `<div class="${wrapCls}" title="No sprite available"></div>`;
   const cls = `sprite-img${opts.faded?' faded':''}`;
-  // One-shot retry with a cache-bust query param: dodges the browser HTTP
-  // cache for the retry (a transient 5xx/timeout otherwise sticks for the
-  // page lifetime). After one retry we give up and hide.
-  return `<div class="${wrapCls}"${opts.shiny?' title="Shiny"':''}><img class="${cls}" src="${url}" alt="${species}" loading="lazy" onerror="if (!this.dataset.retried) { this.dataset.retried='1'; this.src = this.src + (this.src.includes('?') ? '&' : '?') + 'r=' + Date.now(); } else { this.style.display='none'; }"></div>`;
+  // hq (HOME render): on error, fall back to the default pixel sprite (some very
+  // new species lack a HOME render). non-hq: one cache-bust retry, then hide.
+  const onerr = (opts.hq && fallbackUrl && fallbackUrl !== url)
+    ? `onerror="if(!this.dataset.fb){this.dataset.fb='1';this.src='${fallbackUrl}';}else{this.style.display='none';}"`
+    : `onerror="if (!this.dataset.retried) { this.dataset.retried='1'; this.src = this.src + (this.src.includes('?') ? '&' : '?') + 'r=' + Date.now(); } else { this.style.display='none'; }"`;
+  return `<div class="${wrapCls}"${opts.shiny?' title="Shiny"':''}><img class="${cls}" src="${url}" alt="${species}" loading="lazy" ${onerr}></div>`;
 }
 
 /* ── PokeAPI backfill (gen-aware) ──
@@ -5809,7 +5819,7 @@ function cardInner(p, realIdx) {
   const moveList = (typeof p.moves === 'string')
     ? p.moves.split(',').map(s=>s.trim()).filter(Boolean)
     : (Array.isArray(p.moves) ? p.moves.filter(Boolean) : []);
-  const sprite = spriteImg(p.species, {faded: !p.alive, shiny: p.isShiny});
+  const sprite = spriteImg(p.species, {faded: !p.alive, shiny: p.isShiny, hq:true});
   const ownTypes = [p.type1, p.type2].filter(Boolean);
   const movePillsHtml = moveList.map(m => {
     const t = getMoveType(m);
@@ -6662,7 +6672,7 @@ function renderBossCard(b, boss, roster, detailMode) {
             <div class="boss-name">${b.species}</div>
           </div>
         </div>
-        <div class="bph-sprite">${spriteImg(b.species, {lg:true})}</div>
+        <div class="bph-sprite">${spriteImg(b.species, {lg:true, hq:true})}</div>
       </div>
     </div>
     ${counterHtml}
@@ -9291,7 +9301,7 @@ function encActionDetails(species) {
 function speciesView(species) {
   const info = pokeInfo(species);
   const sprite = species && pokeId(species)
-    ? `<img src="${spriteUrl(species)}" alt="${species}" onerror="this.style.display='none'">`
+    ? `<img class="pv-hq" src="${spriteUrl(species,'art')}" alt="${species}" onerror="if(!this.dataset.fb){this.dataset.fb='1';this.classList.remove('pv-hq');this.src='${spriteUrl(species)}';}else{this.style.display='none';}">`
     : `<div style="color:var(--text3);font-size:11px">no sprite</div>`;
   const types = info?.t || [];
   const abilities = info?.a || [];
@@ -9466,7 +9476,7 @@ function pokeView(p, idx) {
     ? p.moves.split(',').map(s=>s.trim()).filter(Boolean)
     : (Array.isArray(p.moves) ? p.moves.filter(Boolean) : []);
   const sprite = p.species && pokeId(p.species)
-    ? `<img src="${spriteUrl(p.species, p.isShiny?'shiny':undefined)}" alt="${p.species}" onerror="this.style.display='none'">`
+    ? `<img class="pv-hq" src="${spriteUrl(p.species, p.isShiny?'art-shiny':'art')}" alt="${p.species}" onerror="if(!this.dataset.fb){this.dataset.fb='1';this.classList.remove('pv-hq');this.src='${spriteUrl(p.species, p.isShiny?'shiny':undefined)}';}else{this.style.display='none';}">`
     : `<div style="color:var(--text3);font-size:11px">no sprite</div>`;
   // Stats at the actual roster level when known — uses nature + always-on
   // ability modifiers (Huge Power / Pure Power). Conditional abilities (Guts
@@ -10558,7 +10568,8 @@ async function buildPrefetchUrlsAllGamesWithRegions(progressFn) {
   const urls = new Set();
   for (const k of Object.keys(GAMES)) _collectPrefetchUrlsForGame(k, urls);
   for (let id = 1; id <= 1025; id++) {
-    urls.add(`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`);
+    urls.add(`sprites/pixel/${id}.png`);   // self-hosted; same-origin
+    urls.add(`sprites/art/${id}.webp`);    // shiny variants cache on-view (rare)
   }
   // Evolution chains drive the backfill's .e lookup. PokeAPI has ~549 chains
   // total (as of Gen 9); 560 gives a safe margin. Unused IDs 404 — the SW
@@ -10659,7 +10670,7 @@ async function buildPrefetchUrlsForGameWithRegions(gameKey, progressFn) {
   _collectPrefetchUrlsForGame(gameKey, urls);
   for (const name of _collectGameSpeciesNames(gameKey)) {
     const id = _spriteIdForSpecies(name);
-    if (id) urls.add(`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`);
+    if (id) { urls.add(`sprites/pixel/${id}.png`); urls.add(`sprites/art/${id}.webp`); }
   }
   const r = GAMES[gameKey]?.dataSources?.pokeapiRegion;
   if (r) {
