@@ -10481,6 +10481,23 @@ function _collectGameSpeciesNames(gameKey) {
       }
     }
   }
+
+  // Boss-team walker: every leagues file for this game. Boss aces that aren't
+  // also wild encounters (most gym leaders / E4) have no sprite from the two
+  // walkers above, so a per-game pre-cache left their boss-matchup cards blank
+  // offline. Including them here covers both the sprite PNGs and (via
+  // _collectPrefetchUrlsForGame) their /pokemon/ stat-backfill endpoints.
+  const leagueFiles = new Set();
+  collectFilesInto(game.dataSources?.leagues, leagueFiles);
+  for (const file of leagueFiles) {
+    const leagueData = window.NUZ_DATA?.leagues?.[file];
+    if (!leagueData || !leagueData.trainers) continue;
+    for (const t of Object.values(leagueData.trainers)) {
+      for (const member of (t.team || [])) {
+        if (member && member.species) speciesNames.add(member.species);
+      }
+    }
+  }
   return speciesNames;
 }
 
@@ -10568,8 +10585,10 @@ async function buildPrefetchUrlsAllGamesWithRegions(progressFn) {
   const urls = new Set();
   for (const k of Object.keys(GAMES)) _collectPrefetchUrlsForGame(k, urls);
   for (let id = 1; id <= 1025; id++) {
-    urls.add(`sprites/pixel/${id}.png`);   // self-hosted; same-origin
-    urls.add(`sprites/art/${id}.webp`);    // shiny variants cache on-view (rare)
+    urls.add(`sprites/pixel/${id}.png`);          // self-hosted; same-origin
+    urls.add(`sprites/art/${id}.webp`);
+    urls.add(`sprites/pixel-shiny/${id}.png`);    // shiny coverage offline too
+    urls.add(`sprites/art-shiny/${id}.webp`);
   }
   // Evolution chains drive the backfill's .e lookup. PokeAPI has ~549 chains
   // total (as of Gen 9); 560 gives a safe margin. Unused IDs 404 — the SW
@@ -10670,7 +10689,12 @@ async function buildPrefetchUrlsForGameWithRegions(gameKey, progressFn) {
   _collectPrefetchUrlsForGame(gameKey, urls);
   for (const name of _collectGameSpeciesNames(gameKey)) {
     const id = _spriteIdForSpecies(name);
-    if (id) { urls.add(`sprites/pixel/${id}.png`); urls.add(`sprites/art/${id}.webp`); }
+    if (id) {
+      urls.add(`sprites/pixel/${id}.png`);
+      urls.add(`sprites/art/${id}.webp`);
+      urls.add(`sprites/pixel-shiny/${id}.png`);
+      urls.add(`sprites/art-shiny/${id}.webp`);
+    }
   }
   const r = GAMES[gameKey]?.dataSources?.pokeapiRegion;
   if (r) {

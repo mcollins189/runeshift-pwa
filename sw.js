@@ -36,7 +36,16 @@
 // A cache-first route caches them on view (and the pre-cache pre-fills them);
 // bumping the shell cache evicts the old v3 shell so installed users pick up
 // the self-host index.html.
-const SHELL_CACHE = 'nuz-shell-v4';
+// v5 — offline data.bundle.js fix: index.html loads data.bundle.js?v=<ts>
+// (build-data rewrites the ?v= each build), but install caches it under the
+// bare path. cacheFirst matched ?v=NNN with ignoreSearch:false, so once a
+// deploy bumped ?v=, offline clients had no entry for the new query →
+// data.bundle.js failed → NUZ_DATA undefined → bosses + most features broke
+// offline. cacheFirst now falls back to an ignoreSearch match when the exact
+// key misses AND the network is unreachable, rescuing the bundle offline while
+// keeping the online ?v= freshness path (exact miss → fetch fresh → re-cache).
+// Bumped to evict the stale/broken v4 cache and force a fresh reinstall.
+const SHELL_CACHE = 'nuz-shell-v5';
 const POKEAPI_CACHE = 'nuz-pokeapi-v1';
 
 // Same-origin shell URLs use relative paths so the PWA works at any subpath
@@ -166,9 +175,21 @@ async function cacheFirst(req, cacheName) {
   const cache = await caches.open(cacheName);
   const hit = await cache.match(req, { ignoreSearch: false });
   if (hit) return hit;
-  const res = await fetch(req, { cache: 'no-store' });
-  if (res && (res.ok || res.type === 'opaque')) cache.put(req, res.clone());
-  return res;
+  try {
+    const res = await fetch(req, { cache: 'no-store' });
+    if (res && (res.ok || res.type === 'opaque')) cache.put(req, res.clone());
+    return res;
+  } catch (e) {
+    // Offline + exact-key miss. Retry the lookup ignoring the query string so a
+    // request like data.bundle.js?v=<new-ts> still resolves against the bare
+    // install-time entry (or a previously-cached ?v=). Without this, a deploy
+    // that bumped ?v= leaves offline clients with no bundle → NUZ_DATA undefined
+    // → bosses + most features break. Other shell assets carry no query, so the
+    // ignoreSearch match is identical to the exact match for them (harmless).
+    const alt = await cache.match(req, { ignoreSearch: true });
+    if (alt) return alt;
+    throw e;
+  }
 }
 
 async function networkFirst(req, cacheName) {
