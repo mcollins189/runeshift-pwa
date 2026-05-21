@@ -53,7 +53,12 @@
 // rotate-to-portrait guard added in index.html. manifest.json is a cache-first
 // shell asset, so bump to re-cache it (index.html is network-first already).
 const SHELL_CACHE = 'nuz-shell-v7';
-const POKEAPI_CACHE = 'nuz-pokeapi-v1';
+// v2 — all self-hosted artwork sprites (sprites/art*, sprites/pixel* unchanged)
+// were regenerated (trimmed/normalized). Sprites are served cache-first as
+// "immutable", so without a bump existing clients would keep the old artwork
+// forever. Bumping evicts the old cache (activate sweep) so they re-fetch the
+// normalized sprites. Also re-fetches PokeAPI api responses (cheap, network-backed).
+const POKEAPI_CACHE = 'nuz-pokeapi-v2';
 
 // Same-origin shell URLs use relative paths so the PWA works at any subpath
 // (e.g. github.io/runeshift-pwa/) — they resolve against self.location, which

@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
-<script src="data.bundle.js?v=1779380984540" onerror="window.__NUZ_BUNDLE_MISSING=true"></script>
+<script src="data.bundle.js?v=1779388277926" onerror="window.__NUZ_BUNDLE_MISSING=true"></script>
 <style>
   :root {
     --bg:#0f0f10;--bg2:#18181b;--bg3:#222228;--bg4:#2a2a32;
@@ -144,6 +144,7 @@
   .fbar-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--text3);font-weight:600}
   .fbar-select{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:5px 8px;color:var(--text);font-family:'Outfit',sans-serif;font-size:12px;cursor:pointer}
   .fbar-select:focus{outline:none;border-color:var(--accent)}
+  .filter-bar .fbar-search{flex:0 0 auto;width:180px;max-width:100%;cursor:text}
   /* user-select:none — prevents the browser from selecting text when a
      hold-to-drag is interpreted as a quick click+drag. Without this, dragging
      a card before the 150ms (mouse) / 250ms (touch) hold delay completes
@@ -276,7 +277,12 @@
   .typed .boss-name{font-size:18px;font-weight:700;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .bph-sprite{flex-shrink:0;align-self:flex-start;position:relative;z-index:2;margin:-74px -4px -12px 8px}
   .bph-sprite .sprite-wrap{background:transparent;overflow:visible;width:136px;height:136px}
-  .bph-sprite .sprite-wrap .sprite-img{width:136px;height:136px;filter:drop-shadow(0 4px 7px rgba(0,0,0,.55));animation:bossBreathe 3.4s ease-in-out infinite}
+  /* Height-based sizing on the card header art: sprites are tight-cropped (no
+     transparent padding), shown in a box that's ~1.3× wider than tall with
+     object-fit:contain. So every Pokémon fills the same HEIGHT up to a 1.3:1
+     aspect; genuinely wide ones (Graveler 2:1) cap their width and sit a touch
+     shorter rather than overlapping the name / next card. */
+  .bph-sprite .sprite-wrap .sprite-img{width:150px;height:136px;object-fit:contain;max-width:none;filter:drop-shadow(0 4px 7px rgba(0,0,0,.55));animation:bossBreathe 3.4s ease-in-out infinite}
   @keyframes bossBreathe{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-3px) scale(1.05)}}
   @media (prefers-reduced-motion: reduce){.bph-sprite .sprite-img{animation:none}}
   .bp-counter{display:flex;flex-wrap:wrap;align-items:center;gap:6px;background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.25);border-radius:6px;padding:6px 8px;font-size:11px}
@@ -472,7 +478,7 @@
   .pc-hdr.typed{position:relative;overflow:visible;margin:-14px -14px 8px;padding:13px 14px 12px;border-radius:var(--radius) var(--radius) 0 0}
   .pc-hdr .bph-sprite{margin:-44px -2px -10px 8px}
   .pc-hdr .bph-sprite .sprite-wrap{width:108px;height:108px}
-  .pc-hdr .bph-sprite .sprite-wrap .sprite-img{width:108px;height:108px}
+  .pc-hdr .bph-sprite .sprite-wrap .sprite-img{width:132px;height:108px;object-fit:contain;max-width:none}
   .pc-species{font-size:11px;color:var(--text3);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .card-body{display:flex;flex-direction:column;gap:5px}
 
@@ -6058,8 +6064,11 @@ function initRouteSortable() {
 // Roster filter/sort state (UI-local, not saved).
 let rosterFilterType = 'all';
 let rosterSort = 'custom';
+let rosterSearch = '';
 function setRosterFilter(t) { rosterFilterType = t; renderRoster(); }
 function setRosterSort(s) { rosterSort = s; renderRoster(); }
+// Wrap in withRenderStability so the search input keeps focus + caret per keystroke.
+function setRosterSearch(q) { rosterSearch = q; withRenderStability(document.getElementById('roster-grid') || document.body, renderRoster); }
 
 // Walk the team and proactively trigger backfill for any species not yet
 // resolved. Without this, sprites render as "no sprite" placeholders on cold
@@ -6115,6 +6124,9 @@ function renderRoster() {
     const types = ['all','Normal','Fire','Water','Electric','Grass','Ice','Fighting','Poison','Ground','Flying','Psychic','Bug','Rock','Ghost','Dragon','Dark','Steel','Fairy'];
     const sorts = [['custom','Custom (drag)'],['level-desc','Level ↓'],['level-asc','Level ↑'],['name','Name'],['type','Type'],['recent','Recently caught']];
     filters.innerHTML = `
+      <label class="fbar-lbl">Find</label>
+      <input class="fbar-select fbar-search" type="text" id="roster-search-input" placeholder="name or species"
+        value="${(rosterSearch||'').replace(/"/g,'&quot;')}" oninput="setRosterSearch(this.value)">
       <label class="fbar-lbl">Type</label>
       <select class="fbar-select" onchange="setRosterFilter(this.value)">
         ${types.map(t => `<option value="${t}"${t===rosterFilterType?' selected':''}>${t==='all'?'All types':t}</option>`).join('')}
@@ -6125,10 +6137,14 @@ function renderRoster() {
       </select>`;
   }
 
-  // ── Bench grid: alive, optionally filtered by type, sorted per dropdown.
+  // ── Bench grid: alive, optionally filtered by type + search, sorted per dropdown.
+  const sq = (rosterSearch||'').toLowerCase().trim();
   let bench = alive.filter(x => !x.p.inParty);
   if (rosterFilterType !== 'all') {
     bench = bench.filter(x => x.p.type1 === rosterFilterType || x.p.type2 === rosterFilterType);
+  }
+  if (sq) {
+    bench = bench.filter(x => (x.p.nickname||'').toLowerCase().includes(sq) || (x.p.species||'').toLowerCase().includes(sq));
   }
   if (rosterSort !== 'custom') {
     const cmp = {
@@ -6145,9 +6161,11 @@ function renderRoster() {
     return;
   }
   if (!bench.length) {
-    const reason = rosterFilterType !== 'all'
-      ? `No alive ${rosterFilterType}-type Pokémon outside your active team.`
-      : `Your whole alive roster is in the active team. Empty bench.`;
+    const reason = sq
+      ? `No bench Pokémon match “${sq}”.`
+      : rosterFilterType !== 'all'
+        ? `No alive ${rosterFilterType}-type Pokémon outside your active team.`
+        : `Your whole alive roster is in the active team. Empty bench.`;
     g.innerHTML = `<div class="empty" style="grid-column:1/-1">${reason}</div>`;
     return;
   }
@@ -7768,7 +7786,7 @@ function renderEncountersByRegion(el, gameKey, game) {
       allLocs.push(l.name);
     }
   }
-  const matched = allLocs.filter(loc => !q || loc.toLowerCase().includes(q));
+  const matched = allLocs.filter(loc => encLocMatchesQuery(game, ver, loc, q));
   const routes = curRoutes();
   const team = curTeam();
   const railItems = matched.map(loc => {
@@ -7850,7 +7868,7 @@ function renderEncountersByRegion(el, gameKey, game) {
     <div class="enc-layout">
       <div class="enc-rail">
         <div class="enc-search">
-          <input id="enc-search-input" type="text" placeholder="Search locations…" value="${encSearchQuery||''}" oninput="setEncSearch(this.value)">
+          <input id="enc-search-input" type="text" placeholder="Search locations & species…" value="${encSearchQuery||''}" oninput="setEncSearch(this.value)">
         </div>
         ${railHtml}
       </div>
@@ -7909,7 +7927,7 @@ function renderEncountersFromTables(el, gameKey, game) {
     if (!hasTxtSpecies && !hasTableData) continue;
     allLocs.push(loc.name);
   }
-  const matched = allLocs.filter(loc => !q || loc.toLowerCase().includes(q));
+  const matched = allLocs.filter(loc => encLocMatchesQuery(game, ver, loc, q));
   const routes = curRoutes();
   const team = curTeam();
   const railItems = matched.map(loc => {
@@ -7956,7 +7974,7 @@ function renderEncountersFromTables(el, gameKey, game) {
     <div class="enc-layout">
       <div class="enc-rail">
         <div class="enc-search">
-          <input id="enc-search-input" type="text" placeholder="Search locations…" value="${encSearchQuery||''}" oninput="setEncSearch(this.value)">
+          <input id="enc-search-input" type="text" placeholder="Search locations & species…" value="${encSearchQuery||''}" oninput="setEncSearch(this.value)">
         </div>
         ${railHtml}
       </div>
@@ -7984,6 +8002,51 @@ function _lookupEncTable(tableData, locName) {
   }
   const origKey = tableData._normIdx[target];
   return origKey ? tableData.byName[origKey] : null;
+}
+
+// Species (lowercased) appearing at a location, for the "search locations &
+// species" rail filter. Pulls from the encounter-tables bundle (display names
+// like "Ponyta") and the txt routes file (slug names like "ponyta") —
+// whichever the game has. Lowercased substring matching handles both forms.
+function encLocSpeciesNames(game, ver, locName) {
+  const out = new Set();
+  const src = peelVariant(game?.dataSources?.encounterTables, game, curVariant());
+  if (src) {
+    const files = typeof src === 'string' ? [src] : Object.values(src);
+    for (const f of files) {
+      const td = window.NUZ_DATA?.encounterTables?.[f];
+      const t = td && _lookupEncTable(td, locName);
+      if (!t) continue;
+      for (const pool of (t.pools || [])) {
+        for (const tk of ['morning', 'day', 'night']) {
+          for (const e of (pool[tk] || [])) if (e.species) out.add(String(e.species).toLowerCase());
+        }
+      }
+    }
+  }
+  const rf = resolveDataSource(game?.dataSources?.routes, game, ver, curVariant());
+  const tr = rf && window.NUZ_DATA?.routes?.[rf];
+  if (tr) {
+    const loc = tr.locations.find(l => l.name === locName);
+    if (loc) for (const s of (loc.species || [])) {
+      const nm = typeof s === 'string' ? s : (s && (s.name || s.species)) || '';
+      if (nm) out.add(String(nm).toLowerCase());
+    }
+  }
+  // PokeAPI-region games render the panel from live PokeAPI data that isn't
+  // loaded until click time, so the txt species above are only a partial list.
+  // The bundled regionSpeciesIndex (built from the same PokeAPI source) makes
+  // species search complete + offline for them.
+  const idx = window.NUZ_DATA?.regionSpeciesIndex?.[curGame()]?.[locName];
+  if (idx) for (const s of idx) out.add(String(s).toLowerCase());
+  return out;
+}
+// Rail filter predicate: query matches the location NAME or any species there.
+function encLocMatchesQuery(game, ver, locName, q) {
+  if (!q) return true;
+  if (locName.toLowerCase().includes(q)) return true;
+  for (const s of encLocSpeciesNames(game, ver, locName)) if (s.includes(q)) return true;
+  return false;
 }
 
 function buildEncounterMainFromTables(locName, ver, game) {
@@ -8578,7 +8641,7 @@ function renderEncountersFromNuzData(el, gameKey, game) {
   const q = (encSearchQuery||'').toLowerCase().trim();
 
   const railHtml = groups.map(g => {
-    const matchedItems = g.items.filter(loc => !q || loc.toLowerCase().includes(q));
+    const matchedItems = g.items.filter(loc => encLocMatchesQuery(game, ver, loc, q));
     if (q && !matchedItems.length) return '';
     const collapsed = encGroupCollapsed[g.name];
     const itemsHtml = matchedItems.map(loc => {
@@ -8631,7 +8694,7 @@ function renderEncountersFromNuzData(el, gameKey, game) {
     <div class="enc-layout">
       <div class="enc-rail">
         <div class="enc-search">
-          <input id="enc-search-input" type="text" placeholder="Search locations…" value="${encSearchQuery||''}" oninput="setEncSearch(this.value)">
+          <input id="enc-search-input" type="text" placeholder="Search locations & species…" value="${encSearchQuery||''}" oninput="setEncSearch(this.value)">
         </div>
         ${railHtml || '<div class="enc-empty" style="padding:18px">No locations match.</div>'}
       </div>
