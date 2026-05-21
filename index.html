@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
-<script src="data.bundle.js?v=1779311096959" onerror="window.__NUZ_BUNDLE_MISSING=true"></script>
+<script src="data.bundle.js?v=1779324511788" onerror="window.__NUZ_BUNDLE_MISSING=true"></script>
 <style>
   :root {
     --bg:#0f0f10;--bg2:#18181b;--bg3:#222228;--bg4:#2a2a32;
@@ -9959,7 +9959,10 @@ function sdFilter(input, kind) {
         badgeHtml = type ? `<span class="type-badge t-${type}">${type}</span>` : '';
       } else if (kind === 'species') {
         const info = pokeInfo(name);
-        const types = info ? info.t : [];
+        let types = info ? info.t : [];
+        if ((!types || !types.length) && typeof window !== 'undefined' && window.NUZ_DATA?.typesBySlug && typeof speciesSlug === 'function') {
+          types = window.NUZ_DATA.typesBySlug[speciesSlug(name)] || [];
+        }
         badgeHtml = types.map(t=>`<span class="type-badge t-${t}">${t}</span>`).join('');
       } else if (kind === 'route') {
         // For root routes that have sub-zones, hint at it.
