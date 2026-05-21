@@ -145,6 +145,9 @@
   .fbar-select{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:5px 8px;color:var(--text);font-family:'Outfit',sans-serif;font-size:12px;cursor:pointer}
   .fbar-select:focus{outline:none;border-color:var(--accent)}
   .filter-bar .fbar-search{flex:0 0 auto;width:180px;max-width:100%;cursor:text}
+  /* Keep each label glued above its control so a flex-wrap never strands a
+     label next to the wrong control. */
+  .fbar-group{display:flex;flex-direction:column;gap:3px;align-items:flex-start}
   /* user-select:none — prevents the browser from selecting text when a
      hold-to-drag is interpreted as a quick click+drag. Without this, dragging
      a card before the 150ms (mouse) / 250ms (touch) hold delay completes
@@ -6124,17 +6127,23 @@ function renderRoster() {
     const types = ['all','Normal','Fire','Water','Electric','Grass','Ice','Fighting','Poison','Ground','Flying','Psychic','Bug','Rock','Ghost','Dragon','Dark','Steel','Fairy'];
     const sorts = [['custom','Custom (drag)'],['level-desc','Level ↓'],['level-asc','Level ↑'],['name','Name'],['type','Type'],['recent','Recently caught']];
     filters.innerHTML = `
-      <label class="fbar-lbl">Find</label>
-      <input class="fbar-select fbar-search" type="text" id="roster-search-input" placeholder="name or species"
-        value="${(rosterSearch||'').replace(/"/g,'&quot;')}" oninput="setRosterSearch(this.value)">
-      <label class="fbar-lbl">Type</label>
-      <select class="fbar-select" onchange="setRosterFilter(this.value)">
-        ${types.map(t => `<option value="${t}"${t===rosterFilterType?' selected':''}>${t==='all'?'All types':t}</option>`).join('')}
-      </select>
-      <label class="fbar-lbl">Sort</label>
-      <select class="fbar-select" onchange="setRosterSort(this.value)">
-        ${sorts.map(([k,label]) => `<option value="${k}"${k===rosterSort?' selected':''}>${label}</option>`).join('')}
-      </select>`;
+      <div class="fbar-group">
+        <label class="fbar-lbl">Find</label>
+        <input class="fbar-select fbar-search" type="text" id="roster-search-input" placeholder="name or species"
+          value="${(rosterSearch||'').replace(/"/g,'&quot;')}" oninput="setRosterSearch(this.value)">
+      </div>
+      <div class="fbar-group">
+        <label class="fbar-lbl">Type</label>
+        <select class="fbar-select" onchange="setRosterFilter(this.value)">
+          ${types.map(t => `<option value="${t}"${t===rosterFilterType?' selected':''}>${t==='all'?'All types':t}</option>`).join('')}
+        </select>
+      </div>
+      <div class="fbar-group">
+        <label class="fbar-lbl">Sort</label>
+        <select class="fbar-select" onchange="setRosterSort(this.value)">
+          ${sorts.map(([k,label]) => `<option value="${k}"${k===rosterSort?' selected':''}>${label}</option>`).join('')}
+        </select>
+      </div>`;
   }
 
   // ── Bench grid: alive, optionally filtered by type + search, sorted per dropdown.
@@ -8255,7 +8264,11 @@ function buildEncounterMainFromTables(locName, ver, game) {
     if (!p.alive || !p.species) continue;
     for (const s of getEvoChainSet(p.species)) teamLineSet.add(s);
   }
-  const deadSpecies = new Set(team.filter(p=>!p.alive).map(p=>(p.species||'').toLowerCase()));
+  // A fallen Pokémon is "non-existent" for encounter purposes: its species can be
+  // re-caught and counts as a fresh first encounter in a new location. The dupe set
+  // (teamLineSet) already excludes the dead, so we don't flag the species "fallen"
+  // anywhere either. The route log still records where a mon was originally caught.
+  const deadSpecies = new Set();
   const caughtRoutes = curRoutes().filter(rt => rt.result==='caught' && routesMatch(rt.route, locName));
   const caughtAtThisLoc = new Set(caughtRoutes.map(rt => (rt.encounter||'').toLowerCase()));
   for (const p of team) {
@@ -8789,7 +8802,11 @@ function buildEncounterMainNuzData(locName, merged, ver, game) {
     if (!p.alive || !p.species) continue;
     for (const s of getEvoChainSet(p.species)) teamLineSet.add(s);
   }
-  const deadSpecies = new Set(team.filter(p=>!p.alive).map(p=>(p.species||'').toLowerCase()));
+  // A fallen Pokémon is "non-existent" for encounter purposes: its species can be
+  // re-caught and counts as a fresh first encounter in a new location. The dupe set
+  // (teamLineSet) already excludes the dead, so we don't flag the species "fallen"
+  // anywhere either. The route log still records where a mon was originally caught.
+  const deadSpecies = new Set();
   const caughtRoutes = curRoutes().filter(rt => rt.result==='caught' && routesMatch(rt.route, locName));
   const caughtAtThisLoc = new Set(caughtRoutes.map(rt => (rt.encounter||'').toLowerCase()));
   for (const p of team) {
@@ -8960,7 +8977,11 @@ function buildEncounterMain(loc, ver) {
     if (!p.alive || !p.species) continue;
     for (const s of getEvoChainSet(p.species)) teamLineSet.add(s);
   }
-  const deadSpecies = new Set(team.filter(p=>!p.alive).map(p=>(p.species||'').toLowerCase()));
+  // A fallen Pokémon is "non-existent" for encounter purposes: its species can be
+  // re-caught and counts as a fresh first encounter in a new location. The dupe set
+  // (teamLineSet) already excludes the dead, so we don't flag the species "fallen"
+  // anywhere either. The route log still records where a mon was originally caught.
+  const deadSpecies = new Set();
   const caughtRoutes = curRoutes().filter(rt => rt.result==='caught' && routesMatch(rt.route, loc));
   const caughtAtThisLoc = new Set(caughtRoutes.map(rt => (rt.encounter||'').toLowerCase()));
   // Also include any team-member caught at this location (handles direct adds via roster)
