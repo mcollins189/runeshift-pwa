@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
-<script src="data.bundle.js?v=1779325272189" onerror="window.__NUZ_BUNDLE_MISSING=true"></script>
+<script src="data.bundle.js?v=1779326122659" onerror="window.__NUZ_BUNDLE_MISSING=true"></script>
 <style>
   :root {
     --bg:#0f0f10;--bg2:#18181b;--bg3:#222228;--bg4:#2a2a32;
@@ -9904,7 +9904,11 @@ function sdFilter(input, kind) {
     // custom names / fakemon not in the dex map) + team + already-logged catches.
     const set = new Set(Object.keys(POKEMON_DB));
     if (typeof window !== 'undefined' && window.NUZ_DATA?.dexIdBySlug) {
-      for (const slug of Object.keys(window.NUZ_DATA.dexIdBySlug)) set.add(prettySpecies(slug));
+      const aliases = window.NUZ_DATA.slugAliases || {};
+      for (const slug of Object.keys(window.NUZ_DATA.dexIdBySlug)) {
+        if (aliases[slug]) continue; // skip form-slug aliases (e.g. wishiwashi-solo) — base slug already lists it
+        set.add(prettySpecies(slug));
+      }
     }
     const game = GAMES[curGame()];
     if (game?.dataSources?.routes && typeof window !== 'undefined' && window.NUZ_DATA?.routes) {
