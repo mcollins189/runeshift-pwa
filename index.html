@@ -324,15 +324,19 @@
     .bpd-moves-grid{grid-template-columns:1fr}
   }
   .team-analysis{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px}
-  .analysis-row{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}
+  .analysis-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border);font-size:14px}
   .analysis-row:last-child{border-bottom:none}
-  .ar-name{font-weight:500;min-width:120px;color:var(--text)}
+  /* Enlarged sprite for the team-vs-boss rows. Sprite = wrap so contain fits it
+     fully inside the circle (no crop-fill / clipping of wide sprites). */
+  .analysis-row .sprite-wrap.sprite-sm{width:52px;height:52px}
+  .analysis-row .sprite-wrap.sprite-sm .sprite-img{width:52px;height:52px}
+  .ar-name{font-weight:500;min-width:120px;color:var(--text);font-size:15px}
   .ar-types{display:flex;gap:3px}
-  .ar-verdict{margin-left:auto;font-size:12px;padding:3px 10px;border-radius:20px;font-weight:500}
+  .ar-verdict{margin-left:auto;font-size:13px;padding:4px 12px;border-radius:20px;font-weight:600}
   .v-good{background:var(--green-bg);color:var(--green)}
   .v-bad{background:var(--red-bg);color:var(--red)}
   .v-neutral{background:var(--bg3);color:var(--text2)}
-  .ar-detail{font-size:11px;color:var(--text3);margin-left:8px}
+  .ar-detail{font-size:13px;color:var(--text3);margin-left:8px}
   .matchup-empty{text-align:center;padding:36px 20px;color:var(--text3);font-size:13px;line-height:1.8}
   .matchup-empty-icon{font-size:32px;opacity:0.4;margin-bottom:8px}
 
@@ -712,10 +716,12 @@
   .speed-bar-name{min-width:130px;color:var(--text2);font-size:12px;display:flex;align-items:center;gap:8px}
   .speed-bar-row.me .speed-bar-name{color:var(--text)}
   .speed-bar-row.boss .speed-bar-name{color:#f0b070}
-  /* Enlarge + crop-fill the speed-table sprite to match the encounter-list icons
-     (default .sprite-sm is a tiny 32px that looks lost in the row). */
-  .speed-bar-name .sprite-wrap.sprite-sm{width:42px;height:42px}
-  .speed-bar-name .sprite-wrap.sprite-sm .sprite-img{width:54px;height:54px;flex-shrink:0}
+  /* Enlarge the speed-table sprite (default .sprite-sm is a tiny 32px that looks
+     lost in the row). Sprite = wrap size so object-fit:contain fits it fully
+     inside the circle — no crop-fill, so wide sprites (e.g. Crobat) aren't
+     clipped by the circular mask. */
+  .speed-bar-name .sprite-wrap.sprite-sm{width:46px;height:46px}
+  .speed-bar-name .sprite-wrap.sprite-sm .sprite-img{width:46px;height:46px}
   .speed-bar-wrap{flex:1;height:14px;background:var(--bg3);border-radius:4px;position:relative;overflow:hidden}
   .speed-bar-fill{display:block;height:100%;border-radius:4px;transition:width .3s}
   .speed-bar-row.me .speed-bar-fill{background:rgba(108,143,255,.35)}
@@ -841,12 +847,12 @@
     /* Matchup table: 5 columns + a sprite overflow at 420px. Stack so the
        detail wraps to its own row underneath, name shrinks, sprite stays
        small. Verdict keeps its right-edge anchor via margin-left:auto. */
-    .analysis-row { flex-wrap: wrap; gap: 8px; padding: 10px 0; }
-    .analysis-row .sprite-wrap.sprite-sm { width: 28px; height: 28px; }
-    .analysis-row .sprite-wrap.sprite-sm .sprite-img { width: 28px; height: 28px; }
-    .ar-name { min-width: 0; flex: 1; font-size: 12px; }
-    .ar-verdict { font-size: 11px; padding: 3px 8px; }
-    .ar-detail { flex-basis: 100%; margin-left: 0; }
+    .analysis-row { flex-wrap: wrap; gap: 10px; padding: 12px 0; }
+    .analysis-row .sprite-wrap.sprite-sm { width: 50px; height: 50px; }
+    .analysis-row .sprite-wrap.sprite-sm .sprite-img { width: 50px; height: 50px; }
+    .ar-name { min-width: 0; flex: 1; font-size: 14px; }
+    .ar-verdict { font-size: 13px; padding: 4px 11px; }
+    .ar-detail { flex-basis: 100%; margin-left: 0; font-size: 13px; }
   }
   /* Compact-label rule shared across breakpoints — on wide screens the full
      label shows; on phones we collapse to "🚪 Switch" via the .hdr-btn-full-label
