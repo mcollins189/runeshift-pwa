@@ -360,12 +360,16 @@
   .reco-card .card-top.with-sprite{display:flex;flex-direction:column;flex:1;min-height:0}
   .reco-card .card-body{flex:1}
   .reco-card .edit-hint{margin-top:auto;padding-top:6px}
-  .reco-verdict{flex-shrink:0;display:flex;align-items:center;padding:0 13px;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase}
+  /* Verdict + reason are STACKED (not one stretch row) so the verdict pill stays
+     a consistent size across cards while the reason wraps to as many lines as
+     needed. (Previously align-items:stretch made the verdict band grow with the
+     reason height.) */
+  .reco-verdict{align-self:flex-start;flex-shrink:0;display:inline-flex;align-items:center;padding:3px 10px;border-radius:6px;font-size:10px;font-weight:700;letter-spacing:.03em;text-transform:uppercase}
   .reco-verdict.v-good{background:var(--green);color:#0f0f10}
   .reco-verdict.v-neutral{background:var(--bg4);color:var(--text2)}
   .reco-verdict.v-bad{background:var(--red);color:#0f0f10}
-  .reco-reason-text{flex:1;min-width:0;padding:11px 14px;line-height:1.4}
-  .reco-reason{display:flex;align-items:stretch;font-size:12px;color:var(--text2);border-top:1px solid var(--border);background:rgba(255,255,255,.022);margin:auto -14px -14px;border-radius:0 0 var(--radius) var(--radius);overflow:hidden}
+  .reco-reason-text{line-height:1.4;color:var(--text2)}
+  .reco-reason{display:flex;flex-direction:column;align-items:flex-start;gap:6px;font-size:12px;color:var(--text2);border-top:1px solid var(--border);background:rgba(255,255,255,.022);margin:auto -14px -14px;padding:10px 14px;border-radius:0 0 var(--radius) var(--radius)}
 
   /* Stats */
   .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:20px}
