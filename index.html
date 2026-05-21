@@ -863,6 +863,22 @@
     .ar-result { flex-basis: 100%; margin-left: 0; justify-content: space-between; }
     .ar-detail { font-size: 13px; }
   }
+  /* Rotate-to-portrait guard. Manifest orientation can't be conditional (and iOS
+     ignores it), so we block the landscape layout on PHONES only and prompt a
+     rotate. Scoped by short viewport height + coarse pointer so phone landscape
+     (height ~375-430px) triggers but tablet landscape (height ~700px+) does not
+     — tablets stay free to use any orientation. */
+  #rotate-guard { display: none; }
+  @media (orientation: landscape) and (max-height: 480px) and (pointer: coarse) {
+    #rotate-guard {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      position: fixed; inset: 0; z-index: 100000; background: var(--bg); color: var(--text);
+      text-align: center; padding: 24px; gap: 10px;
+    }
+    .rotate-guard-icon { font-size: 40px; }
+    .rotate-guard-title { font-size: 18px; font-weight: 600; }
+    .rotate-guard-sub { font-size: 13px; color: var(--text2); max-width: 340px; }
+  }
   /* Compact-label rule shared across breakpoints — on wide screens the full
      label shows; on phones we collapse to "🚪 Switch" via the .hdr-btn-full-label
      toggle in the 420px block above. */
@@ -873,6 +889,12 @@
 </style>
 </head>
 <body>
+
+<div id="rotate-guard" aria-hidden="true">
+  <div class="rotate-guard-icon">📱↻</div>
+  <div class="rotate-guard-title">Rotate to portrait</div>
+  <div class="rotate-guard-sub">NuzTracker is designed for portrait on phones.</div>
+</div>
 
 <div id="login-screen" class="login-screen">
   <div class="login-box">

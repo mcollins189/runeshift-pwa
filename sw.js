@@ -49,7 +49,10 @@
 // (skips fakemon / custom moves / form species-endpoints / evo-chain gaps) and
 // the dead raw.githubusercontent sprite route was removed. Bumped so existing
 // clients adopt the new SW + re-cache the fresh data.bundle.js.
-const SHELL_CACHE = 'nuz-shell-v6';
+// v7 — manifest.json orientation changed (natural -> any) + a phone-landscape
+// rotate-to-portrait guard added in index.html. manifest.json is a cache-first
+// shell asset, so bump to re-cache it (index.html is network-first already).
+const SHELL_CACHE = 'nuz-shell-v7';
 const POKEAPI_CACHE = 'nuz-pokeapi-v1';
 
 // Same-origin shell URLs use relative paths so the PWA works at any subpath
