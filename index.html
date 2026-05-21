@@ -146,7 +146,7 @@
      Sortable drag, and the cursor stays in "I-beam" mode until you click away.
      -webkit-touch-callout suppresses the iOS long-press callout menu that
      would otherwise compete with the hold-to-drag gesture. */
-  .poke-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;display:flex;flex-direction:column;gap:8px;position:relative;transition:border-color .15s,box-shadow .15s,background-color .15s;cursor:pointer;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+  .poke-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;display:flex;flex-direction:column;gap:8px;position:relative;overflow:visible;margin-top:48px;transition:border-color .15s,box-shadow .15s,background-color .15s;cursor:pointer;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
   .poke-card:hover{border-color:rgba(108,143,255,.55);background:var(--bg2-hover,var(--bg2));box-shadow:0 2px 14px rgba(0,0,0,.28),0 0 0 1px rgba(108,143,255,.18)}
   .poke-card.in-party{border-color:rgba(108,143,255,.4);box-shadow:0 0 0 1px rgba(108,143,255,.1)}
   .poke-card.sortable-chosen{border-color:var(--accent) !important;box-shadow:0 8px 30px rgba(0,0,0,0.5) !important;opacity:0.95;z-index:50}
@@ -168,7 +168,7 @@
      gets the card's full horizontal space — without this, a 100px button in
      the horizontal flex row eats a third of a narrow 3-col desktop card and
      squishes move pills into ellipses. */
-  .card-party-btn{align-self:flex-end;flex-shrink:0;font-family:'Outfit',sans-serif;font-size:11px;font-weight:500;padding:5px 12px;border-radius:6px;cursor:pointer;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);transition:all .15s;white-space:nowrap;line-height:1}
+  .card-party-btn{align-self:flex-end;flex-shrink:0;margin-top:auto;font-family:'Outfit',sans-serif;font-size:11px;font-weight:500;padding:5px 12px;border-radius:6px;cursor:pointer;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);transition:all .15s;white-space:nowrap;line-height:1}
   .card-party-btn-add{border-color:rgba(108,143,255,.4);color:var(--accent);background:var(--accent-bg)}
   .card-party-btn-add:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
   .card-party-btn-remove{border-color:rgba(255,87,87,.35);color:#ff8888;background:rgba(255,87,87,.08)}
@@ -250,9 +250,26 @@
   .matchup-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px;margin-bottom:16px}
   .matchup-grid-detail{grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:12px}
   .boss-poke{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;display:flex;flex-direction:column;gap:6px}
-  .boss-poke-rich{padding:12px 14px;gap:10px}
+  .boss-poke-rich{padding:12px 14px;gap:10px;position:relative;overflow:visible;margin-top:72px}
   .boss-poke-hdr{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;flex-wrap:wrap}
   .boss-poke-hdr .boss-types{margin-top:0}
+  .boss-poke-hdr.typed{display:block;position:relative;overflow:visible;margin:-12px -14px 2px;padding:13px 14px 12px;border-radius:var(--radius-sm) var(--radius-sm) 0 0}
+  .boss-ability{font-size:10px;color:var(--text2);font-weight:600;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+  .bph-types{position:absolute;top:-11px;left:14px;display:flex;gap:5px;z-index:3}
+  .bph-type{font-size:12px;font-weight:700;padding:3px 11px;border-radius:20px;color:#1c1c1c;letter-spacing:.04em;text-transform:uppercase;box-shadow:0 2px 5px rgba(0,0,0,.45)}
+  .bph-row{display:flex;align-items:flex-end;justify-content:space-between;gap:8px}
+  .bph-text{flex:1;min-width:0;display:flex;align-items:flex-start;gap:11px}
+  .bph-meta{margin-bottom:2px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pc-lv{flex-shrink:0;display:flex;flex-direction:column;align-items:flex-start;line-height:1}
+  .pc-lv-lbl{font-size:9px;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+  .pc-lv-num{font-size:25px;font-weight:800;line-height:.95;font-variant-numeric:tabular-nums;color:var(--text)}
+  .bph-nameblock{flex:1;min-width:0}
+  .typed .boss-name{font-size:18px;font-weight:700;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .bph-sprite{flex-shrink:0;align-self:flex-start;position:relative;z-index:2;margin:-74px -4px -12px 8px}
+  .bph-sprite .sprite-wrap{background:transparent;overflow:visible;width:136px;height:136px}
+  .bph-sprite .sprite-wrap .sprite-img{width:136px;height:136px;filter:drop-shadow(0 4px 7px rgba(0,0,0,.55));animation:bossBreathe 3.4s ease-in-out infinite}
+  @keyframes bossBreathe{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-3px) scale(1.05)}}
+  @media (prefers-reduced-motion: reduce){.bph-sprite .sprite-img{animation:none}}
   .bp-counter{display:flex;flex-wrap:wrap;align-items:center;gap:6px;background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.25);border-radius:6px;padding:6px 8px;font-size:11px}
   .bp-counter-lbl{font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:var(--green);font-weight:600;margin-right:2px}
   .bp-counter-mon{display:inline-flex;align-items:center;gap:4px;color:var(--text);font-weight:500}
@@ -297,7 +314,7 @@
   .bpd-mv-pwr{font-size:11px;color:var(--text2);font-weight:600;font-variant-numeric:tabular-nums;flex-shrink:0}
   .bpd-mv-bot{display:flex;align-items:center;gap:4px}
   .bpd-mv-bot .type-badge{font-size:9px;padding:1px 6px}
-  .bpd-mv-cat{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:3px;font-size:10px;line-height:1}
+  .bpd-mv-cat{display:inline-flex;align-items:center;justify-content:center;min-width:16px;height:16px;padding:0 4px;border-radius:3px;font-size:9px;font-weight:700;letter-spacing:.03em;line-height:1}
   .bpd-cat-P{background:rgba(248,113,113,.18);color:#f87171}
   .bpd-cat-S{background:rgba(108,143,255,.18);color:#9eb8ff}
   .bpd-cat-U{background:rgba(168,168,184,.18);color:var(--text2)}
@@ -321,11 +338,12 @@
 
   /* Reco card score badge */
   .reco-card{position:relative}
-  .reco-score-badge{position:absolute;top:-1px;left:-1px;font-size:9px;font-weight:600;padding:3px 8px;border-radius:var(--radius) 0 var(--radius-sm) 0;letter-spacing:.03em;text-transform:uppercase;z-index:2}
-  .reco-score-badge.v-good{background:var(--green);color:#0f0f10}
-  .reco-score-badge.v-neutral{background:var(--bg4);color:var(--text2)}
-  .reco-score-badge.v-bad{background:var(--red);color:#0f0f10}
-  .reco-reason{font-size:10px;color:var(--text2);padding:8px 12px 10px;line-height:1.5;border-top:1px solid var(--border);background:rgba(255,255,255,.015);margin:0 -1px -1px;border-radius:0 0 var(--radius-sm) var(--radius-sm)}
+  .reco-verdict{flex-shrink:0;display:flex;align-items:center;padding:0 13px;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase}
+  .reco-verdict.v-good{background:var(--green);color:#0f0f10}
+  .reco-verdict.v-neutral{background:var(--bg4);color:var(--text2)}
+  .reco-verdict.v-bad{background:var(--red);color:#0f0f10}
+  .reco-reason-text{flex:1;min-width:0;padding:11px 14px;line-height:1.4}
+  .reco-reason{display:flex;align-items:stretch;font-size:12px;color:var(--text2);border-top:1px solid var(--border);background:rgba(255,255,255,.022);margin:auto -14px -14px;border-radius:0 0 var(--radius) var(--radius);overflow:hidden}
 
   /* Stats */
   .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:20px}
@@ -423,8 +441,14 @@
   .sprite-sm .sprite-img{width:32px;height:32px}
   .sprite-lg{width:72px;height:72px}
   .sprite-lg .sprite-img{width:72px;height:72px}
-  .card-top.with-sprite{align-items:center}
-  .card-top.with-sprite .card-main{flex:1;min-width:0}
+  .card-top.with-sprite{display:block}
+  /* Roster/team card header band — mirrors the boss-card .typed header. */
+  .pc-hdr.typed{position:relative;overflow:visible;margin:-14px -14px 8px;padding:13px 14px 12px;border-radius:var(--radius) var(--radius) 0 0}
+  .pc-hdr .bph-sprite{margin:-44px -2px -10px 8px}
+  .pc-hdr .bph-sprite .sprite-wrap{width:108px;height:108px}
+  .pc-hdr .bph-sprite .sprite-wrap .sprite-img{width:108px;height:108px}
+  .pc-species{font-size:11px;color:var(--text3);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .card-body{display:flex;flex-direction:column;gap:5px}
 
   /* Evolve button */
   .btn-evolve{padding:7px 14px;font-size:12px;font-family:'Outfit',sans-serif;border:1px solid rgba(74,222,128,.4);border-radius:var(--radius-sm);background:rgba(74,222,128,.08);color:var(--green);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:5px}
@@ -447,8 +471,8 @@
      headline, which then collapses to zero width and the name overflows under
      the buttons. */
   .pv-header{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border)}
-  .pv-sprite{width:96px;height:96px;background:var(--bg3);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
-  .pv-sprite img{width:96px;height:96px;image-rendering:pixelated;object-fit:contain}
+  .pv-sprite{width:104px;height:104px;background:var(--bg3);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
+  .pv-sprite img{width:134px;height:134px;image-rendering:pixelated;object-fit:contain;flex-shrink:0}
   .pv-headline{flex:1;min-width:200px}
   .pv-nick{font-family:'Crimson Pro',serif;font-size:22px;font-weight:600;color:var(--text);line-height:1.1}
   .pv-species{font-size:13px;color:var(--text3);margin-top:2px}
@@ -580,6 +604,9 @@
   .enc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px}
   .enc-poke{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 10px;display:flex;align-items:center;gap:10px;transition:all .15s;position:relative}
   .enc-poke:hover{border-color:var(--border2)}
+  /* Larger encounter icon: circle ~card height, sprite scaled up to fill it. */
+  .enc-poke .sprite-wrap.sprite-sm{width:50px;height:50px}
+  .enc-poke .sprite-wrap.sprite-sm .sprite-img{width:64px;height:64px;flex-shrink:0}
   .enc-poke.clickable{cursor:pointer}
   .enc-poke.clickable:hover{border-color:var(--accent);background:var(--bg2);transform:translateY(-1px);box-shadow:0 2px 8px rgba(0,0,0,.2)}
   .enc-action-menu{position:fixed;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:10px;z-index:200;box-shadow:0 8px 30px rgba(0,0,0,.5);min-width:240px;font-family:'Outfit',sans-serif;display:flex;flex-direction:column;gap:4px}
@@ -779,8 +806,8 @@
        long-text buttons (e.g. "→ Evolve to Roselia (friendship (day))") don't
        squeeze the headline column down to nothing. */
     .pv-header { flex-direction: column; gap: 10px; align-items: stretch; }
-    .pv-sprite { width: 80px; height: 80px; align-self: center; }
-    .pv-sprite img { width: 80px; height: 80px; }
+    .pv-sprite { width: 92px; height: 92px; align-self: center; }
+    .pv-sprite img { width: 118px; height: 118px; }
     .pv-nick { font-size: 19px; }
     .pv-actions { width: 100%; }
     .pv-actions button { flex: 1 1 auto; min-width: 0; justify-content: center; text-align: center; }
@@ -5795,16 +5822,25 @@ function cardInner(p, realIdx) {
     if (isSTAB) cls.push('stab');
     return `<div class="${cls.join(' ')}" title="${m} · ${t||'Unknown type'}${isSTAB?' · STAB':''}${cat==='U'?' · status':''}"><span>${m}</span></div>`;
   }).join('');
+  const ownTypeList = [p.type1, p.type2].filter(Boolean);
+  const hdrHex = ownTypeList[0] ? TYPE_COLOR[ownTypeList[0]] : null;
+  const hdrStyle = hdrHex ? ` style="background:linear-gradient(100deg, ${hdrHex}30, ${hdrHex}08 60%, transparent)"` : '';
+  const typesHtml = ownTypeList.map(t => `<span class="bph-type" style="background:${TYPE_COLOR[t]||'#777'}">${t}</span>`).join('');
   return `
-    <div class="drag-handle" title="Hold to reorder">⠿</div>
-    ${sprite}
-    <div class="card-main">
-      <div class="card-header">
-        <div><div class="poke-nickname">${p.nickname}${p.isShiny?'<span class="shiny-spark" title="Shiny">✨</span>':''}</div><div class="poke-species">${p.species||'Unknown'}</div></div>
-        <div class="card-lv">Lv ${p.level||'?'}</div>
+    <div class="pc-hdr typed"${hdrStyle}>
+      <div class="bph-types">${typesHtml}</div>
+      <div class="bph-row">
+        <div class="bph-text">
+          <div class="pc-lv"><span class="pc-lv-lbl">Lv</span><span class="pc-lv-num">${p.level||'?'}</span></div>
+          <div class="bph-nameblock">
+            <div class="boss-name">${p.nickname}${p.isShiny?'<span class="shiny-spark" title="Shiny">✨</span>':''}</div>
+            <div class="pc-species">${p.species||'Unknown'}</div>
+          </div>
+        </div>
+        <div class="bph-sprite">${sprite}</div>
       </div>
-      <div class="types">${typeBadge(p.type1)}${typeBadge(p.type2)}</div>
-      <div class="card-divider"></div>
+    </div>
+    <div class="card-body">
       ${p.route?`<div class="detail-row"><span class="detail-label">Route</span><span class="detail-val">${p.route}</span></div>`:''}
       ${p.ability?`<div class="detail-row"><span class="detail-label">Ability</span><span class="detail-val">${p.ability}</span></div>`:''}
       ${p.nature?`<div class="detail-row"><span class="detail-label">Nature</span><span class="detail-val">${p.nature}</span></div>`:''}
@@ -6441,9 +6477,8 @@ function renderMatchup() {
       const reason = getMatchupReason(p, boss);
       // Reuse card layout but with reco-card class for score badge
       return `<div class="poke-card reco-card" onclick="openEdit(${idx})"${p.inParty?' style="border-color:rgba(108,143,255,.4);box-shadow:0 0 0 1px rgba(108,143,255,.1)"':''}>
-        <div class="reco-score-badge v-${analysis.verdict}" title="Score: ${score.toFixed(1)}">${analysis.label}</div>
         <div class="card-top with-sprite">${cardInner(p, idx)}</div>
-        <div class="reco-reason">${reason}</div>
+        <div class="reco-reason"><span class="reco-verdict v-${analysis.verdict}" title="Score: ${score.toFixed(1)}">${analysis.label}</span><span class="reco-reason-text">${reason}</span></div>
       </div>`;
     }).join('');
     html += `</div>`;
@@ -6571,7 +6606,10 @@ function moveDetails(rawName) {
   return out;
 }
 const CATEGORY_LABEL = { P:'physical', S:'special', U:'status' };
-const CATEGORY_GLYPH = { P:'⚔', S:'✦', U:'◆' };  // simple inline glyphs to avoid SVG dep
+const CATEGORY_GLYPH = { P:'PH', S:'SP', U:'ST' };  // compact phys/spec/status labels
+// Per-type accent hex (mirrors the .t-<Type> color values in CSS) for the
+// type-tinted boss-card header gradient.
+const TYPE_COLOR = { Normal:'#c8c878', Fire:'#f08030', Water:'#6890f0', Electric:'#f8d030', Grass:'#78c850', Ice:'#98d8d8', Fighting:'#e05040', Poison:'#c060c0', Ground:'#e0c068', Flying:'#a890f0', Psychic:'#f85888', Bug:'#a8b820', Rock:'#b8a038', Ghost:'#9070c0', Dragon:'#9060e8', Dark:'#987060', Steel:'#b8b8d0', Fairy:'#ee99ac' };
 
 // Renders one opponent in the matchup grid. detailMode=false → compact layout
 // matching the original (just header, types, hit-with, threats). detailMode=true
@@ -6609,10 +6647,23 @@ function renderBossCard(b, boss, roster, detailMode) {
     counterHtml = `<div class="bp-counter bp-counter-empty">No alive Pokémon in your roster yet</div>`;
   }
 
+  const hdrType = bTypes[0];
+  const hdrHex = hdrType ? TYPE_COLOR[hdrType] : null;
+  const hdrStyle = hdrHex ? ` style="background:linear-gradient(100deg, ${hdrHex}30, ${hdrHex}08 60%, transparent)"` : '';
+  const abilityHtml = b.ability ? `<span class="boss-ability">${prettyLabel(b.ability)}</span>` : '';
   return `<div class="boss-poke boss-poke-rich">
-    <div class="boss-poke-hdr">
-      <div><span class="boss-name">${b.species}</span><span class="boss-lv"> Lv ${b.lv}</span></div>
-      <div class="boss-types">${bTypes.map(t => typeBadge(t)).join('')}</div>
+    <div class="boss-poke-hdr typed"${hdrStyle}>
+      <div class="bph-types">${bTypes.map(t => `<span class="bph-type" style="background:${TYPE_COLOR[t]||'#777'}">${t}</span>`).join('')}</div>
+      <div class="bph-row">
+        <div class="bph-text">
+          <div class="pc-lv"><span class="pc-lv-lbl">Lv</span><span class="pc-lv-num">${b.lv}</span></div>
+          <div class="bph-nameblock">
+            ${abilityHtml ? `<div class="bph-meta">${abilityHtml}</div>` : ''}
+            <div class="boss-name">${b.species}</div>
+          </div>
+        </div>
+        <div class="bph-sprite">${spriteImg(b.species, {lg:true})}</div>
+      </div>
     </div>
     ${counterHtml}
     ${b.note ? `<div class="boss-threat">⚠ ${b.note}</div>` : ''}
@@ -6643,10 +6694,7 @@ function renderBossPokeDetail(b) {
   const barDenom = (calc && b.lv) ? 180 * Math.max(1, b.lv/50) : 180;
 
   const leftCol = `<div class="bpd-col-left">
-    <div class="bpd-sprite">${spriteImg(b.species, {lg:true})}</div>
-    <div class="bpd-types-row">${types.map(t => typeBadge(t)).join('')}</div>
     ${bst != null ? `<div class="bpd-bst" title="Base stat total"><span class="bpd-lbl">BST</span><span>${bst}</span></div>` : ''}
-    ${b.ability ? `<div class="bpd-kv"><span class="bpd-lbl">Ability</span><span class="bpd-val">${prettyLabel(b.ability)}</span></div>` : ''}
     ${b.nature ? `<div class="bpd-kv"><span class="bpd-lbl">Nature</span><span class="bpd-val">${prettyLabel(b.nature)}</span></div>` : ''}
     ${b.item ? `<div class="bpd-kv"><span class="bpd-lbl">Item</span><span class="bpd-val">${prettyLabel(b.item)}</span></div>` : ''}
     ${b.matchup ? `<div class="bpd-kv"><span class="bpd-lbl">Counters</span><span class="bpd-val">${typeBadge(prettyLabel(b.matchup))}</span></div>` : ''}
