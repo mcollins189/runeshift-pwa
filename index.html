@@ -4059,6 +4059,23 @@ function curTeamLineSet() {
   }
   return set;
 }
+// Map of species(lowercase) → logged outcome ('caught' | 'failed' | 'skipped' | …)
+// for everything resolved at a location, plus team members caught there. A
+// nuzlocke is one encounter per route, so ANY logged outcome (caught, missed/
+// failed, skipped) greys + tags that species in the location's encounter list
+// and excludes it from recommendations.
+function loggedSpeciesAtLoc(locName) {
+  const m = new Map();
+  for (const rt of curRoutes()) {
+    if (!routesMatch(rt.route, locName)) continue;
+    const sp = (rt.encounter || '').toLowerCase();
+    if (sp && !m.has(sp)) m.set(sp, rt.result || 'caught');
+  }
+  for (const p of curTeam()) {
+    if (p.species && routesMatch(p.route, locName)) m.set(p.species.toLowerCase(), 'caught');
+  }
+  return m;
+}
 function getEvoChainSet(species) {
   const out = new Set();
   if (!species) return out;
@@ -7278,6 +7295,13 @@ function renderHeaderVariantPill() {
   ).join('');
 }
 
+// Scroll a horizontal scroller so `target` is its scrollLeft, clamped. Direct
+// scrollLeft assignment is used (reliable everywhere) rather than scrollTo's
+// `behavior:'smooth'`, which some engines silently no-op.
+function scrollLeftTo(el, target) {
+  el.scrollLeft = Math.max(0, Math.min(target, el.scrollWidth - el.clientWidth));
+}
+
 function switchTab(n, dir) {
   // Direction for the slide animation: +1 forward (slide in from right), -1 back
   // (from left), 0 none. Inferred from tab order when not passed (e.g. tab taps).
@@ -7288,7 +7312,16 @@ function switchTab(n, dir) {
   }
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active','slide-in-left','slide-in-right'));
-  document.querySelector(`[onclick="switchTab('${n}')"]`).classList.add('active');
+  const tabBtn = document.querySelector(`[onclick="switchTab('${n}')"]`);
+  tabBtn.classList.add('active');
+  // Keep the active tab in view within the horizontally-scrollable tab bar
+  // (mobile) so swiping to an off-screen tab scrolls the selector to it.
+  const tabsBar = tabBtn.closest('.tabs');
+  if (tabsBar && tabsBar.scrollWidth > tabsBar.clientWidth + 2) {
+    const br = tabBtn.getBoundingClientRect(), cr = tabsBar.getBoundingClientRect();
+    const left = tabsBar.scrollLeft + (br.left - cr.left) - (tabsBar.clientWidth - br.width) / 2;
+    scrollLeftTo(tabsBar, left);
+  }
   const sec = document.getElementById(`tab-${n}`);
   sec.classList.add('active');
   if (dir !== 0) { void sec.offsetWidth; sec.classList.add(dir > 0 ? 'slide-in-right' : 'slide-in-left'); }
@@ -8334,11 +8367,7 @@ function buildEncounterMainFromTables(locName, ver, game) {
   // (teamLineSet) already excludes the dead, so we don't flag the species "fallen"
   // anywhere either. The route log still records where a mon was originally caught.
   const deadSpecies = new Set();
-  const caughtRoutes = curRoutes().filter(rt => rt.result==='caught' && routesMatch(rt.route, locName));
-  const caughtAtThisLoc = new Set(caughtRoutes.map(rt => (rt.encounter||'').toLowerCase()));
-  for (const p of team) {
-    if (routesMatch(p.route, locName) && p.species) caughtAtThisLoc.add(p.species.toLowerCase());
-  }
+  const caughtAtThisLoc = loggedSpeciesAtLoc(locName);
   const matchesVer = (e) => e.v === 'both' || e.v === ver;
   const totalVers = versionLetters.length;
   // Per-species version tag (NOT per-pool). A species that appears in every
@@ -8872,11 +8901,7 @@ function buildEncounterMainNuzData(locName, merged, ver, game) {
   // (teamLineSet) already excludes the dead, so we don't flag the species "fallen"
   // anywhere either. The route log still records where a mon was originally caught.
   const deadSpecies = new Set();
-  const caughtRoutes = curRoutes().filter(rt => rt.result==='caught' && routesMatch(rt.route, locName));
-  const caughtAtThisLoc = new Set(caughtRoutes.map(rt => (rt.encounter||'').toLowerCase()));
-  for (const p of team) {
-    if (routesMatch(p.route, locName) && p.species) caughtAtThisLoc.add(p.species.toLowerCase());
-  }
+  const caughtAtThisLoc = loggedSpeciesAtLoc(locName);
 
   // Convert each species slug to the {p, lv, r, v} shape renderEncList expects.
   // lv=[1,100] is the renderEncList placeholder that gets hidden as "not meaningful".
@@ -9047,14 +9072,7 @@ function buildEncounterMain(loc, ver) {
   // (teamLineSet) already excludes the dead, so we don't flag the species "fallen"
   // anywhere either. The route log still records where a mon was originally caught.
   const deadSpecies = new Set();
-  const caughtRoutes = curRoutes().filter(rt => rt.result==='caught' && routesMatch(rt.route, loc));
-  const caughtAtThisLoc = new Set(caughtRoutes.map(rt => (rt.encounter||'').toLowerCase()));
-  // Also include any team-member caught at this location (handles direct adds via roster)
-  for (const p of team) {
-    if (routesMatch(p.route, loc) && p.species) {
-      caughtAtThisLoc.add(p.species.toLowerCase());
-    }
-  }
+  const caughtAtThisLoc = loggedSpeciesAtLoc(loc);
 
   // Header
   let dataNote;
@@ -9392,13 +9410,21 @@ function renderEncListInternal(list, teamLineSet, deadSpecies, caughtAtThisLoc, 
     const speciesLc = e.p.toLowerCase();
     const isDupe = enforceDupes && teamLineSet.has(speciesLc);
     const isDead = deadSpecies.has(speciesLc);
-    const isCaught = caughtAtThisLoc.has(speciesLc);
+    // caughtAtThisLoc maps species → logged outcome at this location.
+    const logOutcome = caughtAtThisLoc.get(speciesLc) || null;
+    const isCaught = logOutcome === 'caught';
+    const isMissed = logOutcome === 'failed';       // missed / fled / KO'd
+    const isSkipped = logOutcome === 'skipped';
     let stateClass = '';
     if (isCaught) stateClass = ' caught';
+    else if (isMissed) stateClass = ' dead';        // greyed, like a lost encounter
+    else if (isSkipped) stateClass = ' dupe';       // greyed, dismissed
     else if (isDead) stateClass = ' dead';
     else if (isDupe) stateClass = ' dupe';
     let flag = '';
     if (isCaught) flag = '<span class="enc-flag caught">caught</span>';
+    else if (isMissed) flag = '<span class="enc-flag dead">missed</span>';
+    else if (isSkipped) flag = '<span class="enc-flag dupe">skipped</span>';
     else if (isDead) flag = '<span class="enc-flag dead">fallen</span>';
     else if (isDupe) flag = '<span class="enc-flag dupe">dupe</span>';
     else if (!methodLocked && winners) {
@@ -9430,7 +9456,7 @@ function renderEncListInternal(list, teamLineSet, deadSpecies, caughtAtThisLoc, 
     const safeLoc = (loc||'').replace(/'/g,"\\'");
     const safeSp = e.p.replace(/'/g,"\\'");
     return `<div class="enc-poke clickable${stateClass}" title="Click to log encounter" onclick="encActionMenu('${safeLoc}', '${safeSp}', event)">
-      ${spriteImg(e.p, {sm:true, faded:isDead||isDupe, apiId:e.apiId})}
+      ${spriteImg(e.p, {sm:true, faded:isDead||isDupe||isMissed||isSkipped, apiId:e.apiId})}
       <div class="enc-poke-info">
         <div class="enc-poke-name">${e.p}${verTag}${flag}</div>
         <div class="enc-poke-meta">
