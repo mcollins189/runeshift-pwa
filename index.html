@@ -110,7 +110,7 @@
 
   .poke-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px;margin-bottom:16px}
   .party-strip{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:14px}
-  .party-slot{display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 10px;min-height:56px;cursor:pointer;transition:border-color .12s,background .12s;position:relative}
+  .party-slot{display:flex;align-items:center;gap:10px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 10px;min-height:64px;cursor:pointer;transition:border-color .12s,background .12s;position:relative}
   .party-slot:hover{border-color:var(--accent);background:var(--bg3)}
   .party-slot.empty{border-style:dashed;border-color:var(--border);background:transparent;color:var(--text3);justify-content:center;font-size:11px;cursor:default;font-style:italic}
   .party-slot.empty:hover{border-color:var(--border);background:transparent}
@@ -123,7 +123,8 @@
     .party-slot-x{opacity:.75;width:26px;height:26px;border-radius:13px;font-size:18px;background:rgba(0,0,0,.35);color:var(--text2)}
     .party-slot-x:active{background:rgba(255,87,87,.25);color:#ff5757}
   }
-  .party-slot .sprite-wrap.sprite-sm{width:36px;height:36px;flex-shrink:0}
+  .party-slot .sprite-wrap.sprite-sm{width:48px;height:48px;flex-shrink:0}
+  .party-slot .sprite-wrap.sprite-sm .sprite-img{width:48px;height:48px}
   .party-slot-info{display:flex;flex-direction:column;gap:1px;min-width:0;flex:1}
   .party-slot-name{font-size:12px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .party-slot-meta{display:flex;gap:6px;font-size:10px;color:var(--text2)}
@@ -332,11 +333,13 @@
   .analysis-row .sprite-wrap.sprite-sm .sprite-img{width:52px;height:52px}
   .ar-name{font-weight:500;min-width:120px;color:var(--text);font-size:15px}
   .ar-types{display:flex;gap:3px}
-  .ar-verdict{margin-left:auto;font-size:13px;padding:4px 12px;border-radius:20px;font-weight:600}
+  /* reason + verdict grouped so they read as connected (on the same line) */
+  .ar-result{margin-left:auto;display:flex;align-items:center;gap:10px}
+  .ar-verdict{font-size:13px;padding:4px 12px;border-radius:20px;font-weight:600;flex-shrink:0}
   .v-good{background:var(--green-bg);color:var(--green)}
   .v-bad{background:var(--red-bg);color:var(--red)}
   .v-neutral{background:var(--bg3);color:var(--text2)}
-  .ar-detail{font-size:13px;color:var(--text3);margin-left:8px}
+  .ar-detail{font-size:13px;color:var(--text3)}
   .matchup-empty{text-align:center;padding:36px 20px;color:var(--text3);font-size:13px;line-height:1.8}
   .matchup-empty-icon{font-size:32px;opacity:0.4;margin-bottom:8px}
 
@@ -852,7 +855,9 @@
     .analysis-row .sprite-wrap.sprite-sm .sprite-img { width: 50px; height: 50px; }
     .ar-name { min-width: 0; flex: 1; font-size: 14px; }
     .ar-verdict { font-size: 13px; padding: 4px 11px; }
-    .ar-detail { flex-basis: 100%; margin-left: 0; font-size: 13px; }
+    /* reason + verdict share the full second line: reason left, verdict right */
+    .ar-result { flex-basis: 100%; margin-left: 0; justify-content: space-between; }
+    .ar-detail { font-size: 13px; }
   }
   /* Compact-label rule shared across breakpoints — on wide screens the full
      label shows; on phones we collapse to "🚪 Switch" via the .hdr-btn-full-label
@@ -6517,8 +6522,7 @@ function renderMatchup() {
           ${spriteImg(p.species, {sm:true})}
           <span class="ar-name">${p.nickname}${overCap?` <span style="color:var(--amber);font-size:10px">over cap</span>`:''}</span>
           <div class="ar-types">${typeBadge(p.type1)}${typeBadge(p.type2)}</div>
-          <span class="ar-detail">${analysis.detail}</span>
-          <span class="ar-verdict v-${analysis.verdict}">${analysis.label}</span>
+          <div class="ar-result"><span class="ar-detail">${analysis.detail}</span><span class="ar-verdict v-${analysis.verdict}">${analysis.label}</span></div>
         </div>`;
     }
     html += `</div>`;
