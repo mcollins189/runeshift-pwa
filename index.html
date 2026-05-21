@@ -709,9 +709,13 @@
   .speed-section{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;margin-top:16px}
   .speed-bar-row{display:flex;align-items:center;gap:10px;padding:5px 0;font-size:12px}
   .speed-bar-row.me{font-weight:500}
-  .speed-bar-name{min-width:130px;color:var(--text2);font-size:12px;display:flex;align-items:center;gap:6px}
+  .speed-bar-name{min-width:130px;color:var(--text2);font-size:12px;display:flex;align-items:center;gap:8px}
   .speed-bar-row.me .speed-bar-name{color:var(--text)}
   .speed-bar-row.boss .speed-bar-name{color:#f0b070}
+  /* Enlarge + crop-fill the speed-table sprite to match the encounter-list icons
+     (default .sprite-sm is a tiny 32px that looks lost in the row). */
+  .speed-bar-name .sprite-wrap.sprite-sm{width:42px;height:42px}
+  .speed-bar-name .sprite-wrap.sprite-sm .sprite-img{width:54px;height:54px;flex-shrink:0}
   .speed-bar-wrap{flex:1;height:14px;background:var(--bg3);border-radius:4px;position:relative;overflow:hidden}
   .speed-bar-fill{display:block;height:100%;border-radius:4px;transition:width .3s}
   .speed-bar-row.me .speed-bar-fill{background:rgba(108,143,255,.35)}
