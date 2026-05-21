@@ -349,6 +349,13 @@
 
   /* Reco card score badge */
   .reco-card{position:relative}
+  /* Pin the edit hint to the bottom-left of the reco card's content area (just
+     above the reason bar) regardless of how many details the card has. The
+     reco card keeps its hint in card-body (unlike roster/active cards), so we
+     grow card-top/card-body and push the hint down with margin-top:auto. */
+  .reco-card .card-top.with-sprite{display:flex;flex-direction:column;flex:1;min-height:0}
+  .reco-card .card-body{flex:1}
+  .reco-card .edit-hint{margin-top:auto;padding-top:6px}
   .reco-verdict{flex-shrink:0;display:flex;align-items:center;padding:0 13px;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase}
   .reco-verdict.v-good{background:var(--green);color:#0f0f10}
   .reco-verdict.v-neutral{background:var(--bg4);color:var(--text2)}
