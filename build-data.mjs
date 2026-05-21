@@ -471,9 +471,12 @@ function parseEncounterTables(raw) {
 
     if (line.startsWith('Encounters (')) {
       if (!currentTime || !currentNames.length || currentMapId == null || currentTableN == null) continue;
-      const lv = line.match(/Levels?\s+(\d+)\s*-\s*(\d+)/);
+      // Accept either a range ("Levels 7-9") or a single level ("Levels 7").
+      // Fixed-level encounters (swarms) list one level — without the optional
+      // second group these lines were skipped, dropping the whole pool.
+      const lv = line.match(/Levels?\s+(\d+)(?:\s*-\s*(\d+))?/);
       if (!lv) continue;
-      const lvMin = +lv[1], lvMax = +lv[2];
+      const lvMin = +lv[1], lvMax = lv[2] != null ? +lv[2] : +lv[1];
       const after = line.slice(line.indexOf(':') + 1);
       // Lazy match: "<name> (NN%)" pairs separated by ", ". Lazy quantifier lets the
       // inner "(Forme N)" parens be absorbed into the name part before the final (NN%).

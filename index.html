@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
-<script src="data.bundle.js?v=1779337690162" onerror="window.__NUZ_BUNDLE_MISSING=true"></script>
+<script src="data.bundle.js?v=1779380984540" onerror="window.__NUZ_BUNDLE_MISSING=true"></script>
 <style>
   :root {
     --bg:#0f0f10;--bg2:#18181b;--bg3:#222228;--bg4:#2a2a32;
@@ -590,6 +590,13 @@
   .pv-suggest{background:var(--accent-bg);border:1px solid rgba(108,143,255,.3);border-radius:6px;padding:10px 12px;margin-top:10px;font-size:12px;color:var(--text2);line-height:1.5}
   .pv-suggest strong{color:var(--text)}
   .pv-suggest .pv-suggest-title{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--accent);margin-bottom:4px;font-weight:600}
+  /* Compact ranked recommendation list (move suggestions + evolution-timing advice) */
+  .pv-suggest-line{padding:5px 0;font-size:12px;line-height:1.45;color:var(--text2)}
+  .pv-suggest-line + .pv-suggest-line{border-top:1px solid rgba(255,255,255,.07);margin-top:2px;padding-top:7px}
+  .pv-suggest-lv{font-weight:600;color:var(--accent);margin-right:6px}
+  .pv-suggest-line.evo .pv-suggest-lv{color:var(--amber)}
+  .pv-suggest-line strong{color:var(--text)}
+  .pv-suggest-meta{color:var(--text3)}
 
   /* Encounters page */
   .enc-layout{display:grid;grid-template-columns:260px 1fr;gap:16px;align-items:flex-start}
@@ -969,7 +976,7 @@
     <button class="tab" onclick="switchTab('routes')"><span class="tab-dot"></span>Route log<span class="tab-count" id="tc-routes">0</span></button>
     <button class="tab" onclick="switchTab('graveyard')"><span class="tab-dot"></span>Graveyard<span class="tab-count" id="tc-grave">0</span></button>
     <button class="tab" onclick="switchTab('stats')"><span class="tab-dot"></span>Stats</button>
-    <button class="tab" onclick="switchTab('rules')"><span class="tab-dot"></span>Rules</button>
+    <button class="tab" onclick="switchTab('rules')"><span class="tab-dot"></span>Settings</button>
   </div>
 
   <div class="main">
@@ -3509,7 +3516,9 @@ function curTools() {
     surf: !!raw.surf,
     rod: ROD_LEVELS[rod] != null ? rod : 'none',
     rockSmash: !!raw.rockSmash,
-    honey: !!raw.honey
+    honey: !!raw.honey,
+    pokeradar: !!raw.pokeradar,
+    swarm: !!raw.swarm
   };
 }
 function setTool(toolName, val) {
@@ -3592,6 +3601,8 @@ function isMethodLocked(method) {
   if (method === 'surf') return !tools.surf;
   if (method === 'rockSmash') return !tools.rockSmash;
   if (method === 'honey') return !tools.honey;
+  if (method === 'pokeradar') return !tools.pokeradar;
+  if (method === 'swarm') return !tools.swarm;
   const requiredRod = ROD_METHOD_FOR[method];
   if (requiredRod) return tools.rod !== requiredRod;
   return false;  // grass / tallGrass / shallowWater / flowers / horde / walking / rustling / flying / berry / special
@@ -3605,8 +3616,10 @@ function buildToolsPillHtml(gameKey) {
   const hasSurf      = gameHasMethod(gameKey, 'surf');
   const hasRockSmash = gameHasMethod(gameKey, 'rockSmash');
   const hasHoney     = gameHasMethod(gameKey, 'honey');
+  const hasRadar     = gameHasMethod(gameKey, 'pokeradar');
+  const hasSwarm     = gameHasMethod(gameKey, 'swarm');
   const hasAnyRod    = gameHasMethod(gameKey, 'oldRod') || gameHasMethod(gameKey, 'goodRod') || gameHasMethod(gameKey, 'superRod');
-  if (!hasSurf && !hasRockSmash && !hasHoney && !hasAnyRod) return '';
+  if (!hasSurf && !hasRockSmash && !hasHoney && !hasRadar && !hasSwarm && !hasAnyRod) return '';
 
   const pill = (id, label, emoji, active, onclick, tip) =>
     `<button class="${active?'active':''}" onclick="${onclick}" title="${tip}"><span class="tools-emoji">${emoji}</span>${label}</button>`;
@@ -3643,6 +3656,14 @@ function buildToolsPillHtml(gameKey) {
   if (hasHoney) {
     parts.push(pill('honey','Headbutt / Honey','🍯', tools.honey, `setTool('honey', ${!tools.honey})`,
       tools.honey ? 'Headbutt/Honey unlocked' : 'Headbutt/Honey locked — those pools are dimmed and skip recommendations'));
+  }
+  if (hasRadar) {
+    parts.push(pill('pokeradar','Poké Radar','📡', tools.pokeradar, `setTool('pokeradar', ${!tools.pokeradar})`,
+      tools.pokeradar ? 'Poké Radar on — radar-only pools shown' : 'Poké Radar off — radar-only encounter pools are hidden/dimmed'));
+  }
+  if (hasSwarm) {
+    parts.push(pill('swarm','Swarm','🐛', tools.swarm, `setTool('swarm', ${!tools.swarm})`,
+      tools.swarm ? 'Swarm on — daily-swarm pools shown' : 'Swarm off — daily-swarm encounter pools are hidden/dimmed'));
   }
   return `<div class="tools-pill-row" title="Mark which tools you have unlocked. Locked methods are dimmed and skip recommendation flags.">
     <span class="tools-prefix">Tools:</span>
@@ -8203,9 +8224,10 @@ function buildEncounterMainFromTables(locName, ver, game) {
     // tables (e.g. Route 205 grass split N/S). Day/Night tabs live inside the
     // grass section since only grass varies by time of day for BDSP.
     const METHOD_LABELS = {
-      grass: 'Walking (tall grass)', surf: 'Surfing',
+      grass: 'Walking', surf: 'Surfing',
       oldRod: 'Old Rod', goodRod: 'Good Rod', superRod: 'Super Rod',
       honey: 'Honey tree', rockSmash: 'Rock Smash',
+      pokeradar: 'Poké Radar', swarm: 'Swarm',
       // Gen 5 (B2W2) methods.
       darkGrass: 'Dark grass', rustlingGrass: 'Rustling grass',
       ripplingWater: 'Rippling water', ripplingRod: 'Rippling water (Super Rod)',
@@ -8225,14 +8247,14 @@ function buildEncounterMainFromTables(locName, ver, game) {
       'grass', 'darkGrass', 'rustlingGrass', 'tallGrass', 'shallowWater',
       'yellowFlowers', 'redFlowers', 'purpleFlowers',
       'surf', 'ripplingWater', 'oldRod', 'goodRod', 'superRod', 'ripplingRod',
-      'honey', 'rockSmash', 'horde',
+      'honey', 'pokeradar', 'swarm', 'rockSmash', 'horde',
     ];
     // Gen-7 (SM/USUM) tall-grass tables actually mix four distinct mechanics
     // under a single [grass] method tag — regular walking, rare flying overhead,
     // berry-tree spots, and rustling grass. Classify each pool by its slot
     // distribution + species composition and emit them as separate sections.
     const ALOLA_GRASS_SUB_LABELS = {
-      walking: 'Walking (tall grass)',
+      walking: 'Walking',
       rustling: 'Rustling grass',
       flying: 'Pokémon flying overhead',
       berry: 'Under berry trees',
@@ -8321,6 +8343,18 @@ function buildEncounterMainFromTables(locName, ver, game) {
         }
         return a.lvMin - b.lvMin || a.lvMax - b.lvMax;
       });
+      // Resolve the pools that actually render for THIS time phase first. A
+      // grass area split into Morning/Day/Night arrives as separate pools that
+      // share one subZone; only the active phase's pool has entries, the others
+      // are empty. Labeling must be based on this rendered set — counting the
+      // empty siblings would slap a spurious "· Area 1 A" on the lone visible pool.
+      const rendered = [];
+      for (const p of sortedPools) {
+        const entries = p[time].map(toRenderEntry)
+          .filter(matchesVer).sort((a,b) => b.r - a.r);
+        if (entries.length) rendered.push({ p, entries });
+      }
+      if (!rendered.length) return '';
       // Prefer the sub-zone label (Beachfront / 1F Outside / etc.) over the
       // generic A/B/C fallback when the parsed data carries one. When several
       // siblings share the same subZone (Route 1 SM/USUM has 4 distinct grass
@@ -8328,10 +8362,15 @@ function buildEncounterMainFromTables(locName, ver, game) {
       // bundles multiple Map IDs under the same parenthetical name), append
       // A/B/C to disambiguate — "Hau'oli Outskirts A / B / C / D".
       const subZoneCounts = new Map();
-      for (const p of sortedPools) {
+      for (const { p } of rendered) {
         if (p.subZone) subZoneCounts.set(p.subZone, (subZoneCounts.get(p.subZone) || 0) + 1);
       }
       const subZoneSeen = new Map();
+      // Honey tiers come through as separate tables (Common / Rare / Very rare,
+      // in that source order). Label the VISIBLE pools for the active time —
+      // empty tables for other times are skipped, so count only what renders.
+      const HONEY_TIERS = ['Common', 'Rare', 'Very rare'];
+      let honeyVisibleIdx = 0;
       const tag = (p, i) => {
         if (p.subZone) {
           if ((subZoneCounts.get(p.subZone) || 0) > 1) {
@@ -8341,12 +8380,16 @@ function buildEncounterMainFromTables(locName, ver, game) {
           }
           return ` · ${p.subZone}`;
         }
-        return sortedPools.length > 1 ? ` · ${String.fromCharCode(65 + i)}` : '';
+        return rendered.length > 1 ? ` · ${String.fromCharCode(65 + i)}` : '';
       };
-      return sortedPools.map((p, i) => {
-        const entries = p[time].map(toRenderEntry)
-          .filter(matchesVer).sort((a,b) => b.r - a.r);
-        if (!entries.length) return '';
+      return rendered.map(({ p, entries }, i) => {
+        let subLabel;
+        if (method === 'honey') {
+          subLabel = ` · ${HONEY_TIERS[honeyVisibleIdx] || String.fromCharCode(65 + honeyVisibleIdx)}`;
+          honeyVisibleIdx++;
+        } else {
+          subLabel = tag(p, i);
+        }
         const total = entries.reduce((s,e) => s + e.r, 0);
         const lvLabel = p.lvMin === p.lvMax ? `Lv ${p.lvMin}` : `Lv ${p.lvMin}–${p.lvMax}`;
         const lockedCls = isMethodLocked(method) ? ' locked-method' : '';
@@ -8355,7 +8398,7 @@ function buildEncounterMainFromTables(locName, ver, game) {
         // PokeAPI path used by vanilla BW) so floor/sub-area labels read the same.
         return `<div class="enc-section${lockedCls}">
           <div class="enc-section-hdr">
-            <span class="enc-method-label">${sectionLabel || (METHOD_LABELS[method] || method)}${tag(p, i)}</span>
+            <span class="enc-method-label">${sectionLabel || (METHOD_LABELS[method] || method)}${subLabel}</span>
             <span style="font-size:10px;color:var(--text3);margin-left:8px">${entries.length} species · ${lvLabel} · ${total}%</span>
           </div>
           ${renderEncList(entries, teamLineSet, deadSpecies, caughtAtThisLoc, ver, locName, method)}
@@ -9721,6 +9764,72 @@ function pokeView(p, idx) {
 }
 
 // Asynchronously render the learnset section into the open detail view
+// Evolution-timing advice for the move planner. Compares this species' upcoming
+// level-up moves against its evolved form's learnset and recommends whether to
+// delay evolution (to secure a move) or evolve (to grab an evo-only move you'd
+// otherwise skip). Reuses scoreMove so the priority sorts in among the move
+// suggestions. The `noRelearning` rule widens what counts as "lost":
+//   - relearning allowed: only moves the evo NEVER learns by level-up count
+//     (permanently lost on evolution — a relearner can't teach them).
+//   - no relearning: also count moves the evo learns LATER (delay to get them
+//     early) and evo-only moves you'd skip past by delaying (evolve to keep them).
+// Returns { kind:'delay'|'evolve', score, lv, move, evoName, text } or null.
+async function computeEvolutionAdvice(species, level, currentMoves, noRelearning) {
+  const info = pokeInfo(species) || (typeof backfilledPokemon !== 'undefined' && backfilledPokemon[speciesSlug(species)]);
+  const evo = info && info.e;
+  if (!evo || !evo[0] || isErrorRecord(info)) return null;
+  const evoName = evo[0];
+  const ownTypes = info.t || [];
+  const ownStats = info.s || null;
+  let selfLs, evoLs;
+  try { [selfLs, evoLs] = await Promise.all([fetchLearnset(species), fetchLearnset(evoName)]); }
+  catch (e) { return null; }
+  if (!selfLs || !selfLs.length || !evoLs || !evoLs.length) return null;
+  const canon = (n) => (resolveMove(n) || n).toLowerCase();
+  const ownedCanon = new Set(currentMoves.map(canon));
+  // Evo's level-up moves → earliest level it learns each (by canonical name).
+  const evoLevelByName = new Map();
+  for (const m of evoLs) {
+    if (m.isEvo) continue;
+    const k = canon(m.name);
+    if (!evoLevelByName.has(k) || m.lv < evoLevelByName.get(k)) evoLevelByName.set(k, m.lv);
+  }
+  // DELAY side — pre-evo upcoming moves you'd lose/postpone by evolving.
+  let bestDelay = null;
+  for (const m of selfLs) {
+    if (m.isEvo || m.lv <= level) continue;
+    const k = canon(m.name);
+    if (ownedCanon.has(k)) continue;
+    const evoLv = evoLevelByName.get(k);
+    const lost = (evoLv === undefined) || (noRelearning && evoLv > m.lv);
+    if (!lost) continue;
+    const sc = scoreMove(m.name, ownTypes, ownStats);
+    if (sc.score < 40) continue;
+    if (!bestDelay || sc.score > bestDelay.score) bestDelay = { move: m.name, lv: m.lv, score: sc.score, never: evoLv === undefined };
+  }
+  // EVOLVE side — evo-only moves you'd skip past by delaying (only matters with no relearning).
+  let bestEvolve = null;
+  if (noRelearning) {
+    const selfNames = new Set(selfLs.filter(m => !m.isEvo).map(m => canon(m.name)));
+    for (const m of evoLs) {
+      if (m.isEvo || m.lv <= level) continue;
+      const k = canon(m.name);
+      if (selfNames.has(k) || ownedCanon.has(k)) continue;
+      const sc = scoreMove(m.name, ownTypes, ownStats);
+      if (sc.score < 40) continue;
+      if (!bestEvolve || sc.score > bestEvolve.score) bestEvolve = { move: m.name, lv: m.lv, score: sc.score };
+    }
+  }
+  if (!bestDelay && !bestEvolve) return null;
+  if (bestDelay && (!bestEvolve || bestDelay.score >= bestEvolve.score)) {
+    const why = bestDelay.never ? `${evoName} never learns it by level-up` : `${evoName} only learns it later`;
+    return { kind: 'delay', score: bestDelay.score, lv: bestDelay.lv, move: bestDelay.move, evoName,
+      text: `learn ${bestDelay.move} (${why})` };
+  }
+  return { kind: 'evolve', score: bestEvolve.score, lv: bestEvolve.lv, move: bestEvolve.move, evoName,
+    text: `${evoName} learns ${bestEvolve.move} (Lv ${bestEvolve.lv}) you'd skip by delaying` };
+}
+
 async function renderPokeViewLearnset(idx) {
   const container = document.getElementById('pv-learnset-container');
   if (!container) return;
@@ -9862,29 +9971,40 @@ async function renderPokeViewLearnset(idx) {
       ${isNext?'<span class="pv-ls-flag next">next</span>':''}
     </div>`);
   }
+  // Evolution-timing advice (delay vs evolve), scored so it sorts in among the
+  // move suggestions. Always uses the cannot-relearn model (no Move Reminder)
+  // so the advice is always actionable — flags pre-evo moves the evo learns
+  // late or never, and evo-only moves you'd skip by delaying.
+  const evoAdvice = await computeEvolutionAdvice(p.species, lv, currentMoves, true);
+
+  // Unified, ranked recommendation list rendered as compact line items.
+  const recItems = suggestions.map(s => ({ score: s.score.score, kind: 'move', s }));
+  if (evoAdvice) recItems.push({ score: evoAdvice.score, kind: 'evo', evo: evoAdvice });
+  recItems.sort((a, b) => b.score - a.score);
+
   let suggHtml = '';
-  if (suggestions.length) {
-    const s = suggestions[0];
-    const upT = getMoveType(s.move.name);
-    const upPwr = movePower(s.move.name);
-    const upCat = moveCategory(s.move.name);
-    const upEff = moveEffect(s.move.name);
-    const lvLabel = s.isEvo ? 'On evolution' : `At Lv ${s.move.lv}`;
-    let body = `<div class="pv-suggest-title">${lvLabel} — <strong>${s.move.name}</strong> ${upT?'('+upT+')':''} ${upPwr?upPwr+' BP':''} ${upCat==='P'?'physical':upCat==='S'?'special':'status'}${s.score.label==='STAB'?' · STAB':''}</div>`;
-    if (s.swap) {
-      const swapT = getMoveType(s.swap.name);
-      body += `Consider replacing <strong>${s.swap.name}</strong>${swapT?` (${swapT})`:''} — this move scores noticeably higher for your set.`;
-      if (s.swap.role === 'util') body += ` Trade-off: you'd lose ${s.swap.name}'s utility, so weigh whether you still need it.`;
-    } else if (currentMoves.length < 4) {
-      body += `You have an empty slot — pick it up freely.`;
-    } else if (s.isEvo) {
-      body += `Available right now — this Pokémon learns it upon evolving and it scores well, but no current move is a clear cut. Compare manually before swapping.`;
-    } else {
-      body += `Worth a look, but no current move scores low enough to make this an obvious swap. Compare manually.`;
-    }
-    if (upEff && /recoil|charge|recharge/.test(upEff)) body += `<br><span style="color:var(--text3);font-size:11px">Note: ${upEff.replace(/,/g,', ')}.</span>`;
-    suggHtml = `<div class="pv-suggest">${body}</div>`;
-  } else if (upcoming.length === 0 && evoMoves.length === 0) {
+  if (recItems.length) {
+    const lines = recItems.slice(0, 3).map(r => {
+      if (r.kind === 'evo') {
+        const e = r.evo;
+        const icon = e.kind === 'delay' ? '⏳' : '⬆';
+        const head = e.kind === 'delay' ? `Delay evolution${e.lv ? ` to Lv ${e.lv}` : ''}` : 'Evolve when ready';
+        return `<div class="pv-suggest-line evo"><span class="pv-suggest-lv">${icon}</span><strong>${head}</strong> <span class="pv-suggest-meta">— ${e.text}</span></div>`;
+      }
+      const s = r.s;
+      const upT = getMoveType(s.move.name);
+      const upPwr = movePower(s.move.name);
+      const upCat = moveCategory(s.move.name);
+      const lvLabel = s.isEvo ? 'On evo' : `Lv ${s.move.lv}`;
+      const metaBits = [upT, upPwr ? upPwr + ' BP' : '', upCat === 'P' ? 'phys' : upCat === 'S' ? 'spec' : 'status'].filter(Boolean).join(' · ');
+      let action;
+      if (s.swap) action = `swap for ${s.swap.name}`;
+      else if (currentMoves.length < 4) action = 'empty slot — free pickup';
+      else action = 'compare manually';
+      return `<div class="pv-suggest-line"><span class="pv-suggest-lv">${lvLabel}</span><strong>${s.move.name}</strong> <span class="pv-suggest-meta">${metaBits} · ${action}</span></div>`;
+    });
+    suggHtml = `<div class="pv-suggest"><div class="pv-suggest-title">Recommendations</div>${lines.join('')}</div>`;
+  } else if (upcoming.length === 0 && evoMoves.length === 0 && !evoAdvice) {
     suggHtml = `<div class="pv-suggest" style="background:var(--bg3);border-color:var(--border);color:var(--text3)">No more level-up moves to learn.</div>`;
   }
   container.innerHTML = `<div class="pv-learnset">${lsRows.join('')}</div>${suggHtml}`;
