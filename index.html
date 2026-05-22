@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <link rel="manifest" href="manifest.json">
@@ -44,7 +44,12 @@
   .btn-login:disabled{opacity:0.5;cursor:not-allowed}
   .login-error{font-size:12px;color:var(--red);margin-top:10px;display:none;padding:8px 12px;background:var(--red-bg);border-radius:var(--radius-sm);line-height:1.6}
 
-  .topbar{position:sticky;top:0;z-index:10;background:var(--bg)}
+  .topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+  /* iOS safe-area: push app content below the status bar/notch and fill that
+     strip with the app's dark colour so content can't scroll behind it. All
+     env() values are 0 on Android/desktop, so this is a no-op there. */
+  #app{padding-top:env(safe-area-inset-top,0px)}
+  .safe-top-fill{position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:90}
   .header{border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--bg);flex-wrap:wrap}
   .header-left{display:flex;flex-direction:column;gap:6px}
   .header-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
@@ -103,7 +108,7 @@
   .tab.active .tab-dot{display:block}
   .tab-count{font-size:11px;background:var(--bg3);border-radius:10px;padding:1px 6px;color:var(--text3)}
 
-  .main{padding:24px;max-width:1100px;margin:0 auto;overflow-x:clip}
+  .main{padding:24px 24px calc(24px + env(safe-area-inset-bottom,0px));max-width:1100px;margin:0 auto;overflow-x:clip}
   .section{display:none}.section.active{display:block}
   /* Tab-change slide: incoming section eases in from the swipe direction
      (forward = from the right, back = from the left). */
@@ -917,7 +922,7 @@
     .cap-badge { padding: 4px 8px; gap: 6px; }
     .cap-badge label { display: none; }       /* "Level cap" label takes too much space */
     .hdr-btn { padding: 4px 8px; font-size: 11px; }
-    .tabs { padding: 8px 14px 0; position: sticky; top: 0; z-index: 11; }
+    .tabs { padding: 8px 14px 0; position: sticky; top: env(safe-area-inset-top, 0px); z-index: 11; }
     .tabs-scroll { gap: 0; }
     .tab { padding: 8px 11px; font-size: 14px; }
     .tab-count { font-size: 10px; padding: 1px 5px; margin-left: 4px; }
@@ -1024,6 +1029,7 @@
 </div>
 
 <div id="app" style="display:none">
+ <div class="safe-top-fill"></div>
  <div class="topbar">
   <div class="header">
     <div class="header-left">
@@ -7587,7 +7593,7 @@ function buildBattlePlan(boss, pool, setMode) {
     const act = planChooseAction(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, lastTo);
     let P = party[pIdx], B = bossC[bIdx];
     if (act.type === 'switch') { notes.push(`${setMode ? 'switch (eats a hit) to' : 'pivot to'} <b>${party[act.idx].label}</b>`); lastTo = act.idx; pIdx = act.idx; usage[pIdx].entered = true; bossAtk(pIdx); endTurn(pIdx); continue; }
-    if (act.type === 'pivot') { notes.push(`<b>${P.label}</b> U-turn → pivot to <b>${party[act.idx].label}</b>`); usage[pIdx].pivoted = true; hit(P, B, pIdx); lastTo = act.idx; pIdx = act.idx; usage[pIdx].entered = true; if (bHP[bIdx] > 0) bossAtk(pIdx); endTurn(pIdx); continue; }
+    if (act.type === 'pivot') { notes.push(`<b>${P.label}</b> ${P.flags.pivot || 'pivot'} → switch to <b>${party[act.idx].label}</b>`); usage[pIdx].pivoted = true; hit(P, B, pIdx); lastTo = act.idx; pIdx = act.idx; usage[pIdx].entered = true; if (bHP[bIdx] > 0) bossAtk(pIdx); endTurn(pIdx); continue; }
     if (act.type === 'sleepStay') { notes.push(`put ${B.label} to sleep → free turns`); bSlp[bIdx] = 2; endTurn(pIdx); continue; }
     if (act.type === 'sleepSwitch') { notes.push(`sleep ${B.label}, switch in <b>${party[act.idx].label}</b> safely`); bSlp[bIdx] = 2; lastTo = act.idx; pIdx = act.idx; usage[pIdx].entered = true; endTurn(pIdx); continue; }
     if (act.type === 'protect') { notes.push(`Protect to stall`); if (bSlp[bIdx] > 0) bSlp[bIdx]--; endTurn(pIdx); continue; }
@@ -7818,16 +7824,21 @@ function renderMatchup() {
       if (specTargets) {
         const play = specialistPlay(p, specTargets, boss, specialistForSpecies);
         const clears = specTargets.join(', ');
-        if (play && play.switchTo && _r.setMode) {
-          // Set mode: no free switch after a KO — you'd be stuck vs the next
-          // threat, so lead the follow-up answer for that fight instead.
-          specHtml = `<div class="reco-spec" title="Set mode: after KOing ${clears} you don't get a free switch — it's stuck vs ${play.weakTo}. Bring ${play.switchTo} in for that one (e.g. land an earlier final blow with it).">🔄 Clears ${clears} → Set: stuck vs ${play.weakTo} after (lead ${play.switchTo} for it)</div>`;
-        } else if (play && play.switchTo) {
-          specHtml = `<div class="reco-spec" title="Send it in to delete ${clears}, then switch out before ${play.weakTo} — ${play.switchTo} handles that one.">🔄 Clears ${clears} → switch to ${play.switchTo} vs ${play.weakTo}</div>`;
-        } else if (play) {
-          specHtml = `<div class="reco-spec" title="Hard-counters ${clears}; ${_r.setMode?'it then stays in vs':'pivot out before'} ${play.weakTo}.">★ Clears ${clears}${_r.setMode?` → then stuck vs ${play.weakTo}`:` → pivot before ${play.weakTo}`}</div>`;
-        } else {
+        // A self-switch move (Volt Switch / U-turn / Flip Turn) lets the mon leave
+        // AFTER its KO even in Set mode — so it's not "stuck". Shift always lets you
+        // switch on a KO; in Set you can only escape with such a move.
+        const pivotMv = planFlags(p).pivot;
+        const canEscape = !_r.setMode || !!pivotMv;
+        if (!play) {
           specHtml = `<div class="reco-spec" title="Hard-counters ${clears} — send it in for that fight even if its overall matchup is mixed">★ Specialist vs ${clears}</div>`;
+        } else if (!canEscape) {
+          // Set mode + no self-switch move → genuinely stuck vs the next threat.
+          specHtml = `<div class="reco-spec" title="Set mode: after KOing ${clears} you don't get a free switch — it's stuck vs ${play.weakTo}.${play.switchTo?` Bring ${play.switchTo} in for that one (e.g. land an earlier final blow with it).`:''}">🔄 Clears ${clears} → Set: stuck vs ${play.weakTo} after${play.switchTo?` (lead ${play.switchTo} for it)`:''}</div>`;
+        } else {
+          // Can leave: Shift free-switch, or Set + a self-switch move.
+          const verb = (_r.setMode && pivotMv) ? `${pivotMv} out` : 'pivot out';
+          const dest = play.switchTo ? ` to ${play.switchTo}` : '';
+          specHtml = `<div class="reco-spec" title="Send it in to delete ${clears}, then ${verb}${dest} before ${play.weakTo}${(_r.setMode && pivotMv)?` — ${pivotMv} escapes even in Set mode`:''}.">🔄 Clears ${clears} → ${verb}${dest} before ${play.weakTo}</div>`;
         }
       }
       const tip = betterStabTip(p);
