@@ -204,6 +204,7 @@
   .detail-row{display:flex;align-items:baseline;gap:6px;font-size:11px;line-height:1.5}
   .detail-label{color:var(--text3);min-width:48px;flex-shrink:0}
   .detail-val{color:var(--text2);flex:1;word-break:break-word}
+  .kv-blurb{color:var(--text3);font-size:11px;font-style:italic}
   .moves-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px;flex:1}
   .move-pill{font-size:11px;background:var(--bg3);border-radius:4px;padding:4px 8px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:5px;border-left:3px solid var(--border2);min-width:0}
   /* Inner span needs min-width:0 + ellipsis itself so flex can shrink it below
@@ -1242,6 +1243,81 @@ function scoreMove(name, ownerTypes, ownerStats) {
 // Common abilities. Names only — used for dropdown.
 // The scoring engine checks specific names for special effects.
 const ABILITIES = ["Adaptability","Aerilate","Aftermath","Air Lock","Analytic","Anger Point","Anger Shell","Anticipation","Arena Trap","Armor Tail","Aroma Veil","As One","Aura Break","Bad Dreams","Ball Fetch","Battery","Battle Armor","Battle Bond","Beads of Ruin","Beast Boost","Berserk","Big Pecks","Blaze","Bulletproof","Cheek Pouch","Chilling Neigh","Chlorophyll","Clear Body","Cloud Nine","Color Change","Comatose","Commander","Competitive","Compound Eyes","Contrary","Corrosion","Costar","Cotton Down","Cud Chew","Curious Medicine","Cursed Body","Cute Charm","Damp","Dancer","Dark Aura","Dauntless Shield","Dazzling","Defeatist","Defiant","Delta Stream","Desolate Land","Disguise","Download","Dragon's Maw","Drizzle","Drought","Dry Skin","Early Bird","Earth Eater","Effect Spore","Electric Surge","Electromorphosis","Embody Aspect","Emergency Exit","Fairy Aura","Filter","Flame Body","Flare Boost","Flash Fire","Flower Gift","Flower Veil","Fluffy","Forecast","Forewarn","Friend Guard","Frisk","Full Metal Body","Fur Coat","Gale Wings","Galvanize","Gluttony","Good as Gold","Gooey","Gorilla Tactics","Grass Pelt","Grassy Surge","Grim Neigh","Guard Dog","Gulp Missile","Guts","Hadron Engine","Harvest","Healer","Heatproof","Heavy Metal","Honey Gather","Hospitality","Huge Power","Hunger Switch","Hustle","Hydration","Hyper Cutter","Ice Body","Ice Face","Ice Scales","Illuminate","Illusion","Immunity","Imposter","Infiltrator","Innards Out","Inner Focus","Insomnia","Intimidate","Intrepid Sword","Iron Barbs","Iron Fist","Justified","Keen Eye","Klutz","Leaf Guard","Levitate","Libero","Light Metal","Lightning Rod","Limber","Lingering Aroma","Liquid Ooze","Liquid Voice","Long Reach","Magic Bounce","Magic Guard","Magician","Magma Armor","Magnet Pull","Marvel Scale","Mega Launcher","Merciless","Mimicry","Mind's Eye","Minus","Mirror Armor","Misty Surge","Mold Breaker","Moody","Motor Drive","Moxie","Multiscale","Multitype","Mummy","Mycelium Might","Natural Cure","Neuroforce","Neutralizing Gas","No Guard","Normalize","Oblivious","Opportunist","Orichalcum Pulse","Overcoat","Overgrow","Own Tempo","Parental Bond","Pastel Veil","Perish Body","Pickpocket","Pickup","Pixilate","Plus","Poison Heal","Poison Point","Poison Puppeteer","Poison Touch","Power Construct","Power of Alchemy","Power Spot","Prankster","Pressure","Primordial Sea","Prism Armor","Propeller Tail","Protean","Protosynthesis","Psychic Surge","Punk Rock","Pure Power","Purifying Salt","Quark Drive","Queenly Majesty","Quick Draw","Quick Feet","Rain Dish","Rattled","Receiver","Reckless","Refrigerate","Regenerator","Ripen","Rivalry","Rock Head","Rocky Payload","Rough Skin","Run Away","Sand Force","Sand Rush","Sand Spit","Sand Stream","Sand Veil","Sap Sipper","Schooling","Scrappy","Screen Cleaner","Seed Sower","Serene Grace","Shadow Shield","Shadow Tag","Sharpness","Shed Skin","Sheer Force","Shell Armor","Shield Dust","Shields Down","Simple","Skill Link","Slow Start","Slush Rush","Sniper","Snow Cloak","Snow Warning","Solar Power","Solid Rock","Soul-Heart","Soundproof","Speed Boost","Stakeout","Stall","Stalwart","Stamina","Stance Change","Static","Steadfast","Steam Engine","Steely Spirit","Stench","Sticky Hold","Storm Drain","Strong Jaw","Sturdy","Suction Cups","Super Luck","Supersweet Syrup","Supreme Overlord","Surge Surfer","Swarm","Sweet Veil","Swift Swim","Sword of Ruin","Symbiosis","Synchronize","Tablets of Ruin","Tangled Feet","Tangling Hair","Technician","Telepathy","Tera Shell","Tera Shift","Teraform Zero","Thermal Exchange","Thick Fat","Tinted Lens","Torrent","Tough Claws","Toxic Boost","Toxic Chain","Toxic Debris","Trace","Transistor","Triage","Truant","Turboblaze","Unaware","Unburden","Unnerve","Vessel of Ruin","Victory Star","Vital Spirit","Volt Absorb","Wandering Spirit","Water Absorb","Water Bubble","Water Compaction","Water Veil","Weak Armor","Well-Baked Body","White Smoke","Wimp Out","Wind Power","Wind Rider","Wonder Guard","Wonder Skin","Zen Mode","Zero to Hero"];
+// Held items for the catch/edit form's searchable item field. Includes every
+// stat-affecting item (spelled to match STAT_AFFECTING_ITEMS keys) + Air Balloon
+// (Ground immunity) + commonly-used hold items. Free text is still accepted on save.
+const HELD_ITEMS = ["Air Balloon","Assault Vest","Berry Juice","Big Root","Black Belt","Black Glasses","Black Sludge","Blunder Policy","Bright Powder","Charcoal","Choice Band","Choice Scarf","Choice Specs","Cleanse Tag","Damp Rock","Deep Sea Scale","Deep Sea Tooth","Dragon Fang","Eject Button","Eviolite","Expert Belt","Fairy Feather","Flame Orb","Float Stone","Focus Band","Focus Sash","Grip Claw","Hard Stone","Heat Rock","Heavy-Duty Boots","Iron Ball","King's Rock","Lagging Tail","Leftovers","Life Orb","Light Ball","Light Clay","Lum Berry","Magnet","Mental Herb","Metal Coat","Metal Powder","Metronome","Miracle Seed","Muscle Band","Mystic Water","Never-Melt Ice","Poison Barb","Power Herb","Protective Pads","Quick Claw","Quick Powder","Razor Claw","Razor Fang","Red Card","Ring Target","Rocky Helmet","Room Service","Safety Goggles","Scope Lens","Sharp Beak","Shell Bell","Silk Scarf","Silver Powder","Sitrus Berry","Smooth Rock","Soft Sand","Soothe Bell","Spell Tag","Sticky Barb","Terrain Extender","Thick Club","Throat Spray","Toxic Orb","Twisted Spoon","Weakness Policy","White Herb","Wide Lens","Wise Glasses","Zoom Lens"];
+
+// Short "what it does" blurbs shown next to a mon's ability / held item on the
+// card. Lookup is punctuation/case-insensitive (handles "kings-rock" slugs too).
+const ABILITY_BLURBS = {
+  'Levitate':'Ground immunity', 'Flash Fire':'Fire immune; boosts Fire', 'Water Absorb':'Heals from Water; immune',
+  'Volt Absorb':'Heals from Electric; immune', 'Storm Drain':'Draws + immune to Water', 'Lightning Rod':'Draws + immune to Electric',
+  'Motor Drive':'Electric immune; +Spe', 'Sap Sipper':'Grass immune; +Atk', 'Dry Skin':'Heals in rain; weak to Fire',
+  'Earth Eater':'Heals from Ground; immune', 'Well-Baked Body':'Fire immune; +2 Def', 'Wind Rider':'Wind/Flying immune; +Atk',
+  'Bulletproof':'Blocks ball & bomb moves', 'Soundproof':'Blocks sound moves',
+  'Thick Fat':'Halves Fire & Ice dmg', 'Heatproof':'Halves Fire dmg', 'Water Bubble':'Halves Fire; 2× Water',
+  'Purifying Salt':'Halves Ghost; status-immune', 'Fluffy':'Halves contact; weak to Fire',
+  'Filter':'Softens super-effective hits', 'Solid Rock':'Softens super-effective hits', 'Prism Armor':'Softens super-effective hits',
+  'Ice Scales':'Halves special dmg', 'Fur Coat':'Doubles Defense', 'Multiscale':'Halves dmg at full HP', 'Shadow Shield':'Halves dmg at full HP',
+  'Huge Power':'Doubles Attack', 'Pure Power':'Doubles Attack', 'Speed Boost':'+Spe each turn',
+  'Intimidate':'Lowers foe Attack on entry', 'Moxie':'+Atk after a KO', 'Beast Boost':'Boosts best stat after KO',
+  'Guts':'+50% Atk when statused', 'Quick Feet':'+50% Spe when statused', 'Marvel Scale':'+50% Def when statused',
+  'Hustle':'+50% Atk, −accuracy', 'Adaptability':'Stronger STAB', 'Technician':'Boosts weak moves', 'Sheer Force':'+power, no side effects',
+  'Tough Claws':'Boosts contact moves', 'Strong Jaw':'Boosts biting moves', 'Iron Fist':'Boosts punch moves', 'Mega Launcher':'Boosts pulse moves',
+  'Sharpness':'Boosts slicing moves', 'Skill Link':'Multi-hits always hit 5', 'Serene Grace':'2× side-effect chance', 'Sniper':'Stronger crits',
+  'Regenerator':'Heals 1/3 HP on switch', 'Natural Cure':'Cures status on switch', 'Poison Heal':'Heals while poisoned',
+  'Magic Guard':'Only attacks hurt it', 'Sturdy':'Survives a 1-shot at full HP', 'Rough Skin':'Hurts attacker on contact', 'Iron Barbs':'Hurts attacker on contact',
+  'Static':'May paralyze on contact', 'Poison Point':'May poison on contact', 'Flame Body':'May burn on contact', 'Effect Spore':'May status on contact', 'Cute Charm':'May infatuate on contact',
+  'Drizzle':'Summons rain', 'Drought':'Summons sun', 'Sand Stream':'Summons sandstorm', 'Snow Warning':'Summons snow',
+  'Chlorophyll':'2× Spe in sun', 'Swift Swim':'2× Spe in rain', 'Sand Rush':'2× Spe in sand', 'Slush Rush':'2× Spe in snow', 'Solar Power':'+SpA in sun (−HP)',
+  'Prankster':'Priority status moves', 'Gale Wings':'Priority Flying at full HP', 'Triage':'Priority healing moves',
+  'Trace':'Copies a foe ability', 'Download':'+Atk or SpA vs foe', 'Unaware':'Ignores stat changes', 'Mold Breaker':'Ignores foe ability', 'Teravolt':'Ignores foe ability', 'Turboblaze':'Ignores foe ability',
+  'Wonder Guard':'Only super-effective hits land', 'No Guard':'All moves hit', 'Pressure':'Foe spends extra PP',
+  'Defeatist':'Weakens below half HP', 'Slow Start':'Weak for 5 turns', 'Truant':'Loafs every other turn',
+  'Pickup':'Picks up items', 'Harvest':'Recovers its berry', 'Gluttony':'Eats berries early', 'Cloud Nine':'Negates weather', 'Air Lock':'Negates weather',
+  'Cursed Body':'May disable a move', 'Rock Head':'No recoil dmg', 'Magic Bounce':'Reflects status moves',
+};
+const ITEM_BLURBS = {
+  'Leftovers':'Heals 1/16 HP each turn', 'Black Sludge':'Heals Poison-types; hurts others', 'Shell Bell':'Heals from damage dealt', 'Big Root':'More HP from draining moves',
+  'Choice Band':'+50% Atk; locks 1 move', 'Choice Specs':'+50% SpA; locks 1 move', 'Choice Scarf':'+50% Spe; locks 1 move',
+  'Assault Vest':'+50% SpD; no status moves', 'Eviolite':'+50% Def/SpD if not fully evolved', 'Life Orb':'+30% dmg, −10% HP/turn',
+  'Light Ball':'Doubles Pikachu Atk & SpA', 'Thick Club':'Doubles Cubone/Marowak Atk', 'Metal Powder':'Doubles Ditto Def', 'Quick Powder':'Doubles Ditto Spe',
+  'Deep Sea Tooth':'Doubles Clamperl SpA', 'Deep Sea Scale':'Doubles Clamperl SpD',
+  'Focus Sash':'Survives a 1-shot from full HP', 'Focus Band':'May survive a KO', 'Air Balloon':'Ground immunity until hit',
+  'Rocky Helmet':'Hurts attacker on contact', 'Sitrus Berry':'Heals 25% HP when low', 'Lum Berry':'Cures any status once', 'Berry Juice':'Heals 20 HP when low',
+  'Expert Belt':'+20% super-effective dmg', 'Muscle Band':'+10% physical dmg', 'Wise Glasses':'+10% special dmg', 'Wide Lens':'+accuracy',
+  'Scope Lens':'+crit chance', 'Razor Claw':'+crit chance', 'Razor Fang':'May flinch', "King's Rock":'May flinch', 'Quick Claw':'May move first', 'Bright Powder':'Lowers foe accuracy',
+  'Toxic Orb':'Badly poisons the holder', 'Flame Orb':'Burns the holder', 'Mental Herb':'Cures taunt/infatuation once', 'White Herb':'Restores lowered stats once', 'Power Herb':'Skips a charge turn once',
+  'Weakness Policy':'+2 Atk/SpA when hit super-effectively', 'Throat Spray':'+SpA after a sound move', 'Heavy-Duty Boots':'Ignores entry hazards', 'Safety Goggles':'Blocks powder & weather dmg',
+  'Red Card':'Forces the foe to switch', 'Eject Button':'Switches out when hit', 'Protective Pads':'Blocks contact effects', 'Sticky Barb':'Hurts holder; may transfer', 'Grip Claw':'Extends trapping moves',
+  'Iron Ball':'Halves Spe; grounds holder', 'Float Stone':'Halves weight', 'Lagging Tail':'Holder moves last', 'Ring Target':'Removes type immunities', 'Zoom Lens':'+accuracy if slower',
+  'Metronome':'Boosts a repeated move', 'Room Service':'−Spe under Trick Room', 'Blunder Policy':'+2 Spe after a miss',
+  'Damp Rock':'Extends rain', 'Heat Rock':'Extends sun', 'Smooth Rock':'Extends sandstorm', 'Light Clay':'Extends screens', 'Terrain Extender':'Extends terrain',
+  'Charcoal':'+20% Fire moves', 'Mystic Water':'+20% Water moves', 'Magnet':'+20% Electric moves', 'Miracle Seed':'+20% Grass moves', 'Never-Melt Ice':'+20% Ice moves',
+  'Black Belt':'+20% Fighting moves', 'Poison Barb':'+20% Poison moves', 'Soft Sand':'+20% Ground moves', 'Sharp Beak':'+20% Flying moves', 'Twisted Spoon':'+20% Psychic moves',
+  'Silver Powder':'+20% Bug moves', 'Hard Stone':'+20% Rock moves', 'Spell Tag':'+20% Ghost moves', 'Dragon Fang':'+20% Dragon moves', 'Black Glasses':'+20% Dark moves',
+  'Metal Coat':'+20% Steel moves', 'Silk Scarf':'+20% Normal moves', 'Fairy Feather':'+20% Fairy moves', 'Cleanse Tag':'Fewer wild encounters', 'Soothe Bell':'Raises friendship',
+};
+function _blurbLookup(map, name) {
+  if (!name) return '';
+  const n = String(name).toLowerCase().replace(/[^a-z0-9]/g, '');
+  const k = Object.keys(map).find(x => x.toLowerCase().replace(/[^a-z0-9]/g, '') === n);
+  return k ? map[k] : '';
+}
+function abilityBlurb(name) { return _blurbLookup(ABILITY_BLURBS, name); }
+function itemBlurb(name)    { return _blurbLookup(ITEM_BLURBS, name); }
+// "+Atk / −SpA" from a nature's stat modifiers (neutral natures → "neutral").
+function natureBlurb(nature) {
+  if (!nature) return '';
+  const key = Object.keys(NATURE_MODS).find(k => k.toLowerCase() === String(nature).toLowerCase());
+  if (!key) return '';
+  const mods = NATURE_MODS[key], names = ['HP','Atk','Def','SpA','SpD','Spe'];
+  let up = -1, down = -1;
+  for (let i = 1; i < 6; i++) { if (mods[i] > 1) up = i; if (mods[i] < 1) down = i; }
+  return (up < 0 && down < 0) ? 'neutral' : `+${names[up]} / −${names[down]}`;
+}
+function kvBlurb(text) { return text ? ` <span class="kv-blurb">— ${text}</span>` : ''; }
 
 // Abilities with special scoring effects
 // Each entry returns extra info used in scoreMatchup
@@ -1297,6 +1373,47 @@ function getAbilityEffect(name) {
   // Case-insensitive lookup
   const key = Object.keys(ABILITY_EFFECTS).find(k => k.toLowerCase() === name.toLowerCase());
   return key ? ABILITY_EFFECTS[key] : {};
+}
+
+// Defensive type-effectiveness modifiers from a Pokémon's ABILITY (separate from
+// ABILITY_EFFECTS, which scoreMatchup reads for its own keys). Shapes:
+//   immune:[types]  → ×0   | resist:[types] → ×0.5 | weak:[types] → ×2
+//   onlySE:true     → only super-effective hits land (Wonder Guard)
+//   filter:true     → super-effective hits ×0.75 (Filter / Solid Rock / Prism Armor)
+const ABILITY_DEF_MODS = {
+  'Levitate':{immune:['Ground']}, 'Flash Fire':{immune:['Fire']},
+  'Water Absorb':{immune:['Water']}, 'Storm Drain':{immune:['Water']},
+  'Volt Absorb':{immune:['Electric']}, 'Lightning Rod':{immune:['Electric']},
+  'Motor Drive':{immune:['Electric']}, 'Sap Sipper':{immune:['Grass']},
+  'Earth Eater':{immune:['Ground']}, 'Well-Baked Body':{immune:['Fire']},
+  'Wind Rider':{immune:['Flying']}, 'Dry Skin':{immune:['Water'],weak:['Fire']},
+  'Thick Fat':{resist:['Fire','Ice']}, 'Heatproof':{resist:['Fire']},
+  'Water Bubble':{resist:['Fire']}, 'Purifying Salt':{resist:['Ghost']},
+  'Fluffy':{weak:['Fire']}, 'Filter':{filter:true}, 'Solid Rock':{filter:true},
+  'Prism Armor':{filter:true}, 'Wonder Guard':{onlySE:true},
+};
+function getAbilityDefMod(name) {
+  if (!name) return {};
+  const k = Object.keys(ABILITY_DEF_MODS).find(x => x.toLowerCase() === name.toLowerCase());
+  return k ? ABILITY_DEF_MODS[k] : {};
+}
+// Combined defensive modifier from ability + held item (Air Balloon → Ground-immune).
+function getDefMod(ability, item) {
+  const a = getAbilityDefMod(ability);
+  const mod = { immune: (a.immune || []).slice(), resist: a.resist, weak: a.weak, onlySE: a.onlySE, filter: a.filter };
+  if (item && /air\s?balloon/i.test(item) && !mod.immune.includes('Ground')) mod.immune.push('Ground');
+  return mod;
+}
+// effectiveness() with a defender's ability/item modifiers applied.
+function effDef(atk, t1, t2, mod) {
+  mod = mod || {};
+  if (mod.immune && mod.immune.includes(atk)) return 0;
+  let m = effectiveness(atk, t1, t2);
+  if (mod.weak && mod.weak.includes(atk)) m *= 2;
+  if (mod.resist && mod.resist.includes(atk)) m *= 0.5;
+  if (mod.onlySE && m < 2) return 0;       // Wonder Guard: only SE hits land
+  if (mod.filter && m >= 2) m *= 0.75;     // Filter / Solid Rock / Prism Armor
+  return m;
 }
 
 // Status moves — these have a type but don't deal damage, so they shouldn't count as offensive coverage.
@@ -3383,9 +3500,17 @@ function getFinalEvo(name) {
   let cur = name, guard = 0;
   while (guard++ < 6) {
     const info = pokeInfo(cur);
+    // Ensure THIS node's evo data is fetched: a sprite-only stub (not in the
+    // curated POKEMON_DB) has no `.e` yet, so the chain can't be walked. Kick a
+    // backfill and stop — the onBackfill re-render re-runs scoring with `.e`.
+    // Without this, e.g. Ralts scored as Ralts instead of Gardevoir.
+    if (info && !info.e && !POKEMON_DB[cur] && typeof ensurePokemonBackfilled === 'function') {
+      ensurePokemonBackfilled(cur);
+    }
     if (!info || !info.e) return cur;
     const next = info.e[0];
     if (!next || next === cur) return cur;
+    if (!evoAvailable(next)) return cur;   // not obtainable in this game (e.g. Ursaluna in BDSP)
     // Warm the chain offline-safely: kick a backfill if the next link is missing.
     if (!pokeInfo(next) && typeof ensurePokemonBackfilled === 'function') {
       ensurePokemonBackfilled(next);
@@ -3394,9 +3519,81 @@ function getFinalEvo(name) {
   }
   return cur;
 }
-function getFinalEvoBST(name) {
-  const fe = getFinalEvo(name);
+// BST of an evo-chain final, handling branched finals ("Gardevoir/Gallade") by
+// scoring the strongest branch that's actually available in the current game.
+function bstOfEvoName(fe) {
+  if (!fe) return null;
+  if (fe.includes('/')) {
+    const vals = [];
+    for (const raw of fe.split('/')) {
+      const b = raw.trim();
+      if (!evoAvailable(b)) continue;
+      const bst = calcBST(b);
+      if (bst != null) vals.push(bst);
+      // Warm an un-backfilled branch so its BST (and thus the tier) resolves on
+      // the next onBackfill re-render — otherwise a branched-evo species like
+      // Clamperl stays tier-less and the tier filter can't act on it.
+      else if (typeof ensurePokemonBackfilled === 'function' && !POKEMON_DB[b]) ensurePokemonBackfilled(b);
+    }
+    return vals.length ? Math.max(...vals) : null;
+  }
   return calcBST(fe);
+}
+// The single strongest available branch of a (possibly branched) final-evo name.
+function bestEvoBranch(fe) {
+  if (!fe) return null;
+  if (!fe.includes('/')) return fe;
+  let best = null, bestBST = -1;
+  for (const raw of fe.split('/')) {
+    const b = raw.trim();
+    if (!evoAvailable(b)) continue;
+    const bst = calcBST(b);
+    if (bst != null && bst > bestBST) { bestBST = bst; best = b; }
+  }
+  return best;
+}
+// Plain-language descriptor of a stat spread, so the recommendation can explain
+// *why* a mon lands where it does (e.g. Absol = "glass cannon" → decent, not top).
+function statArchetype(stats) {
+  if (!stats || stats.length !== 6 || stats.some(v => v == null)) return null;
+  const [hp, atk, def, spa, spd, spe] = stats;
+  const off = Math.max(atk, spa);
+  const bulk = hp + def + spd;
+  if (off >= 105 && (def + spd) <= 130) return 'Glass cannon — hits hard but frail';
+  if (off <= 70 && bulk >= 290) return 'Wall — very bulky, little offense';
+  if (spe >= 100 && off >= 100) return 'Fast sweeper — speed + power';
+  if (off >= 95 && bulk >= 270) return 'Bulky attacker — durable and strong';
+  if (bulk >= 300) return 'Tanky — high overall bulk';
+  if (off >= 110) return 'Strong attacker';
+  return null;
+}
+// Plain-language explanation of WHY a mon lands in its tier — shown for every
+// species so the Details "Team fit" reads like advice, not just numbers.
+function tierRationale(tier, fe, feBST, isFinal, isTrap, isGrind) {
+  const into = isFinal ? '' : `evolves into ${fe}; `;
+  if (isTrap)  return `Gimmick mon (${into}BST ${feBST}) — high on paper, but a broken ability/movepool holds it back. Skip.`;
+  if (isGrind) return `Long-grind evo (${into}BST ${feBST}) — its pre-evo is a slog to raise; only worth it if you commit early.`;
+  switch (tier) {
+    case 'top':    return `Top tier — ${into}elite final stats (BST ${feBST}); a keeper for the whole run.`;
+    case 'strong': return `Strong tier — ${into}solid final stats (BST ${feBST}); pulls weight into the late game.`;
+    case 'decent': return `Decent tier — ${into}middling final stats (BST ${feBST}); fine early/mid, tends to fall off late.`;
+    default:       return `Filler — ${into}low final stats (BST ${feBST}); likely outclassed later, but okay as an early-game fill.`;
+  }
+}
+// Extra one-line stat caveats (Speed / frailty) layered on top of the archetype.
+function statCaveats(stats, arch) {
+  if (!stats || stats.length !== 6 || stats.some(v => v == null)) return [];
+  const [hp, atk, def, spa, spd, spe] = stats;
+  const out = [];
+  if (spe <= 50) out.push('Low Speed — usually moves last');
+  else if (spe >= 115) out.push('Very fast — outspeeds most threats');
+  // "frail" only if the archetype didn't already say so (glass cannon implies frail).
+  if (!/glass cannon|frail/i.test(arch || '') && (hp + def + spd) <= 230) out.push('Frail — gets KO\'d quickly');
+  if (Math.max(atk, def, spa, spd, spe) <= 80) out.push('No standout stat to build around');
+  return out.slice(0, 2);
+}
+function getFinalEvoBST(name) {
+  return bstOfEvoName(getFinalEvo(name));
 }
 
 /* === Encounter recommendation system ===
@@ -3819,8 +4016,9 @@ function getRosterDefensiveHoles() {
   for (const p of alive) {
     const types = pokeTypes(p.species) || [];
     if (!types.length) continue;
+    const defMod = getDefMod(p.ability, p.held);   // Levitate, Thick Fat, Air Balloon, …
     for (const atk of ALL_TYPES) {
-      const eff = effectiveness(atk, types[0], types[1] || null);
+      const eff = effDef(atk, types[0], types[1] || null, defMod);
       if (eff >= 2) weakCount[atk] = (weakCount[atk] || 0) + 1;
     }
   }
@@ -3842,25 +4040,34 @@ function getRecommendation(species, ctx) {
     return null;
   }
   const fe = getFinalEvo(species);
-  const feBST = calcBST(fe);
+  const feBST = bstOfEvoName(fe);
   if (feBST == null) return null;
+
+  const isFinal = fe === species;
+  const isCatchingPreEvo = species !== fe;
+  const trap = BST_TRAP_LIST[fe];
+  const grind = BST_GRIND_PRE_LIST[fe];
+
+  // Tier from raw final-evo BST (+ trap/grind overrides). Computed up front so
+  // the reasoning can explain it in plain language.
+  let tier = 'filler';
+  if (feBST >= REC_TIER_THRESHOLDS.top) tier = 'top';
+  else if (feBST >= REC_TIER_THRESHOLDS.strong) tier = 'strong';
+  else if (feBST >= REC_TIER_THRESHOLDS.decent) tier = 'decent';
+  if (trap) tier = 'filler';                       // Slaking/Regigigas never reach top.
+  if (grind && isCatchingPreEvo) tier = 'filler';  // Magikarp catches don't earn a ★.
 
   const reasons = [];
   let score = feBST;
-  const isFinal = fe === species;
-  reasons.push(isFinal ? `BST ${feBST}` : `Evolves into ${fe} (BST ${feBST})`);
-
-  const trap = BST_TRAP_LIST[fe];
-  if (trap) { score += trap; reasons.push(`Gimmick penalty ${trap}`); }
-
-  // Long-grind pre-evo penalty (Magikarp → Gyarados, Feebas → Milotic).
-  // Only applies when catching the pre-evo; wild adult catches bypass.
-  const grind = BST_GRIND_PRE_LIST[fe];
-  const isCatchingPreEvo = species !== fe;
-  if (grind && isCatchingPreEvo) {
-    score += grind;
-    reasons.push(`Long-grind to ${fe} ${grind}`);
-  }
+  const feStats = pokeStats(bestEvoBranch(fe));
+  // Lead with a plain-language "why this tier", then the stat-spread archetype
+  // and any caveats — so every species explains itself, not just numbers.
+  reasons.push(tierRationale(tier, fe, feBST, isFinal, !!trap, !!(grind && isCatchingPreEvo)));
+  const arch = statArchetype(feStats);
+  if (arch) reasons.push(arch);
+  for (const c of statCaveats(feStats, arch)) reasons.push(c);
+  if (trap) score += trap;
+  if (grind && isCatchingPreEvo) score += grind;
 
   // Rare-slot multiplier — small bonus, never the dominant factor.
   const rate = ctx?.chancePct || 0;
@@ -3932,14 +4139,6 @@ function getRecommendation(species, ctx) {
     }
   }
 
-  // Tier from raw final-evo BST so rare-slot Wurmples never get ★.
-  let tier = 'filler';
-  if (feBST >= REC_TIER_THRESHOLDS.top) tier = 'top';
-  else if (feBST >= REC_TIER_THRESHOLDS.strong) tier = 'strong';
-  else if (feBST >= REC_TIER_THRESHOLDS.decent) tier = 'decent';
-  if (trap) tier = 'filler';  // Slaking/Regigigas never reach top.
-  if (grind && isCatchingPreEvo) tier = 'filler';  // Magikarp catches don't earn a ★.
-
   // "Rare gem" flag: top tier in a slot ≤5% chance. Distinguishes
   // "definitely catchable strong pick" from "great mon if RNG cooperates".
   const isRareGem = tier === 'top' && rate > 0 && rate <= 5;
@@ -3984,8 +4183,32 @@ const STAT_AFFECTING_ABILITIES = {
   'Unburden':      { note: { stat: 5, text: '2× Spe after consuming item' } },
   'Sap Sipper':    { note: { stat: 1, text: '+1 Atk when hit by Grass' } },
   'Toxic Boost':   { note: { stat: 1, text: '+50% Atk when poisoned' } },
-  'Flare Boost':   { note: { stat: 3, text: '+50% SpA when burned' } }
+  'Flare Boost':   { note: { stat: 3, text: '+50% SpA when burned' } },
+  'Fur Coat':      { bake: { stat: 2, mult: 2 } },
+  'Gorilla Tactics': { note: { stat: 1, text: '+50% Atk (locks into one move)' } },
+  'Intrepid Sword': { note: { stat: 1, text: '+1 Atk on switch-in' } },
+  'Dauntless Shield': { note: { stat: 2, text: '+1 Def on switch-in' } }
 };
+
+// Held items that change a displayed stat unconditionally (or by species/evo
+// eligibility). Stat indices: [hp,atk,def,spa,spd,spe]. Items that don't change
+// a base stat (Life Orb, Leftovers, type-boost items, berries) are intentionally
+// omitted — they affect damage/HP, not the stat number.
+const STAT_AFFECTING_ITEMS = {
+  'Choice Band':   { mult: [{ stat:1, mult:1.5 }] },
+  'Choice Specs':  { mult: [{ stat:3, mult:1.5 }] },
+  'Choice Scarf':  { mult: [{ stat:5, mult:1.5 }] },
+  'Assault Vest':  { mult: [{ stat:4, mult:1.5 }] },
+  'Eviolite':      { mult: [{ stat:2, mult:1.5 }, { stat:4, mult:1.5 }], reqEvo:true },
+  'Light Ball':    { mult: [{ stat:1, mult:2 }, { stat:3, mult:2 }], species:['pikachu'] },
+  'Thick Club':    { mult: [{ stat:1, mult:2 }], species:['cubone','marowak'] },
+  'Metal Powder':  { mult: [{ stat:2, mult:2 }], species:['ditto'] },
+  'Quick Powder':  { mult: [{ stat:5, mult:2 }], species:['ditto'] },
+  'Deep Sea Tooth':{ mult: [{ stat:3, mult:2 }], species:['clamperl'] },
+  'Deep Sea Scale':{ mult: [{ stat:4, mult:2 }], species:['clamperl'] },
+};
+// Eviolite-eligible = the species can still evolve (its info carries an .e chain).
+function canStillEvolve(species) { const i = pokeInfo(species); return !!(i && i.e); }
 
 // Compute stats at a specific level using the Gen 3+ formula. Assumes 31 IVs / 0 EVs
 // (the realistic Nuzlocke baseline — wild catches and trainer mons aren't EV-trained).
@@ -4033,13 +4256,33 @@ function calcStatAtLevel(baseStats, level, options) {
     if (effect.note) notes.push({ statIdx: effect.note.stat, text: effect.note.text });
     if (effect.note2) notes.push({ statIdx: effect.note2.stat, text: effect.note2.text });
   }
+  // Held-item stat multipliers (Choice Band/Specs/Scarf, Assault Vest, Eviolite,
+  // Light Ball, Thick Club, …). Normalized the same way as abilities.
+  const normIt = options.item ? String(options.item).toLowerCase().replace(/[^a-z0-9]/g, '') : '';
+  const itemKey = normIt ? Object.keys(STAT_AFFECTING_ITEMS).find(k => k.toLowerCase().replace(/[^a-z0-9]/g, '') === normIt) : null;
+  const itemDef = itemKey ? STAT_AFFECTING_ITEMS[itemKey] : null;
+  if (itemDef) {
+    // Match the species map (base slugs like 'marowak') against the slug + its
+    // region-stripped base, so "Alolan Marowak" → 'marowak-alola' → 'marowak' hits.
+    const spSlug = options.species && typeof speciesSlug === 'function'
+      ? (speciesSlug(options.species) || String(options.species).toLowerCase())
+      : String(options.species || '').toLowerCase();
+    const spBase = spSlug.replace(/-(alola|galar|hisui|paldea)$/, '');
+    const speciesOk = !itemDef.species || itemDef.species.includes(spSlug) || itemDef.species.includes(spBase);
+    const evoOk = !itemDef.reqEvo || (options.species && canStillEvolve(options.species));
+    if (speciesOk && evoOk) {
+      for (const m of itemDef.mult) if (out[m.stat] != null) out[m.stat] = Math.floor(out[m.stat] * m.mult);
+    }
+  }
   return { stats: out, notes };
 }
 
 function getEvolution(name) {
   const info = pokeInfo(name);
   if (!info || !info.e) return null;
-  return { target: info.e[0], method: info.e[1] };
+  const target = info.e[0];
+  if (!evoAvailable(target)) return null;   // hide game-impossible evolutions (e.g. Ursaluna in BDSP)
+  return { target, method: info.e[1] };
 }
 
 // Walks the full evolution line through `species` — pre-evos, the species
@@ -4194,6 +4437,30 @@ const VERSION_GROUP_TO_GEN = {
 
 function getGameGen() {
   return GAMES[curGame()]?.gen || null;
+}
+
+// National-dex generation of a species (by dex id), for gating cross-gen evolutions.
+const GEN_DEX_MAX = [0, 151, 251, 386, 493, 649, 721, 809, 905, 1025]; // index = gen
+function dexGen(id) { for (let g = 1; g <= 9; g++) if (id <= GEN_DEX_MAX[g]) return g; return 9; }
+function speciesNatGen(name) {
+  const slug = (typeof speciesSlug === 'function') ? speciesSlug(name) : null;
+  const id = (slug && window.NUZ_DATA?.dexIdBySlug) ? window.NUZ_DATA.dexIdBySlug[slug] : null;
+  return id ? dexGen(id) : null;
+}
+// Evolutions that pass a naive gen cutoff but are region/title-locked in a
+// specific game (keys = GAMES key; values = lowercase slug of the evolved species).
+// e.g. BDSP is Gen 8, so Ursaluna (Gen 8) clears the cutoff but is Legends-Arceus-only.
+const EVO_GAME_BLOCKLIST = {
+  shining_pearl: ['ursaluna', 'sylveon', 'kleavor', 'wyrdeer', 'overqwil', 'sneasler', 'basculegion'],
+};
+// Is evolving INTO `target` possible in the current game? Coarse gen cutoff
+// (no later-gen species) + a per-game blocklist for in-gen-but-unavailable evos.
+function evoAvailable(target) {
+  const gen = getGameGen();
+  if (gen) { const ng = speciesNatGen(target); if (ng && ng > gen) return false; }
+  const bl = EVO_GAME_BLOCKLIST[curGame()];
+  if (bl) { const slug = (typeof speciesSlug === 'function') ? speciesSlug(target) : String(target).toLowerCase(); if (bl.includes(slug)) return false; }
+  return true;
 }
 
 // Title-cases a PokeAPI type/ability slug for our type-effectiveness lookups.
@@ -5961,9 +6228,9 @@ function cardInner(p, realIdx, includeHint = true) {
     </div>
     <div class="card-body">
       ${p.route?`<div class="detail-row"><span class="detail-label">Route</span><span class="detail-val">${p.route}</span></div>`:''}
-      ${p.ability?`<div class="detail-row"><span class="detail-label">Ability</span><span class="detail-val">${p.ability}</span></div>`:''}
-      ${p.nature?`<div class="detail-row"><span class="detail-label">Nature</span><span class="detail-val">${p.nature}</span></div>`:''}
-      ${p.held?`<div class="detail-row"><span class="detail-label">Item</span><span class="detail-val">${p.held}</span></div>`:''}
+      ${p.ability?`<div class="detail-row"><span class="detail-label">Ability</span><span class="detail-val">${p.ability}${kvBlurb(abilityBlurb(p.ability))}</span></div>`:''}
+      ${p.nature?`<div class="detail-row"><span class="detail-label">Nature</span><span class="detail-val">${p.nature}${kvBlurb(natureBlurb(p.nature))}</span></div>`:''}
+      ${p.held?`<div class="detail-row"><span class="detail-label">Item</span><span class="detail-val">${p.held}${kvBlurb(itemBlurb(p.held))}</span></div>`:''}
       ${moveList.length?`<div class="detail-row" style="align-items:flex-start"><span class="detail-label" style="padding-top:2px">Moves</span><div class="moves-grid">${movePillsHtml}</div></div>`:''}
       ${p.notes?`<div class="detail-row"><span class="detail-label">Notes</span><span class="detail-val" style="font-style:italic;color:var(--text3)">${p.notes}</span></div>`:''}
       ${includeHint?`<div class="edit-hint">✎ tap to view & edit</div>`:''}
@@ -6659,13 +6926,13 @@ function buildSpeedTierSection(party, boss) {
   };
   const rows = [];
   for (const p of party) {
-    const spd = calcSpd(p.species, p.level, { nature: p.nature, ability: p.ability });
+    const spd = calcSpd(p.species, p.level, { nature: p.nature, ability: p.ability, item: p.held });
     if (spd == null) continue;
     rows.push({ species: p.species, name: p.nickname || p.species, lv: p.level || 1, spd, side: 'me' });
   }
   for (const b of (boss.team||[])) {
     const lv = b.lv || boss.cap || 1;
-    const spd = calcSpd(b.species, lv, { nature: b.nature, ability: b.ability });
+    const spd = calcSpd(b.species, lv, { nature: b.nature, ability: b.ability, item: b.item });
     if (spd == null) continue;
     rows.push({ species: b.species, name: b.species, lv, spd, side: 'boss' });
   }
@@ -6821,7 +7088,7 @@ function renderBossPokeDetail(b) {
   // Bosses carry b.lv + b.ability from the leagues file; 6 hack-ROM leagues files
   // also encode b.nature, which the calc consumes when present (neutral otherwise).
   // Falls back to raw base stats when level is missing.
-  const calc = (stats && b.lv) ? calcStatAtLevel(stats, b.lv, { ability: b.ability, species: b.species, nature: b.nature || null }) : null;
+  const calc = (stats && b.lv) ? calcStatAtLevel(stats, b.lv, { ability: b.ability, species: b.species, nature: b.nature || null, item: b.item }) : null;
   const displayStats = calc ? calc.stats : stats;
   const statNotes = calc ? calc.notes : [];
   const statTitle = (calc && b.lv) ? `Stats (Lv ${b.lv})` : 'Base stats';
@@ -7528,6 +7795,7 @@ let selectedEncWeather = 'Normal Weather';  // SwSh Wild Area weather tab; 'Norm
 let selectedEncTableSeason = 'Spring';  // B2W2 encounter-tables season tab (display-case; distinct from the lowercase PokeAPI-path selectedEncSeason)
 let encGroupCollapsed = {}; // groupName → bool
 let encSearchQuery = '';
+let selectedEncTier = 'all'; // encounters tier filter: all | top | strong | decent
 
 // SwSh Wild Area weather vocabulary — drives the weather-tab detection in
 // buildEncounterMainFromTables. The Sword.txt / Shield.txt scraper encodes
@@ -7731,6 +7999,20 @@ function derivePoolsFromMethods(data, opts) {
 }
 function toggleEncGroup(name) { encGroupCollapsed[name] = !encGroupCollapsed[name]; renderEncounters(); }
 function setEncSearch(q) { encSearchQuery = q; renderEncounters(); }
+function setEncTier(t) { selectedEncTier = t; renderEncounters(); }
+// Recommendation tier ordering for the encounters tier filter.
+const TIER_RANK = { top: 3, strong: 2, decent: 1, filler: 0 };
+function tierMeetsFilter(tier) {
+  if (selectedEncTier === 'all') return true;
+  if (!tier) return true;                       // unknown / not-yet-backfilled → keep visible
+  return tier === selectedEncTier;              // exact tier (Decent shows only decent)
+}
+function buildTierPillHtml() {
+  const opts = [['all','All'],['top','Top'],['strong','Strong'],['decent','Decent']];
+  return `<div class="ver-pill tier-pill" title="Show only encounters at or above this recommendation tier">
+    ${opts.map(([k,l]) => `<button class="${selectedEncTier===k?'active':''}" onclick="setEncTier('${k}')">${l}</button>`).join('')}
+  </div>`;
+}
 
 function setRunVariant(v) {
   const r = curRun(); if (!r) return;
@@ -7970,7 +8252,7 @@ function renderEncountersByRegion(el, gameKey, game) {
   el.innerHTML = `
     <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap">
       <p class="slabel" style="margin-bottom:0">${game.name} wild encounter reference</p>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">${versionPillHtml}${seasonPillHtml}${buildToolsPillHtml(gameKey)}</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">${versionPillHtml}${seasonPillHtml}${buildToolsPillHtml(gameKey)}${buildTierPillHtml()}</div>
     </div>
     <div class="enc-layout">
       <div class="enc-rail">
@@ -8076,7 +8358,7 @@ function renderEncountersFromTables(el, gameKey, game) {
   el.innerHTML = `
     <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap">
       <p class="slabel" style="margin-bottom:0">${game.name} wild encounter reference</p>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">${versionPillHtml}${buildToolsPillHtml(gameKey)}</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">${versionPillHtml}${buildToolsPillHtml(gameKey)}${buildTierPillHtml()}</div>
     </div>
     <div class="enc-layout">
       <div class="enc-rail">
@@ -8796,7 +9078,7 @@ function renderEncountersFromNuzData(el, gameKey, game) {
   el.innerHTML = `
     <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap">
       <p class="slabel" style="margin-bottom:0">${game.name} wild encounter reference</p>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">${versionPillHtml}${buildToolsPillHtml(gameKey)}</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">${versionPillHtml}${buildToolsPillHtml(gameKey)}${buildTierPillHtml()}</div>
     </div>
     <div class="enc-layout">
       <div class="enc-rail">
@@ -9406,6 +9688,19 @@ function renderEncListInternal(list, teamLineSet, deadSpecies, caughtAtThisLoc, 
     }
   }
 
+  // Tier filter: show only species whose recommendation tier meets the selection
+  // (at-or-above), regardless of caught/missed/dupe/legendary state — a caught
+  // "decent" mon shouldn't appear under "Top". Species with no tier yet
+  // (un-backfilled / unscorable) stay visible so the list doesn't blank out while
+  // data loads; they re-filter once their tier resolves via onBackfill.
+  if (selectedEncTier !== 'all') {
+    list = list.filter(e => {
+      const rec = getRecommendation(e.p, { chancePct: e.r });
+      return tierMeetsFilter(rec ? rec.tier : null);
+    });
+    if (!list.length) return `<div class="enc-empty" style="padding:12px;font-size:12px">No encounters at this tier.</div>`;
+  }
+
   return `<div class="enc-grid">` + list.map(e => {
     const speciesLc = e.p.toLowerCase();
     const isDupe = enforceDupes && teamLineSet.has(speciesLc);
@@ -9455,7 +9750,7 @@ function renderEncListInternal(list, teamLineSet, deadSpecies, caughtAtThisLoc, 
     const metaTrail = [lvStr, rateStr].filter(Boolean).join(' · ');
     const safeLoc = (loc||'').replace(/'/g,"\\'");
     const safeSp = e.p.replace(/'/g,"\\'");
-    return `<div class="enc-poke clickable${stateClass}" title="Click to log encounter" onclick="encActionMenu('${safeLoc}', '${safeSp}', event)">
+    return `<div class="enc-poke clickable${stateClass}" title="Click to log encounter" onclick="encActionMenu('${safeLoc}', '${safeSp}', event, ${rate||0})">
       ${spriteImg(e.p, {sm:true, faded:isDead||isDupe||isMissed||isSkipped, apiId:e.apiId})}
       <div class="enc-poke-info">
         <div class="enc-poke-name">${e.p}${verTag}${flag}</div>
@@ -9470,7 +9765,7 @@ function renderEncListInternal(list, teamLineSet, deadSpecies, caughtAtThisLoc, 
 
 // Open a small popover with three actions when clicking an encounter card.
 // Uses a global container that overlays the screen near the click.
-function encActionMenu(loc, species, ev) {
+function encActionMenu(loc, species, ev, rate) {
   ev.stopPropagation();
   closeEncActionMenu();
   const menu = document.createElement('div');
@@ -9758,7 +10053,7 @@ function pokeView(p, idx) {
   let statsTitle = 'Base stats';
   if (info && info.s && info.s.length === 6 && info.s.some(v => v != null)) {
     const labels = ['HP','Atk','Def','SpA','SpD','Spe'];
-    const calc = p.level ? calcStatAtLevel(info.s, p.level, { nature: p.nature, ability: p.ability, species: p.species }) : null;
+    const calc = p.level ? calcStatAtLevel(info.s, p.level, { nature: p.nature, ability: p.ability, species: p.species, item: p.held }) : null;
     const displayStats = calc ? calc.stats : info.s;
     const statNotes = calc ? calc.notes : [];
     // Level-aware denominator: 100-base lands ~67% of bar regardless of level.
@@ -9775,20 +10070,22 @@ function pokeView(p, idx) {
     const bst = info.s.reduce((a,b)=>a+(b||0),0);
     statsHtml += `<div style="margin-top:6px;font-size:11px;color:var(--text3);text-align:right">BST ${bst}</div>`;
   }
-  // Weaknesses/resistances based on assigned types
+  // Weaknesses/resistances based on assigned types + the mon's ability/held item
+  // (Levitate → Ground immune, Thick Fat → Fire/Ice ×½, Air Balloon → Ground immune, …).
   let weakHtml = '';
   if (types.length) {
     const ALL_TYPES = ['Normal','Fire','Water','Electric','Grass','Ice','Fighting','Poison','Ground','Flying','Psychic','Bug','Rock','Ghost','Dragon','Dark','Steel','Fairy'];
+    const defMod = getDefMod(p.ability, p.held);
     const mults = {};
     for (const atk of ALL_TYPES) {
-      const m = effectiveness(atk, types[0], types[1] || null);
+      const m = effDef(atk, types[0], types[1] || null, defMod);
       if (m !== 1) mults[atk] = m;
     }
     const sorted = Object.entries(mults).sort((a,b)=>b[1]-a[1]);
     if (sorted.length) {
       weakHtml = `<div class="weakness-grid">` + sorted.map(([t,m]) => {
         const cls = m===4?'x4':(m===2?'x2':(m===0.5?'x05':(m===0.25?'x025':(m===0?'x0':''))));
-        const lbl = m===0?'×0':(m===0.25?'×¼':(m===0.5?'×½':`×${m}`));
+        const lbl = m===0?'×0':(m===0.25?'×¼':(m===0.5?'×½':(m===0.75?'×¾':`×${m}`)));
         return `<div class="weak-pill ${cls}"><span>${t}</span><span class="wp-mult">${lbl}</span></div>`;
       }).join('') + `</div>`;
     }
@@ -10209,7 +10506,7 @@ function pokeForm(p, isEdit) {
     </div>
     <div class="frow">
       <div><div class="flabel">Nature</div><select id="f-nature">${natureOpts(p.nature)}</select></div>
-      <div><div class="flabel">Held item</div><input type="text" id="f-held" value="${(p.held||'').replace(/"/g,'&quot;')}"></div>
+      <div><div class="flabel">Held item</div>${searchableDropdown('f-held', p.held||'', 'item')}</div>
     </div>
     <div class="flabel" style="margin-top:4px">Moves</div>
     <div class="frow">
@@ -10233,7 +10530,7 @@ function pokeForm(p, isEdit) {
 function searchableDropdown(id, value, kind) {
   const moveType = kind === 'move' && value ? getMoveType(value) : null;
   const badge = moveType ? `<span class="sd-type-badge type-badge t-${moveType}" id="${id}-badge">${moveType}</span>` : '';
-  const placeholder = kind === 'move' ? 'Search moves…' : (kind === 'species' ? 'Search Pokémon…' : (kind === 'route' ? 'Search locations…' : 'Search abilities…'));
+  const placeholder = kind === 'move' ? 'Search moves…' : (kind === 'species' ? 'Search Pokémon…' : (kind === 'route' ? 'Search locations…' : (kind === 'item' ? 'Search items…' : 'Search abilities…')));
   const inputClass = moveType ? 'sd-input with-type' : 'sd-input';
   return `<div class="sd-wrap" data-kind="${kind}">
     ${badge}
@@ -10297,6 +10594,7 @@ function sdFilter(input, kind) {
     curRoutes().forEach(r => { if (r.route && !seen.has(r.route)) { items.push(r.route); seen.add(r.route); } });
     curTeam().forEach(p => { if (p.route && !seen.has(p.route)) { items.push(p.route); seen.add(p.route); } });
   }
+  else if (kind === 'item') items = HELD_ITEMS;
   else items = ABILITIES;
   // Filter
   let filtered;
