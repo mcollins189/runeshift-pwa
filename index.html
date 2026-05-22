@@ -902,12 +902,14 @@
     .ar-detail { font-size: 13px; }
   }
   /* Rotate-to-portrait guard. Manifest orientation can't be conditional (and iOS
-     ignores it), so we block the landscape layout on PHONES only and prompt a
-     rotate. Scoped by short viewport height + coarse pointer so phone landscape
-     (height ~375-430px) triggers but tablet landscape (height ~700px+) does not
-     — tablets stay free to use any orientation. */
+     ignores it), so we block the landscape layout below iPad-mini size and prompt
+     a rotate. Cutoff = iPad mini's short side (768px): in landscape the height IS
+     the short side, so max-height:767px catches every phone + small tablet but
+     leaves iPad mini (height 768) and up free to use any orientation. The JS
+     `applyOrientationLock` below additionally true-locks the OS where supported
+     (installed Android PWA); the overlay is the fallback (iOS / browser tabs). */
   #rotate-guard { display: none; }
-  @media (orientation: landscape) and (max-height: 480px) and (pointer: coarse) {
+  @media (orientation: landscape) and (max-height: 767px) and (pointer: coarse) {
     #rotate-guard {
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       position: fixed; inset: 0; z-index: 100000; background: var(--bg); color: var(--text);
@@ -1277,6 +1279,77 @@ const ABILITY_BLURBS = {
   'Defeatist':'Weakens below half HP', 'Slow Start':'Weak for 5 turns', 'Truant':'Loafs every other turn',
   'Pickup':'Picks up items', 'Harvest':'Recovers its berry', 'Gluttony':'Eats berries early', 'Cloud Nine':'Negates weather', 'Air Lock':'Negates weather',
   'Cursed Body':'May disable a move', 'Rock Head':'No recoil dmg', 'Magic Bounce':'Reflects status moves',
+  'Aerilate':'Normal moves become Flying, +power', 'Aftermath':'Hurts attacker on fainting', 'Analytic':'+power when moving last',
+  'Anger Point':'Max Atk when crit', 'Anger Shell':'+offense, −defense at half HP', 'Anticipation':'Senses dangerous foe moves',
+  'Arena Trap':'Traps grounded foes', 'Armor Tail':'Blocks priority moves', 'Aroma Veil':'Shields team from taunt/etc.',
+  'As One':'Unnerve + KO stat boost', 'Aura Break':'Reverses Aura abilities', 'Bad Dreams':'Hurts sleeping foes',
+  'Ball Fetch':'Retrieves a failed Poké Ball', 'Battery':'Boosts allies’ special moves', 'Battle Armor':'Blocks critical hits',
+  'Battle Bond':'Powers up after a KO', 'Beads of Ruin':'Lowers all foes’ SpD', 'Berserk':'+SpA when dropping below half HP',
+  'Big Pecks':'Defense can’t be lowered', 'Blaze':'+Fire power when low HP', 'Cheek Pouch':'Extra HP from berries',
+  'Chilling Neigh':'+Atk after a KO', 'Clear Body':'Stats can’t be lowered', 'Color Change':'Becomes the hit move’s type',
+  'Comatose':'Always asleep; status-immune', 'Commander':'Hides in Dondozo, boosts it', 'Competitive':'+2 SpA when a stat is lowered',
+  'Compound Eyes':'+accuracy', 'Contrary':'Stat changes are reversed', 'Corrosion':'Can poison Steel/Poison',
+  'Costar':'Copies ally stat boosts on entry', 'Cotton Down':'Lowers all foes’ Spe when hit', 'Cud Chew':'Re-eats its berry next turn',
+  'Curious Medicine':'Resets ally stat changes', 'Damp':'Prevents Explosion moves', 'Dancer':'Copies dance moves',
+  'Dark Aura':'Boosts all Dark moves', 'Dauntless Shield':'+1 Def on entry', 'Dazzling':'Blocks priority moves',
+  'Defiant':'+2 Atk when a stat is lowered', 'Delta Stream':'Summons strong winds', 'Desolate Land':'Summons extreme sun',
+  'Disguise':'Blocks the first hit once', 'Dragon’s Maw':'Boosts Dragon moves', 'Early Bird':'Wakes from sleep faster',
+  'Electric Surge':'Sets Electric Terrain', 'Electromorphosis':'Charges power when hit', 'Embody Aspect':'Boosts a stat by mask',
+  'Emergency Exit':'Switches out at half HP', 'Fairy Aura':'Boosts all Fairy moves', 'Flare Boost':'+SpA when burned',
+  'Flower Gift':'+Atk/SpD in sun (team)', 'Flower Veil':'Shields Grass allies from status', 'Forecast':'Form/type follows weather',
+  'Forewarn':'Reveals foe’s strongest move', 'Friend Guard':'Reduces ally damage', 'Frisk':'Reveals foe’s item',
+  'Full Metal Body':'Stats can’t be lowered', 'Galvanize':'Normal moves become Electric, +power', 'Good as Gold':'Immune to status moves', 'Gorilla Tactics':'+50% Atk; locks one move',
+  'Gooey':'Lowers Spe on contact', 'Grass Pelt':'+Def on Grassy Terrain', 'Grassy Surge':'Sets Grassy Terrain',
+  'Grim Neigh':'+SpA after a KO', 'Guard Dog':'Can’t be forced out; +Atk vs Intimidate', 'Gulp Missile':'Strikes back after Surf/Dive',
+  'Hadron Engine':'Electric Terrain; +SpA on it', 'Healer':'May cure ally status', 'Heavy Metal':'Doubles weight',
+  'Honey Gather':'Picks up Honey', 'Hospitality':'Heals ally on entry', 'Hunger Switch':'Switches form each turn',
+  'Hydration':'Cures status in rain', 'Hyper Cutter':'Attack can’t be lowered', 'Ice Body':'Heals in snow; snow-immune',
+  'Ice Face':'Blocks one physical hit', 'Illuminate':'Accuracy can’t be lowered', 'Illusion':'Disguised as last party mon',
+  'Immunity':'Can’t be poisoned', 'Imposter':'Transforms into the foe', 'Infiltrator':'Ignores screens & substitute',
+  'Innards Out':'Hurts KOer for its leftover HP', 'Inner Focus':'No flinch; ignores Intimidate', 'Insomnia':'Can’t fall asleep',
+  'Intrepid Sword':'+1 Atk on entry', 'Justified':'+Atk when hit by Dark', 'Keen Eye':'Accuracy can’t be lowered',
+  'Klutz':'Can’t use its held item', 'Leaf Guard':'No status in sun', 'Libero':'Becomes its move’s type',
+  'Light Metal':'Halves weight', 'Limber':'Can’t be paralyzed', 'Lingering Aroma':'Spreads ability on contact',
+  'Liquid Ooze':'Draining hurts the drainer', 'Liquid Voice':'Sound moves become Water', 'Long Reach':'Avoids contact effects',
+  'Magician':'Steals foe’s item on hit', 'Magma Armor':'Can’t be frozen', 'Magnet Pull':'Traps Steel-types',
+  'Merciless':'Always crits poisoned foes', 'Mimicry':'Type follows the terrain', 'Mind’s Eye':'Ignores evasion; hits Ghosts',
+  'Minus':'+SpA with a Plus/Minus ally', 'Mirror Armor':'Bounces back stat drops', 'Misty Surge':'Sets Misty Terrain',
+  'Moody':'Random big stat shifts each turn', 'Multitype':'Type matches its Plate', 'Mummy':'Spreads Mummy on contact',
+  'Mycelium Might':'Status moves ignore ability', 'Neuroforce':'+super-effective damage', 'Neutralizing Gas':'Disables all abilities',
+  'Normalize':'All moves become Normal', 'Oblivious':'Immune to infatuation/taunt', 'Opportunist':'Copies foe’s stat boosts',
+  'Orichalcum Pulse':'Sun; +Atk in sun', 'Overcoat':'Blocks powder & weather dmg', 'Overgrow':'+Grass power when low HP',
+  'Own Tempo':'No confusion; ignores Intimidate', 'Parental Bond':'Hits twice (2nd weaker)', 'Pastel Veil':'Team can’t be poisoned',
+  'Perish Body':'Both faint in 3 turns on contact', 'Pickpocket':'Steals item when hit', 'Pixilate':'Normal moves become Fairy, +power',
+  'Plus':'+SpA with a Plus/Minus ally', 'Poison Puppeteer':'Poisoned foes get confused', 'Poison Touch':'May poison on contact',
+  'Power Construct':'Full form at half HP', 'Power of Alchemy':'Copies fainted ally’s ability', 'Power Spot':'Boosts allies’ moves',
+  'Primordial Sea':'Summons heavy rain', 'Propeller Tail':'Ignores redirection', 'Protean':'Becomes its move’s type',
+  'Protosynthesis':'Boosts best stat in sun', 'Psychic Surge':'Sets Psychic Terrain', 'Punk Rock':'+sound; halves sound dmg',
+  'Quark Drive':'Boosts best stat on Electric Terrain', 'Queenly Majesty':'Blocks priority moves', 'Quick Draw':'May move first',
+  'Rain Dish':'Heals in rain', 'Rattled':'+Spe when hit by Bug/Dark/Ghost', 'Receiver':'Inherits fainted ally’s ability',
+  'Reckless':'+power for recoil moves', 'Refrigerate':'Normal moves become Ice, +power', 'Ripen':'Doubles berry effects',
+  'Rivalry':'+power vs same gender', 'Rocky Payload':'Boosts Rock moves', 'Run Away':'Always flee wild battles',
+  'Sand Force':'+Rock/Ground/Steel power in sand', 'Sand Spit':'Sandstorm when hit', 'Sand Veil':'+evasion in sandstorm',
+  'Schooling':'Strong school form at high HP', 'Scrappy':'Hits Ghosts; ignores Intimidate', 'Screen Cleaner':'Removes screens on entry',
+  'Seed Sower':'Grassy Terrain when hit', 'Shadow Tag':'Traps the foe', 'Shed Skin':'May cure its status',
+  'Shell Armor':'Blocks critical hits', 'Shield Dust':'Blocks added move effects', 'Shields Down':'Frail core at low HP',
+  'Simple':'Doubles its stat changes', 'Snow Cloak':'+evasion in snow', 'Soul-Heart':'+SpA when any mon faints',
+  'Stakeout':'+power vs switch-ins', 'Stall':'Always moves last', 'Stalwart':'Ignores redirection',
+  'Stamina':'+Def when hit', 'Stance Change':'Swaps blade/shield forms', 'Steadfast':'+Spe when it flinches',
+  'Steam Engine':'+6 Spe when hit by Fire/Water', 'Steely Spirit':'Boosts team’s Steel moves', 'Stench':'May flinch',
+  'Sticky Hold':'Item can’t be stolen', 'Suction Cups':'Can’t be forced out', 'Super Luck':'+crit chance',
+  'Supersweet Syrup':'Lowers foe evasion on entry', 'Supreme Overlord':'+power per fainted ally', 'Surge Surfer':'2× Spe on Electric Terrain',
+  'Swarm':'+Bug power when low HP', 'Sweet Veil':'Team can’t fall asleep', 'Sword of Ruin':'Lowers all foes’ Def',
+  'Symbiosis':'Passes its item to ally', 'Synchronize':'Passes status to the foe', 'Tablets of Ruin':'Lowers all foes’ Atk',
+  'Tangled Feet':'+evasion when confused', 'Tangling Hair':'Lowers Spe on contact', 'Telepathy':'Dodges ally moves',
+  'Tera Shell':'Full HP: all hits resisted', 'Tera Shift':'Changes form on entry', 'Teraform Zero':'Clears weather/terrain',
+  'Thermal Exchange':'+Atk hit by Fire; burn-immune', 'Tinted Lens':'Doubles not-very-effective dmg', 'Torrent':'+Water power when low HP',
+  'Toxic Boost':'+Atk when poisoned', 'Toxic Chain':'May badly poison on hit', 'Toxic Debris':'Toxic Spikes when hit',
+  'Transistor':'Boosts Electric moves', 'Unburden':'2× Spe after using its item', 'Unnerve':'Foes can’t eat berries',
+  'Vessel of Ruin':'Lowers all foes’ SpA', 'Victory Star':'+accuracy (team)', 'Vital Spirit':'Can’t fall asleep',
+  'Wandering Spirit':'Swaps ability on contact', 'Water Compaction':'+2 Def when hit by Water', 'Water Veil':'Can’t be burned',
+  'Weak Armor':'Hit: −Def, +2 Spe', 'White Smoke':'Stats can’t be lowered', 'Wimp Out':'Switches out at half HP',
+  'Wind Power':'Charges from wind moves', 'Wonder Skin':'Status moves often miss', 'Zen Mode':'Changes form at half HP',
+  'Zero to Hero':'Transforms on switch-out',
 };
 const ITEM_BLURBS = {
   'Leftovers':'Heals 1/16 HP each turn', 'Black Sludge':'Heals Poison-types; hurts others', 'Shell Bell':'Heals from damage dealt', 'Big Root':'More HP from draining moves',
@@ -1315,7 +1388,7 @@ function natureBlurb(nature) {
   const mods = NATURE_MODS[key], names = ['HP','Atk','Def','SpA','SpD','Spe'];
   let up = -1, down = -1;
   for (let i = 1; i < 6; i++) { if (mods[i] > 1) up = i; if (mods[i] < 1) down = i; }
-  return (up < 0 && down < 0) ? 'neutral' : `+${names[up]} / −${names[down]}`;
+  return (up < 0 && down < 0) ? 'no stat change' : `+${names[up]} / −${names[down]}`;
 }
 function kvBlurb(text) { return text ? ` <span class="kv-blurb">— ${text}</span>` : ''; }
 
@@ -10969,22 +11042,32 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-// Hard-lock phones to portrait. Android (installed PWA) supports
-// screen.orientation.lock, so the device won't rotate at all — better than just
-// covering the landscape layout. iOS has no orientation-lock API, so the
-// #rotate-guard overlay remains the fallback there. Scoped to phone-sized
-// screens (min dimension <= 500px) so tablets stay free to rotate.
-(function lockPortraitOnPhone() {
+// True-lock orientation by device size: BELOW iPad-mini (short side < 768px) →
+// lock portrait; iPad mini and up → unlocked (any orientation). screen.orientation
+// .lock only works in an installed/standalone PWA (Android); browser tabs + iOS
+// reject it, so the #rotate-guard overlay is the visual fallback there. Re-asserts
+// on rotation/resize so a failed first attempt (or a size change) is retried.
+function applyOrientationLock() {
   try {
-    const minDim = Math.min(window.screen.width || 0, window.screen.height || 0);
-    if (!(minDim > 0 && minDim <= 500)) return;            // not a phone — leave free
     const o = window.screen && window.screen.orientation;
-    if (o && typeof o.lock === 'function') {
-      const res = o.lock('portrait');
-      if (res && typeof res.catch === 'function') res.catch(() => {});  // browser tab / iOS — overlay handles it
+    if (!o) return;
+    const minDim = Math.min(window.screen.width || 0, window.screen.height || 0);
+    if (!minDim) return;
+    if (minDim < 768) {                                    // phone / sub-iPad-mini → lock portrait
+      if (typeof o.lock === 'function') {
+        const res = o.lock('portrait-primary');
+        if (res && typeof res.catch === 'function') {
+          res.catch(() => { try { const r2 = o.lock('portrait'); if (r2 && r2.catch) r2.catch(() => {}); } catch (e) {} });
+        }
+      }
+    } else if (typeof o.unlock === 'function') {           // iPad mini and up → free to rotate
+      try { o.unlock(); } catch (e) {}
     }
   } catch (e) { /* unsupported — overlay handles it */ }
-})();
+}
+applyOrientationLock();
+window.addEventListener('orientationchange', applyOrientationLock);
+window.addEventListener('resize', applyOrientationLock);
 
 function postToSW(msg) {
   // active is the controlling SW once installed; on first load it may still
