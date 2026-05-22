@@ -549,7 +549,8 @@
   .se2-pm{width:24px;height:24px;border:1px solid var(--border2);border-radius:6px;background:var(--bg2);color:var(--text2);font-size:15px;line-height:1;cursor:pointer;padding:0}
   .se2-pm:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
   .se2-pm:disabled{opacity:.4;cursor:default}
-  .se2-val{width:50px;padding:4px 3px;font-size:13px;text-align:center;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-weight:700}
+  .se2-val{width:50px;padding:4px 3px;font-size:13px;text-align:center;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-weight:700;-moz-appearance:textfield;appearance:textfield}
+  .se2-val::-webkit-outer-spin-button,.se2-val::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
   .se2-foot{display:flex;align-items:center;gap:12px;margin-top:11px;flex-wrap:wrap}
   .se2-vitsel{font-size:11px;padding:5px 7px;border:1px solid var(--border2);border-radius:6px;background:var(--bg2);color:var(--text2);cursor:pointer}
   .se2-evused{font-size:11px;color:var(--text3)}
@@ -685,6 +686,7 @@
   .pv-suggest-line + .pv-suggest-line{border-top:1px solid rgba(255,255,255,.07);margin-top:2px;padding-top:7px}
   .pv-suggest-lv{font-weight:600;color:var(--accent);margin-right:6px}
   .pv-suggest-line.evo .pv-suggest-lv{color:var(--amber)}
+  .pv-suggest-next{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--green);background:var(--green-bg);border-radius:3px;padding:1px 5px;margin-right:5px}
   .pv-suggest-line strong{color:var(--text)}
   .pv-suggest-meta{color:var(--text3)}
 
@@ -1331,6 +1333,15 @@ function scoreMove(name, ownerTypes, ownerStats) {
   if (!d) return { score: 30, label: 'Unknown', role: 'unknown' }; // truly unknown / not yet backfilled
   const [power, cat, eff] = d;
   const isSTAB = type && ownerTypes && ownerTypes.includes(type);
+  // Accuracy as an expected-value weight, mirroring the damage model
+  // (bestHitFraction). MOVE_ACCURACY is the source of truth (covers bundled /
+  // backfilled moves too); fall back to the curated tag when the table is silent
+  // so we never double-count a flat penalty on top of the multiplier.
+  let acc = moveAccuracy(canon);
+  if (acc >= 100 && eff) {
+    if (eff.includes('very-inaccurate')) acc = 55;
+    else if (eff.includes('inaccurate')) acc = 80;
+  }
   if (cat === 'U') {
     // Utility moves are valued by effect tag — these are conservative scores
     const utilScores = {
@@ -1342,30 +1353,38 @@ function scoreMove(name, ownerTypes, ownerStats) {
       'rain':40, 'sun':40,
       'hazard':50, 'atkdown':35, 'defdown':35, 'spddown':40, 'accdown':25
     };
-    const score = utilScores[eff] !== undefined ? utilScores[eff] : 30;
+    const base = utilScores[eff] !== undefined ? utilScores[eff] : 30;
+    // An unreliable status move (e.g. Hypnosis 60%) is worth less than a sure one.
+    const score = Math.round(base * acc / 100);
     return { score, label: 'Utility', role: 'util' };
   }
   // Damaging
   let score = power || 30;
   if (isSTAB) score = Math.round(score * 1.5);
+  score = Math.round(score * acc / 100); // expected damage weighting
   // Modifiers
   if (eff && eff.includes('priority')) score += 5;
   if (eff && eff.includes('drain')) score += 6;
   if (eff && eff.includes('no-miss')) score += 3;
   if (eff && eff.includes('flinch')) score += 4;
   if (eff && eff.includes('high-crit')) score += 4;
-  if (eff && eff.includes('inaccurate')) score -= 8;
-  if (eff && eff.includes('very-inaccurate')) score -= 25;
-  if (eff && eff.includes('recoil')) score -= 5;
-  if (eff && eff.includes('recoil-huge')) score -= 15;
+  // Recoil scales with the damage you deal, so the self-hit (a real death risk in
+  // a Nuzlocke) scales with the move's power — a 120 BP recoil move is far riskier
+  // than a 90 BP one. Penalty ≈ recoil fraction × base power. 'recoil-huge' = ~50%
+  // (Head Smash), plain 'recoil' = ~25-33% (Double-Edge, Brave Bird, Take Down…).
+  if (eff && eff.includes('recoil-huge')) score -= Math.round((power || 0) * 0.35);
+  else if (eff && eff.includes('recoil')) score -= Math.round((power || 0) * 0.20);
   if (eff && eff.includes('recharge')) score -= 15;
   if (eff && eff.includes('charge')) score -= 10;
   if (eff && eff.includes('multi')) score += 8; // counts each hit
-  // Stat-mismatched moves get penalized if owner stats are known
+  // Stat-mismatched moves get penalized if owner stats are known. Uses the
+  // EFFECTIVE category so pre-split (Gen ≤3) games judge phys/special by TYPE,
+  // matching the damage model.
   if (ownerStats && Array.isArray(ownerStats) && ownerStats.length===6) {
+    const effCat = effectiveCategory(cat, type);
     const [, atk, , spa] = ownerStats;
-    if (cat === 'P' && atk < spa - 20) score -= 12;
-    if (cat === 'S' && spa < atk - 20) score -= 12;
+    if (effCat === 'P' && atk < spa - 20) score -= 12;
+    if (effCat === 'S' && spa < atk - 20) score -= 12;
   }
   return { score, label: isSTAB ? 'STAB' : '', role: 'attack' };
 }
@@ -11719,56 +11738,59 @@ async function renderPokeViewLearnset(idx) {
   const already = levelMoves.filter(m => m.lv <= lv);
   const upcoming = levelMoves.filter(m => m.lv > lv);
 
-  // Score current moves
-  const currentScored = currentMoves.map(m => ({ name:m, ...scoreMove(m, ownTypes, ownStats) }));
-  // The weakest current slot (lowest score) — only meaningful if you have 4 slots
-  const sortedCurrent = [...currentScored].sort((a,b) => a.score - b.score);
+  // The current set, scored once. Entries: { name, score, type, cat }.
+  const curSet = currentMoves.map(m => ({ name: m, score: scoreMove(m, ownTypes, ownStats).score, type: getMoveType(m), cat: moveCategory(m) }));
 
-  // Inner helper — given a candidate move + its score, decide which current
-  // slot (if any) to suggest swapping out. Shared by both the evo-move and
-  // upcoming-move suggestion paths so the swap heuristic stays consistent.
-  const findBestSwap = (uName, upScore, minDelta) => {
-    if (currentMoves.length < 4) return { swap: null, delta: 0 };
-    let bestSwap = null, bestDelta = 0;
-    for (const c of currentScored) {
+  // Which current slot a candidate move should replace. Slots already claimed by
+  // a sooner upgrade are excluded, so each recommendation targets a DISTINCT real
+  // slot (no two recs fighting over the same move) and later moves point at the
+  // next real slot down — "looking ahead" without ever inventing a phantom target.
+  const findSwapIn = (uName, upScore, minDelta, claimed) => {
+    if (curSet.length < 4) return null;
+    const uType = getMoveType(uName), uCat = moveCategory(uName);
+    const uIsDmg = uCat === 'P' || uCat === 'S';
+    const dmgTypes = curSet.filter(c => (c.cat === 'P' || c.cat === 'S') && c.type).map(c => c.type);
+    let best = null, bestDelta = 0;
+    for (const c of curSet) {
+      if (claimed.has(c.name)) continue; // a sooner upgrade already takes this slot
       const delta = upScore.score - c.score;
-      if (delta > bestDelta && delta >= minDelta) {
-        const cEff = moveEffect(c.name) || '';
-        const uEff = moveEffect(uName) || '';
-        const cIsKeyUtil = /sleep|badpoison|paralysis|burn|sub|heal|spaup\+2|atkup\+2|spdup\+2|atkup\+spdup|spaup\+spdup|trap/.test(cEff);
-        if (cIsKeyUtil && !uEff) continue;
-        bestSwap = c;
-        bestDelta = delta;
+      if (delta <= bestDelta || delta < minDelta) continue;
+      const cEff = moveEffect(c.name) || '', uEff = moveEffect(uName) || '';
+      const cIsKeyUtil = /sleep|badpoison|paralysis|burn|sub|heal|spaup\+2|atkup\+2|spdup\+2|atkup\+spdup|spaup\+spdup|trap/.test(cEff);
+      if (cIsKeyUtil && !uEff) continue;
+      // Coverage protection: don't drop the ONLY damaging move of its type for a
+      // move that adds no new type (would strictly shrink offensive coverage —
+      // e.g. dropping Luxio's lone Dark move for a 4th Electric move).
+      if ((c.cat === 'P' || c.cat === 'S') && c.type && c.type !== uType) {
+        const cTypeIsSole = dmgTypes.filter(t => t === c.type).length <= 1;
+        const uAddsNewType = uIsDmg && uType && !dmgTypes.includes(uType);
+        if (cTypeIsSole && !uAddsNewType) continue;
       }
+      best = c; bestDelta = delta;
     }
-    return { swap: bestSwap, delta: bestDelta };
+    return best ? { swap: best, delta: bestDelta } : null;
   };
 
-  // For each upcoming move, decide whether it's worth recommending and which slot to replace
+  // Walk learnable moves in the order you'll get them. Only ACTIONABLE upgrades
+  // are kept (a clear swap into a free slot, or an empty-slot pickup); moves that
+  // don't improve the set are omitted as noise.
+  const claimed = new Set();
+  let openSlots = Math.max(0, 4 - currentMoves.length);
   const suggestions = [];
-  // Evolution moves go first — they're available NOW (assuming the Pokémon
-  // is this species), so they should take priority over future level-up
-  // moves of equivalent score. Threshold is lower (35) than for upcoming
-  // moves because evo moves are a one-time opportunity to grab a coverage
-  // move that the line otherwise wouldn't get, so even modest-score evo
-  // moves are worth surfacing.
-  for (const u of evoMoves) {
-    if (ownedCanon.has(u.name.toLowerCase())) continue;
-    if (dismissedCanon.has(u.name.toLowerCase())) continue; // user clicked Skip
+  const consider = (u, isEvo, minDelta, scoreFloor) => {
+    if (ownedCanon.has(u.name.toLowerCase())) return;
+    if (dismissedCanon.has(u.name.toLowerCase())) return; // user clicked Skip
     const upScore = scoreMove(u.name, ownTypes, ownStats);
-    if (upScore.score < 35) continue;
-    const { swap, delta } = findBestSwap(u.name, upScore, 10);
-    suggestions.push({ move: u, score: upScore, swap, delta, isEvo: true });
-  }
-  for (const u of upcoming.slice(0, 12)) {
-    if (ownedCanon.has(u.name.toLowerCase())) continue; // already known
-    if (dismissedCanon.has(u.name.toLowerCase())) continue; // user clicked Skip
-    const upScore = scoreMove(u.name, ownTypes, ownStats);
-    // Only consider clearly worthwhile additions (score > 50) OR clear STAB
-    if (upScore.score < 45) continue;
-    const { swap, delta } = findBestSwap(u.name, upScore, 15);
-    suggestions.push({ move: u, score: upScore, swap, delta });
-  }
+    const res = findSwapIn(u.name, upScore, minDelta, claimed);
+    const swap = res ? res.swap : null;
+    if (!swap && (openSlots <= 0 || upScore.score < scoreFloor)) return; // no actionable add
+    suggestions.push({ move: u, score: upScore, swap, delta: res ? res.delta : 0, isEvo });
+    if (swap) claimed.add(swap.name); else openSlots--; // an empty slot gets filled
+  };
+  // Evo moves first — available NOW (the mon just became this species), a one-time
+  // chance to grab coverage, so a lower delta (10) / score floor (35).
+  for (const u of evoMoves) consider(u, true, 10, 35);
+  for (const u of upcoming.slice(0, 12)) consider(u, false, 15, 45);
   // Build HTML
   const stabBadge = (mname) => {
     const t = getMoveType(mname);
@@ -11838,14 +11860,31 @@ async function renderPokeViewLearnset(idx) {
   // late or never, and evo-only moves you'd skip by delaying.
   const evoAdvice = await computeEvolutionAdvice(p.species, lv, currentMoves, true);
 
-  // Unified, ranked recommendation list rendered as compact line items.
-  const recItems = suggestions.map(s => ({ score: s.score.score, kind: 'move', s }));
-  if (evoAdvice) recItems.push({ score: evoAdvice.score, kind: 'evo', evo: evoAdvice });
-  recItems.sort((a, b) => b.score - a.score);
+  // Move recommendations rendered as compact line items. Each carries an
+  // imminence level (`lv`): evo moves are available now (0), level-up moves use
+  // their learn level.
+  const moveItems = suggestions.map(s => ({ score: s.score.score, lv: s.isEvo ? 0 : (s.move.lv || 0), kind: 'move', s }));
+
+  // Selection + ordering. Always surface the soonest pick so an imminent upgrade
+  // isn't buried under stronger moves many levels away, then keep the strongest
+  // picks. Display everything ordered by imminence (soonest first).
+  const byImminence = (a, b) => a.lv - b.lv || b.score - a.score;
+  let chosen = [];
+  if (moveItems.length) {
+    const byScore = [...moveItems].sort((a, b) => b.score - a.score);
+    const next = [...moveItems].sort(byImminence)[0];
+    const picks = new Set([next]); // always include the soonest actionable upgrade
+    for (const m of byScore) { if (picks.size >= 3) break; picks.add(m); }
+    chosen = [...picks].sort(byImminence);
+  }
+  // Evolution-timing advice is time-sensitive — level past the window and you can
+  // lose the chance to delay — so it's always pinned to the TOP when present.
+  if (evoAdvice) chosen.unshift({ score: evoAdvice.score, lv: evoAdvice.lv || 0, kind: 'evo', evo: evoAdvice });
 
   let suggHtml = '';
-  if (recItems.length) {
-    const lines = recItems.slice(0, 3).map(r => {
+  if (chosen.length) {
+    let labeledNext = false; // tag the soonest move line as the "next" recommendation
+    const lines = chosen.map(r => {
       if (r.kind === 'evo') {
         const e = r.evo;
         const icon = e.kind === 'delay' ? '⏳' : '⬆';
@@ -11853,6 +11892,9 @@ async function renderPokeViewLearnset(idx) {
         return `<div class="pv-suggest-line evo"><span class="pv-suggest-lv">${icon}</span><strong>${head}</strong> <span class="pv-suggest-meta">— ${e.text}</span></div>`;
       }
       const s = r.s;
+      // "Next rec:" tags the soonest move that has a concrete swap — the next
+      // actionable replacement — not just any imminent line.
+      const isNextRec = !labeledNext && !!s.swap; if (isNextRec) labeledNext = true;
       const upT = getMoveType(s.move.name);
       const upPwr = movePower(s.move.name);
       const upCat = moveCategory(s.move.name);
@@ -11862,7 +11904,8 @@ async function renderPokeViewLearnset(idx) {
       if (s.swap) action = `swap for ${s.swap.name}`;
       else if (currentMoves.length < 4) action = 'empty slot — free pickup';
       else action = 'compare manually';
-      return `<div class="pv-suggest-line"><span class="pv-suggest-lv">${lvLabel}</span><strong>${s.move.name}</strong> <span class="pv-suggest-meta">${metaBits} · ${action}</span></div>`;
+      const nextTag = isNextRec ? '<span class="pv-suggest-next">Next rec:</span> ' : '';
+      return `<div class="pv-suggest-line${isNextRec ? ' is-next' : ''}"><span class="pv-suggest-lv">${lvLabel}</span>${nextTag}<strong>${s.move.name}</strong> <span class="pv-suggest-meta">${metaBits} · ${action}</span></div>`;
     });
     suggHtml = `<div class="pv-suggest"><div class="pv-suggest-title">Recommendations</div>${lines.join('')}</div>`;
   } else if (upcoming.length === 0 && evoMoves.length === 0 && !evoAdvice) {
