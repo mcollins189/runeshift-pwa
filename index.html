@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
-<script src="data.bundle.js?v=1779388277926" onerror="window.__NUZ_BUNDLE_MISSING=true"></script>
+<script src="data.bundle.js?v=1779478327822" onerror="window.__NUZ_BUNDLE_MISSING=true"></script>
 <style>
   :root {
     --bg:#0f0f10;--bg2:#18181b;--bg3:#222228;--bg4:#2a2a32;
@@ -1150,9 +1150,9 @@ const MOVE_DATA = {
   'Hyper Fang':[80,'P','flinch'],'Mega Punch':[80,'P'],'Mega Kick':[120,'P'],
   'Crush Claw':[75,'P'],'Slash':[70,'P','high-crit'],'Cut':[50,'P'],'Bite':[60,'P','flinch'],
   'Rock Climb':[90,'P','confuse'],'Hyper Beam':[150,'P','recharge'],'Giga Impact':[150,'P','recharge'],
-  'Fury Swipes':[18,'P','multi'],'Comet Punch':[18,'P','multi'],
+  'Fury Swipes':[55,'P','multi'],'Comet Punch':[55,'P','multi'],'Fury Attack':[55,'P','multi'],'Double Slap':[55,'P','multi'],
   'Extreme Speed':[80,'P','priority+2'],'Vise Grip':[55,'P'],'Bind':[15,'P','trap'],
-  'Wrap':[15,'P','trap'],'Tail Slap':[25,'P','multi'],'Fake Out':[40,'P','priority+3,flinch'],
+  'Wrap':[15,'P','trap'],'Tail Slap':[75,'P','multi'],'Fake Out':[40,'P','priority+3,flinch'],
   // Normal special
   'Swift':[60,'S','no-miss'],'Tri Attack':[80,'S','status-chance'],
   'Hyper Voice':[90,'S'],'Boomburst':[140,'S'],
@@ -1191,7 +1191,7 @@ const MOVE_DATA = {
   // Grass
   'Absorb':[20,'S','drain'],'Mega Drain':[40,'S','drain'],'Giga Drain':[75,'S','drain'],
   'Vine Whip':[45,'P'],'Razor Leaf':[55,'P','high-crit'],'Magical Leaf':[60,'S','no-miss'],
-  'Bullet Seed':[25,'P','multi'],'Seed Bomb':[80,'P'],'Leaf Blade':[90,'P','high-crit'],
+  'Bullet Seed':[75,'P','multi'],'Seed Bomb':[80,'P'],'Leaf Blade':[90,'P','high-crit'],
   'Solar Beam':[120,'S','charge'],'Energy Ball':[90,'S','spddown'],'Petal Dance':[120,'S','confuse-self'],
   'Wood Hammer':[120,'P','recoil'],'Leaf Storm':[130,'S','spadown'],
   'Leech Seed':[0,'U','drain'],
@@ -1207,9 +1207,10 @@ const MOVE_DATA = {
   'Blizzard':[110,'S','freeze,inaccurate'],'Ice Fang':[65,'P','freeze,flinch'],
   'Avalanche':[60,'P','priority-low,2x-hit'],
   // Fighting
-  'Karate Chop':[50,'P','high-crit'],'Double Kick':[30,'P','multi'],'Low Kick':[60,'P'],
+  'Karate Chop':[50,'P','high-crit'],'Double Kick':[60,'P','multi'],'Low Kick':[60,'P'],'Triple Kick':[60,'P','multi'],'Arm Thrust':[48,'P','multi'],
   'Brick Break':[75,'P','breaks-screens'],'Mach Punch':[40,'P','priority'],'Force Palm':[60,'P','paralysis'],
   'Rock Smash':[40,'P','defdown'],'Drain Punch':[75,'P','drain'],'Hammer Arm':[100,'P','spddown-self'],
+  'Vital Throw':[70,'P','no-miss'],'Revenge':[60,'P','2x-after'],'Low Sweep':[65,'P','spddown'],'Seismic Toss':[60,'P','fixed'],
   'Cross Chop':[100,'P','high-crit'],'Sky Uppercut':[85,'P'],'Close Combat':[120,'P','defdown-self'],
   'Submission':[80,'P','recoil'],'Vacuum Wave':[40,'S','priority'],'Focus Blast':[120,'S','spddown,inaccurate'],
   'Aura Sphere':[80,'S','no-miss'],'Bulk Up':[0,'U','atkup+defup'],
@@ -1223,7 +1224,7 @@ const MOVE_DATA = {
   'Magnitude':[70,'P','variable'],'Bulldoze':[60,'P','spddown'],'Dig':[80,'P','charge'],
   'Mud Bomb':[65,'S','accdown'],'Mud Shot':[55,'S','spddown'],
   'Earthquake':[100,'P'],'Earth Power':[90,'S','spddown'],'Bone Club':[65,'P','flinch'],
-  'Bonemerang':[50,'P','2x-hit'],'Bone Rush':[25,'P','multi'],'Drill Run':[80,'P','high-crit'],
+  'Bonemerang':[100,'P','multi'],'Bone Rush':[75,'P','multi'],'Drill Run':[80,'P','high-crit'],
   // Flying
   'Peck':[35,'P'],'Wing Attack':[60,'P'],'Gust':[40,'S'],'Aerial Ace':[60,'P','no-miss'],
   'Air Cutter':[60,'S','high-crit'],'Air Slash':[75,'S','flinch'],'Fly':[90,'P','charge'],
@@ -1236,7 +1237,13 @@ const MOVE_DATA = {
   // Bug
   'Bug Bite':[60,'P','steal-berry'],'Fury Cutter':[40,'P','escalates'],'Silver Wind':[60,'S','statup'],
   'U-turn':[70,'P','switch'],'X-Scissor':[80,'P'],'Bug Buzz':[90,'S','spddown'],
-  'Megahorn':[120,'P'],'Pin Missile':[25,'P','multi'],
+  'Megahorn':[120,'P'],'Pin Missile':[75,'P','multi'],'Twineedle':[50,'P','multi'],
+  // Multi-hit moves store EFFECTIVE power (per-hit × typical hits) so both the
+  // move scorer AND the damage model treat them realistically; 'multi' adds a
+  // small bonus for breaking Sturdy / Focus Sash / Substitute.
+  'Rock Blast':[75,'P','multi'],'Icicle Spear':[75,'P','multi'],'Scale Shot':[75,'P','multi'],'Dual Chop':[80,'P','multi'],
+  'Gear Grind':[100,'P','multi'],'Double Iron Bash':[120,'P','multi'],'Dragon Darts':[100,'P','multi'],'Surging Strikes':[75,'P','multi'],
+  'Water Shuriken':[45,'S','priority,multi'],'Triple Axel':[80,'P','multi'],'Population Bomb':[120,'P','multi'],
   // Rock
   'Rock Throw':[50,'P'],'Rock Tomb':[60,'P','spddown'],'Smack Down':[50,'P','grounds'],
   'Ancient Power':[60,'S','statup'],'Power Gem':[80,'S'],'Rock Slide':[75,'P','flinch'],
@@ -1269,11 +1276,43 @@ const MOVE_DATA = {
 
 function moveData(name) {
   const canon = resolveMove(name) || name;
-  return MOVE_DATA[canon] || null;
+  // Tier 1: curated MOVE_DATA — primary, carries the nuanced effect tags.
+  if (MOVE_DATA[canon]) return MOVE_DATA[canon];
+  const slug = (typeof moveSlug === 'function') ? moveSlug(canon) : null;
+  // Tier 2: complete bundled move stats (power + category for the whole movedex,
+  // from data.bundle.js) — works FULLY OFFLINE, no PokeAPI dependency. This is
+  // what lets "pre-cache for offline" deliver correct move data instead of a flat
+  // "unknown". Effect tags aren't included (curated-only), so it's a base score.
+  const bundled = (slug && typeof NUZ_DATA !== 'undefined' && NUZ_DATA.moveStats) ? NUZ_DATA.moveStats[slug] : null;
+  if (bundled) return [bundled[0] || 0, bundled[1], ''];
+  // Tier 3: live PokeAPI backfill — only for moves the bundle lacks (brand-new /
+  // fakemon / custom hack moves).
+  const bf = slug ? backfilledMoves[slug] : null;
+  if (bf && typeof bf === 'object' && bf.category) return [bf.power || 0, bf.category, ''];
+  return null;
 }
 function movePower(name) { const d = moveData(name); return d ? d[0] : null; }
 function moveCategory(name) { const d = moveData(name); return d ? d[1] : null; }
 function moveEffect(name) { const d = moveData(name); return d && d[2] ? d[2] : ''; }
+// Pre-Gen-4 games used the TYPE-based physical/special split: a move's damage
+// category was decided by its TYPE, not the move. PokeAPI / our tables store the
+// MODERN per-move category, so for those games we override category by type.
+// Scope: VANILLA Gen ≤3 only (RBY/Y/GS/C/RS/E/FRLG). Gen-3 ROM hacks frequently
+// backport the modern split, so hacks (category 'Other ROM hacks') stay per-move.
+const PHYSICAL_TYPES_PRE_SPLIT = new Set(['Normal','Fighting','Flying','Ground','Rock','Bug','Ghost','Poison','Steel']);
+function gameIsPreSplit(gameKey) {
+  const key = gameKey || (typeof curGame === 'function' ? curGame() : '');
+  const g = (typeof GAMES !== 'undefined') ? GAMES[key] : null;
+  return !!(g && g.gen && g.gen <= 3 && g.category !== 'Other ROM hacks');
+}
+// The category a move ACTUALLY uses for damage, honoring the pre-split rule for
+// the active game. Status stays status; unknown (null) is left for the caller's
+// fallback. (Gen 1's unified Special stat isn't modelled — Gen 1 stays approximate.)
+function effectiveCategory(modernCat, type, gameKey) {
+  if (modernCat !== 'P' && modernCat !== 'S') return modernCat;
+  if (type && gameIsPreSplit(gameKey)) return PHYSICAL_TYPES_PRE_SPLIT.has(type) ? 'P' : 'S';
+  return modernCat;
+}
 // Pivot moves (deal damage AND switch out) — premium Nuzlocke utility: they
 // grab momentum and bring a teammate in safely. Value = base power + a pivot
 // bonus, scored even when the move isn't in MOVE_DATA (Volt Switch/Flip Turn).
@@ -1288,8 +1327,8 @@ function scoreMove(name, ownerTypes, ownerStats) {
     let s = PIVOT_MOVES[canon]; if (isStabP) s = Math.round(s * 1.5); s += 14;
     return { score: s, label: 'Pivot', role: 'pivot' };
   }
-  const d = MOVE_DATA[canon];
-  if (!d) return { score: 30, label: 'Unknown', role: 'unknown' }; // unknown moves: neutral mid-score
+  const d = moveData(canon); // MOVE_DATA first, then PokeAPI-backfilled power/category
+  if (!d) return { score: 30, label: 'Unknown', role: 'unknown' }; // truly unknown / not yet backfilled
   const [power, cat, eff] = d;
   const isSTAB = type && ownerTypes && ownerTypes.includes(type);
   if (cat === 'U') {
@@ -4880,13 +4919,11 @@ async function fetchMoveFromApi(name, gen) {
       }
     }
 
-    // Gen 1-3 used the type-based physical/special split. PokeAPI's damage_class
-    // already reflects modern category; map to our P/S/U letters.
-    const PHYSICAL_TYPES_PRE_SPLIT = new Set(['Normal','Fighting','Flying','Ground','Rock','Bug','Ghost','Poison','Steel']);
-    let catLetter = category === 'physical' ? 'P' : category === 'special' ? 'S' : 'U';
-    if (gen && gen <= 3 && type && catLetter !== 'U') {
-      catLetter = PHYSICAL_TYPES_PRE_SPLIT.has(type) ? 'P' : 'S';
-    }
+    // Store the MODERN per-move category. The pre-Gen-4 type-based split is applied
+    // uniformly at CONSUMPTION time by effectiveCategory() (which correctly limits
+    // it to vanilla Gen ≤3 and excludes split-backporting ROM hacks), so the cached
+    // value stays game-agnostic — a single source of truth for the split decision.
+    const catLetter = category === 'physical' ? 'P' : category === 'special' ? 'S' : 'U';
 
     const result = { type: type || null, power: power || null, category: catLetter, slug };
     backfilledMoves[slug] = result;
@@ -7034,9 +7071,11 @@ function bestHitFraction(A, B, opts) {
   let best = 0, bestType = null, bestEff = 0, bestPrio = false, bestDrain = false, bestCanon = null, bestAcc = 100;
   for (const c of candidates) {
     const eff = effectivenessWithAbility(c.type, B.type1, B.type2, B.abil);
+    // Pre-Gen-4 (vanilla Gen ≤3) games decide physical/special by TYPE, not move.
+    const cat = effectiveCategory(c.cat, c.type);
     let atkStat, defStat, physical;
-    if (c.cat === 'S') { atkStat = A.stats[3]; defStat = B.stats[4]; physical = false; }
-    else if (c.cat === 'P') { atkStat = A.stats[1]; defStat = B.stats[2]; physical = true; }
+    if (cat === 'S') { atkStat = A.stats[3]; defStat = B.stats[4]; physical = false; }
+    else if (cat === 'P') { atkStat = A.stats[1]; defStat = B.stats[2]; physical = true; }
     else { // unknown category: assume the mon uses its better attacking stat
       if ((A.stats[3]||0) > (A.stats[1]||0)) { atkStat = A.stats[3]; defStat = B.stats[4]; physical = false; }
       else { atkStat = A.stats[1]; defStat = B.stats[2]; physical = true; }
@@ -11379,6 +11418,14 @@ function pokeView(p, idx) {
   const moveList = (typeof p.moves === 'string')
     ? p.moves.split(',').map(s=>s.trim()).filter(Boolean)
     : (Array.isArray(p.moves) ? p.moves.filter(Boolean) : []);
+  // Kick PokeAPI backfill for any move the curated MOVE_DATA lacks, so the move
+  // scorer (level-up prompt + learnset planner) rates real attacks correctly
+  // instead of flat "unknown". The onBackfill handler re-renders this modal.
+  if (typeof ensureMoveBackfilled === 'function') {
+    for (const mv of moveList) if (!moveData(mv)) ensureMoveBackfilled(mv);
+    const pend = _pendingLearnMoves.get(idx);
+    if (pend) for (const pm of pend) if (pm && pm.name && !moveData(pm.name)) ensureMoveBackfilled(pm.name);
+  }
   const sprite = p.species && pokeId(p.species)
     ? `<img class="pv-hq" src="${spriteUrl(p.species, p.isShiny?'art-shiny':'art')}" alt="${p.species}" onerror="if(!this.dataset.fb){this.dataset.fb='1';this.classList.remove('pv-hq');this.src='${spriteUrl(p.species, p.isShiny?'shiny':undefined)}';}else{this.style.display='none';}">`
     : `<div style="color:var(--text3);font-size:11px">no sprite</div>`;
@@ -11645,6 +11692,12 @@ async function renderPokeViewLearnset(idx) {
   if (!p || !p.species) { container.innerHTML = '<div class="learnset-loading">No species selected.</div>'; return; }
   const ls = await fetchLearnset(p.species);
   if (!ls.length) { container.innerHTML = '<div class="learnset-loading">No learnset data available offline. (PokeAPI fetch may have failed — check your connection.)</div>'; return; }
+  // Backfill any learnset move the curated MOVE_DATA lacks so its score (and the
+  // evolution-timing advice) is accurate rather than flat "unknown". onBackfill
+  // re-renders this view, which re-scores with the now-known power/category.
+  if (typeof ensureMoveBackfilled === 'function') {
+    for (const m of ls) if (m && m.name && !moveData(m.name)) ensureMoveBackfilled(m.name);
+  }
   const info = pokeInfo(p.species);
   const ownTypes = info ? info.t : [p.type1, p.type2].filter(Boolean);
   const ownStats = info ? info.s : null;
@@ -13074,6 +13127,17 @@ onBackfill(() => {
     fire('tab-routes', typeof renderRoutes === 'function' ? renderRoutes : null);
     fire('tab-grave', typeof renderGrave === 'function' ? renderGrave : null);
     fire('tab-stats', typeof renderStats === 'function' ? renderStats : null);
+    // Refresh the open detail modal (pokeView) too — newly-backfilled move data
+    // changes move scores. Skip when the EDIT FORM is open (no .pv-header) so we
+    // don't clobber in-progress form edits.
+    const ov = document.getElementById('overlay');
+    if (ov && ov.classList.contains('open') && editIdx != null) {
+      const body = document.getElementById('modal-body');
+      if (body && body.querySelector('.pv-header') && curTeam()[editIdx]) {
+        body.innerHTML = pokeView(curTeam()[editIdx], editIdx);
+        if (typeof renderPokeViewLearnset === 'function') setTimeout(() => renderPokeViewLearnset(editIdx), 50);
+      }
+    }
   }, 150);
 });
 
