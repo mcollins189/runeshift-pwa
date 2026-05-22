@@ -52,7 +52,10 @@
 // v7 — manifest.json orientation changed (natural -> any) + a phone-landscape
 // rotate-to-portrait guard added in index.html. manifest.json is a cache-first
 // shell asset, so bump to re-cache it (index.html is network-first already).
-const SHELL_CACHE = 'nuz-shell-v7';
+// v8 — manifest.json orientation set to "portrait" (hard lock for installed
+// Android PWAs; the JS screen.orientation.lock fallback alone was unreliable).
+// Re-cache the new manifest.
+const SHELL_CACHE = 'nuz-shell-v8';
 // v2 — all self-hosted artwork sprites (sprites/art*, sprites/pixel* unchanged)
 // were regenerated (trimmed/normalized). Sprites are served cache-first as
 // "immutable", so without a bump existing clients would keep the old artwork
