@@ -8002,12 +8002,17 @@ function _readyBattle(party, bossC, mode, rng) {
 }
 let _readinessCache = { seed: null, result: null };
 const READINESS_N = 100; // enough samples that low-probability deaths (crit OHKOs) register reliably rather than depending on one lucky seed
-function computeReadiness(boss, pool, setMode) {
+// opts.n overrides the sample count (lower = faster, used for the projection
+// delta sims). opts.noCache skips the shared single-slot cache entirely so a
+// projected-team sim can never overwrite/return the LIVE team's cached result.
+function computeReadiness(boss, pool, setMode, opts) {
+  const N = (opts && opts.n) || READINESS_N;
+  const noCache = !!(opts && opts.noCache);
   const team = boss.team || [];
   if (!team.length || !pool || !pool.length) return null;
   const mode = setMode ? 'set' : 'shift';
   const seed = _readinessSeed(boss, pool, mode);
-  if (_readinessCache.seed === seed && _readinessCache.result) return _readinessCache.result;
+  if (!noCache && _readinessCache.seed === seed && _readinessCache.result) return _readinessCache.result;
   const party = []; for (const p of pool) { const c = pCombatant(p); if (c) { c.flags = planFlags(p); party.push(c); } }
   const bossC = team.map(b => bossCombatant(b, boss)).filter(Boolean);
   // Wait for FULL data: if any boss mon isn't backfilled yet, return null without
@@ -8015,15 +8020,15 @@ function computeReadiness(boss, pool, setMode) {
   if (bossC.length !== team.length || !party.length) return null;
   const rng = _mulberry32(seed);
   let wins = 0, marginSum = 0, deathSum = 0;
-  for (let i = 0; i < READINESS_N; i++) { const r = _readyBattle(party, bossC, mode, rng); deathSum += r.deaths; if (r.won) { wins++; marginSum += r.endHP; } }
-  const w = wins / READINESS_N, marginWon = wins ? marginSum / wins : 0, avgDeaths = deathSum / READINESS_N;
+  for (let i = 0; i < N; i++) { const r = _readyBattle(party, bossC, mode, rng); deathSum += r.deaths; if (r.won) { wins++; marginSum += r.endHP; } }
+  const w = wins / N, marginWon = wins ? marginSum / wins : 0, avgDeaths = deathSum / N;
   // Win probability gates the score; surviving-team-HP margin separates a clean
   // sweep from a costly grind. Dead mons contribute 0 HP, so `marginWon` ALREADY
   // reflects losses — we deliberately do NOT apply a separate death multiplier
   // (an earlier one wrongly drove 99%-win-but-costly fights to 0 / "Unwinnable").
   // `deaths` feeds the band's clean-sweep gate + the "deaths/run" readout only.
   const result = { score: Math.round(100 * w * (0.45 + 0.55 * marginWon)), winRate: Math.round(w * 100), margin: Math.round(marginWon * 100), deaths: +avgDeaths.toFixed(2) };
-  _readinessCache = { seed, result };
+  if (!noCache) _readinessCache = { seed, result };
   return result;
 }
 // Band label + colour class for a readiness score. `deaths` = expected mons lost
@@ -8038,6 +8043,224 @@ function readinessBand(score, deaths, risky) {
   if (score >= 40) return { label: 'Pyrrhic — winnable but fragile; a bad roll could wipe you', cls: 'rd-pyrrhic' };
   if (score >= 18) return { label: 'Danger — likely to lose Pokémon', cls: 'rd-danger' };
   return { label: 'Unwinnable — no reliable path to victory', cls: 'rd-dead' };
+}
+
+/* ──────────────────────────────────────────────────────────────────────
+   Readiness-improvement advice (projection-based, read-only)
+   ----------------------------------------------------------------------
+   Layered ON TOP of the matchup — it NEVER feeds the live readiness Monte
+   Carlo (that stays your team exactly as it is now). It answers "what would
+   raise this score?" by (a) finding the boss team's shared weaknesses, (b)
+   spotting coverage gaps in your recommended team, and (c) surfacing bench
+   mons that — projected to the level you'd realistically be at for THIS fight,
+   with their reachable evolution — would plug the gap. Fully type-chart +
+   roster-move derived, so it works for every game, current and future.
+   ────────────────────────────────────────────────────────────────────── */
+
+// Level we project bench candidates to: the cap for cap-defining bosses, else
+// the ace of THIS specific fight (boss.team is the fight's own team, so this is
+// per-fight — Barry's Hearthome fight projects to ~21, not his Canalave ace).
+// Bounded by design — never an absurd level-100 projection.
+function adviceTargetLevel(boss) { return (boss && boss.cap) || bossAceLevel(boss) || 1; }
+
+// Synchronous learnset read (in-memory cache → localStorage). NO network.
+// null = not cached yet (caller queues a background fetch + re-render).
+function cachedLearnsetSync(species) {
+  if (Array.isArray(learnsetCache[species])) return learnsetCache[species];
+  const c = loadCachedLearnset(species);
+  if (c && c.kind === 'ok') { learnsetCache[species] = c.data; return c.data; }
+  return null;
+}
+
+// Project a species forward to `targetLevel`, applying reachable evolutions.
+// Level evos require reaching the level; stone/trade/friendship evos are treated
+// as "doable anytime" investments and always applied. Branched evos pick the
+// strongest-by-BST branch — a CONTEXT-BLIND heuristic (e.g. vs a special
+// attacker Slowking out-walls Slowbro, and the Eeveelutions / Glaceon-Leafeon
+// can flip by boss type). Good enough for v1; revisit if it mis-picks.
+function projectSpeciesAtLevel(species, targetLevel) {
+  let cur = species, evolved = false, guard = 0;
+  while (guard++ < 6) {
+    const info = pokeInfo(cur);
+    if (!info || !info.e || !info.e[0]) break;
+    let target = String(info.e[0]);
+    const method = info.e[1];
+    if (target.includes('/')) target = bestEvoBranch(target) || target.split('/')[0].trim();
+    if (!target || !evoAvailable(target)) break;
+    const lvReq = (typeof method === 'number') ? method : (/^\d+$/.test(String(method)) ? +method : null);
+    if (lvReq != null && targetLevel < lvReq) break;          // level evo not yet reached
+    if (!pokeInfo(target)) { if (typeof ensurePokemonBackfilled === 'function') ensurePokemonBackfilled(target); break; } // need stats to project
+    cur = target; evolved = true;
+  }
+  return { species: cur, evolved };
+}
+
+// Token + cache guarding the async delta-scoring pass. The cache is keyed by a
+// signature of the boss + the FULL current team state, so a boss switch OR a
+// mid-sim team edit invalidates it (stale results are discarded on resolve).
+let _adviceFetchToken = 0;
+let _adviceDeltaCache = { key: null, scored: null };
+function _adviceTeamStateHash() {
+  return curTeam().map(p => `${p.species}:${p.level}:${p.moves}:${(p.ivs||[]).join('')}:${(p.evs||[]).join('')}:${p.held||''}:${p.ability||''}:${p.nature||''}:${p.alive?1:0}:${p.inParty?1:0}`).join('|');
+}
+
+// Build a synthetic roster-mon for the projected gem so computeReadiness can sim
+// it: evolved species, projected level, current ability/nature/item/IVs/EVs, and
+// a plausible 4-move set that includes the key coverage move.
+function _projGemMon(p, projSpecies, projLevel, coverMove, projTypes) {
+  const canon = n => (resolveMove(n) || n).toLowerCase();
+  const mv = normMovesList(p.moves).slice(0, 4);
+  if (!mv.some(m => canon(m) === canon(coverMove))) { if (mv.length < 4) mv.push(coverMove); else mv[3] = coverMove; }
+  return { species: projSpecies, level: projLevel, type1: projTypes[0] || null, type2: projTypes[1] || null,
+    ability: p.ability, nature: p.nature, held: p.held, ivs: p.ivs, evs: p.evs, moves: mv.join(', '), alive: true, inParty: true };
+}
+
+// SYNC structural analysis (no sims). Returns the stable, sim-independent items
+// (shared-weakness headline, level gap, blind spots) plus the bench-gem
+// CANDIDATES whose actual readiness impact gets measured asynchronously.
+//   blindSpots = boss mons NO recommended-team member hits super-effectively
+//                (binary genuine gap — the force-surface trigger).
+function analyzeAdvice(boss, recommended, roster) {
+  const out = { bossN: 0, headline: null, levelGap: null, blindSpots: [], candidates: [], pending: [] };
+  if (!boss || !Array.isArray(boss.team) || !boss.team.length) return out;
+  const bossCs = [];
+  for (const b of boss.team) { const C = bossCombatant(b, boss); if (C) bossCs.push({ b, C }); }
+  if (!bossCs.length) return out;          // boss stats not backfilled yet — stay quiet
+  const N = out.bossN = bossCs.length;
+  const bossShort = String(boss.name || '').split(' — ')[0];
+  const seCount = (T) => bossCs.filter(({ C }) => effectivenessWithAbility(T, C.type1, C.type2, C.abil) >= 2).length;
+  const dmgMoveTypes = (p) => normMovesList(p.moves).map(m => { const c = resolveMove(m); const cat = c ? moveCategory(c) : null; if (cat === 'U' || (c && STATUS_MOVES.has(c))) return null; return c ? MOVES[c] : getMoveType(m); }).filter(Boolean);
+  const hitsSE = (p, C) => dmgMoveTypes(p).some(t => effectivenessWithAbility(t, C.type1, C.type2, C.abil) >= 2);
+
+  // Blind spots: boss mons with no super-effective answer on the recommended team.
+  out.blindSpots = bossCs.filter(({ C }) => !(recommended || []).some(p => hitsSE(p, C))).map(({ b }) => b.species);
+
+  // Shared weaknesses + how thinly the recommended team covers each.
+  const coverCount = {};
+  for (const T of TYPES) { const c = seCount(T); if (c) coverCount[T] = c; }
+  const threshold = Math.max(2, Math.ceil(N / 2));
+  const keyTypes = Object.keys(coverCount).filter(T => coverCount[T] >= threshold).sort((a, b) => coverCount[b] - coverCount[a]);
+  const coverers = {};
+  for (const T of keyTypes) coverers[T] = (recommended || []).filter(p => dmgMoveTypes(p).includes(T)).map(p => p.nickname || p.species);
+  const gaps = keyTypes.filter(T => coverers[T].length === 0);
+  const thin = keyTypes.filter(T => coverers[T].length === 1);
+  const headlineTypes = keyTypes.slice(0, 3);
+  if (headlineTypes.length && (gaps.length || thin.length)) {
+    const weakWord = headlineTypes.join(' & ');
+    let action;
+    if (gaps.length) action = `nothing on your recommended team hits <strong>${gaps.join('/')}</strong> — your biggest lever`;
+    else { const t = thin[0]; action = `only ${coverers[t][0]} brings <strong>${t}</strong> — a second ${t} attacker would steady it`; }
+    out.headline = { icon: '⚠', html: `${bossShort}'s team shares a <strong>${weakWord}</strong> weakness, but ${action}.` };
+  }
+
+  // Bench-gem candidates: alive roster mons NOT on the recommended team that,
+  // projected to the fight's target level (+ reachable evo), bring a wanted type.
+  const recoSet = new Set(recommended || []);
+  const target = adviceTargetLevel(boss);
+  const wantTypes = gaps.length ? gaps : thin;
+  if (wantTypes.length) {
+    for (const p of (roster || [])) {
+      if (!p.alive || !p.species || recoSet.has(p)) continue;
+      const projLevel = Math.max(p.level || 1, target);          // clamp: ceiling, never downgrade
+      const proj = projectSpeciesAtLevel(p.species, projLevel);
+      const pinfo = pokeInfo(proj.species);
+      if (!pinfo || !pinfo.s) continue;                          // stats not ready (warming)
+      const accessible = [];
+      const pushMove = (name) => { const c = resolveMove(name); const t = c ? MOVES[c] : getMoveType(name); if (!t) return; const cat = c ? moveCategory(c) : null; if (cat === 'U' || (c && STATUS_MOVES.has(c))) return; accessible.push({ name, type: t }); };
+      for (const m of normMovesList(p.moves)) pushMove(m);
+      const ls = cachedLearnsetSync(proj.species);
+      if (ls) { for (const m of ls) { if (!m.isEvo && (m.lv || 0) > projLevel) continue; pushMove(m.name); } }
+      else if (!out.pending.includes(proj.species)) out.pending.push(proj.species);
+      const bringT = wantTypes.find(T => accessible.some(a => a.type === T));
+      if (!bringT) continue;
+      const coverMove = accessible.find(a => a.type === bringT).name;
+      const projTypes = pinfo.t || [];
+      const projP = { species: proj.species, level: projLevel, type1: projTypes[0] || null, type2: projTypes[1] || null, ability: p.ability, held: p.held, ivs: p.ivs, evs: p.evs };
+      const bait = coverageBaitVs(projP, boss);
+      const caution = (bait && bait.mult >= 2) ? `${bait.type} (${bait.species}) hits it ${bait.mult}×${baitGlyph(bait)}` : '';
+      out.candidates.push({ name: p.nickname || p.species, curLevel: p.level || 1, projLevel, evolved: proj.evolved, projSpecies: proj.species, type: bringT, move: coverMove, hits: seCount(bringT), caution, projMon: _projGemMon(p, proj.species, projLevel, coverMove, projTypes) });
+    }
+  }
+
+  // Level gap — your team meaningfully under the fight's ace.
+  const ace = bossAceLevel(boss);
+  const teamMax = (recommended || []).reduce((m, p) => Math.max(m, p.level || 0), 0);
+  if (ace && teamMax && (ace - teamMax) >= 3) {
+    const aceMon = boss.team.reduce((m, b) => ((b.lv || 0) > (m.lv || 0) ? b : m), boss.team[0]);
+    out.levelGap = { icon: '📉', html: `Your team tops out at <strong>Lv ${teamMax}</strong> vs ${aceMon.species} (<strong>Lv ${ace}</strong>) — closing that gap lifts every damage roll.` };
+  }
+  return out;
+}
+
+// Build the projected team for a gem: the gem replaces the recommended team's
+// weakest member (whoever it would actually bump), so the sim measures its
+// MARGINAL contribution.
+function _projectedTeamWith(recommended, gemMon, boss) {
+  const team = (recommended || []).slice();
+  if (!team.length) return [gemMon];
+  if (team.length >= 6) {
+    let wi = 0, ws = Infinity;
+    for (let i = 0; i < team.length; i++) { const s = scoreMatchup(team[i], boss, boss.cap); if (s < ws) { ws = s; wi = i; } }
+    team[wi] = gemMon;
+  } else team.push(gemMon);
+  return team;
+}
+
+// ASYNC: for each candidate, sim the projected team and record the readiness
+// delta vs the live baseline. Pre-filtered to the few best by coverage and run
+// with a lighter sample count (noCache so the live meter is never corrupted);
+// yields between sims so the tab never freezes. Ranked by delta — which bakes in
+// safety for free (a gem that gets KO'd barely moves the score).
+async function scoreAdviceGems(boss, recommended, candidates, setMode, baseScore) {
+  const pre = candidates.slice().sort((a, b) => b.hits - a.hits).slice(0, 4);
+  const scored = [];
+  for (const g of pre) {
+    await new Promise(r => setTimeout(r, 0));   // yield to the UI between sims
+    const team = _projectedTeamWith(recommended, g.projMon, boss);
+    const res = computeReadiness(boss, team, setMode, { n: 60, noCache: true });
+    const ps = res ? res.score : baseScore;
+    scored.push({ ...g, projScore: ps, delta: ps - baseScore });
+  }
+  scored.sort((a, b) => b.delta - a.delta || b.hits - a.hits);
+  return scored;
+}
+
+// Assemble the advice items. `scored` null = still measuring (show stable items +
+// a faded "measuring…" placeholder, NO provisional gem list that would reorder).
+// Returns { items, projScore, projDelta } — projScore drives the meter's ghost
+// bar + delta badge (best single high-impact swap).
+function renderAdviceItems(analysis, scored, baseScore) {
+  const items = []; let projScore = null, projDelta = null;
+  if (analysis.headline) items.push(analysis.headline);
+  if (!scored) {                                  // measuring
+    if (analysis.candidates.length) items.push({ icon: '⟳', html: `<span style="color:var(--text3)">measuring which bench Pokémon raise your score…</span>` });
+    if (analysis.levelGap) items.push(analysis.levelGap);
+    return { items, projScore, projDelta, measuring: true };
+  }
+  const positive = scored.filter(g => g.delta > 0);
+  const bestDelta = scored.length ? Math.max(0, ...scored.map(g => g.delta)) : 0;
+  // Soft suppression: when nothing meaningfully helps AND there's no genuine
+  // blind spot, collapse to a single reassuring line.
+  if (bestDelta < 4 && !analysis.blindSpots.length) {
+    const out = [{ icon: '✓', html: `You’re in strong shape — no high-impact swaps found for this fight.` }];
+    if (analysis.levelGap) out.push(analysis.levelGap);
+    return { items: out, projScore, projDelta, measuring: false };
+  }
+  const top = positive.slice(0, 3);
+  if (top.length) { projScore = top[0].projScore; projDelta = top[0].delta; }
+  for (const g of top) {
+    const invest = [];
+    if (g.projLevel > g.curLevel) invest.push(`grind to Lv ${g.projLevel}`);
+    if (g.evolved) invest.push(`evolve to ${g.projSpecies}`);
+    const investBit = invest.length ? ` — ${invest.join(', ')}` : '';
+    const caution = g.caution ? ` <span style="color:var(--amber)">⚠ ${g.caution}</span>` : '';
+    items.push({ icon: '💡', html: `<strong>${g.name}</strong> → <strong>${g.type}</strong> via ${g.move} (SE ${g.hits}/${analysis.bossN})${investBit} · <span style="color:#4ade80;font-weight:600">+${g.delta} readiness</span>${caution}` });
+  }
+  if (analysis.blindSpots.length && !top.length) {
+    items.push({ icon: '⚠', html: `Nothing in your box hits <strong>${analysis.blindSpots.join(', ')}</strong> super-effectively — out-bulk or chip ${analysis.blindSpots.length > 1 ? 'them' : 'it'}.` });
+  }
+  if (analysis.levelGap) items.push(analysis.levelGap);
+  return { items, projScore, projDelta, measuring: false };
 }
 
 function renderMatchup() {
@@ -8097,12 +8320,54 @@ function renderMatchup() {
     </div>` : '';
   // Readiness meter — seeded Monte Carlo over the recommended team (see computeReadiness).
   const readiness = computeReadiness(boss, recommended, _r.setMode);
+
+  // How-to-improve advice (read-only; never feeds the live readiness score).
+  // Cached delta-scoring is keyed to the boss + full team state; while a fight's
+  // sims are still running we show the stable items + a faded "measuring…" and
+  // settle into the delta-ranked gems (+ projected-score badge) when they land.
+  let adviceHtml = '', projScore = null, projDelta = null;
+  if (readiness) {
+    const analysis = analyzeAdvice(boss, recommended, curTeam());
+    const stateHash = _adviceTeamStateHash();
+    const advKey = `${cap}|${showRematch}|${(boss.team||[]).map(b=>b.species+b.lv).join(',')}|${stateHash}`;
+    const scored = (_adviceDeltaCache.key === advKey) ? _adviceDeltaCache.scored : null;
+    const measuring = !scored && analysis.candidates.length > 0;
+    const rendered = renderAdviceItems(analysis, scored, readiness.score);
+    projScore = rendered.projScore; projDelta = rendered.projDelta;
+    if (rendered.items.length) {
+      const fade = rendered.measuring ? 'opacity:.72;' : '';
+      adviceHtml = `<div class="rd-advice" style="${fade}margin:-2px 0 12px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm)">
+        <div style="font-size:11.5px;color:var(--text);font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px">💡 How to improve readiness</div>
+        <ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:5px;font-size:12px;line-height:1.6;color:var(--text2)">
+          ${rendered.items.map(it=>`<li><span style="margin-left:-2px">${it.icon}</span> ${it.html}</li>`).join('')}
+        </ul>
+      </div>`;
+    }
+    // Dispatch the async delta sims when we're measuring; re-render ONCE when they
+    // settle, discarding stale results (boss switch / team edit / newer dispatch).
+    if (measuring) {
+      const token = ++_adviceFetchToken;
+      (async () => {
+        if (analysis.pending.length) await Promise.all(analysis.pending.map(s => fetchLearnset(s).catch(()=>null)));
+        const a2 = analyzeAdvice(boss, recommended, curTeam());     // learnsets may add candidates
+        const sc = await scoreAdviceGems(boss, recommended, a2.candidates, _r.setMode, readiness.score);
+        if (token !== _adviceFetchToken || curCap() !== cap || _adviceTeamStateHash() !== stateHash) return;
+        _adviceDeltaCache = { key: advKey, scored: sc };
+        renderMatchup();
+      })();
+    }
+  }
+
   let readinessHtml = '';
   if (readiness) {
     const band = readinessBand(readiness.score, readiness.deaths, planResult && planResult.risky);
+    // Ghost bar: solid fill 0→current, soft-green headroom current→projected.
+    const showProj = projScore != null && projScore > readiness.score;
+    const barBg = showProj ? ` style="background:linear-gradient(to right, rgba(74,222,128,.32) 0 ${projScore}%, var(--bg2) ${projScore}% 100%)"` : '';
+    const projBadge = showProj ? ` <span class="rd-proj" title="Best single high-impact swap from the advice below" style="color:#4ade80;font-weight:700;font-size:13px">→ ${projScore} <span style="font-size:11px">(+${projDelta})</span></span>` : '';
     readinessHtml = `<div class="readiness ${band.cls}" title="From ${READINESS_N} simulated battles of your recommended team (with random damage rolls &amp; misses): wins ${readiness.winRate}% of the time, surviving team HP ${readiness.margin}% on average. Edit a stat / EV / item to watch it move.">
-      <div class="rd-top"><span class="rd-num">${readiness.score}</span><span class="rd-of">/100</span><span class="rd-label">Battle readiness — ${band.label}</span></div>
-      <div class="rd-bar"><span class="rd-fill" style="width:${readiness.score}%"></span></div>
+      <div class="rd-top"><span class="rd-num">${readiness.score}</span><span class="rd-of">/100</span>${projBadge}<span class="rd-label">Battle readiness — ${band.label}</span></div>
+      <div class="rd-bar"${barBg}><span class="rd-fill" style="width:${readiness.score}%"></span></div>
       <div class="rd-sub">${readiness.winRate}% win rate · ${readiness.margin}% avg team HP left${(readiness.deaths >= 0.05 || (planResult && planResult.risky)) && readiness.deaths > 0 ? ` · <span style="color:var(--red)">≈${readiness.deaths} deaths/run</span>` : ''}${_r.setMode ? ' · Set mode' : ''}</div>
     </div>`;
   }
@@ -8139,6 +8404,7 @@ function renderMatchup() {
       </div>
     </div>
     ${readinessHtml}
+    ${adviceHtml}
     <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:8px">
       <p class="slabel" style="margin-bottom:0">Their team — weaknesses & threats</p>
       <button class="hdr-btn" onclick="toggleMatchupDetail()">${matchupDetailMode ? 'Hide details' : 'Show details'}</button>
