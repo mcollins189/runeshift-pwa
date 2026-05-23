@@ -8299,7 +8299,7 @@ let _precomputeKey = null, _precomputeGen = 0, _precomputeActive = false, _backf
 // setup in renderMatchup (rematch default, rival starter variant, cap eligibility).
 // Returns null when data isn't ready yet (a boss mon not backfilled) — retried on
 // the next backfill epoch. A key mismatch only costs the speedup, never accuracy.
-function _precomputeCtx(realBoss) {
+function _precomputeCtx(realBoss, allowFetch) {
   if (!realBoss || !Array.isArray(realBoss.team) || !realBoss.team.length) return null;
   const hasRematch = Array.isArray(realBoss.rematch) && realBoss.rematch.length;
   const showRematch = !!(hasRematch && isChampionDefeated());   // matchup default when first opened
@@ -8307,7 +8307,12 @@ function _precomputeCtx(realBoss) {
   workTeam = starterVariantTeam(workTeam);   // narrow any starter-branched battle to the player's pick
   const boss = (workTeam !== realBoss.team) ? { ...realBoss, team: workTeam } : realBoss;
   if (!boss.team || !boss.team.length) return null;
-  for (const b of boss.team) { if (!pokeInfo(b.species)) { ensurePokemonBackfilled(b.species); return null; } }
+  // Only PROACTIVELY fetch missing species for the highest-priority bosses (allowFetch =
+  // current + next few). For the long tail we warm only when data is ALREADY present —
+  // otherwise a no-precache cold load would fire 100+ PokeAPI fetches, each repainting
+  // the view and making sprites pop-in/flash. The tail warms instantly with the precache
+  // (data local) or once the boss is visited.
+  for (const b of boss.team) { if (!pokeInfo(b.species)) { if (allowFetch) ensurePokemonBackfilled(b.species); return null; } }
   const _r = curRules();
   const setMode = !!_r.setMode;
   const ignoreCap = (_r.nuzlockeMode === false) || _r.ignoreCapForMatchups || showRematch;
@@ -8324,8 +8329,8 @@ function _precomputeCtx(realBoss) {
 // nothing runs on the main thread (the boss is just left for later).
 // Returns true if it actually ran sims (so the caller yields to idle); false when
 // fully cached / nothing to do (so restarts skip warmed bosses with no idle cost).
-async function _precomputeBoss(realBoss) {
-  const ctx = _precomputeCtx(realBoss);
+async function _precomputeBoss(realBoss, allowFetch) {
+  const ctx = _precomputeCtx(realBoss, allowFetch);
   if (!ctx) return false;
   const { boss, recommended, eligibleRoster, setMode, showRematch } = ctx;
   const mode = setMode ? 'set' : 'shift';
@@ -8369,10 +8374,14 @@ async function _runPrecompute(gen, key) {
   _precomputeActive = true;
   try {
     const game = curGame();
+    let idx = 0;
     for (const boss of _precomputeBossOrder()) {
       if (gen !== _precomputeGen || curGame() !== game) return;   // superseded by newer state
       let worked = false;
-      try { worked = await _precomputeBoss(boss); } catch (e) {}
+      // Proactively fetch data only for the current boss + next 3 (idx<4); the rest
+      // warm without fetching (keeps cold-load sprite loading calm — see _precomputeCtx).
+      try { worked = await _precomputeBoss(boss, idx < 4); } catch (e) {}
+      idx++;
       if (gen !== _precomputeGen || curGame() !== game) return;
       if (worked) await _idleYield();   // only pace heavy bosses; cached ones skip free
     }
@@ -8691,7 +8700,7 @@ function renderAdviceItems(analysis, scored, baseScore) {
     items.push({ icon: '💡', html: `<strong>${g.name}</strong> — ${bits.join(', ')}${deltaTag(g)}` });
   }
   if (pickB.length) {
-    if (pickU.length) items.push({ isHeader: true, html: '💎 Diamonds in the rough — bench Pokémon worth raising' });
+    if (pickU.length) items.push({ isHeader: true, html: '💎 Hidden Gems in your Roster — bench Pokémon worth raising' });
     for (const g of pickB) {
       const invest = [];
       if (g.projLevel > g.curLevel) invest.push(`grind to Lv ${g.projLevel}`);
