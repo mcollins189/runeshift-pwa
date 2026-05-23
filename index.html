@@ -269,6 +269,8 @@
   .rip-name{font-size:14px;font-weight:500}
   .rip-name span{font-weight:400;color:var(--text3)}
   .rip-detail{font-size:11px;color:var(--text3);margin-top:2px}
+  .rip-revive{flex-shrink:0;font-size:11px;font-weight:600;padding:5px 10px;border:1px solid var(--border2);border-radius:6px;background:var(--bg3);color:var(--text2);cursor:pointer}
+  .rip-revive:hover{border-color:var(--green);color:var(--green);background:var(--green-bg)}
   .empty{text-align:center;padding:40px 20px;color:var(--text3);font-size:13px;line-height:1.8}
 
   /* Boss matchup */
@@ -432,6 +434,8 @@
   .bp-plan-mv{color:var(--accent);font-weight:600}
   .bp-plan-risk{color:var(--amber);font-weight:600;font-size:11px}
   .bp-plan-note{display:block;margin-top:6px;font-size:10.5px;color:var(--text3);font-style:italic;list-style:none}
+  .bp-alt{display:block;margin-top:7px;padding:6px 9px;font-size:11.5px;line-height:1.5;color:var(--text2);background:var(--green-bg);border-left:3px solid var(--green);border-radius:5px}
+  .bp-alt-tag{display:inline-block;font-weight:700;color:var(--green);text-transform:uppercase;font-size:9.5px;letter-spacing:.04em;margin-right:5px}
   .reco-tip{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:600;color:var(--accent);background:rgba(108,143,255,.1);border:1px solid rgba(108,143,255,.3);border-radius:5px;padding:2px 7px;line-height:1.3}
   .reco-tip.reco-itemtip{color:var(--green);background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.3)}
   .reco-variance{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:600;color:var(--red);background:var(--red-bg);border:1px solid rgba(248,113,113,.4);border-radius:5px;padding:2px 7px;line-height:1.3}
@@ -633,6 +637,8 @@
   .new-move-prompt .nmp-btn.replace{background:var(--accent-bg);color:var(--accent);border-color:rgba(108,143,255,.4)}
   .new-move-prompt .nmp-btn.replace:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
   .new-move-prompt .nmp-slot.recommended .nmp-btn.replace{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 0 0 2px rgba(108,143,255,.25)}
+  .new-move-prompt .nmp-slot.empty.recommended{border-color:rgba(34,197,94,.5);background:rgba(34,197,94,.08);border-style:solid}
+  .new-move-prompt .nmp-slot.empty.recommended .nmp-btn.teach{background:#22c55e;color:#0f0f10;border-color:#22c55e;box-shadow:0 0 0 2px rgba(34,197,94,.25)}
   .new-move-prompt .nmp-btn.teach{background:rgba(34,197,94,.10);color:#86efac;border-color:rgba(34,197,94,.35)}
   .new-move-prompt .nmp-btn.teach:hover{background:#22c55e;color:#0f0f10;border-color:#22c55e}
   .new-move-prompt .nmp-actions{display:flex;justify-content:flex-end;margin-top:10px}
@@ -6739,11 +6745,11 @@ function renderRoutes() {
 function renderGrave() {
   const list = document.getElementById('grave-list');
   const empty = document.getElementById('grave-empty');
-  const dead = curTeam().filter(p=>!p.alive);
-  document.getElementById('tc-grave').textContent = dead.length;
-  if (!dead.length) { list.innerHTML=''; empty.style.display='block'; return; }
+  const deadIdx = curTeam().map((p,i)=>({p,i})).filter(x=>!x.p.alive);
+  document.getElementById('tc-grave').textContent = deadIdx.length;
+  if (!deadIdx.length) { list.innerHTML=''; empty.style.display='block'; return; }
   empty.style.display = 'none';
-  list.innerHTML = dead.map(p=>`
+  list.innerHTML = deadIdx.map(({p,i})=>`
     <div class="rip-card">
       ${spriteImg(p.species, {sm:true, faded:true, shiny:p.isShiny})}
       <div class="rip-info">
@@ -6751,6 +6757,7 @@ function renderGrave() {
         <div class="rip-detail">${p.causeOfDeath||'Unknown cause'} · ${p.route||'—'}</div>
       </div>
       ${typeBadge(p.type1)}
+      <button class="rip-revive" onclick="revivePoke(${i})" title="Undo this death — move back to your roster">↺ Revive</button>
     </div>`).join('');
 }
 
@@ -7591,6 +7598,50 @@ function planChooseLead(party, bossC, mode) {
   return bi;
 }
 
+// ── Roster Shield ────────────────────────────────────────────────────────────
+// An ISOLATED 1v1 (one of our mons vs one boss mon) used ONLY as a post-plan
+// check — never inside the planner. Question: "could this mon clear that foe if
+// allowed ONE emergency potion to bridge an otherwise-lethal hit?" Kept out of
+// the 1-ply planner on purpose (an action-selector would just potion-stall);
+// here there's no roster to switch to and no score to game, so the potion timing
+// is unambiguous (heal only when the next hit would faint us and it actually
+// saves us, item priority). mode 'set' costs one switch-in hit on entry.
+function bridgeDuel(P, B, mode, allowPotion) {
+  const ourF = (bestHitFraction(P, B) || {}).frac || 0;
+  if (ourF <= 0) return { win: false, used: false };
+  const theirF = (bestHitFraction(B, P) || {}).frac || 0;
+  const pFast = (P.stats[5] || 0) >= (B.stats[5] || 0);
+  let pHP = 1, bHP = 1, used = false, g = 0;
+  if (mode === 'set') pHP -= theirF; // switching in mid-fight eats one hit
+  while (g++ < 40 && pHP > 0 && bHP > 0) {
+    const weKOnow = pFast && ourF >= bHP;        // we strike first and KO → take no hit
+    const lethal = theirF > 0 && theirF >= pHP;  // the incoming hit would faint us
+    if (allowPotion && !used && lethal && !weKOnow && pHP + 0.5 - theirF > 0.02) {
+      used = true; pHP = Math.min(1, pHP + 0.5); pHP -= theirF; continue; // potion (priority), then eat the hit
+    }
+    if (pFast) { bHP -= ourF; if (bHP > 0) pHP -= theirF; }
+    else { pHP -= theirF; if (pHP > 0) bHP -= ourF; }
+  }
+  return { win: bHP <= 0 && pHP > 0, used };
+}
+// For a foe the active plan is gambling against, find the best teammate that
+// cleanly clears it — preferring one that wins outright, else one that wins via a
+// single potion bridge. Returns { label, needsPotion } or null.
+function rosterShieldAlt(party, foe, mode, gamblerIdx) {
+  let best = null, bestScore = -1;
+  for (let j = 0; j < party.length; j++) {
+    if (j === gamblerIdx) continue;
+    const X = party[j];
+    const potionWin = bridgeDuel(X, foe, mode, true).win;
+    if (!potionWin) continue;                       // can't handle it even with a potion
+    const cleanWin = bridgeDuel(X, foe, mode, false).win;
+    const ourF = (bestHitFraction(X, foe) || {}).frac || 0;
+    const score = (cleanWin ? 1e6 : 0) + ourF * 100; // prefer a clean answer, then harder hitter
+    if (score > bestScore) { bestScore = score; best = { label: X.label, needsPotion: !cleanWin }; }
+  }
+  return best;
+}
+
 // Build the displayed battle plan by forward-simulating the planner from full
 // HP and narrating each phase (one phase per boss Pokémon, in expected send
 // order) with plain-English tactical text + Set/Shift-aware switch wording.
@@ -7598,6 +7649,7 @@ function buildBattlePlan(boss, pool, setMode) {
   const team = boss.team || [];
   if (!team.length || !pool || !pool.length) return null;
   const mode = setMode ? 'set' : 'shift';
+  const itemsOK = curRules().banBattleItems !== true; // potions assumed unless the run bans in-battle items
   // Keep each combatant's source index in `pool` so plan usage can be mapped
   // back onto the recommended cards (filter would otherwise misalign indices).
   const party = [];
@@ -7618,9 +7670,10 @@ function buildBattlePlan(boss, pool, setMode) {
   const hit = (P, B, pi) => { const h = bestHitFraction(P, B); bHP[bIdx] -= h.frac; if (h.drain) heal(pi, 0.5 * h.frac * ((B.stats[0] || 1) / (P.stats[0] || 1))); };
   const endTurn = (pi) => { if (pHP[pi] > 0) { if (party[pi].flags.lefto) heal(pi, 1 / 16); if (party[pi].flags.sitrus && !sUsed[pi] && pHP[pi] < 0.5) { sUsed[pi] = true; heal(pi, 0.25); } } };
   const steps = [];
+  const dangerNoted = new Set(); // (pIdx#bIdx) pairs already flagged as a near-OHKO gamble
   // ONE phase per boss Pokémon: record how we enter, any mid-phase events, and
   // who delivers the KO; flush only when the opponent faints (or the fight ends).
-  let enterVerb = 'Lead', enterIdx = pIdx, notes = [];
+  let enterVerb = 'Lead', enterIdx = pIdx, notes = [], phaseAlt = null;
   const flush = () => {
     const ko = pIdx;
     if (bHP[bIdx] <= 0) usage[ko].kos++; // credit only when the foe actually fainted
@@ -7628,8 +7681,8 @@ function buildBattlePlan(boss, pool, setMode) {
     let chain = `${enterVerb} <b>${party[enterIdx].label}</b>`;
     if (ko !== enterIdx) chain += ` → <b>${party[ko].label}</b>`;
     const n = notes.length ? ` · ${notes.join(' · ')}` : '';
-    steps.push(`${chain} vs ${bossC[bIdx].label}${moveNameOf(party[ko], bossC[bIdx])}${n}`);
-    notes = [];
+    steps.push(`${chain} vs ${bossC[bIdx].label}${moveNameOf(party[ko], bossC[bIdx])}${n}${phaseAlt || ''}`);
+    notes = []; phaseAlt = null;
   };
   const bossAtk = (pi) => { if (bSlp[bIdx] > 0) { bSlp[bIdx]--; return; } pHP[pi] -= planFrac(bossC[bIdx], party[pi]); };
 
@@ -7658,6 +7711,26 @@ function buildBattlePlan(boss, pool, setMode) {
     if (act.type === 'heal') { notes.push(`<b>${P.label}</b> heals up`); heal(pIdx, 0.5); bossAtk(pIdx); endTurn(pIdx); continue; }
     // attack (drain moves siphon HP back via hit())
     const pF = (P.stats[5] || 0) >= (B.stats[5] || 0);
+    // Fragile-commit warning: `frac` is the MAX-roll, crit-excluded estimate, so a
+    // foe hit ≥85% means "survives only barely" — a crit, a high roll, or model
+    // imprecision turns it into a OHKO. If that foe actually swings at us (it's
+    // faster, or we can't KO it first), flag the gamble once per matchup.
+    const inc = bestHitFraction(B, P);
+    const weKOfirst = pF && bestHitFraction(P, B).frac >= bHP[bIdx];
+    if (inc && inc.frac >= 0.85 && !weKOfirst) {
+      const dk = pIdx + '#' + bIdx;
+      if (!dangerNoted.has(dk)) {
+        dangerNoted.add(dk);
+        notes.push(`<span class="bp-plan-risk">⚠ ${P.label} is in OHKO range from ${B.label}'s ${inc.move || 'hit'} — a high roll or crit kills it, so committing here is a gamble</span>`);
+        // Roster Shield: if a teammate can cleanly clear this foe (via a one-potion
+        // bridge if needed), surface it as a distinct, optional alternative line so
+        // the matchup advice matches the per-foe "best counter" card.
+        if (itemsOK && !phaseAlt) {
+          const alt = rosterShieldAlt(party, B, mode, pIdx);
+          if (alt) phaseAlt = `<div class="bp-alt"><span class="bp-alt-tag">🎒 Safer alternative</span> switch to <b>${alt.label}</b>${alt.needsPotion ? ' and use a <b>Potion</b>' : ''} — it clears ${B.label} without the crit gamble${alt.needsPotion ? ' (heal it once when it drops low to absorb the extra hit)' : ''}.</div>`;
+        }
+      }
+    }
     if (pF) { hit(P, B, pIdx); if (bHP[bIdx] > 0) bossAtk(pIdx); } else { bossAtk(pIdx); if (pHP[pIdx] > 0) hit(P, B, pIdx); }
     endTurn(pIdx);
   }
@@ -7677,7 +7750,10 @@ function buildBattlePlan(boss, pool, setMode) {
     else                 { role = 'backup';  tag = 'Plan: backup (not needed)';      cls = 'pr-backup'; }
     usageBySrc[c._srcIdx] = { role, tag, cls, kos: u.kos, sacked: u.sacked, entered: u.entered };
   });
-  return { steps, usage: usageBySrc };
+  // `risky` = the planned line commits a mon to a near-OHKO matchup (a flagged
+  // gamble) or sacks one — a reliable, deterministic signal the readiness band
+  // uses so it never calls such a fight a "clean sweep".
+  return { steps, usage: usageBySrc, risky: dangerNoted.size > 0 || anySack };
 }
 
 /* ──────────────────────────────────────────────────────────────────────
@@ -7705,7 +7781,9 @@ function _readyHit(A, B, rng) {
   const acc = h.acc == null ? 100 : h.acc;
   if (rng() * 100 >= acc) return { miss: true };
   const raw = h.frac * 100 / Math.max(1, acc);
-  return { dmg: raw * (0.85 + rng() * 0.15), drain: h.drain };
+  let dmg = raw * (0.85 + rng() * 0.15);
+  if (rng() < 1 / 16) dmg *= 1.5; // critical hit — this is what lets a "barely survives" hit actually KO
+  return { dmg, drain: h.drain };
 }
 // Simulate one battle in fractional HP, player driven by the shipped planner,
 // boss by greedy best-expected damage. Returns { won, endHP (avg team HP frac) }.
@@ -7733,11 +7811,11 @@ function _readyBattle(party, bossC, mode, rng) {
     endTurn(pIdx);
   }
   const won = !bHP.some(h => h > 0) && pHP.some(h => h > 0);
-  let endHP = 0; for (const h of pHP) endHP += Math.max(0, h);
-  return { won, endHP: endHP / party.length };
+  let endHP = 0, deaths = 0; for (const h of pHP) { endHP += Math.max(0, h); if (h <= 0) deaths++; }
+  return { won, endHP: endHP / party.length, deaths };
 }
 let _readinessCache = { seed: null, result: null };
-const READINESS_N = 60;
+const READINESS_N = 100; // enough samples that low-probability deaths (crit OHKOs) register reliably rather than depending on one lucky seed
 function computeReadiness(boss, pool, setMode) {
   const team = boss.team || [];
   if (!team.length || !pool || !pool.length) return null;
@@ -7750,18 +7828,26 @@ function computeReadiness(boss, pool, setMode) {
   // caching so it recomputes (cheap bail) on the onBackfill re-render once ready.
   if (bossC.length !== team.length || !party.length) return null;
   const rng = _mulberry32(seed);
-  let wins = 0, marginSum = 0;
-  for (let i = 0; i < READINESS_N; i++) { const r = _readyBattle(party, bossC, mode, rng); if (r.won) { wins++; marginSum += r.endHP; } }
-  const w = wins / READINESS_N, marginWon = wins ? marginSum / wins : 0;
-  // Win probability gates the score; surviving-HP margin separates a clean sweep
-  // from a Pyrrhic red-lining win.
-  const result = { score: Math.round(100 * w * (0.45 + 0.55 * marginWon)), winRate: Math.round(w * 100), margin: Math.round(marginWon * 100) };
+  let wins = 0, marginSum = 0, deathSum = 0;
+  for (let i = 0; i < READINESS_N; i++) { const r = _readyBattle(party, bossC, mode, rng); deathSum += r.deaths; if (r.won) { wins++; marginSum += r.endHP; } }
+  const w = wins / READINESS_N, marginWon = wins ? marginSum / wins : 0, avgDeaths = deathSum / READINESS_N;
+  // Win probability gates the score; surviving-team-HP margin separates a clean
+  // sweep from a costly grind. Dead mons contribute 0 HP, so `marginWon` ALREADY
+  // reflects losses — we deliberately do NOT apply a separate death multiplier
+  // (an earlier one wrongly drove 99%-win-but-costly fights to 0 / "Unwinnable").
+  // `deaths` feeds the band's clean-sweep gate + the "deaths/run" readout only.
+  const result = { score: Math.round(100 * w * (0.45 + 0.55 * marginWon)), winRate: Math.round(w * 100), margin: Math.round(marginWon * 100), deaths: +avgDeaths.toFixed(2) };
   _readinessCache = { seed, result };
   return result;
 }
-// Band label + colour class for a readiness score.
-function readinessBand(score) {
-  if (score >= 85) return { label: 'Elite — clean sweep predicted', cls: 'rd-elite' };
+// Band label + colour class for a readiness score. `deaths` = expected mons lost
+// per run: even a high-scoring fight that routinely trades a teammate is NOT a
+// clean sweep in a Nuzlocke, so the top band is gated on near-zero deaths.
+function readinessBand(score, deaths, risky) {
+  const d = deaths || 0;
+  if (score >= 85) return (d < 0.08 && !risky)
+    ? { label: 'Elite — clean sweep predicted', cls: 'rd-elite' }
+    : { label: 'Strong — usually clean, but a roll can cost a mon', cls: 'rd-safe' };
   if (score >= 65) return { label: 'Safe — clean win, expect some chip', cls: 'rd-safe' };
   if (score >= 40) return { label: 'Pyrrhic — winnable but fragile; a bad roll could wipe you', cls: 'rd-pyrrhic' };
   if (score >= 18) return { label: 'Danger — likely to lose Pokémon', cls: 'rd-danger' };
@@ -7814,11 +7900,11 @@ function renderMatchup() {
   const readiness = computeReadiness(boss, recommended, _r.setMode);
   let readinessHtml = '';
   if (readiness) {
-    const band = readinessBand(readiness.score);
+    const band = readinessBand(readiness.score, readiness.deaths, planResult && planResult.risky);
     readinessHtml = `<div class="readiness ${band.cls}" title="From ${READINESS_N} simulated battles of your recommended team (with random damage rolls &amp; misses): wins ${readiness.winRate}% of the time, surviving team HP ${readiness.margin}% on average. Edit a stat / EV / item to watch it move.">
       <div class="rd-top"><span class="rd-num">${readiness.score}</span><span class="rd-of">/100</span><span class="rd-label">Battle readiness — ${band.label}</span></div>
       <div class="rd-bar"><span class="rd-fill" style="width:${readiness.score}%"></span></div>
-      <div class="rd-sub">${readiness.winRate}% win rate · ${readiness.margin}% avg team HP left${_r.setMode ? ' · Set mode' : ''}</div>
+      <div class="rd-sub">${readiness.winRate}% win rate · ${readiness.margin}% avg team HP left${(readiness.deaths >= 0.05 || (planResult && planResult.risky)) && readiness.deaths > 0 ? ` · <span style="color:var(--red)">≈${readiness.deaths} deaths/run</span>` : ''}${_r.setMode ? ' · Set mode' : ''}</div>
     </div>`;
   }
   const overCapCount = ignoreCap ? 0 : curTeam().filter(p=>p.alive && boss.cap && (p.level||0) > boss.cap).length;
@@ -9044,6 +9130,7 @@ const DEFAULT_RULES = {
   shinyClause: false,       // Allow shiny catch even when dupe/skipped
   noLegendaries: false,
   setMode: false,           // Battle style: false=Shift (free switch on KO), true=Set (no free switch)
+  banBattleItems: false,    // When true, hide the Roster Shield potion-bridge alternatives (item-clause run)
   notes: ''
 };
 // Helper: are nuzlocke rules currently enforced? Optional toggles short-circuit
@@ -9070,8 +9157,8 @@ function setRule(key, value) {
     renderMatchup();
   } else if (key === 'dupesClause' || key === 'speciesClause' || key === 'shinyClause' || key === 'noLegendaries') {
     renderEncounters();
-  } else if (key === 'setMode') {
-    renderMatchup();   // switch-based plays (bait/pivot) change with battle style
+  } else if (key === 'setMode' || key === 'banBattleItems') {
+    renderMatchup();   // switch plays + potion-bridge alternatives change the plan
   }
   renderRules();
 }
@@ -9111,6 +9198,13 @@ function renderRules() {
         <div>
           <div class="rule-name">Set battle style</div>
           <div class="rule-desc">No free switch when you KO an opponent (vs Shift, which lets you swap before their next Pokémon comes in). When on, the Boss Matchup "switch to…" plays are reframed — you can't KO-and-pivot for free, so you must already be in with the right Pokémon (e.g. land the final blow with your baiter so it faces the next foe).</div>
+        </div>
+      </label>
+      <label class="rule-row">
+        <input type="checkbox" ${rules.banBattleItems?'checked':''} onchange="setRule('banBattleItems', this.checked)">
+        <div>
+          <div class="rule-name">Ban healing items in boss battles</div>
+          <div class="rule-desc">For item-clause runs. The battle plan/readiness are always computed item-free, but by default a 🎒 "safer alternative" is surfaced when a teammate could clear a flagged threat with one potion (e.g. tank a hit a glass-cannon would gamble on). Turn this on to hide those potion-bridge suggestions.</div>
         </div>
       </label>
     </div>
@@ -11534,13 +11628,20 @@ function pokeView(p, idx) {
       upCat === 'P' ? 'physical' : upCat === 'S' ? 'special' : (upCat === 'U' ? 'status' : null),
       stab ? 'STAB' : null,
     ].filter(Boolean).join(' · ');
-    // Score each current slot; the lowest-scoring slot that the new move
-    // clearly beats (delta ≥ 15) gets the "Recommended" tag.
+    // If there's an OPEN slot, the right call is always to just add the move there
+    // — never give up an existing move while a slot is free. So recommend the first
+    // empty slot and don't flag any replacement. Only when the set is full (4 moves)
+    // do we suggest replacing the lowest-scoring slot the new move clearly beats.
     const currentScored = moveList.map(mv => ({ name: mv, ...scoreMove(mv, ownTypes, ownStats) }));
+    let firstEmpty = -1;
+    for (let i = 0; i < 4; i++) { if (!moveList[i]) { firstEmpty = i; break; } }
+    const hasEmpty = firstEmpty >= 0;
     let bestSlot = -1, bestDelta = 0;
-    for (let i = 0; i < currentScored.length; i++) {
-      const delta = upScore.score - currentScored[i].score;
-      if (delta > bestDelta && delta >= 15) { bestSlot = i; bestDelta = delta; }
+    if (!hasEmpty) {
+      for (let i = 0; i < currentScored.length; i++) {
+        const delta = upScore.score - currentScored[i].score;
+        if (delta > bestDelta && delta >= 15) { bestSlot = i; bestDelta = delta; }
+      }
     }
     const slotRows = [];
     for (let i = 0; i < 4; i++) {
@@ -11561,9 +11662,10 @@ function pokeView(p, idx) {
           <button class="nmp-btn replace" onclick="learnMoveReplace(${idx}, ${i})">Replace${isRec ? ' (recommended)' : ''}</button>
         </div>`);
       } else {
-        slotRows.push(`<div class="nmp-slot empty">
+        const isRecEmpty = i === firstEmpty;
+        slotRows.push(`<div class="nmp-slot empty${isRecEmpty ? ' recommended' : ''}">
           <div class="nmp-slot-info"><span class="nmp-slot-name">— empty slot ${i + 1} —</span></div>
-          <button class="nmp-btn teach" onclick="learnMoveTeach(${idx})">Teach here</button>
+          <button class="nmp-btn teach" onclick="learnMoveTeach(${idx})">Teach here${isRecEmpty ? ' (recommended)' : ''}</button>
         </div>`);
       }
     }
@@ -11578,10 +11680,10 @@ function pokeView(p, idx) {
           ${upType ? `<span class="type-badge t-${upType}">${upType}</span>` : ''}
           <span class="nmp-meta-text">${metaBits || 'unknown'} · score ${upScore.score}</span>
         </div>
-        <div class="nmp-tip">${bestSlot >= 0
-          ? `<strong>${moveList[bestSlot]}</strong> looks like the obvious swap — the new move scores ${bestDelta} points higher for this set.`
-          : (moveList.length < 4
-            ? 'You have an empty slot — pick it up freely.'
+        <div class="nmp-tip">${hasEmpty
+          ? 'You have an open slot — teach it there for free; no need to give anything up.'
+          : (bestSlot >= 0
+            ? `<strong>${moveList[bestSlot]}</strong> looks like the obvious swap — the new move scores ${bestDelta} points higher for this set.`
             : 'Your current set already scores well; replacing anything is a judgment call.')}</div>
         <div class="nmp-slots">${slotRows.join('')}</div>
         <div class="nmp-actions">
@@ -11724,10 +11826,6 @@ async function renderPokeViewLearnset(idx) {
     ? p.moves.split(',').map(s=>s.trim()).filter(Boolean)
     : (Array.isArray(p.moves) ? p.moves.filter(Boolean) : []);
   const ownedCanon = new Set(currentMoves.map(m => (resolveMove(m)||m).toLowerCase()));
-  // Moves the user explicitly skipped via the inline learn-prompt. Treated
-  // as "handled" for suggestion/prompt purposes — still shown in the chart
-  // as historical reference (with a "skipped" flag), but never re-suggested.
-  const dismissedCanon = new Set((p.dismissedMoves || []).map(s => s.toLowerCase()));
   const lv = p.level || 0;
   // Evo moves bypass the level-gate — they're available the instant the
   // Pokémon becomes this species, regardless of its current level. Splitting
@@ -11737,6 +11835,19 @@ async function renderPokeViewLearnset(idx) {
   const levelMoves = ls.filter(m => !m.isEvo);
   const already = levelMoves.filter(m => m.lv <= lv);
   const upcoming = levelMoves.filter(m => m.lv > lv);
+  // Un-stick stale skips: if the user lowered this mon's level back BELOW a move
+  // they'd previously skipped, that "Don't learn" decision no longer applies (they
+  // haven't reached the move again). Clear it so the move is re-recommended now and
+  // re-prompts when they re-level past it.
+  if (Array.isArray(p.dismissedMoves) && p.dismissedMoves.length) {
+    const lvOf = new Map(levelMoves.map(m => [(resolveMove(m.name)||m.name).toLowerCase(), m.lv]));
+    const kept = p.dismissedMoves.filter(d => { const dl = lvOf.get((resolveMove(d)||d).toLowerCase()); return dl == null || dl <= lv; });
+    if (kept.length !== p.dismissedMoves.length) { p.dismissedMoves = kept; if (typeof save === 'function') save(); }
+  }
+  // Moves the user explicitly skipped via the inline learn-prompt. Treated
+  // as "handled" for suggestion/prompt purposes — still shown in the chart
+  // as historical reference (with a "skipped" flag), but never re-suggested.
+  const dismissedCanon = new Set((p.dismissedMoves || []).map(s => s.toLowerCase()));
 
   // The current set, scored once. Entries: { name, score, type, cat }.
   const curSet = currentMoves.map(m => ({ name: m, score: scoreMove(m, ownTypes, ownStats).score, type: getMoveType(m), cat: moveCategory(m) }));
@@ -12462,11 +12573,19 @@ function toggleShiny(idx) {
 }
 function markDead(idx) {
   const team = curRun().team;
-  const cause = prompt(`What killed ${team[idx].nickname}?`)||'Unknown';
-  team[idx].alive = false; team[idx].inParty = false; team[idx].causeOfDeath = cause;
+  const cause = prompt(`What killed ${team[idx].nickname}?`);
+  if (cause === null) return; // user hit Cancel — do NOT send to the graveyard
+  team[idx].alive = false; team[idx].inParty = false; team[idx].causeOfDeath = cause.trim() || 'Unknown';
   team[idx].deathAt = Date.now();
   save(); render(); closeModal();
   showToast(`${team[idx].nickname} moved to graveyard`,'error');
+}
+function revivePoke(idx) {
+  const team = curRun().team; const p = team[idx]; if (!p) return;
+  if (!confirm(`Bring ${p.nickname || p.species} back from the graveyard? Use this to undo a mistaken death.`)) return;
+  p.alive = true; delete p.causeOfDeath; delete p.deathAt;
+  save(); render();
+  showToast(`${p.nickname || p.species} revived to your roster`, 'success');
 }
 function deletePoke(idx) {
   const run = curRun(); if (!run) return;
