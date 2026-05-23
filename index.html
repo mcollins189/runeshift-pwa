@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
-<script src="data.bundle.js?v=1779521451368" onerror="window.__NUZ_BUNDLE_MISSING=true"></script>
+<script src="data.bundle.js?v=1779561145121" onerror="window.__NUZ_BUNDLE_MISSING=true"></script>
 <style>
   :root {
     --bg:#0f0f10;--bg2:#18181b;--bg3:#222228;--bg4:#2a2a32;
@@ -4888,7 +4888,16 @@ function makeErrorRecord(prev) {
 // once new data lands. Keyed by 'all' for now; per-key dispatch can come later.
 const backfillSubscribers = new Set();
 function onBackfill(fn) { backfillSubscribers.add(fn); }
-function fireBackfill() { for (const fn of backfillSubscribers) try { fn(); } catch(e) {} }
+let _bfPrecomputeT = null;
+function fireBackfill() {
+  for (const fn of backfillSubscribers) try { fn(); } catch(e) {}
+  if (typeof _refreshSimWorker === 'function') _refreshSimWorker();
+  // Backfill makes more bosses computable + changes move data → bump the precompute
+  // epoch (debounced; backfill fires many times on cold load) so the idle pass
+  // re-runs against fresh data and picks up bosses that were't ready before.
+  clearTimeout(_bfPrecomputeT);
+  _bfPrecomputeT = setTimeout(() => { _backfillEpoch++; if (typeof schedulePrecompute === 'function') schedulePrecompute(); }, 1600);
+}
 
 // PokeAPI's /pokemon/<slug> endpoint 404s for species whose canonical entry
 // only exists under a form-specific slug (no bare "default" form). Map those
@@ -6992,30 +7001,54 @@ function toggleRematchView() { _rematchView = !_rematchShown; renderMatchup(); }
 // it): each member carries a starter tag — grass/fire/water — in its `matchup`
 // field, and same-slot variants repeat once per starter. detectStarterType()
 // figures out your pick so we can show only the team you'll actually face.
-const STARTER_TYPES = new Set(['grass','fire','water']);
+const STARTER_TYPES = new Set(['grass','fire','water','eevee']);
+// Insurgence offers an Eevee starter as a 4th choice — tagged 'eevee' in the data
+// (a variant label, NOT a type), so an Eevee-line pick maps to the 'eevee' variant
+// rather than to its Normal/eeveelution type.
+const EEVEE_LINE = new Set(['eevee','vaporeon','jolteon','flareon','espeon','umbreon','leafeon','glaceon','sylveon']);
 // Found via the "Starter" route-log entry → its linked roster mon → that mon's
 // primary type (Torterra→Grass, Infernape→Fire, Empoleon→Water, and the same
-// for every game's starters). null = unknown → show every variant.
+// for every game's starters; Eevee-line → 'eevee'). null = unknown → show every variant.
 function detectStarterType() {
   const run = curRun(); if (!run) return null;
   const team = curTeam();
+  const tagOf = sp => {
+    if (!sp) return null;
+    if (EEVEE_LINE.has(speciesSlug(sp))) return 'eevee';     // Insurgence's Eevee starter
+    const info = pokeInfo(sp);
+    const t = (info && info.t && info.t[0]) ? String(info.t[0]).toLowerCase() : null;
+    return (t && STARTER_TYPES.has(t)) ? t : null;
+  };
   for (const rt of (run.routes || [])) {
     if (!/starter/i.test(rt.route || '')) continue;
     const idx = rt.linkedTeamIdx;
-    const mon = (typeof idx === 'number') ? team[idx] : null;
-    const sp = (mon && mon.species) || rt.encounter;
-    const info = sp ? pokeInfo(sp) : null;
-    const t = (info && info.t && info.t[0]) ? String(info.t[0]).toLowerCase() : null;
-    if (t && STARTER_TYPES.has(t)) return t;
+    const linked = (typeof idx === 'number') ? team[idx] : null;
+    // Try the linked roster mon first, then the recorded encounter species. The
+    // index link can go STALE (shifts when a mon is deleted/reordered) while the
+    // encounter string stays accurate, so falling back to it recovers the pick.
+    // Starter evolutions preserve primary type (Chimchar/Monferno/Infernape = Fire),
+    // so either source yields the right answer when it resolves to a starter tag.
+    for (const sp of [linked && linked.species, rt.encounter]) {
+      const tag = tagOf(sp);
+      if (tag) return tag;
+    }
   }
   return null;
 }
-// Filter a rival's team down to the variant matching the player's starter.
-// Untagged members (matchup ∉ grass/fire/water) are always kept; tagged members
-// survive only when the tag matches. The starter tag is stripped off the kept
-// members so the boss card doesn't render it as a bogus "Counters" hint. If the
-// starter is unknown (no log yet) every variant is kept so nothing is hidden.
-function rivalTeamForRun(team) {
+// True when a team carries starter-variant tags on its members — i.e. the battle
+// branches by which starter you picked. Covers rivals AND starter-branched
+// gym/champion fights (the Striaton trio gym, Blue/Kukui/Leon-style champions,
+// Ilima, Hop's semifinals, Insurgence's 4-way rivals…).
+function teamHasStarterVariants(team) {
+  return (team || []).some(m => STARTER_TYPES.has((m.matchup || '').toLowerCase().trim()));
+}
+// Narrow a starter-branched team down to the single variant matching the player's
+// pick. Untagged members are always kept; tagged members survive only when the tag
+// matches your starter. The matched members' tag is stripped so the card doesn't
+// render it as a bogus "Counters" hint. Unknown starter (no log yet) → keep every
+// variant so nothing is hidden. No-op for normal fixed-team battles.
+function starterVariantTeam(team) {
+  if (!teamHasStarterVariants(team)) return team;
   const st = detectStarterType();
   const out = [];
   for (const m of (team || [])) {
@@ -8064,37 +8097,305 @@ function _readyBattle(party, bossC, mode, rng) {
   let endHP = 0, deaths = 0; for (const h of pHP) { endHP += Math.max(0, h); if (h <= 0) deaths++; }
   return { won, endHP: endHP / party.length, deaths };
 }
-let _readinessCache = { seed: null, result: null };
+// Small LRU Maps (insertion-order = recency; re-set on read to bump). Replace the
+// old single-slot caches so boss switching + revisits are instant and the idle
+// precompute pass can warm many bosses ahead of time.
+function _lruGet(map, key) { if (!map.has(key)) return undefined; const v = map.get(key); map.delete(key); map.set(key, v); return v; }
+function _lruSet(map, key, val, cap) { if (map.has(key)) map.delete(key); map.set(key, val); while (map.size > cap) map.delete(map.keys().next().value); return val; }
+const _readinessLRU = new Map(); const RD_LRU_CAP = 32;
 const READINESS_N = 100; // enough samples that low-probability deaths (crit OHKOs) register reliably rather than depending on one lucky seed
 // opts.n overrides the sample count (lower = faster, used for the projection
 // delta sims). opts.noCache skips the shared single-slot cache entirely so a
 // projected-team sim can never overwrite/return the LIVE team's cached result.
+// Build the sim inputs (combatants) on the MAIN thread — this is the part that
+// needs pokeInfo/calcStatAtLevel/getAbilityEffect (NOT shipped to the worker).
+// Returns { party, bossC } of plain, structured-clone-safe combatant objects, or
+// null when data isn't ready (a boss mon not backfilled yet).
+function _buildSimInputs(boss, pool, mode) {
+  const team = boss.team || [];
+  if (!team.length || !pool || !pool.length) return null;
+  const party = []; for (const p of pool) { const c = pCombatant(p); if (c) { c.flags = planFlags(p); party.push(c); } }
+  const bossC = team.map(b => bossCombatant(b, boss)).filter(Boolean);
+  if (bossC.length !== team.length || !party.length) return null;
+  return { party, bossC };
+}
+// The pure Monte-Carlo loop + score formula. Self-contained (uses only _mulberry32
+// + _readyBattle + the pre-built combatants), so it is SHIPPED VERBATIM into the
+// Web Worker — the worker and this sync path run identical code → identical results.
+function _scoreFromSims(party, bossC, mode, n, seed) {
+  const rng = _mulberry32(seed);
+  let wins = 0, marginSum = 0, deathSum = 0;
+  for (let i = 0; i < n; i++) { const r = _readyBattle(party, bossC, mode, rng); deathSum += r.deaths; if (r.won) { wins++; marginSum += r.endHP; } }
+  const w = wins / n, marginWon = wins ? marginSum / wins : 0, avgDeaths = deathSum / n;
+  // Win probability gates the score; surviving-team-HP margin separates a clean
+  // sweep from a costly grind. Dead mons contribute 0 HP, so `marginWon` ALREADY
+  // reflects losses — we deliberately do NOT apply a separate death multiplier.
+  return { score: Math.round(100 * w * (0.45 + 0.55 * marginWon)), winRate: Math.round(w * 100), margin: Math.round(marginWon * 100), deaths: +avgDeaths.toFixed(2) };
+}
 function computeReadiness(boss, pool, setMode, opts) {
   const N = (opts && opts.n) || READINESS_N;
   const noCache = !!(opts && opts.noCache);
-  const team = boss.team || [];
-  if (!team.length || !pool || !pool.length) return null;
+  if (!(boss.team || []).length || !pool || !pool.length) return null;
   const mode = setMode ? 'set' : 'shift';
   const seed = _readinessSeed(boss, pool, mode);
-  if (!noCache && _readinessCache.seed === seed && _readinessCache.result) return _readinessCache.result;
-  const party = []; for (const p of pool) { const c = pCombatant(p); if (c) { c.flags = planFlags(p); party.push(c); } }
-  const bossC = team.map(b => bossCombatant(b, boss)).filter(Boolean);
-  // Wait for FULL data: if any boss mon isn't backfilled yet, return null without
-  // caching so it recomputes (cheap bail) on the onBackfill re-render once ready.
-  if (bossC.length !== team.length || !party.length) return null;
-  const rng = _mulberry32(seed);
-  let wins = 0, marginSum = 0, deathSum = 0;
-  for (let i = 0; i < N; i++) { const r = _readyBattle(party, bossC, mode, rng); deathSum += r.deaths; if (r.won) { wins++; marginSum += r.endHP; } }
-  const w = wins / N, marginWon = wins ? marginSum / wins : 0, avgDeaths = deathSum / N;
-  // Win probability gates the score; surviving-team-HP margin separates a clean
-  // sweep from a costly grind. Dead mons contribute 0 HP, so `marginWon` ALREADY
-  // reflects losses — we deliberately do NOT apply a separate death multiplier
-  // (an earlier one wrongly drove 99%-win-but-costly fights to 0 / "Unwinnable").
-  // `deaths` feeds the band's clean-sweep gate + the "deaths/run" readout only.
-  const result = { score: Math.round(100 * w * (0.45 + 0.55 * marginWon)), winRate: Math.round(w * 100), margin: Math.round(marginWon * 100), deaths: +avgDeaths.toFixed(2) };
-  if (!noCache) _readinessCache = { seed, result };
+  // Only the full-N live result is cached/shared (the precompute pass warms this
+  // same LRU under the same seed via simReadinessAsync). Lower-N projection sims
+  // pass noCache so they can never overwrite/return the LIVE team's result.
+  if (!noCache && N === READINESS_N) { const hit = _lruGet(_readinessLRU, seed); if (hit) return hit; }
+  const inp = _buildSimInputs(boss, pool, mode);
+  if (!inp) return null;   // data not ready — cheap bail; recomputes on onBackfill
+  const result = _scoreFromSims(inp.party, inp.bossC, mode, N, seed);
+  if (!noCache && N === READINESS_N) _lruSet(_readinessLRU, seed, result, RD_LRU_CAP);
   return result;
 }
+
+/* ──────────────────────────────────────────────────────────────────────
+   READINESS WEB WORKER (v5.0) — runs the Monte-Carlo sims off the main thread
+   so the heavy advice + precompute passes never jank the UI. Built at runtime
+   from a Blob = the engine functions' source (.toString) + the data tables
+   (sent via init message) → SINGLE SOURCE OF TRUTH, offline by construction (no
+   separate file → nothing extra for the SW to cache). A DATA-DRIVEN self-test
+   gates it; ANY failure (missing dep, mismatch, timeout, no Worker support) →
+   synchronous main-thread fallback, so the worker can only add speed, never
+   change a result. See WORKER_DESIGN.md. */
+// POOL of identical workers so the ~8 advice sims run in PARALLEL (1 worker did
+// them serially → ~5s; a pool of N → ~5/N). _workerOK gates the whole pool.
+let _pool = [], _workerOK = null /*null=untested,true,false*/, _poolReadyP = null, _selfTestP = null, _simJobId = 0;
+const _simPending = new Map();
+const _POOL_SIZE = Math.max(1, Math.min(4, (typeof navigator !== 'undefined' && navigator.hardwareConcurrency) ? navigator.hardwareConcurrency - 1 : 3));
+// Engine functions shipped to the worker (the full sim closure). gameIsPreSplit
+// is EXCLUDED — it reads curGame()/GAMES, so the worker gets an override instead.
+function _simWorkerFnList() {
+  return [_scoreFromSims, _readyBattle, _readyHit, _mulberry32, bestHitFraction,
+    planFlags, planFrac, planTKO, planWins, planBestRepl, planRollout, planActions,
+    planChooseAction, planChooseLead, resolveMove, getMoveType, moveData, movePower,
+    moveCategory, moveEffect, effectiveCategory, moveHasPriority, moveAccuracy,
+    itemDamageMult, itemAccuracyMult, effectiveness, effectivenessWithAbility,
+    normMovesList, normalizeMoveName, moveSlug];
+}
+function _buildWorkerSource() {
+  // `const NAME = <source>` is robust to either declaration style (function decl
+  // OR const-arrow) — f.name supplies the binding either way.
+  const fnSrc = _simWorkerFnList().map(f => 'const ' + f.name + ' = ' + f.toString()).join(';\n') + ';';
+  return [
+    'let MOVES,MOVE_DATA,MOVE_ACCURACY,TYPE_BOOST_ITEM,TYPE_CHART,MM_DEFAULT_POWER,PLAN_SWITCH_PEN,MOVES_NORMALIZED,backfilledMoves={},__PRESPLIT=false;',
+    'let STATUS_MOVES=new Set(),PHYSICAL_TYPES_PRE_SPLIT=new Set(),PLAN_PIVOT=new Set(),PLAN_SLEEP=new Set(),PLAN_RECOVER=new Set();',
+    'var NUZ_DATA={};',
+    'const gameIsPreSplit=()=>__PRESPLIT;',   // override: orig reads curGame()/GAMES
+    fnSrc,
+    'onmessage=function(e){var m=e.data;',
+    ' if(m.type==="init"){var d=m.data;MOVES=d.MOVES;MOVE_DATA=d.MOVE_DATA;MOVE_ACCURACY=d.MOVE_ACCURACY;TYPE_BOOST_ITEM=d.TYPE_BOOST_ITEM;TYPE_CHART=d.TYPE_CHART;MM_DEFAULT_POWER=d.MM_DEFAULT_POWER;PLAN_SWITCH_PEN=d.PLAN_SWITCH_PEN;MOVES_NORMALIZED=d.MOVES_NORMALIZED;backfilledMoves=d.backfilledMoves||{};STATUS_MOVES=new Set(d.STATUS_MOVES);PHYSICAL_TYPES_PRE_SPLIT=new Set(d.PHYSICAL_TYPES_PRE_SPLIT);PLAN_PIVOT=new Set(d.PLAN_PIVOT);PLAN_SLEEP=new Set(d.PLAN_SLEEP);PLAN_RECOVER=new Set(d.PLAN_RECOVER);NUZ_DATA={moveStats:d.moveStats};postMessage({type:"ready"});return;}',
+    ' if(m.type==="sim"){__PRESPLIT=!!m.preSplit;var r=null,err=null;try{r=_scoreFromSims(m.party,m.bossC,m.mode,m.n,m.seed);}catch(ex){err=String(ex&&ex.message||ex);}postMessage({type:"simDone",id:m.id,result:r,err:err});return;}',
+    '};'
+  ].join('\n');
+}
+function _workerInitPayload() {
+  return {
+    MOVES, MOVE_DATA, MOVE_ACCURACY, TYPE_BOOST_ITEM, TYPE_CHART, MM_DEFAULT_POWER, PLAN_SWITCH_PEN, MOVES_NORMALIZED,
+    moveStats: (typeof NUZ_DATA !== 'undefined' && NUZ_DATA.moveStats) || {},
+    backfilledMoves: (typeof backfilledMoves !== 'undefined' && backfilledMoves) || {},
+    STATUS_MOVES: [...STATUS_MOVES], PHYSICAL_TYPES_PRE_SPLIT: [...PHYSICAL_TYPES_PRE_SPLIT],
+    PLAN_PIVOT: [...PLAN_PIVOT], PLAN_SLEEP: [...PLAN_SLEEP], PLAN_RECOVER: [...PLAN_RECOVER]
+  };
+}
+function _makeWorker() {
+  const url = URL.createObjectURL(new Blob([_buildWorkerSource()], { type: 'text/javascript' }));
+  const w = new Worker(url);
+  URL.revokeObjectURL(url);
+  w._ready = new Promise(res => { w._readyResolve = res; });
+  w.onmessage = (e) => {
+    const m = e.data;
+    if (m.type === 'ready') { if (w._readyResolve) w._readyResolve(); }
+    else if (m.type === 'simDone') { const cb = _simPending.get(m.id); if (cb) { _simPending.delete(m.id); cb(m); } }
+  };
+  w.onerror = () => { _workerOK = false; _disposePool(); };
+  w.postMessage({ type: 'init', data: _workerInitPayload() });
+  return w;
+}
+function _ensurePool() {
+  if (_workerOK === false) return false;
+  if (_pool.length) return true;
+  if (typeof Worker === 'undefined' || typeof URL === 'undefined' || !URL.createObjectURL || typeof Blob === 'undefined') { _workerOK = false; return false; }
+  try {
+    for (let i = 0; i < _POOL_SIZE; i++) _pool.push(_makeWorker());
+    _poolReadyP = Promise.all(_pool.map(w => w._ready));
+    return true;
+  } catch (e) { _workerOK = false; _disposePool(); return false; }
+}
+function _disposePool() { for (const w of _pool) { try { w.terminate(); } catch (e) {} } _pool = []; for (const cb of _simPending.values()) cb({ result: null, err: 'disposed' }); _simPending.clear(); }
+// Re-sync every worker's move snapshot after a PokeAPI backfill lands (debounced —
+// backfill fires many times on a cold load; re-posting the payload each time is wasteful).
+let _wkRefreshT = null;
+function _refreshSimWorker() {
+  if (!(_pool.length && _workerOK !== false)) return;
+  clearTimeout(_wkRefreshT);
+  _wkRefreshT = setTimeout(() => { if (_pool.length && _workerOK !== false) { const payload = _workerInitPayload(); for (const w of _pool) w.postMessage({ type: 'init', data: payload }); } }, 1500);
+}
+// Round-robin a sim across the pool (each worker drains its own queue FIFO).
+function _runSimInPool(party, bossC, mode, n, seed, preSplit) {
+  return new Promise((resolve) => {
+    if (!_pool.length) { resolve(null); return; }
+    const id = ++_simJobId, w = _pool[id % _pool.length]; let done = false;
+    const to = setTimeout(() => { if (!done) { done = true; _simPending.delete(id); resolve(null); } }, 12000);
+    _simPending.set(id, (m) => { if (done) return; done = true; clearTimeout(to); resolve(m.err ? null : m.result); });
+    try { w.postMessage({ type: 'sim', id, party, bossC, mode, n, seed, preSplit }); }
+    catch (e) { done = true; clearTimeout(to); _simPending.delete(id); resolve(null); }
+  });
+}
+// Data-driven self-test: a low-N sim of the ACTUAL pool+boss must match the sync
+// path EXACTLY before we trust the workers (catches hack-move/pre-split divergence
+// a fixed fixture would miss). Memoized so concurrent callers share one test.
+async function _selfTestWorker(inp, mode, seed, preSplit) {
+  const n = 24;
+  const sync = _scoreFromSims(inp.party, inp.bossC, mode, n, seed);
+  const wk = await _runSimInPool(inp.party, inp.bossC, mode, n, seed, preSplit);
+  return !!(wk && sync && wk.score === sync.score && wk.winRate === sync.winRate && wk.margin === sync.margin && wk.deaths === sync.deaths);
+}
+function _ensureSelfTest(inp, mode, seed, preSplit) {
+  if (!_selfTestP) _selfTestP = _selfTestWorker(inp, mode, seed, preSplit).then(ok => { _workerOK = ok; return ok; });
+  return _selfTestP;
+}
+// Async readiness — pool if trusted, else synchronous fallback. Identical
+// inputs+seed ⇒ identical result to computeReadiness. Drives the heavy passes.
+async function simReadinessAsync(boss, pool, setMode, opts) {
+  const N = (opts && opts.n) || READINESS_N;
+  const noCache = !!(opts && opts.noCache);
+  const workerOnly = !!(opts && opts.workerOnly);   // precompute: never fall back to main-thread (would jank)
+  const cacheable = !noCache && N === READINESS_N;   // share/warm the same LRU computeReadiness reads
+  const mode = setMode ? 'set' : 'shift';
+  const inp = _buildSimInputs(boss, pool, mode);
+  if (!inp) return null;
+  const seed = _readinessSeed(boss, pool, mode);
+  if (cacheable) { const hit = _lruGet(_readinessLRU, seed); if (hit) return hit; }
+  const preSplit = (typeof gameIsPreSplit === 'function') ? gameIsPreSplit() : false;
+  if (_ensurePool()) {
+    try { await _poolReadyP; } catch (e) {}
+    if (_workerOK === null) await _ensureSelfTest(inp, mode, seed, preSplit);
+    if (_workerOK) { const r = await _runSimInPool(inp.party, inp.bossC, mode, N, seed, preSplit); if (r) { if (cacheable) _lruSet(_readinessLRU, seed, r, RD_LRU_CAP); return r; } }
+  }
+  if (workerOnly) return null;                // worker unavailable/untrusted → caller skips (no main-thread sim)
+  await new Promise(r => setTimeout(r, 0));   // fallback yield (keeps the sync path from janking)
+  const r = _scoreFromSims(inp.party, inp.bossC, mode, N, seed);
+  if (cacheable) _lruSet(_readinessLRU, seed, r, RD_LRU_CAP);
+  return r;
+}
+/* ──────────────────────────────────────────────────────────────────────
+   IDLE BACKGROUND PRECOMPUTE (v5.0) — warm the readiness meter + advice for
+   EVERY boss so navigation is instant. Order: the boss you're on now → the
+   rest by progression (cap-ascending). Runs only when the worker pool is
+   trusted (workerOnly), one boss at a time, yielding to idle between each so it
+   never janks. Results land in the same LRU caches the live render reads, keyed
+   identically — so a precomputed boss opens with no measuring spinner. A
+   state-key (game + full team hash + backfill epoch) supersedes in-flight work
+   when anything changes; already-cached bosses are skipped on restart. */
+const _ric = (typeof requestIdleCallback === 'function')
+  ? (cb) => requestIdleCallback(cb, { timeout: 2000 })
+  : (cb) => setTimeout(cb, 200);
+const _idleYield = () => new Promise(res => _ric(() => res()));
+let _precomputeKey = null, _precomputeGen = 0, _precomputeActive = false, _backfillEpoch = 0;
+
+// Resolve a boss to the exact context the live matchup render uses, so the cache
+// keys MATCH (recommended team → readiness seed; team hash → advKey). Mirrors the
+// setup in renderMatchup (rematch default, rival starter variant, cap eligibility).
+// Returns null when data isn't ready yet (a boss mon not backfilled) — retried on
+// the next backfill epoch. A key mismatch only costs the speedup, never accuracy.
+function _precomputeCtx(realBoss) {
+  if (!realBoss || !Array.isArray(realBoss.team) || !realBoss.team.length) return null;
+  const hasRematch = Array.isArray(realBoss.rematch) && realBoss.rematch.length;
+  const showRematch = !!(hasRematch && isChampionDefeated());   // matchup default when first opened
+  let workTeam = showRematch ? realBoss.rematch : realBoss.team;
+  workTeam = starterVariantTeam(workTeam);   // narrow any starter-branched battle to the player's pick
+  const boss = (workTeam !== realBoss.team) ? { ...realBoss, team: workTeam } : realBoss;
+  if (!boss.team || !boss.team.length) return null;
+  for (const b of boss.team) { if (!pokeInfo(b.species)) { ensurePokemonBackfilled(b.species); return null; } }
+  const _r = curRules();
+  const setMode = !!_r.setMode;
+  const ignoreCap = (_r.nuzlockeMode === false) || _r.ignoreCapForMatchups || showRematch;
+  const eligibleRoster = curTeam().filter(p => p.alive && (ignoreCap || !boss.cap || (p.level||0) <= boss.cap));
+  const bossCount = (boss.team||[]).length;
+  const recoSlots = recoMatchCount ? bossCount : 6;
+  const recommended = recommendTeam(eligibleRoster, boss, recoSlots);
+  if (!recommended || !recommended.length) return null;
+  return { realBoss, boss, showRematch, setMode, eligibleRoster, recommended };
+}
+
+// Warm one boss: readiness meter (full N → readiness LRU) then the advice delta
+// pass (→ advice LRU). All sims are workerOnly, so if the worker isn't trusted
+// nothing runs on the main thread (the boss is just left for later).
+// Returns true if it actually ran sims (so the caller yields to idle); false when
+// fully cached / nothing to do (so restarts skip warmed bosses with no idle cost).
+async function _precomputeBoss(realBoss) {
+  const ctx = _precomputeCtx(realBoss);
+  if (!ctx) return false;
+  const { boss, recommended, eligibleRoster, setMode, showRematch } = ctx;
+  const mode = setMode ? 'set' : 'shift';
+  const seed = _readinessSeed(boss, recommended, mode);
+  let worked = false;
+  let readiness = _lruGet(_readinessLRU, seed);
+  if (!readiness) {
+    readiness = await simReadinessAsync(boss, recommended, setMode, { workerOnly: true });
+    if (!readiness) return false;   // worker not trusted / data race → bail, retry next epoch
+    worked = true;
+  }
+  // Advice: only worth measuring when there are candidates to project.
+  const analysis = analyzeAdvice(boss, recommended, eligibleRoster);
+  if (!analysis.candidates.length && !analysis.pending.length) return worked;
+  const stateHash = _adviceTeamStateHash();
+  const advKey = _advCacheKey(boss.name, showRematch, boss.team, stateHash);
+  if (_lruGet(_adviceLRU, advKey)) return worked;   // already warmed
+  if (analysis.pending.length) await Promise.all(analysis.pending.map(s => fetchLearnset(s).catch(()=>null)));
+  const a2 = analyzeAdvice(boss, recommended, eligibleRoster);
+  const sc = await scoreAdviceGems(boss, recommended, a2.candidates, setMode, readiness.score, true);
+  if (_adviceTeamStateHash() !== stateHash) return worked;   // team edited mid-pass → discard (stale)
+  _lruSet(_adviceLRU, advKey, sc, ADV_LRU_CAP);
+  return true;
+}
+
+// Warm order: start at the first NOT-yet-defeated boss (where the player actually is
+// in their run — independent of whatever cap happens to be selected on open), continue
+// forward through the progression, then WRAP to the start. getBosses returns story
+// order, so a rotate-from-there warms the most-likely-next fights first, then loops
+// back to cover earlier ones too.
+function _precomputeBossOrder() {
+  const bosses = getBosses(curGame()) || [];
+  if (!bosses.length) return [];
+  let i = (typeof isBossDefeated === 'function') ? bosses.findIndex(b => !isBossDefeated(b.name)) : -1;
+  if (i <= 0) return bosses.slice();              // all defeated / first is next → natural order
+  return [...bosses.slice(i), ...bosses.slice(0, i)];
+}
+
+async function _runPrecompute(gen, key) {
+  if (gen !== _precomputeGen || _workerOK === false || typeof Worker === 'undefined') return;
+  _precomputeActive = true;
+  try {
+    const game = curGame();
+    for (const boss of _precomputeBossOrder()) {
+      if (gen !== _precomputeGen || curGame() !== game) return;   // superseded by newer state
+      let worked = false;
+      try { worked = await _precomputeBoss(boss); } catch (e) {}
+      if (gen !== _precomputeGen || curGame() !== game) return;
+      if (worked) await _idleYield();   // only pace heavy bosses; cached ones skip free
+    }
+  } finally {
+    _precomputeActive = false;
+    // A newer state arrived while we ran → restart for it (skips already-cached bosses).
+    if (gen !== _precomputeGen) _ric(() => _runPrecompute(_precomputeGen, _precomputeKey));
+  }
+}
+
+// Cheap, idempotent trigger — call on matchup render + (debounced) backfill. Only
+// kicks off a fresh pass when the state actually changed; a running pass is left
+// to finish and self-restart for the new state.
+function schedulePrecompute() {
+  if (typeof Worker === 'undefined' || _workerOK === false) return;
+  let key;
+  try { key = curGame() + '#' + _backfillEpoch + '#' + _adviceTeamStateHash(); } catch (e) { return; }
+  if (key === _precomputeKey) return;
+  _precomputeKey = key;
+  const gen = ++_precomputeGen;
+  if (!_precomputeActive) _ric(() => _runPrecompute(gen, key));
+}
+
 // Band label + colour class for a readiness score. `deaths` = expected mons lost
 // per run: even a high-scoring fight that routinely trades a teammate is NOT a
 // clean sweep in a Nuzlocke, so the top band is gated on near-zero deaths.
@@ -8172,9 +8473,16 @@ function projectSpeciesAtLevel(species, targetLevel) {
 // signature of the boss + the FULL current team state, so a boss switch OR a
 // mid-sim team edit invalidates it (stale results are discarded on resolve).
 let _adviceFetchToken = 0;
-let _adviceDeltaCache = { key: null, scored: null };
+const _adviceLRU = new Map(); const ADV_LRU_CAP = 24;
 function _adviceTeamStateHash() {
   return curTeam().map(p => `${p.species}:${p.level}:${p.moves}:${(p.ivs||[]).join('')}:${(p.evs||[]).join('')}:${p.held||''}:${p.ability||''}:${p.nature||''}:${p.alive?1:0}:${p.inParty?1:0}`).join('|');
+}
+// SINGLE SOURCE OF TRUTH for the advice-cache key. Both the live matchup render
+// AND the idle precompute pass MUST build the key here so they can never drift
+// (a drift would silently lose the precompute speedup). bossName === the boss's
+// display name (also the cap value). See renderMatchup + _precomputeBoss.
+function _advCacheKey(bossName, showRematch, bossTeam, stateHash) {
+  return `${bossName}|${showRematch}|${(bossTeam||[]).map(b=>b.species+b.lv).join(',')}|${stateHash}`;
 }
 
 // Build a synthetic roster-mon for the projected gem so computeReadiness can sim
@@ -8303,16 +8611,22 @@ function _projectedTeamWith(recommended, gemMon, boss, replaceRef) {
 // with a lighter sample count (noCache so the live meter is never corrupted);
 // yields between sims so the tab never freezes. Ranked by delta — which bakes in
 // safety for free (a gem that gets KO'd barely moves the score).
-async function scoreAdviceGems(boss, recommended, candidates, setMode, baseScore) {
+// Sample count for the projection delta sims. Now that these run off-thread (pool)
+// AND are precomputed in the background, we match the live meter's N=100 for tighter,
+// more stable gem rankings (delta noise ~±1 vs ~±1.3 at N=60) at no felt cost.
+const ADVICE_SIM_N = 100;
+async function scoreAdviceGems(boss, recommended, candidates, setMode, baseScore, workerOnly) {
   const pre = candidates.slice().sort((a, b) => (b.rank || 0) - (a.rank || 0)).slice(0, 8);
-  const scored = [];
-  for (const g of pre) {
-    await new Promise(r => setTimeout(r, 0));   // yield to the UI between sims
+  // Fire all sims at once — the worker pool runs them in PARALLEL (off-thread).
+  // (In the no-worker fallback, simReadinessAsync yields per call so the sync
+  // sims stay chunked and don't freeze the UI.) workerOnly = the idle precompute
+  // path, which must never run a sync sim (it would jank the live UI).
+  const scored = await Promise.all(pre.map(async (g) => {
     const team = _projectedTeamWith(recommended, g.projMon, boss, g.replaceRef);
-    const res = computeReadiness(boss, team, setMode, { n: 60, noCache: true });
+    const res = await simReadinessAsync(boss, team, setMode, { n: ADVICE_SIM_N, workerOnly });
     const ps = res ? res.score : baseScore;
-    scored.push({ ...g, projScore: ps, delta: ps - baseScore });
-  }
+    return { ...g, projScore: ps, delta: ps - baseScore };
+  }));
   scored.sort((a, b) => b.delta - a.delta || (b.rank || 0) - (a.rank || 0));
   return scored;
 }
@@ -8415,9 +8729,12 @@ function renderMatchup() {
   const showRematch = hasRematch && (_rematchView != null ? _rematchView : isChampionDefeated());
   _rematchShown = showRematch;
   const isInfo = INFO_BATTLE_TYPES.has(realBoss.battleType);
-  // Rival teams branch on your starter pick — narrow to the variant you'll face.
+  // Starter-branched battles (rivals, the Striaton trio gym, Blue/Kukui/Leon-style
+  // champions, Ilima, Insurgence's 4-way rivals…) ship a team variant per starter —
+  // narrow to the one you'll actually face. No-op for normal fixed-team battles, so
+  // it also fixes readiness being simulated against a bloated combined team.
   let workTeam = showRematch ? realBoss.rematch : realBoss.team;
-  if (realBoss.battleType === 'rival') workTeam = rivalTeamForRun(workTeam);
+  workTeam = starterVariantTeam(workTeam);
   const boss = (workTeam !== realBoss.team) ? { ...realBoss, team: workTeam } : realBoss;
   // Kick off gen-aware PokeAPI backfill for anything we don't have locally.
   // Each completion fires fireBackfill() which retriggers renderMatchup via the
@@ -8460,8 +8777,8 @@ function renderMatchup() {
   if (readiness) {
     const analysis = analyzeAdvice(boss, recommended, eligibleRoster);
     const stateHash = _adviceTeamStateHash();
-    const advKey = `${cap}|${showRematch}|${(boss.team||[]).map(b=>b.species+b.lv).join(',')}|${stateHash}`;
-    const scored = (_adviceDeltaCache.key === advKey) ? _adviceDeltaCache.scored : null;
+    const advKey = _advCacheKey(boss.name, showRematch, boss.team, stateHash);
+    const scored = _lruGet(_adviceLRU, advKey) || null;
     const measuring = !scored && analysis.candidates.length > 0;
     const rendered = renderAdviceItems(analysis, scored, readiness.score);
     projScore = rendered.projScore; projDelta = rendered.projDelta;
@@ -8489,7 +8806,7 @@ function renderMatchup() {
         const a2 = analyzeAdvice(boss, recommended, eligibleRoster);     // learnsets may add candidates
         const sc = await scoreAdviceGems(boss, recommended, a2.candidates, _r.setMode, readiness.score);
         if (token !== _adviceFetchToken || curCap() !== cap || _adviceTeamStateHash() !== stateHash) return;
-        _adviceDeltaCache = { key: advKey, scored: sc };
+        _lruSet(_adviceLRU, advKey, sc, ADV_LRU_CAP);
         renderMatchup();
       })();
     }
@@ -8543,7 +8860,7 @@ function renderMatchup() {
   // When a rival's starter variant can't be inferred yet, every possible mon is
   // shown — tell the player so the (larger) team + readiness aren't mistaken for
   // the exact fight.
-  const rivalNote = (realBoss.battleType === 'rival' && !detectStarterType())
+  const rivalNote = (teamHasStarterVariants(showRematch ? realBoss.rematch : realBoss.team) && !detectStarterType())
     ? `Their team depends on which starter you chose — showing every possible Pokémon. Log your starter (catch it at the "Starter" location) to narrow this to the team you'll actually face.`
     : '';
   let html = `
@@ -8677,6 +8994,9 @@ function renderMatchup() {
   html += buildSpeedTierSection(party, boss);
   el.innerHTML = html;
   initRecoSortable();
+  // Warm the readiness + advice caches for every boss in the background (off-thread,
+  // on idle) so switching to any boss is instant. Cheap + idempotent per state.
+  schedulePrecompute();
 }
 
 function buildSpeedTierSection(party, boss) {
@@ -9070,8 +9390,9 @@ function initRecoSortable() {
 function applyRecommendedTeam() {
   const boss0 = getBosses(curGame()).find(b=>b.name===curCap());
   if (!boss0) return;
-  // Match what the matchup tab displays: narrow a rival to your starter variant.
-  const boss = (boss0.battleType === 'rival') ? { ...boss0, team: rivalTeamForRun(boss0.team) } : boss0;
+  // Match what the matchup tab displays: narrow any starter-branched battle to your pick.
+  const wt = starterVariantTeam(boss0.team);
+  const boss = (wt !== boss0.team) ? { ...boss0, team: wt } : boss0;
   const _r = curRules();
   const ignoreCap = (_r.nuzlockeMode === false) || _r.ignoreCapForMatchups;
   const eligibleRoster = curTeam().filter(p=>p.alive && (ignoreCap || !boss.cap || (p.level||0) <= boss.cap));
@@ -9644,6 +9965,12 @@ function render() {
   renderRoster(); renderActive(); renderRoutes(); renderGrave();
   renderCap(); renderMatchup(); renderStats(); renderEncounters();
   renderHeaderVersionPill();
+  // Warm the readiness/advice caches for EVERY boss in the background as soon as the
+  // app is up — independent of which tab you're on or whether a cap is selected, so
+  // jumping straight to Boss Matchup is already instant. Idle-scheduled + off-thread
+  // (workerOnly), so it never competes with the initial paint/backfill. Cheap +
+  // idempotent: only starts a pass when the team/game state actually changes.
+  if (typeof schedulePrecompute === 'function') schedulePrecompute();
 }
 
 // Persistent version pill in the header — same control whether you're on
