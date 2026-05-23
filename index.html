@@ -594,7 +594,7 @@
   .pv-header{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border)}
   .pv-sprite{width:104px;height:104px;background:var(--bg3);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
   .pv-sprite img{width:134px;height:134px;image-rendering:pixelated;object-fit:contain;flex-shrink:0}
-  .pv-sprite img.pv-hq{width:104px;height:104px;image-rendering:auto}  /* HOME render fills its own frame — don't over-scale/crop */
+  .pv-sprite img.pv-hq{width:100%;height:100%;image-rendering:auto}  /* HOME artwork fills its box exactly (object-fit:contain) at any box size — desktop or mobile */
   .pv-headline{flex:1;min-width:200px}
   .pv-nick{font-family:'Crimson Pro',serif;font-size:22px;font-weight:600;color:var(--text);line-height:1.1}
   .pv-species{font-size:13px;color:var(--text3);margin-top:2px}
