@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
-<script src="data.bundle.js?v=1779478327822" onerror="window.__NUZ_BUNDLE_MISSING=true"></script>
+<script src="data.bundle.js?v=1779521451368" onerror="window.__NUZ_BUNDLE_MISSING=true"></script>
 <style>
   :root {
     --bg:#0f0f10;--bg2:#18181b;--bg3:#222228;--bg4:#2a2a32;
@@ -413,8 +413,30 @@
   .rd-num{font-size:26px;font-weight:800;line-height:1}
   .rd-of{font-size:12px;color:var(--text3);font-weight:600}
   .rd-label{margin-left:8px;font-size:12px;font-weight:600;color:var(--text2)}
-  .rd-bar{height:8px;border-radius:5px;background:var(--bg2);overflow:hidden;margin:8px 0 4px}
-  .rd-fill{display:block;height:100%;border-radius:5px;transition:width .2s ease}
+  .rd-bar{position:relative;height:8px;border-radius:5px;background:var(--bg2);overflow:hidden;margin:8px 0 4px}
+  .rd-fill{display:block;position:relative;z-index:1;height:100%;border-radius:5px;transition:width .2s ease}
+  /* Projected-score ghost bar: sits BEHIND the fill (z-index:0) and is tucked 5px
+     under the fill's rounded end (and extends 5px past the projected point), so it
+     reads as the same bar GROWING out of the current score, not a second pill. */
+  .rd-ghost{position:absolute;top:0;z-index:0;height:100%;width:0;background:rgba(74,222,128,.5);border-radius:5px;pointer-events:none;transition:width .55s cubic-bezier(.22,1,.36,1) .15s}
+  /* Projected-score badge: collapses to zero width when hidden so it reserves no
+     space in the meter; expands + fades in on reveal (and reverses on hide). */
+  .rd-proj{display:inline-block;overflow:hidden;white-space:nowrap;vertical-align:bottom;max-width:0;opacity:0;transition:max-width .5s cubic-bezier(.22,1,.36,1) .15s,opacity .4s ease .2s}
+  .rd-proj.show{max-width:140px;opacity:1;margin-left:8px}
+  /* Reveal frame: a full-width bordered card so it reads as its own section
+     (not part of "Show details"). The header is a clear, hover-able pill toggle;
+     the panel uses a grid 0fr↔1fr transition so it slides open AND closed. */
+  .rd-advice-frame{border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg2);margin:8px 0 12px;overflow:hidden}
+  .rd-advice-toggle{display:flex;align-items:center;gap:8px;width:100%;padding:9px 14px;background:none;border:none;cursor:pointer;color:var(--text);font-family:inherit;font-weight:700;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;transition:background .15s ease}
+  .rd-advice-toggle:hover{background:var(--bg3)}
+  .rd-advice-toggle .rd-tg-caret{margin-left:auto;color:var(--text3);font-size:13px;transition:transform .3s ease}
+  .rd-advice-frame.open .rd-tg-caret{transform:rotate(180deg)}
+  .rd-advice-wrap{display:grid;grid-template-rows:0fr;transition:grid-template-rows .4s cubic-bezier(.22,1,.36,1)}
+  .rd-advice-wrap.open{grid-template-rows:1fr}
+  .rd-advice-inner{overflow:hidden;min-height:0}
+  @media (prefers-reduced-motion: reduce){
+    .rd-ghost,.rd-proj,.rd-advice-wrap{transition:none}
+  }
   .rd-sub{font-size:10.5px;color:var(--text3)}
   .readiness.rd-elite .rd-num,.readiness.rd-elite .rd-label{color:#4ade80}
   .readiness.rd-elite .rd-fill{background:#4ade80}
@@ -3821,9 +3843,21 @@ function pokeInfo(name) {
       const so = patches.stats.get(lower);
       if (so && so.length) {
         const merged = (base.s || [0,0,0,0,0,0]).map((v,i) => so[i] != null ? so[i] : v);
-        return { ...base, s: merged };
+        base = { ...base, s: merged };
       }
     }
+  }
+  // Evolution fallback: the bundled NUZ_DATA.evoBySlug carries forward evolutions
+  // for ALL species (every gen, offline, no backfill), so a species whose `.e`
+  // isn't otherwise known (a Gen 5+ stub, or a backfilled mon whose evo chain
+  // wasn't fetched) still resolves evo-line walks → evo recs / evo-timing advice
+  // work offline everywhere. Only fills `.e` when it's absent (curated POKEMON_DB
+  // chains + final forms with legitimately no evo are left untouched — and final
+  // forms simply aren't in the map).
+  if (base && !base.e && typeof NUZ_DATA !== 'undefined' && NUZ_DATA.evoBySlug) {
+    const slug = (typeof speciesSlug === 'function') ? speciesSlug(n) : lower;
+    const evo = slug && NUZ_DATA.evoBySlug[slug];
+    if (evo && evo.length) base = { ...base, e: [evo.map(x => prettySpecies(x[0])).join('/'), evo[0][1]] };
   }
   return base;
 }
@@ -6919,6 +6953,35 @@ function renderCap() {
 // Settings stored per-run (not part of save data — local UI state only)
 let recoMatchCount = false; // toggle: false = full 6, true = match opponent count
 let matchupDetailMode = false; // toggle: show rich detail under every opponent card
+// Readiness-improvement advice reveal. UI-only, hidden by default and reset to
+// hidden on each entry to the matchup tab. The advice + delta sims are computed
+// SILENTLY on every render (so the cache is warm by the time you click); the
+// toggle just slides the panel in and animates the projected-score ghost bar +
+// badge. The two flags are one-shot triggers for that reveal animation.
+let showAdvice = false, _adviceAnimBar = false;
+// Toggle WITHOUT a re-render — flip the classes/inline styles directly so the CSS
+// transitions animate the panel, ghost bar, and badge in BOTH directions
+// (re-rendering would re-create the nodes in their final state = no animation).
+function toggleAdvice() {
+  showAdvice = !showAdvice;
+  const frame = document.getElementById('rd-advice-frame');
+  const wrap = document.getElementById('rd-advice-wrap');
+  if (!wrap || !frame) { renderMatchup(); return; }
+  const toggle = document.getElementById('rd-advice-toggle');
+  const ghost = document.getElementById('rd-ghost');
+  const badge = document.getElementById('rd-proj-badge');
+  frame.classList.toggle('open', showAdvice);
+  wrap.classList.toggle('open', showAdvice);
+  if (toggle) toggle.setAttribute('aria-expanded', String(showAdvice));
+  if (showAdvice) {
+    if (ghost) ghost.style.width = `calc(${ghost.dataset.target}% + 10px)`;
+    else _adviceAnimBar = true;          // still measuring — animate the bar in when sims settle
+    if (badge) badge.classList.add('show');
+  } else {
+    if (ghost) ghost.style.width = '0';
+    if (badge) badge.classList.remove('show');
+  }
+}
 // Boss rematch view (BDSP post-Champion gym rematches). _rematchView: null=auto
 // (on once the Champion is beaten), true/false = user override; reset per boss.
 let _rematchView = null, _lastMatchupCap = null, _rematchShown = false;
@@ -8322,12 +8385,12 @@ function renderMatchup() {
   const readiness = computeReadiness(boss, recommended, _r.setMode);
 
   // How-to-improve advice (read-only; never feeds the live readiness score).
-  // Cached delta-scoring is keyed to the boss + full team state; while a fight's
-  // sims are still running we show the stable items + a faded "measuring…" and
-  // settle into the delta-ranked gems (+ projected-score badge) when they land.
+  // Computed on EVERY render (sims warm in the background) but hidden behind a
+  // toggle: revealing it slides the panel in + animates the ghost bar/badge.
+  // Cached delta-scoring is keyed to the boss + full team state.
   let adviceHtml = '', projScore = null, projDelta = null;
   if (readiness) {
-    const analysis = analyzeAdvice(boss, recommended, curTeam());
+    const analysis = analyzeAdvice(boss, recommended, eligibleRoster);
     const stateHash = _adviceTeamStateHash();
     const advKey = `${cap}|${showRematch}|${(boss.team||[]).map(b=>b.species+b.lv).join(',')}|${stateHash}`;
     const scored = (_adviceDeltaCache.key === advKey) ? _adviceDeltaCache.scored : null;
@@ -8335,12 +8398,16 @@ function renderMatchup() {
     const rendered = renderAdviceItems(analysis, scored, readiness.score);
     projScore = rendered.projScore; projDelta = rendered.projDelta;
     if (rendered.items.length) {
-      const fade = rendered.measuring ? 'opacity:.72;' : '';
-      adviceHtml = `<div class="rd-advice" style="${fade}margin:-2px 0 12px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm)">
-        <div style="font-size:11.5px;color:var(--text);font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px">💡 How to improve readiness</div>
-        <ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:5px;font-size:12px;line-height:1.6;color:var(--text2)">
-          ${rendered.items.map(it=>`<li><span style="margin-left:-2px">${it.icon}</span> ${it.html}</li>`).join('')}
-        </ul>
+      const refining = rendered.measuring ? ` <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text3)">⟳ measuring…</span>` : '';
+      adviceHtml = `<div class="rd-advice-frame${showAdvice ? ' open' : ''}" id="rd-advice-frame">
+        <button class="rd-advice-toggle" id="rd-advice-toggle" aria-expanded="${showAdvice}" onclick="toggleAdvice()" title="What would raise this score?">💡 How to improve readiness${refining}<span class="rd-tg-caret">▾</span></button>
+        <div class="rd-advice-wrap${showAdvice ? ' open' : ''}" id="rd-advice-wrap">
+          <div class="rd-advice-inner">
+            <ul style="margin:2px 0 10px;padding:0 14px 0 32px;display:flex;flex-direction:column;gap:5px;font-size:12px;line-height:1.6;color:var(--text2)">
+              ${rendered.items.map(it=>`<li><span style="margin-left:-2px">${it.icon}</span> ${it.html}</li>`).join('')}
+            </ul>
+          </div>
+        </div>
       </div>`;
     }
     // Dispatch the async delta sims when we're measuring; re-render ONCE when they
@@ -8349,7 +8416,7 @@ function renderMatchup() {
       const token = ++_adviceFetchToken;
       (async () => {
         if (analysis.pending.length) await Promise.all(analysis.pending.map(s => fetchLearnset(s).catch(()=>null)));
-        const a2 = analyzeAdvice(boss, recommended, curTeam());     // learnsets may add candidates
+        const a2 = analyzeAdvice(boss, recommended, eligibleRoster);     // learnsets may add candidates
         const sc = await scoreAdviceGems(boss, recommended, a2.candidates, _r.setMode, readiness.score);
         if (token !== _adviceFetchToken || curCap() !== cap || _adviceTeamStateHash() !== stateHash) return;
         _adviceDeltaCache = { key: advKey, scored: sc };
@@ -8361,15 +8428,33 @@ function renderMatchup() {
   let readinessHtml = '';
   if (readiness) {
     const band = readinessBand(readiness.score, readiness.deaths, planResult && planResult.risky);
-    // Ghost bar: solid fill 0→current, soft-green headroom current→projected.
-    const showProj = projScore != null && projScore > readiness.score;
-    const barBg = showProj ? ` style="background:linear-gradient(to right, rgba(74,222,128,.32) 0 ${projScore}%, var(--bg2) ${projScore}% 100%)"` : '';
-    const projBadge = showProj ? ` <span class="rd-proj" title="Best single high-impact swap from the advice below" style="color:#4ade80;font-weight:700;font-size:13px">→ ${projScore} <span style="font-size:11px">(+${projDelta})</span></span>` : '';
+    // Ghost bar + badge are ALWAYS rendered when there's headroom (so the toggle
+    // can animate them in/out via the CSS transitions), but visually collapsed
+    // (width 0 / max-width 0) until the advice is revealed. Ghost geometry: tucked
+    // 5px under the fill's end + 5px past the projected point so it reads as the
+    // same bar growing, not a second pill.
+    const hasProj = projScore != null && projScore > readiness.score;
+    const ghostW = hasProj ? (projScore - readiness.score) : 0;
+    const animBar = hasProj && showAdvice && _adviceAnimBar;   // settle: animate in once
+    const reveal = hasProj && showAdvice && !animBar;          // resting, revealed
+    const ghostHtml = hasProj ? `<span class="rd-ghost" id="rd-ghost" data-target="${ghostW}" style="left:calc(${readiness.score}% - 5px);width:${reveal ? `calc(${ghostW}% + 10px)` : '0'}"></span>` : '';
+    const projBadge = hasProj ? `<span class="rd-proj${reveal ? ' show' : ''}" id="rd-proj-badge" title="Best single high-impact swap from the advice below" style="color:#4ade80;font-weight:700;font-size:13px">→ ${projScore} <span style="font-size:11px">(+${projDelta})</span></span>` : '';
     readinessHtml = `<div class="readiness ${band.cls}" title="From ${READINESS_N} simulated battles of your recommended team (with random damage rolls &amp; misses): wins ${readiness.winRate}% of the time, surviving team HP ${readiness.margin}% on average. Edit a stat / EV / item to watch it move.">
       <div class="rd-top"><span class="rd-num">${readiness.score}</span><span class="rd-of">/100</span>${projBadge}<span class="rd-label">Battle readiness — ${band.label}</span></div>
-      <div class="rd-bar"${barBg}><span class="rd-fill" style="width:${readiness.score}%"></span></div>
+      <div class="rd-bar">${ghostHtml}<span class="rd-fill" style="width:${readiness.score}%"></span></div>
       <div class="rd-sub">${readiness.winRate}% win rate · ${readiness.margin}% avg team HP left${(readiness.deaths >= 0.05 || (planResult && planResult.risky)) && readiness.deaths > 0 ? ` · <span style="color:var(--red)">≈${readiness.deaths} deaths/run</span>` : ''}${_r.setMode ? ' · Set mode' : ''}</div>
     </div>`;
+    // One-shot grow-in for the SETTLE case (toggled open while still measuring):
+    // render hidden, then reveal shortly after innerHTML lands so the CSS
+    // transitions animate. setTimeout (not rAF — rAF is throttled in a
+    // backgrounded tab). Cleared so backfill re-renders don't re-animate.
+    if (animBar) {
+      _adviceAnimBar = false;
+      setTimeout(() => {
+        const g = document.getElementById('rd-ghost'); if (g) g.style.width = `calc(${ghostW}% + 10px)`;
+        const b = document.getElementById('rd-proj-badge'); if (b) b.classList.add('show');
+      }, 30);
+    }
   }
   const overCapCount = ignoreCap ? 0 : curTeam().filter(p=>p.alive && boss.cap && (p.level||0) > boss.cap).length;
 
@@ -9557,7 +9642,7 @@ function switchTab(n, dir) {
   const sec = document.getElementById(`tab-${n}`);
   sec.classList.add('active');
   if (dir !== 0) { void sec.offsetWidth; sec.classList.add(dir > 0 ? 'slide-in-right' : 'slide-in-left'); }
-  if (n==='matchup') renderMatchup();
+  if (n==='matchup') { showAdvice = false; renderMatchup(); }
   if (n==='stats') renderStats();
   if (n==='encounters') renderEncounters();
   if (n==='rules') renderRules();
@@ -13376,6 +13461,27 @@ function _collectGameSpeciesNames(gameKey) {
     }
     for (const member of (boss.rematch || [])) {
       if (member && member.species) speciesNames.add(member.species);
+    }
+  }
+
+  // Evolution-line expansion: forward-walk every referenced species' evolution
+  // line via the bundled NUZ_DATA.evoBySlug map (all 1025 species, every gen, no
+  // backfill needed) and add each reachable evolved form. A fully-evolved form
+  // that's only an evolution target — never a wild encounter or boss mon — had
+  // no /pokemon/ endpoint pre-cached, so its moveset (learnset) was blank
+  // offline. Since fetchLearnset reads /pokemon/<slug>/, caching it makes move
+  // recs, evo-timing advice, and the projected-evolution readiness gems work
+  // fully offline for the ENTIRE reachable line, in EVERY game.
+  const evoMap = (window.NUZ_DATA && window.NUZ_DATA.evoBySlug) || {};
+  if (Object.keys(evoMap).length) {
+    const queue = [...speciesNames].map(n => speciesSlug(n)).filter(Boolean);
+    const seen = new Set(queue);
+    while (queue.length) {
+      const slug = queue.shift();
+      for (const pair of (evoMap[slug] || [])) {
+        const tgt = pair[0];
+        if (tgt && !seen.has(tgt)) { seen.add(tgt); speciesNames.add(tgt); queue.push(tgt); }
+      }
     }
   }
   return speciesNames;
