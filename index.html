@@ -421,8 +421,8 @@
   .rd-ghost{position:absolute;top:0;z-index:0;height:100%;width:0;background:rgba(74,222,128,.5);border-radius:5px;pointer-events:none;transition:width .55s cubic-bezier(.22,1,.36,1) .15s}
   /* Projected-score badge: collapses to zero width when hidden so it reserves no
      space in the meter; expands + fades in on reveal (and reverses on hide). */
-  .rd-proj{display:inline-block;overflow:hidden;white-space:nowrap;vertical-align:bottom;max-width:0;opacity:0;transition:max-width .5s cubic-bezier(.22,1,.36,1) .15s,opacity .4s ease .2s}
-  .rd-proj.show{max-width:140px;opacity:1;margin-left:8px}
+  .rd-proj{display:inline-block;box-sizing:border-box;overflow:hidden;white-space:nowrap;vertical-align:bottom;max-width:0;opacity:0;padding-left:8px;transition:max-width .5s cubic-bezier(.22,1,.36,1) .12s,opacity .4s ease .18s}
+  .rd-proj.show{max-width:120px;opacity:1}
   /* Reveal frame: a full-width bordered card so it reads as its own section
      (not part of "Show details"). The header is a clear, hover-able pill toggle;
      the panel uses a grid 0fr↔1fr transition so it slides open AND closed. */
@@ -3259,7 +3259,8 @@ const SPECIES_DISPLAY_OVERRIDES = {
   'mr-mime':'Mr. Mime','mrmime':'Mr. Mime','mime-jr':'Mime Jr.',
   'porygon-z':'Porygon-Z','ho-oh':'Ho-Oh','type-null':'Type: Null',
   'farfetchd':'Farfetch’d','sirfetchd':'Sirfetch’d',
-  'tapu-koko':'Tapu Koko','tapu-lele':'Tapu Lele','tapu-bulu':'Tapu Bulu','tapu-fini':'Tapu Fini'
+  'tapu-koko':'Tapu Koko','tapu-lele':'Tapu Lele','tapu-bulu':'Tapu Bulu','tapu-fini':'Tapu Fini',
+  'jangmo-o':'Jangmo-o','hakamo-o':'Hakamo-o','kommo-o':'Kommo-o','mr-rime':'Mr. Rime'
 };
 function prettySpecies(slug) {
   if (!slug) return '';
@@ -8147,8 +8148,17 @@ function projectSpeciesAtLevel(species, targetLevel) {
     const info = pokeInfo(cur);
     if (!info || !info.e || !info.e[0]) break;
     let target = String(info.e[0]);
-    const method = info.e[1];
-    if (target.includes('/')) target = bestEvoBranch(target) || target.split('/')[0].trim();
+    let method = info.e[1];
+    if (target.includes('/')) {
+      const chosen = bestEvoBranch(target) || target.split('/')[0].trim();
+      // `info.e[1]` only carries the FIRST branch's method, which mis-gates
+      // mixed-method branched lines (Kirlia→Gallade is a stone, not Gardevoir's
+      // Lv 30; Slowpoke→Slowking is a trade, not Slowbro's Lv 37). Re-derive the
+      // CHOSEN branch's own method from the per-branch evoBySlug data.
+      const evo = (typeof NUZ_DATA !== 'undefined' && NUZ_DATA.evoBySlug) ? NUZ_DATA.evoBySlug[speciesSlug(cur)] : null;
+      if (evo) { const hit = evo.find(x => x[0] === speciesSlug(chosen)); if (hit) method = hit[1]; }
+      target = chosen;
+    }
     if (!target || !evoAvailable(target)) break;
     const lvReq = (typeof method === 'number') ? method : (/^\d+$/.test(String(method)) ? +method : null);
     if (lvReq != null && targetLevel < lvReq) break;          // level evo not yet reached
@@ -8173,7 +8183,7 @@ function _adviceTeamStateHash() {
 function _projGemMon(p, projSpecies, projLevel, coverMove, projTypes) {
   const canon = n => (resolveMove(n) || n).toLowerCase();
   const mv = normMovesList(p.moves).slice(0, 4);
-  if (!mv.some(m => canon(m) === canon(coverMove))) { if (mv.length < 4) mv.push(coverMove); else mv[3] = coverMove; }
+  if (coverMove && !mv.some(m => canon(m) === canon(coverMove))) { if (mv.length < 4) mv.push(coverMove); else mv[3] = coverMove; }
   return { species: projSpecies, level: projLevel, type1: projTypes[0] || null, type2: projTypes[1] || null,
     ability: p.ability, nature: p.nature, held: p.held, ivs: p.ivs, evs: p.evs, moves: mv.join(', '), alive: true, inParty: true };
 }
@@ -8241,8 +8251,23 @@ function analyzeAdvice(boss, recommended, roster) {
       const projP = { species: proj.species, level: projLevel, type1: projTypes[0] || null, type2: projTypes[1] || null, ability: p.ability, held: p.held, ivs: p.ivs, evs: p.evs };
       const bait = coverageBaitVs(projP, boss);
       const caution = (bait && bait.mult >= 2) ? `${bait.type} (${bait.species}) hits it ${bait.mult}×${baitGlyph(bait)}` : '';
-      out.candidates.push({ name: p.nickname || p.species, curLevel: p.level || 1, projLevel, evolved: proj.evolved, projSpecies: proj.species, type: bringT, move: coverMove, hits: seCount(bringT), caution, projMon: _projGemMon(p, proj.species, projLevel, coverMove, projTypes) });
+      out.candidates.push({ kind: 'bench', name: p.nickname || p.species, curLevel: p.level || 1, projLevel, evolved: proj.evolved, projSpecies: proj.species, type: bringT, move: coverMove, hits: seCount(bringT), caution, rank: seCount(bringT) * 3, replaceRef: null, projMon: _projGemMon(p, proj.species, projLevel, coverMove, projTypes) });
     }
+  }
+
+  // In-team upgrades: leveling a RECOMMENDED member to the cap (+ its reachable
+  // evolution) is often a bigger readiness lever than any bench swap, and was
+  // previously never suggested. Each improvable member becomes a candidate that
+  // replaces ITSELF in the sim, so the delta measures the upgrade in place.
+  const upTarget = adviceTargetLevel(boss);
+  for (const p of (recommended || [])) {
+    if (!p.species) continue;
+    const projLevel = Math.max(p.level || 1, upTarget);          // clamp: cap, never down
+    const proj = projectSpeciesAtLevel(p.species, projLevel);
+    if (projLevel <= (p.level || 1) && !proj.evolved) continue;  // already maxed for this fight
+    const pinfo = pokeInfo(proj.species);
+    if (!pinfo || !pinfo.s) continue;
+    out.candidates.push({ kind: 'upgrade', name: p.nickname || p.species, curLevel: p.level || 1, projLevel, evolved: proj.evolved, projSpecies: proj.species, rank: (projLevel - (p.level || 1)) + (proj.evolved ? 8 : 0), replaceRef: p, projMon: _projGemMon(p, proj.species, projLevel, null, pinfo.t || []) });
   }
 
   // Level gap — your team meaningfully under the fight's ace.
@@ -8258,9 +8283,13 @@ function analyzeAdvice(boss, recommended, roster) {
 // Build the projected team for a gem: the gem replaces the recommended team's
 // weakest member (whoever it would actually bump), so the sim measures its
 // MARGINAL contribution.
-function _projectedTeamWith(recommended, gemMon, boss) {
+function _projectedTeamWith(recommended, gemMon, boss, replaceRef) {
   const team = (recommended || []).slice();
   if (!team.length) return [gemMon];
+  if (replaceRef) {                          // in-team upgrade: swap this member for its upgraded self
+    const i = team.indexOf(replaceRef);
+    if (i >= 0) { team[i] = gemMon; return team; }
+  }
   if (team.length >= 6) {
     let wi = 0, ws = Infinity;
     for (let i = 0; i < team.length; i++) { const s = scoreMatchup(team[i], boss, boss.cap); if (s < ws) { ws = s; wi = i; } }
@@ -8275,16 +8304,16 @@ function _projectedTeamWith(recommended, gemMon, boss) {
 // yields between sims so the tab never freezes. Ranked by delta — which bakes in
 // safety for free (a gem that gets KO'd barely moves the score).
 async function scoreAdviceGems(boss, recommended, candidates, setMode, baseScore) {
-  const pre = candidates.slice().sort((a, b) => b.hits - a.hits).slice(0, 4);
+  const pre = candidates.slice().sort((a, b) => (b.rank || 0) - (a.rank || 0)).slice(0, 8);
   const scored = [];
   for (const g of pre) {
     await new Promise(r => setTimeout(r, 0));   // yield to the UI between sims
-    const team = _projectedTeamWith(recommended, g.projMon, boss);
+    const team = _projectedTeamWith(recommended, g.projMon, boss, g.replaceRef);
     const res = computeReadiness(boss, team, setMode, { n: 60, noCache: true });
     const ps = res ? res.score : baseScore;
     scored.push({ ...g, projScore: ps, delta: ps - baseScore });
   }
-  scored.sort((a, b) => b.delta - a.delta || b.hits - a.hits);
+  scored.sort((a, b) => b.delta - a.delta || (b.rank || 0) - (a.rank || 0));
   return scored;
 }
 
@@ -8294,11 +8323,26 @@ async function scoreAdviceGems(boss, recommended, candidates, setMode, baseScore
 // bar + delta badge (best single high-impact swap).
 function renderAdviceItems(analysis, scored, baseScore) {
   const items = []; let projScore = null, projDelta = null;
+  // Hopeless case: the cap-legal team can't realistically win AND there's nothing
+  // to suggest (no candidates, no positive-delta gem). Coverage-gap / blind-spot
+  // advice is misleading here — you might "hit super-effectively" yet still get
+  // swept by a single weak mon — so say it plainly instead. Common when viewing a
+  // defeated boss you've since out-levelled (your strong mons are over the cap).
+  const noCandidates = !analysis.candidates.length;
+  const noUpside = scored ? !scored.some(g => g.delta > 0) : noCandidates;
+  if (baseScore < 15 && noCandidates && noUpside) {
+    return { items: [{ icon: '⚠', html: `Your cap-legal team can't win this as it stands — you've likely out-levelled this fight, or you'd need a stronger Pokémon at or under the cap.` }], projScore: null, projDelta: null, measuring: false };
+  }
   if (analysis.headline) items.push(analysis.headline);
-  if (!scored) {                                  // measuring
-    if (analysis.candidates.length) items.push({ icon: '⟳', html: `<span style="color:var(--text3)">measuring which bench Pokémon raise your score…</span>` });
+  // No scored gems yet. Only "measuring" if there are candidates whose impact is
+  // actually being simulated; with zero candidates (e.g. nothing cap-legal to
+  // suggest) there's nothing to wait for — show the stable items and stop.
+  if (!scored) {
+    const measuring = analysis.candidates.length > 0;
+    if (measuring) items.push({ icon: '⟳', html: `<span style="color:var(--text3)">measuring which Pokémon raise your score…</span>` });
+    else if (analysis.blindSpots.length) items.push({ icon: '⚠', html: `Nothing in your cap-legal box hits <strong>${analysis.blindSpots.join(', ')}</strong> super-effectively — out-bulk or chip ${analysis.blindSpots.length > 1 ? 'them' : 'it'}.` });
     if (analysis.levelGap) items.push(analysis.levelGap);
-    return { items, projScore, projDelta, measuring: true };
+    return { items, projScore, projDelta, measuring };
   }
   const positive = scored.filter(g => g.delta > 0);
   const bestDelta = scored.length ? Math.max(0, ...scored.map(g => g.delta)) : 0;
@@ -8309,17 +8353,41 @@ function renderAdviceItems(analysis, scored, baseScore) {
     if (analysis.levelGap) out.push(analysis.levelGap);
     return { items: out, projScore, projDelta, measuring: false };
   }
-  const top = positive.slice(0, 3);
-  if (top.length) { projScore = top[0].projScore; projDelta = top[0].delta; }
-  for (const g of top) {
-    const invest = [];
-    if (g.projLevel > g.curLevel) invest.push(`grind to Lv ${g.projLevel}`);
-    if (g.evolved) invest.push(`evolve to ${g.projSpecies}`);
-    const investBit = invest.length ? ` — ${invest.join(', ')}` : '';
-    const caution = g.caution ? ` <span style="color:var(--amber)">⚠ ${g.caution}</span>` : '';
-    items.push({ icon: '💡', html: `<strong>${g.name}</strong> → <strong>${g.type}</strong> via ${g.move} (SE ${g.hits}/${analysis.bossN})${investBit} · <span style="color:#4ade80;font-weight:600">+${g.delta} readiness</span>${caution}` });
+  // Show up to 6, guaranteeing a MIX: leveling/evolving mons already on your team
+  // (💡) AND "diamonds in the rough" still on the bench (💎). Take up to 3 of each
+  // first, then backfill remaining slots from whichever kind has more.
+  const byDelta = (a, b) => b.delta - a.delta;
+  const ups = positive.filter(g => g.kind === 'upgrade');
+  const bes = positive.filter(g => g.kind !== 'upgrade');
+  const MAX = 6, PER = 3;
+  const pickU = ups.slice(0, PER), pickB = bes.slice(0, PER);
+  const extra = [...ups.slice(PER), ...bes.slice(PER)].sort(byDelta);
+  while (pickU.length + pickB.length < MAX && extra.length) {
+    const g = extra.shift();
+    (g.kind === 'upgrade' ? pickU : pickB).push(g);
   }
-  if (analysis.blindSpots.length && !top.length) {
+  pickU.sort(byDelta); pickB.sort(byDelta);
+  if (positive.length) { projScore = positive[0].projScore; projDelta = positive[0].delta; } // badge = best overall
+
+  const deltaTag = g => ` · <span style="color:#4ade80;font-weight:600">+${g.delta} readiness</span>`;
+  for (const g of pickU) {
+    const bits = [];
+    if (g.projLevel > g.curLevel) bits.push(`level ${g.curLevel}→${g.projLevel}`);
+    if (g.evolved) bits.push(`evolve to ${g.projSpecies}`);
+    items.push({ icon: '💡', html: `<strong>${g.name}</strong> — ${bits.join(', ')}${deltaTag(g)}` });
+  }
+  if (pickB.length) {
+    if (pickU.length) items.push({ isHeader: true, html: '💎 Diamonds in the rough — bench Pokémon worth raising' });
+    for (const g of pickB) {
+      const invest = [];
+      if (g.projLevel > g.curLevel) invest.push(`grind to Lv ${g.projLevel}`);
+      if (g.evolved) invest.push(`evolve to ${g.projSpecies}`);
+      const investBit = invest.length ? ` — ${invest.join(', ')}` : '';
+      const caution = g.caution ? ` <span style="color:var(--amber)">⚠ ${g.caution}</span>` : '';
+      items.push({ icon: '💎', html: `<strong>${g.name}</strong> → <strong>${g.type}</strong> via ${g.move} (SE ${g.hits}/${analysis.bossN})${investBit}${deltaTag(g)}${caution}` });
+    }
+  }
+  if (analysis.blindSpots.length && !pickU.length && !pickB.length) {
     items.push({ icon: '⚠', html: `Nothing in your box hits <strong>${analysis.blindSpots.join(', ')}</strong> super-effectively — out-bulk or chip ${analysis.blindSpots.length > 1 ? 'them' : 'it'}.` });
   }
   if (analysis.levelGap) items.push(analysis.levelGap);
@@ -8342,7 +8410,7 @@ function renderMatchup() {
   // after the Champion. Auto-shown once the Champion is beaten; a header toggle
   // flips it. We swap `boss.team` → the rematch team and analyse THAT, ignoring the
   // gym's level cap (it's post-game — your whole roster is fair game).
-  if (cap !== _lastMatchupCap) { _lastMatchupCap = cap; _rematchView = null; } // reset toggle per boss
+  if (cap !== _lastMatchupCap) { _lastMatchupCap = cap; _rematchView = null; showAdvice = false; } // reset rematch + advice reveal per boss
   const hasRematch = Array.isArray(realBoss.rematch) && realBoss.rematch.length;
   const showRematch = hasRematch && (_rematchView != null ? _rematchView : isChampionDefeated());
   _rematchShown = showRematch;
@@ -8404,7 +8472,9 @@ function renderMatchup() {
         <div class="rd-advice-wrap${showAdvice ? ' open' : ''}" id="rd-advice-wrap">
           <div class="rd-advice-inner">
             <ul style="margin:2px 0 10px;padding:0 14px 0 32px;display:flex;flex-direction:column;gap:5px;font-size:12px;line-height:1.6;color:var(--text2)">
-              ${rendered.items.map(it=>`<li><span style="margin-left:-2px">${it.icon}</span> ${it.html}</li>`).join('')}
+              ${rendered.items.map(it=>it.isHeader
+                ? `<li style="list-style:none;margin:5px 0 0 -20px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text3)">${it.html}</li>`
+                : `<li><span style="margin-left:-2px">${it.icon}</span> ${it.html}</li>`).join('')}
             </ul>
           </div>
         </div>
