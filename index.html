@@ -10449,7 +10449,16 @@ function buildTimelineSection() {
 function render() {
   populateRunSelect();
   renderRoster(); renderActive(); renderRoutes(); renderGrave();
-  renderCap(); renderMatchup(); renderStats(); renderEncounters();
+  renderCap();
+  // The heavy tabs (matchup = battle-plan sim, stats = charts, encounters = reco
+  // scoring) ALSO re-render on switchTab, so eagerly rendering all of them on every
+  // render() — e.g. after each save — was pure waste that froze low-power devices
+  // (iOS). Render only the one that's currently visible; the rest render lazily when
+  // the user actually switches to them.
+  const _active = (document.querySelector('.section.active')?.id || '').replace('tab-', '');
+  if (_active === 'matchup') renderMatchup();
+  else if (_active === 'stats') renderStats();
+  else if (_active === 'encounters') renderEncounters();
   renderHeaderVersionPill();
   // Warm the readiness/advice caches for EVERY boss in the background as soon as the
   // app is up — independent of which tab you're on or whether a cap is selected, so
@@ -13585,18 +13594,20 @@ function statEdited(idx) {
 }
 function statNudge(idx, dir) {
   const { base, lvl, mods } = _seCtx(); if (!base) return;
-  const el = document.getElementById('f-stat-' + idx); const cur = parseInt(el && el.value) || 0;
-  // Stats move in IV/EV-quantized jumps, so cur±1 frequently rounds back to the SAME
-  // achievable value (button looks dead). Walk the target outward until the computed
-  // stat actually changes — so − / + always land on the next reachable value (or hold
-  // at the IV31/EV252 ceiling / floor when there's genuinely nowhere left to go).
-  for (let step = 1; step <= 120; step++) {
-    const target = cur + dir * step;
-    if (target < 1) break;                              // can't go below 1
-    _seSolve(idx, target);
-    const ivs = _seReadIVs(), evs = _seReadEVs();
-    if (_statValue(base[idx], idx, lvl, ivs[idx], evs[idx], mods[idx]) !== cur) break;
-  }
+  const b = base[idx], m = mods[idx];
+  const ivs = _seReadIVs(), evs = _seReadEVs();
+  // The summary stat depends ONLY on "points" = IV + floor(EV/4) (see _statValue):
+  // IV 0..31 (31 pts) + EV 0..252 (63 pts) → points 0..94. Walking points one at a
+  // time until the stat actually changes is O(94) worst case — vs the old loop's
+  // ~240k stat evals (nested _seSolve per step), which froze iOS Safari and hung at
+  // the caps. Lowest-EV split (fill IV first) matches _seSolve so typed + nudged agree.
+  const MAXP = 31 + 63;
+  const statForPts = (p) => { const iv = Math.min(31, p), ev = Math.max(0, p - 31) * 4; return _statValue(b, idx, lvl, iv, ev, m); };
+  let p = Math.max(0, Math.min(MAXP, ivs[idx] + Math.floor(evs[idx] / 4)));
+  const cur = statForPts(p);
+  if (dir > 0) { while (p < MAXP) { p++; if (statForPts(p) !== cur) break; } }
+  else { while (p > 0) { p--; if (statForPts(p) !== cur) break; } }
+  _seSet(idx, Math.min(31, p), Math.max(0, p - 31) * 4);
   _seRenderStats();
 }
 // Vitamin = +10 EV to one stat (Protein/Iron/Calcium/Zinc/Carbos/HP Up), capped.

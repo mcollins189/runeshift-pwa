@@ -148,9 +148,11 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Shell HTML -> network-first so the user gets updates when online.
+  // Shell HTML -> network-first, but TIMEOUT-BOUNDED so a slow launch network
+  // (iPad PWA cold-launch) serves the cached shell instantly instead of hanging
+  // on a black screen. Fresh HTML still wins whenever the network is quick.
   if (isShellHtml(req, url)) {
-    event.respondWith(networkFirst(req, SHELL_CACHE));
+    event.respondWith(networkFirst(req, SHELL_CACHE, 1500));
     return;
   }
 
@@ -207,17 +209,39 @@ async function cacheFirst(req, cacheName) {
   }
 }
 
-async function networkFirst(req, cacheName) {
+async function networkFirst(req, cacheName, timeoutMs) {
   const cache = await caches.open(cacheName);
-  try {
-    const res = await fetch(req, { cache: 'no-store' });
+  const matchCached = async () => (await cache.match(req)) || (await cache.match('index.html')) || (await cache.match('/index.html'));
+  // Network fetch that also refreshes the cache on success. Kept as a live promise
+  // so it can update the cache in the background even when we serve from cache.
+  const net = fetch(req, { cache: 'no-store' }).then((res) => {
     if (res && res.ok) cache.put(req, res.clone());
     return res;
-  } catch (e) {
-    const hit = await cache.match(req) || await cache.match('index.html') || await cache.match('/index.html');
-    if (hit) return hit;
-    throw e;
+  });
+  // Timeout-bounded network-first for the HTML shell. A PWA launch is a `navigate`
+  // request routed here; awaiting the network with NO bound meant a slow/asleep
+  // network (classic on an iPad PWA cold-launch, where iOS hasn't reconnected wifi
+  // yet) hung the launch on a black screen until the OS fetch timed out. Now: if a
+  // cached shell exists, race the network against a short timeout and serve the
+  // cache the instant the network is slow — the network promise keeps running and
+  // refreshes the cache for the NEXT launch, so we stay fresh without ever hanging.
+  if (timeoutMs) {
+    const cached = await matchCached();
+    if (cached) {
+      const TIMED_OUT = Symbol('timeout');
+      const winner = await Promise.race([
+        net.catch(() => TIMED_OUT),
+        new Promise((resolve) => setTimeout(() => resolve(TIMED_OUT), timeoutMs)),
+      ]);
+      if (winner && winner !== TIMED_OUT && winner.ok) return winner;   // network answered in time → freshest
+      net.catch(() => {});   // let the background refresh finish + swallow errors
+      return cached;          // slow/failed network → instant cached shell
+    }
   }
+  // No cached shell yet (first-ever load) or no timeout requested → await the network,
+  // fall back to any cache on failure.
+  try { return await net; }
+  catch (e) { const hit = await matchCached(); if (hit) return hit; throw e; }
 }
 
 async function staleWhileRevalidate(req, cacheName) {
