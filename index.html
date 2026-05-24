@@ -8450,6 +8450,15 @@ const _ric = (typeof requestIdleCallback === 'function')
   : (cb) => setTimeout(cb, 200);
 const _idleYield = () => new Promise(res => _ric(() => res()));
 let _precomputeKey = null, _precomputeGen = 0, _precomputeActive = false, _backfillEpoch = 0;
+// Proactive-fetch window for precompute. Bosses at index < _precomputeReach may
+// fetch their missing species (the long tail warms only when data is already
+// present — see _precomputeCtx). The window starts small (current + next few) so a
+// cold load doesn't fire a fetch storm, then GROWS a few bosses per idle pass until
+// it covers the whole list — so every boss eventually warms, not just the front.
+// Reset to the base reach only when the GAME changes (NOT on backfill-epoch bumps,
+// or each landing fetch would re-narrow the window and stall the walk).
+const _PRECOMPUTE_REACH_BASE = 4, _PRECOMPUTE_REACH_STEP = 5;
+let _precomputeReach = _PRECOMPUTE_REACH_BASE, _precomputeReachGame = null;
 
 // Resolve a boss to the exact context the live matchup render uses, so the cache
 // keys MATCH (recommended team → readiness seed; team hash → advKey). Mirrors the
@@ -8531,16 +8540,26 @@ async function _runPrecompute(gen, key) {
   _precomputeActive = true;
   try {
     const game = curGame();
+    const order = _precomputeBossOrder();
     let idx = 0;
-    for (const boss of _precomputeBossOrder()) {
+    for (const boss of order) {
       if (gen !== _precomputeGen || curGame() !== game) return;   // superseded by newer state
       let worked = false;
-      // Proactively fetch data only for the current boss + next 3 (idx<4); the rest
-      // warm without fetching (keeps cold-load sprite loading calm — see _precomputeCtx).
-      try { worked = await _precomputeBoss(boss, idx < 4); } catch (e) {}
+      // Proactively fetch data only for bosses inside the current reach window; the
+      // rest warm without fetching (keeps cold-load fetches calm — see _precomputeCtx).
+      try { worked = await _precomputeBoss(boss, idx < _precomputeReach); } catch (e) {}
       idx++;
       if (gen !== _precomputeGen || curGame() !== game) return;
       if (worked) await _idleYield();   // only pace heavy bosses; cached ones skip free
+    }
+    // Walk the proactive-fetch window forward a few bosses per pass until it covers the
+    // whole list, so the long tail (defeated early gyms / E4 whose species aren't local
+    // and aren't yet backfilled) gets fetched + warmed too — just spread over idle time
+    // rather than all at once. Each step fetches that slice's species this pass; they
+    // warm on the next pass (re-run below, or a backfill-epoch bump) once the data lands.
+    if (_precomputeReach < order.length) {
+      _precomputeReach = Math.min(order.length, _precomputeReach + _PRECOMPUTE_REACH_STEP);
+      if (gen === _precomputeGen && curGame() === game) _ric(() => _runPrecompute(gen, key));
     }
   } finally {
     _precomputeActive = false;
@@ -8554,9 +8573,13 @@ async function _runPrecompute(gen, key) {
 // to finish and self-restart for the new state.
 function schedulePrecompute() {
   if (typeof Worker === 'undefined' || _workerOK === false) return;
-  let key;
-  try { key = curGame() + '#' + _backfillEpoch + '#' + _adviceTeamStateHash(); } catch (e) { return; }
+  let game, key;
+  try { game = curGame(); key = game + '#' + _backfillEpoch + '#' + _adviceTeamStateHash(); } catch (e) { return; }
   if (key === _precomputeKey) return;
+  // New game → restart the proactive-fetch window small (avoid a cold-load fetch storm).
+  // A backfill-epoch / team-edit bump keeps the current (possibly widened) reach so the
+  // walk that warms the long tail isn't reset back to the front every time data lands.
+  if (game !== _precomputeReachGame) { _precomputeReach = _PRECOMPUTE_REACH_BASE; _precomputeReachGame = game; }
   _precomputeKey = key;
   const gen = ++_precomputeGen;
   if (!_precomputeActive) _ric(() => _runPrecompute(gen, key));
