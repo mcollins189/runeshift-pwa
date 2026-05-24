@@ -450,7 +450,10 @@
   .readiness.rd-danger .rd-fill{background:#fb923c}
   .readiness.rd-dead .rd-num,.readiness.rd-dead .rd-label{color:var(--red)}
   .readiness.rd-dead .rd-fill{background:var(--red)}
-  .battle-plan{background:linear-gradient(100deg,rgba(108,143,255,.1),rgba(108,143,255,.03));border:1px solid rgba(108,143,255,.3);border-radius:var(--radius);padding:12px 14px;margin:0 0 14px}
+  .battle-plan{background:linear-gradient(100deg,rgba(108,143,255,.1),rgba(108,143,255,.03));border:1px solid rgba(108,143,255,.3);border-radius:var(--radius);margin:0 0 14px;overflow:hidden}
+  .bp-toggle{color:var(--accent)}
+  .battle-plan.open .rd-tg-caret{transform:rotate(180deg)}
+  .bp-body{padding:2px 14px 12px}
   .bp-plan-hdr{font-size:13px;font-weight:700;color:var(--accent);margin-bottom:8px}
   .bp-plan-sub{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;margin-left:6px}
   .bp-plan-steps{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:5px;font-size:12.5px;color:var(--text2);line-height:1.5}
@@ -6982,6 +6985,15 @@ let matchupDetailMode = false; // toggle: show rich detail under every opponent 
 // toggle just slides the panel in and animates the projected-score ghost bar +
 // badge. The two flags are one-shot triggers for that reveal animation.
 let showAdvice = false, _adviceAnimBar = false;
+let showPlan = false;   // battle plan starts collapsed (like the advice panel); reset to collapsed per boss / on matchup-tab entry.
+function togglePlan() {
+  showPlan = !showPlan;
+  const f = document.getElementById('bp-frame'), w = document.getElementById('bp-wrap');
+  if (!f || !w) { renderMatchup(); return; }
+  f.classList.toggle('open', showPlan);
+  w.classList.toggle('open', showPlan);
+  const t = document.getElementById('bp-toggle'); if (t) t.setAttribute('aria-expanded', String(showPlan));
+}
 // Toggle WITHOUT a re-render — flip the classes/inline styles directly so the CSS
 // transitions animate the panel, ghost bar, and badge in BOTH directions
 // (re-rendering would re-create the nodes in their final state = no animation).
@@ -6998,6 +7010,8 @@ function toggleAdvice() {
     verdict.textContent = showAdvice ? verdict.dataset.proj : verdict.dataset.cur;
     verdict.style.color = showAdvice ? (verdict.dataset.projcol || '') : (verdict.dataset.curcol || '');
   }
+  const subCur = document.getElementById('rd-sub-cur'), subProj = document.getElementById('rd-sub-proj');   // sub-line previews projected win%/losses/HP while open
+  if (subCur && subProj) { subCur.style.display = showAdvice ? 'none' : ''; subProj.style.display = showAdvice ? '' : 'none'; }
   frame.classList.toggle('open', showAdvice);
   wrap.classList.toggle('open', showAdvice);
   if (toggle) toggle.setAttribute('aria-expanded', String(showAdvice));
@@ -8035,7 +8049,7 @@ function buildBattlePlan(boss, pool, setMode) {
   const usage = party.map(() => ({ entered: false, sacked: false, pivoted: false, kos: 0, isLead: false }));
 
   const pHP = party.map(() => 1), bHP = bossC.map(() => 1), bSlp = bossC.map(() => 0), sUsed = party.map(() => false);
-  let pIdx = planChooseLead(party, bossC, mode), bIdx = 0, lastTo = -1, guard = 0, anySack = false;
+  let pIdx = planChooseLead(party, bossC, mode), bIdx = 0, lastTo = -1, guard = 0, anySack = false, koCredited = false;
   let potBudget = (itemsOK && party.some(p => p.flags && p.flags.potionOK)) ? PLAN_POTION_BUDGET : 0, potLast = false;
   usage[pIdx].isLead = true; usage[pIdx].entered = true;
   const heal = (pi, amt) => { if (pHP[pi] > 0) pHP[pi] = Math.min(1, pHP[pi] + amt); };
@@ -8053,10 +8067,11 @@ function buildBattlePlan(boss, pool, setMode) {
   startPhase(`Lead <b>${party[pIdx].label}</b>`);
 
   while (guard++ < 100) {
-    if (!bHP.some(h => h > 0)) { usage[pIdx].kos++; break; }       // KO'd the last foe
+    if (!bHP.some(h => h > 0)) { if (koCredited) koCredited = false; else usage[pIdx].kos++; break; }       // KO'd the last foe (a pivot already credited the real KO'er → don't re-credit)
     if (!pHP.some(h => h > 0)) { if (curPhase) curPhase.turns.push(`<span class="bp-plan-risk">⚠ team gets worn down — no clean win here</span>`); break; }
     if (bHP[bIdx] <= 0) { // foe fainted → credit the KO, open the next phase
-      usage[pIdx].kos++;
+      if (koCredited) koCredited = false; else usage[pIdx].kos++;   // a pivot move already credited the actual KO'er; pIdx is now the switch-in, so don't re-attribute
+
       let nx = -1; for (let j = 0; j < bossC.length; j++) if (bHP[j] > 0) { nx = j; break; } if (nx < 0) break; bIdx = nx;
       let entry;
       if (mode !== 'set') { const r = planBestRepl(party, pHP, bossC[bIdx], bHP[bIdx]); if (r >= 0 && r !== pIdx) { pIdx = r; entry = `Send <b>${party[pIdx].label}</b>`; } else entry = `<b>${party[pIdx].label}</b> stays in`; }
@@ -8076,7 +8091,10 @@ function buildBattlePlan(boss, pool, setMode) {
     const foeVs = (T) => (bSlp[bIdx] > 0) ? `<i>${B.label} asleep</i>` : `${B.label}: ${mv(B, T)}`;
     const foePart = () => foeVs(P);
     if (act.type === 'switch') { const inMon = party[act.idx]; addTurn([`switch <b>${P.label}</b> → <b>${inMon.label}</b>${setMode ? ' <span class="bp-plan-mv">(eats a hit)</span>' : ''}`, foeVs(inMon)]); lastTo = pIdx; pIdx = act.idx; usage[pIdx].entered = true; bossAtk(pIdx); endTurn(pIdx); continue; }
-    if (act.type === 'pivot') { const inMon = party[act.idx], pv = P.flags.pivot || 'pivot'; usage[pIdx].pivoted = true; hit(P, B, pIdx); const pvKO = bHP[bIdx] <= 0; lastTo = pIdx; pIdx = act.idx; usage[pIdx].entered = true; if (bHP[bIdx] > 0) bossAtk(pIdx); endTurn(pIdx); addTurn([`<b>${P.label}</b> ${pv}${pvKO ? ' <b>(KO)</b>' : ''} → <b>${inMon.label}</b>`, pvKO ? null : foeVs(inMon)]); continue; }
+    if (act.type === 'pivot') { const inMon = party[act.idx], pv = P.flags.pivot || 'pivot'; hit(P, B, pIdx); const pvKO = bHP[bIdx] <= 0;
+      if (pvKO && !bHP.some(h => h > 0)) { addTurn([`<b>${P.label}</b> ${pv} → <b>KO</b>`]); continue; }   // pivot move KO'd the LAST foe → battle won, no point pivoting anyone in
+      usage[pIdx].pivoted = true; if (pvKO) { usage[pIdx].kos++; koCredited = true; }   // credit the PIVOTER's KO before we reassign pIdx to the switch-in
+      lastTo = pIdx; pIdx = act.idx; usage[pIdx].entered = true; if (bHP[bIdx] > 0) bossAtk(pIdx); endTurn(pIdx); addTurn([`<b>${P.label}</b> ${pv}${pvKO ? ' <b>(KO)</b>' : ''} → <b>${inMon.label}</b>`, pvKO ? null : foeVs(inMon)]); continue; }
     if (act.type === 'sleepStay') { addTurn([`<b>${P.label}</b> puts ${B.label} to sleep`]); bSlp[bIdx] = 2; endTurn(pIdx); continue; }
     if (act.type === 'sleepSwitch') { addTurn([`<b>${P.label}</b> sleeps ${B.label} → switch in <b>${party[act.idx].label}</b>`]); bSlp[bIdx] = 2; lastTo = pIdx; pIdx = act.idx; usage[pIdx].entered = true; endTurn(pIdx); continue; }
     if (act.type === 'protect') { addTurn([`<b>${P.label}</b> Protect (stall)`]); if (bSlp[bIdx] > 0) bSlp[bIdx]--; endTurn(pIdx); continue; }
@@ -8120,7 +8138,7 @@ function buildBattlePlan(boss, pool, setMode) {
     addTurn(pF ? [ourPart, showFoe ? fp : null] : [showFoe ? fp : null, ourPart]);
   }
   if (!phases.length || !phases.some(ph => ph.turns.length)) return null;
-  const note = anySack ? `Assumes no in-battle healing — a Sitrus Berry / Leftovers on the switch-in could let you pivot instead of sacking.` : null;
+  const note = anySack ? `A held Sitrus Berry or Leftovers on the sacked mon could let it survive a hit and pivot out instead.` : null;
   // Map each party member's usage back onto the recommended-card index (pool
   // index via _srcIdx), so renderMatchup can tag each card with its plan role.
   const usageBySrc = pool.map(() => null);
@@ -8820,7 +8838,7 @@ async function scoreAdviceGems(boss, recommended, candidates, setMode, base, wor
     const ps = res ? res.score : baseScore;
     // delta = composite improvement (ranking + which gems show + the "+X" tag);
     // cleanDelta = flawless-clear% gain (the meter's ghost bar / badge).
-    return { ...g, projScore: ps, projWinRate: res ? res.winRate : null, projDeaths: res ? res.deaths : null, cleanDelta: ps - baseScore, delta: Math.round((res ? compOf(res) : baseComp) - baseComp) };
+    return { ...g, projScore: ps, projWinRate: res ? res.winRate : null, projDeaths: res ? res.deaths : null, projMargin: res ? res.margin : null, cleanDelta: ps - baseScore, delta: Math.round((res ? compOf(res) : baseComp) - baseComp) };
   }));
   scored.sort((a, b) => b.delta - a.delta || (b.rank || 0) - (a.rank || 0));
   return scored;
@@ -8831,7 +8849,7 @@ async function scoreAdviceGems(boss, recommended, candidates, setMode, base, wor
 // Returns { items, projScore, projDelta } — projScore drives the meter's ghost
 // bar + delta badge (best single high-impact swap).
 function renderAdviceItems(analysis, scored, baseScore) {
-  const items = []; let projScore = null, projDelta = null, projWinRate = null, projDeaths = null;
+  const items = []; let projScore = null, projDelta = null, projWinRate = null, projDeaths = null, projMargin = null;
   // Hopeless case: the cap-legal team can't realistically win AND there's nothing
   // to suggest (no candidates, no positive-delta gem). Coverage-gap / blind-spot
   // advice is misleading here — you might "hit super-effectively" yet still get
@@ -8876,7 +8894,7 @@ function renderAdviceItems(analysis, scored, baseScore) {
     (g.kind === 'upgrade' ? pickU : pickB).push(g);
   }
   pickU.sort(byDelta); pickB.sort(byDelta);
-  if (positive.length) { projScore = positive[0].projScore; projDelta = positive[0].cleanDelta; projWinRate = positive[0].projWinRate; projDeaths = positive[0].projDeaths; } // badge/ghost = clean-clear% (matches the meter); list uses composite delta
+  if (positive.length) { projScore = positive[0].projScore; projDelta = positive[0].cleanDelta; projWinRate = positive[0].projWinRate; projDeaths = positive[0].projDeaths; projMargin = positive[0].projMargin; } // badge/ghost = clean-clear% (matches the meter); list uses composite delta
 
   // Qualitative impact tier (the composite delta is an internal score, not a meter %;
   // a bare "+115" read as "the meter jumps 115", which was misleading).
@@ -8902,7 +8920,7 @@ function renderAdviceItems(analysis, scored, baseScore) {
     items.push({ icon: '⚠', html: `Nothing in your box hits <strong>${analysis.blindSpots.join(', ')}</strong> super-effectively — out-bulk or chip ${analysis.blindSpots.length > 1 ? 'them' : 'it'}.` });
   }
   if (analysis.levelGap) items.push(analysis.levelGap);
-  return { items, projScore, projDelta, projWinRate, projDeaths, measuring: false };
+  return { items, projScore, projDelta, projWinRate, projDeaths, projMargin, measuring: false };
 }
 
 function renderMatchup() {
@@ -8921,7 +8939,7 @@ function renderMatchup() {
   // after the Champion. Auto-shown once the Champion is beaten; a header toggle
   // flips it. We swap `boss.team` → the rematch team and analyse THAT, ignoring the
   // gym's level cap (it's post-game — your whole roster is fair game).
-  if (cap !== _lastMatchupCap) { _lastMatchupCap = cap; _rematchView = null; showAdvice = false; } // reset rematch + advice reveal per boss
+  if (cap !== _lastMatchupCap) { _lastMatchupCap = cap; _rematchView = null; showAdvice = false; showPlan = false; } // reset rematch + advice + plan reveal per boss
   const hasRematch = Array.isArray(realBoss.rematch) && realBoss.rematch.length;
   const showRematch = hasRematch && (_rematchView != null ? _rematchView : isChampionDefeated());
   _rematchShown = showRematch;
@@ -8962,14 +8980,16 @@ function renderMatchup() {
   const planResult = buildBattlePlan(boss, recommended, _r.setMode);
   const planPhases = planResult && planResult.phases;
   const planUsage = (planResult && planResult.usage) || [];
-  const planHtml = (planPhases && planPhases.length) ? `<div class="battle-plan">
-      <div class="bp-plan-hdr">🎯 Battle plan <span class="bp-plan-sub">expected order${_r.setMode ? ' · Set mode' : ''}</span></div>
+  const planHtml = (planPhases && planPhases.length) ? `<div class="battle-plan${showPlan ? ' open' : ''}" id="bp-frame">
+      <button class="rd-advice-toggle bp-toggle" id="bp-toggle" aria-expanded="${showPlan}" onclick="togglePlan()" title="Turn-by-turn expected order">🎯 Battle plan<span class="bp-plan-sub">expected order${_r.setMode ? ' · Set mode' : ''}</span><span class="rd-tg-caret">▾</span></button>
+      <div class="rd-advice-wrap${showPlan ? ' open' : ''}" id="bp-wrap"><div class="rd-advice-inner"><div class="bp-body">
       ${planPhases.map(ph => `<div class="bp-phase">
         <div class="bp-phase-hdr">vs <b>${ph.enemy}</b>${ph.entry ? ` <span class="bp-phase-entry">${ph.entry}</span>` : ''}</div>
         <ul class="bp-turns">${ph.turns.map(t => `<li>${t}</li>`).join('')}</ul>
         ${ph.alt ? `<div class="bp-alt">${ph.alt}</div>` : ''}
       </div>`).join('')}
       ${planResult.note ? `<div class="bp-plan-note">${planResult.note}</div>` : ''}
+      </div></div></div>
     </div>` : '';
   // Readiness meter — seeded Monte Carlo over the recommended team (see computeReadiness).
   // Read CACHE-ONLY so the render never blocks on the heavy sim: if it's warmed
@@ -8991,7 +9011,7 @@ function renderMatchup() {
   // Computed on EVERY render (sims warm in the background) but hidden behind a
   // toggle: revealing it slides the panel in + animates the ghost bar/badge.
   // Cached delta-scoring is keyed to the boss + full team state.
-  let adviceHtml = '', projScore = null, projDelta = null, projWinRate = null, projDeaths = null;
+  let adviceHtml = '', projScore = null, projDelta = null, projWinRate = null, projDeaths = null, projMargin = null;
   if (readiness) {
     const analysis = analyzeAdvice(boss, recommended, eligibleRoster);
     const stateHash = _adviceTeamStateHash();
@@ -8999,7 +9019,7 @@ function renderMatchup() {
     const scored = _lruGet(_adviceLRU, advKey) || null;
     const measuring = !scored && analysis.candidates.length > 0;
     const rendered = renderAdviceItems(analysis, scored, readiness.score);
-    projScore = rendered.projScore; projDelta = rendered.projDelta; projWinRate = rendered.projWinRate; projDeaths = rendered.projDeaths;
+    projScore = rendered.projScore; projDelta = rendered.projDelta; projWinRate = rendered.projWinRate; projDeaths = rendered.projDeaths; projMargin = rendered.projMargin;
     if (rendered.items.length) {
       const refining = rendered.measuring ? ` <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text3)">⟳ measuring…</span>` : '';
       adviceHtml = `<div class="rd-advice-frame${showAdvice ? ' open' : ''}" id="rd-advice-frame">
@@ -9049,10 +9069,15 @@ function renderMatchup() {
     // what you'd BECOME with the best swap (e.g. "Costly" → "Strong").
     const projBandData = (hasProj && projScore != null) ? readinessBand(projScore, projDeaths != null ? projDeaths : readiness.deaths, false, projWinRate != null ? projWinRate : readiness.winRate) : null;
     const shownBand = (showAdvice && projBandData) ? projBandData : band;   // displayed text follows the toggle; data-attrs (below) always carry both so toggleAdvice can swap instantly
+    // Sub-line (win-rate / losses / team-HP) also previews the best swap's projected
+    // numbers while the advice is open — that's where the improvement's effect shows.
+    const subInner = (wr, d, mg) => `<span style="color:${wr >= 90 ? 'var(--green)' : wr >= 60 ? 'var(--amber)' : 'var(--red)'};font-weight:600">${wr}% win rate</span>${(d > 0) ? ` with <span style="color:var(--red)">≈${d} losses/run</span>` : ', no losses'}, ${mg}% average team HP left${_r.setMode ? ', Set mode' : ''}`;
+    const hasProjSub = projWinRate != null && projDeaths != null && projMargin != null;
+    const showProjSub = showAdvice && hasProjSub;
     readinessHtml = `<div class="readiness ${band.cls}" title="From ${READINESS_N} simulated battles of your recommended team (random damage rolls, crits &amp; misses): this is the % that end as a CLEAN clear — whole boss team KO'd with zero of your Pokémon fainting. It wins ${readiness.winRate}% of the time overall, losing ≈${readiness.deaths} Pokémon per run on average. Edit a stat / EV / item to watch it move.">
       <div class="rd-top"><span class="rd-num" style="color:${band.color}">${readiness.score}</span><span class="rd-of">%</span><span class="rd-pctlabel">chance to win without losses</span>${projBadge}<span id="rd-verdict" class="rd-verdict" style="color:${shownBand.color}"${projBandData ? ` data-cur="${band.label}" data-proj="${projBandData.label}" data-curcol="${band.color}" data-projcol="${projBandData.color}"` : ''}>${shownBand.label}</span></div>
       <div class="rd-bar">${ghostHtml}<span class="rd-fill" style="width:${readiness.score}%;background:${band.color}"></span></div>
-      <div class="rd-sub"><span style="color:${readiness.winRate >= 90 ? 'var(--green)' : readiness.winRate >= 60 ? 'var(--amber)' : 'var(--red)'};font-weight:600">${readiness.winRate}% win rate</span>${(readiness.deaths > 0) ? ` with <span style="color:var(--red)">≈${readiness.deaths} losses/run</span>` : ', no losses'}, ${readiness.margin}% average team HP left${_r.setMode ? ', Set mode' : ''}</div>
+      <div class="rd-sub"><span id="rd-sub-cur"${showProjSub ? ' style="display:none"' : ''}>${subInner(readiness.winRate, readiness.deaths, readiness.margin)}</span>${hasProjSub ? `<span id="rd-sub-proj"${showProjSub ? '' : ' style="display:none"'}>${subInner(projWinRate, projDeaths, projMargin)}</span>` : ''}</div>
     </div>`;
     // One-shot grow-in for the SETTLE case (toggled open while still measuring):
     // render hidden, then reveal shortly after innerHTML lands so the CSS
@@ -10293,7 +10318,7 @@ function switchTab(n, dir) {
   const sec = document.getElementById(`tab-${n}`);
   sec.classList.add('active');
   if (dir !== 0) { void sec.offsetWidth; sec.classList.add(dir > 0 ? 'slide-in-right' : 'slide-in-left'); }
-  if (n==='matchup') { showAdvice = false; renderMatchup(); }
+  if (n==='matchup') { showAdvice = false; showPlan = false; renderMatchup(); }
   if (n==='stats') renderStats();
   if (n==='encounters') renderEncounters();
   if (n==='rules') renderRules();
