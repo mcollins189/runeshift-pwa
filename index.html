@@ -13583,9 +13583,20 @@ function statEdited(idx) {
   if (!isNaN(t)) _seSolve(idx, Math.max(1, t));
   _seRenderStats();
 }
-function statNudge(idx, delta) {
+function statNudge(idx, dir) {
+  const { base, lvl, mods } = _seCtx(); if (!base) return;
   const el = document.getElementById('f-stat-' + idx); const cur = parseInt(el && el.value) || 0;
-  _seSolve(idx, Math.max(1, cur + delta));
+  // Stats move in IV/EV-quantized jumps, so cur±1 frequently rounds back to the SAME
+  // achievable value (button looks dead). Walk the target outward until the computed
+  // stat actually changes — so − / + always land on the next reachable value (or hold
+  // at the IV31/EV252 ceiling / floor when there's genuinely nowhere left to go).
+  for (let step = 1; step <= 120; step++) {
+    const target = cur + dir * step;
+    if (target < 1) break;                              // can't go below 1
+    _seSolve(idx, target);
+    const ivs = _seReadIVs(), evs = _seReadEVs();
+    if (_statValue(base[idx], idx, lvl, ivs[idx], evs[idx], mods[idx]) !== cur) break;
+  }
   _seRenderStats();
 }
 // Vitamin = +10 EV to one stat (Protein/Iron/Calcium/Zinc/Carbos/HP Up), capped.
@@ -14787,8 +14798,16 @@ onBackfill(() => {
       if (t && t.classList.contains('active') && typeof fn === 'function') fn();
     };
     fire('tab-matchup', typeof renderMatchup === 'function' ? renderMatchup : null);
-    fire('tab-roster', typeof renderRoster === 'function' ? renderRoster : null);
-    fire('tab-active', typeof renderActive === 'function' ? renderActive : null);
+    // Roster/Active cards render entirely from STORED fields (type1/type2, level, moves)
+    // + a sprite that resolves locally via dexIdBySlug for every base species. So a
+    // backfill almost never changes their output — repainting on each one just recreates
+    // the <img>s and FLICKERS. Only repaint when a roster sprite genuinely can't resolve
+    // yet (the ~14 form-default species, e.g. Mimikyu, that need the backfilled apiId).
+    const _rosterSpriteMissing = () => { try { return curTeam().some(p => p && p.species && !spriteUrl(p.species)); } catch (e) { return false; } };
+    if (_rosterSpriteMissing()) {
+      fire('tab-roster', typeof renderRoster === 'function' ? renderRoster : null);
+      fire('tab-active', typeof renderActive === 'function' ? renderActive : null);
+    }
     fire('tab-encounters', typeof renderEncounters === 'function' ? renderEncounters : null);
     fire('tab-routes', typeof renderRoutes === 'function' ? renderRoutes : null);
     fire('tab-grave', typeof renderGrave === 'function' ? renderGrave : null);
