@@ -413,6 +413,8 @@
   .rd-num{font-size:26px;font-weight:800;line-height:1}
   .rd-of{font-size:12px;color:var(--text3);font-weight:600}
   .rd-label{margin-left:8px;font-size:12px;font-weight:600;color:var(--text2)}
+  .rd-pctlabel{margin-left:8px;font-size:10.5px;font-weight:500;color:var(--text3);text-transform:lowercase}
+  .rd-verdict{margin-left:6px;font-size:15px;font-weight:800;line-height:1.1}
   .rd-bar{position:relative;height:8px;border-radius:5px;background:var(--bg2);overflow:hidden;margin:8px 0 4px}
   .rd-fill{display:block;position:relative;z-index:1;height:100%;border-radius:5px;transition:width .2s ease}
   /* Projected-score ghost bar: sits BEHIND the fill (z-index:0) and is tucked 5px
@@ -453,6 +455,17 @@
   .bp-plan-sub{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;margin-left:6px}
   .bp-plan-steps{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:5px;font-size:12.5px;color:var(--text2);line-height:1.5}
   .bp-plan-steps b{color:var(--text);font-weight:600}
+  /* Turn-by-turn plan (v5.1): one phase per boss mon, numbered turns inside */
+  .bp-phase{margin:0 0 9px}
+  .bp-phase:last-child{margin-bottom:0}
+  .bp-phase-hdr{font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px}
+  .bp-phase-hdr b{color:var(--accent)}
+  .bp-phase-entry{font-size:10.5px;font-weight:500;color:var(--text3);margin-left:4px}
+  .bp-turns{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:2px}
+  .bp-turns li{font-size:12px;color:var(--text2);line-height:1.5;padding-left:14px}
+  .bp-turns b{color:var(--text);font-weight:600}
+  .bp-tn{display:inline-block;min-width:22px;margin-left:-14px;font-size:10px;font-weight:700;color:var(--text3)}
+  .bp-sep{color:var(--text3);margin:0 2px;opacity:.6}
   .bp-plan-mv{color:var(--accent);font-weight:600}
   .bp-plan-risk{color:var(--amber);font-weight:600;font-size:11px}
   .bp-plan-note{display:block;margin-top:6px;font-size:10.5px;color:var(--text3);font-style:italic;list-style:none}
@@ -6980,6 +6993,11 @@ function toggleAdvice() {
   const toggle = document.getElementById('rd-advice-toggle');
   const ghost = document.getElementById('rd-ghost');
   const badge = document.getElementById('rd-proj-badge');
+  const verdict = document.getElementById('rd-verdict');   // preview the projected verdict + its colour ("Costly"/orange → "Safe"/blue) while open; revert on close
+  if (verdict && verdict.dataset.proj) {
+    verdict.textContent = showAdvice ? verdict.dataset.proj : verdict.dataset.cur;
+    verdict.style.color = showAdvice ? (verdict.dataset.projcol || '') : (verdict.dataset.curcol || '');
+  }
   frame.classList.toggle('open', showAdvice);
   wrap.classList.toggle('open', showAdvice);
   if (toggle) toggle.setAttribute('aria-expanded', String(showAdvice));
@@ -7297,7 +7315,12 @@ function weatherSpeedMult(ability, weather) {
 // Swift Swim sweeper under a teammate's Rain Dance). Use this everywhere a boss
 // mon enters the duel/speed model so "who's faster" stays correct in weather.
 function bossCombatant(b, boss) {
-  const C = buildCombatant(b.species, b.lv || bossAceLevel(boss), (b.types||[]), b.ability, b.nature, b.item, b.moves);
+  // A handful of difficulty-hack trainers (Radical Red, Inclement Emerald, Unbound,
+  // Insurgence) ship with no level in our source data → stored as a -2 sentinel.
+  // -2 is truthy, so `b.lv || …` used to feed it straight into the stat formula
+  // (garbage stats at level -2). Treat any non-positive level as "unknown" and fall
+  // back to the boss's ace/cap level (bossAceLevel → max real lv, else boss.cap, else 0).
+  const C = buildCombatant(b.species, (b.lv > 0 ? b.lv : bossAceLevel(boss)), (b.types||[]), b.ability, b.nature, b.item, b.moves);
   if (C && C.stats[5] != null) {
     const { weather, reliable } = bossWeather(boss);
     const mult = weatherSpeedMult(b.ability, weather);
@@ -7830,16 +7853,18 @@ function planBestRepl(party, pHP, B, bHP) {
 function planRollout(party, bossC, pHP0, bHP0, bSlp0, pIdx0, bIdx0, mode, first) {
   const pHP = pHP0.slice(), bHP = bHP0.slice(), bSlp = bSlp0.slice(), sUsed = party.map(() => false);
   let pIdx = pIdx0, bIdx = bIdx0, fd = false, g = 0;
+  let potBudget = party.some(p => p.flags && p.flags.potionOK) ? PLAN_POTION_BUDGET : 0, potLast = false;
   const aP = () => pHP.some(h => h > 0), aB = () => bHP.some(h => h > 0);
   const heal = (pi, amt) => { if (pHP[pi] > 0) pHP[pi] = Math.min(1, pHP[pi] + amt); };
   const bossAtk = (pi) => { if (bSlp[bIdx] > 0) { bSlp[bIdx]--; return; } pHP[pi] -= planFrac(bossC[bIdx], party[pi]); };
-  const hit = (P, B, pi) => { const h = bestHitFraction(P, B); bHP[bIdx] -= h.frac; if (h.drain) heal(pi, 0.5 * h.frac * ((B.stats[0] || 1) / (P.stats[0] || 1))); };
+  const hit = (P, B, pi) => { const h = bestHitFraction(P, B); const before = bHP[bIdx]; bHP[bIdx] -= h.frac; if (h.drain) heal(pi, 0.5 * Math.min(h.frac, Math.max(0, before)) * ((B.stats[0] || 1) / (P.stats[0] || 1))); };
   const endTurn = (pi) => { if (pHP[pi] > 0) { if (party[pi].flags.lefto) heal(pi, 1 / 16); if (party[pi].flags.sitrus && !sUsed[pi] && pHP[pi] < 0.5) { sUsed[pi] = true; heal(pi, 0.25); } } };
   while (g++ < 200) {
     if (!aB() || !aP()) break;
     if (bHP[bIdx] <= 0) { let nx = -1; for (let j = 0; j < bossC.length; j++) if (bHP[j] > 0) { nx = j; break; } if (nx < 0) break; bIdx = nx; if (mode !== 'set') { const r = planBestRepl(party, pHP, bossC[bIdx], bHP[bIdx]); if (r >= 0) pIdx = r; } continue; }
     if (pHP[pIdx] <= 0) { const r = planBestRepl(party, pHP, bossC[bIdx], bHP[bIdx]); if (r < 0) break; pIdx = r; continue; }
     let P = party[pIdx], B = bossC[bIdx];
+    const wasPot = potLast; potLast = false;   // only the potion branch re-arms this → blocks two Potions in a row
     let act = fd ? { type: 'attack' } : first; fd = true;
     if (act.type === 'switch' && pHP[act.idx] > 0) { pIdx = act.idx; bossAtk(pIdx); endTurn(pIdx); continue; }
     if (act.type === 'pivot' && P.flags.pivot && pHP[act.idx] > 0) { hit(P, B, pIdx); pIdx = act.idx; if (bHP[bIdx] > 0) bossAtk(pIdx); endTurn(pIdx); continue; }
@@ -7848,6 +7873,11 @@ function planRollout(party, bossC, pHP0, bHP0, bSlp0, pIdx0, bIdx0, mode, first)
     if (act.type === 'protect') { if (bSlp[bIdx] > 0) bSlp[bIdx]--; endTurn(pIdx); continue; }
     if (act.type === 'heal') { heal(pIdx, 0.5); bossAtk(pIdx); endTurn(pIdx); continue; }
     const pF = (P.stats[5] || 0) >= (B.stats[5] || 0);
+    // Reactive Potion (see _readyBattle): spend one to survive an otherwise-lethal hit
+    // instead of attacking, so the rollout values committing + potioning over sacking.
+    if (potBudget > 0 && (!PLAN_POT_NOCONSEC || !wasPot) && planFrac(P, B) >= 0.15 && !(pF && planFrac(P, B) >= bHP[bIdx]) && planFrac(B, P) >= pHP[pIdx] && Math.min(1, pHP[pIdx] + PLAN_HEAL_FRAC) > planFrac(B, P)) {
+      potBudget--; potLast = true; heal(pIdx, PLAN_HEAL_FRAC); bossAtk(pIdx); endTurn(pIdx); continue;
+    }
     if (pF) { hit(P, B, pIdx); if (bHP[bIdx] > 0) bossAtk(pIdx); } else { bossAtk(pIdx); if (pHP[pIdx] > 0) hit(P, B, pIdx); }
     endTurn(pIdx);
   }
@@ -7855,19 +7885,62 @@ function planRollout(party, bossC, pHP0, bHP0, bSlp0, pIdx0, bIdx0, mode, first)
   let bh = 0; for (const h of bHP) bh += Math.max(0, h);
   return (!aB() ? 1e6 : 0) - (!aP() ? 1e5 : 0) + pHP.filter(h => h > 0).length * 2000 + oh * 200 - bh * 200;
 }
-const PLAN_SWITCH_PEN = 1500; // hysteresis: a switch must clearly beat staying
-// Best action from a state + its value. Considers attack, hard-switch, and the
-// utility moves the active mon actually has (Protect, sleep, U-turn pivot).
+let PLAN_SWITCH_PEN = 1500; // hysteresis: a switch must clearly beat staying
+let PLAN_POTION_BUDGET = 3; // in-battle Potions the planner/sim will spend reactively (per battle) to model real item use
+let PLAN_HEAL_FRAC = 0.5;   // fraction of max HP a reactive Potion restores (≈ a Super/Hyper Potion mid-game)
+let PLAN_POT_NOCONSEC = true; // forbid two Potions in a row (if you'd potion twice, you should have switched)
+const PLAN_CRIT_P = 1 / 16;   // crit chance baked into _readyHit (the sim we score against)
+// Nuzlocke risk-aversion weight for the crit-KO gamble the max-roll, crit-EXCLUDED
+// deterministic rollout is BLIND to. A permanent mon loss is worth avoiding well above
+// its raw EV, so even a ~6% crit-KO chance should pull the planner toward a safe
+// switch/heal when one exists. Tunable — validated against the win/death harness.
+let PLAN_RISK_PEN = 14000;
+// P(we lose party[k] to a CRIT this turn) given a NORMAL hit would NOT KO it — the
+// exact blind spot of planRollout (which subtracts max-roll, crit-excluded damage).
+// weKOfirst short-circuits: if we strike first and KO the foe, it never swings.
+function _planCritKORisk(party, bossC, pHP, bHP, bIdx, k, weKOfirst) {
+  if (weKOfirst) return 0;
+  const hp = pHP[k]; if (hp <= 0) return 0;
+  const d = planFrac(bossC[bIdx], party[k]);
+  if (d >= hp) return 0;                      // normal hit already KOs → rollout sees it (no double-count)
+  return (d * 1.5 >= hp) ? PLAN_CRIT_P : 0;   // survives a normal hit but a crit kills → the gamble
+}
+// Best action from a state + its value. Considers attack, hard-switch, and the utility
+// moves the active mon actually has (Protect, sleep, U-turn pivot). RISK-AWARE: each
+// option is docked for the chance it loses a mon to a crit the EV rollout can't see,
+// and a genuine SAFETY switch (staying gambles, the target is safe) is freed from most
+// of the anti-thrash hysteresis so the planner will actually take it — the "switch to a
+// resist instead of gambling the mon" play.
 function planActions(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, lastTo) {
-  const P = party[pIdx];
-  let best = { a: { type: 'attack' }, v: planRollout(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, { type: 'attack' }) };
-  if (P.flags.protect) { const v = planRollout(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, { type: 'protect' }) - 300; if (v > best.v) best = { a: { type: 'protect' }, v }; }
-  if (P.flags.recover && pHP[pIdx] < 0.6) { const v = planRollout(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, { type: 'heal' }) - 100; if (v > best.v) best = { a: { type: 'heal' }, v }; }
-  if (P.flags.sleep && bSlp[bIdx] === 0) { const v = planRollout(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, { type: 'sleepStay' }) - 200; if (v > best.v) best = { a: { type: 'sleepStay' }, v }; }
+  const P = party[pIdx], B = bossC[bIdx];
+  const pFast = (P.stats[5] || 0) >= (B.stats[5] || 0);
+  const weKOfirst = pFast && planFrac(P, B) >= bHP[bIdx];
+  // Value of a candidate action: one max-roll rollout, docked by the analytic crit-KO
+  // gamble for the mon left exposed (riskIdx) — the Phase-1 risk-aware deterministic plan.
+  const score = (first, riskIdx, weFirst) => {
+    const base = planRollout(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, first);
+    const risk = (riskIdx == null) ? 0 : _planCritKORisk(party, bossC, pHP, bHP, bIdx, riskIdx, weFirst || false);
+    return base - risk * PLAN_RISK_PEN;
+  };
+  const stayRisk = _planCritKORisk(party, bossC, pHP, bHP, bIdx, pIdx, weKOfirst);
+  let best = { a: { type: 'attack' }, v: score({ type: 'attack' }, pIdx, weKOfirst) };
+  if (P.flags.protect) { const v = score({ type: 'protect' }, null, false) - 300; if (v > best.v) best = { a: { type: 'protect' }, v }; }
+  if (P.flags.recover && pHP[pIdx] < 0.6) {
+    // crit-risk docked on the POST-heal HP (a recovery MOVE, distinct from item Potions)
+    const hHP = pHP.slice(); hHP[pIdx] = Math.min(1, pHP[pIdx] + 0.5);
+    const healRisk = _planCritKORisk(party, bossC, hHP, bHP, bIdx, pIdx, false);
+    const v = planRollout(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, { type: 'heal' }) - healRisk * PLAN_RISK_PEN - 100;
+    if (v > best.v) best = { a: { type: 'heal' }, v };
+  }
+  if (P.flags.sleep && bSlp[bIdx] === 0) { const v = score({ type: 'sleepStay' }, null, false) - 200; if (v > best.v) best = { a: { type: 'sleepStay' }, v }; }
   for (let j = 0; j < party.length; j++) { if (j === pIdx || pHP[j] <= 0) continue;
-    let v = planRollout(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, { type: 'switch', idx: j }) - PLAN_SWITCH_PEN; if (j === lastTo) v -= 3000; if (v > best.v) best = { a: { type: 'switch', idx: j }, v };
-    if (P.flags.pivot) { let vp = planRollout(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, { type: 'pivot', idx: j }) - PLAN_SWITCH_PEN * 0.4; if (j === lastTo) vp -= 3000; if (vp > best.v) best = { a: { type: 'pivot', idx: j }, v: vp }; }
-    if (P.flags.sleep && bSlp[bIdx] === 0) { let vs = planRollout(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, { type: 'sleepSwitch', idx: j }) - PLAN_SWITCH_PEN * 0.5; if (vs > best.v) best = { a: { type: 'sleepSwitch', idx: j }, v: vs }; }
+    const swRisk = _planCritKORisk(party, bossC, pHP, bHP, bIdx, j, false);
+    // A safety switch (staying gambles, this target is safe) isn't blocked by the
+    // anti-thrash hysteresis — that's the "switch to a resist" play we want to allow.
+    const pen = (stayRisk > 0 && swRisk === 0) ? 0 : PLAN_SWITCH_PEN;
+    let v = score({ type: 'switch', idx: j }, j, false) - pen; if (j === lastTo) v -= 3000; if (v > best.v) best = { a: { type: 'switch', idx: j }, v };
+    if (P.flags.pivot) { let vp = score({ type: 'pivot', idx: j }, j, false) - PLAN_SWITCH_PEN * 0.4; if (j === lastTo) vp -= 3000; if (vp > best.v) best = { a: { type: 'pivot', idx: j }, v: vp }; }
+    if (P.flags.sleep && bSlp[bIdx] === 0) { let vs = score({ type: 'sleepSwitch', idx: j }, null, false) - PLAN_SWITCH_PEN * 0.5; if (vs > best.v) best = { a: { type: 'sleepSwitch', idx: j }, v: vs }; }
   }
   return best;
 }
@@ -7907,20 +7980,33 @@ function bridgeDuel(P, B, mode, allowPotion) {
   }
   return { win: bHP <= 0 && pHP > 0, used };
 }
-// For a foe the active plan is gambling against, find the best teammate that
-// cleanly clears it — preferring one that wins outright, else one that wins via a
-// single potion bridge. Returns { label, needsPotion } or null.
+// For a foe the plan is gambling against, find the BEST answer. The mon ALREADY in
+// (the gambler) is a candidate too — potioning it in place is usually simpler than
+// switching to an equally-exposed teammate, so we only recommend a switch when a
+// DIFFERENT mon is genuinely safer (crit-safe). Ranking: crit-safe > wins without a
+// potion > already-in (no wasted switch) > harder hitter. Returns
+// { label, needsPotion, inPlace, critSafe } or null.
 function rosterShieldAlt(party, foe, mode, gamblerIdx) {
+  const foeSpd = foe.stats[5] || 0;
+  // crit-safe = this mon doesn't lose to a crit: it either outspeeds + OHKOs (never
+  // takes a hit) or survives even a critical hit (×1.5) at full HP.
+  const critSafe = (X) => {
+    const ourF = (bestHitFraction(X, foe) || {}).frac || 0;
+    const theirF = (bestHitFraction(foe, X) || {}).frac || 0;
+    if ((X.stats[5] || 0) >= foeSpd && ourF >= 1) return true;
+    return theirF * 1.5 < 1;
+  };
   let best = null, bestScore = -1;
   for (let j = 0; j < party.length; j++) {
-    if (j === gamblerIdx) continue;
-    const X = party[j];
-    const potionWin = bridgeDuel(X, foe, mode, true).win;
-    if (!potionWin) continue;                       // can't handle it even with a potion
-    const cleanWin = bridgeDuel(X, foe, mode, false).win;
+    const X = party[j]; if (!X) continue;
+    const inPlace = (j === gamblerIdx);
+    const m = inPlace ? 'shift' : mode;             // the mon already in eats no switch-in hit
+    if (!bridgeDuel(X, foe, m, true).win) continue; // can't clear it even with a potion
+    const cleanWin = bridgeDuel(X, foe, m, false).win;
+    const cs = critSafe(X);
     const ourF = (bestHitFraction(X, foe) || {}).frac || 0;
-    const score = (cleanWin ? 1e6 : 0) + ourF * 100; // prefer a clean answer, then harder hitter
-    if (score > bestScore) { bestScore = score; best = { label: X.label, needsPotion: !cleanWin }; }
+    const score = (cs ? 8e6 : 0) + (cleanWin ? 4e6 : 0) + (inPlace ? 2e6 : 0) + ourF * 100;
+    if (score > bestScore) { bestScore = score; best = { label: X.label, needsPotion: !cleanWin, inPlace, critSafe: cs }; }
   }
   return best;
 }
@@ -7936,89 +8022,105 @@ function buildBattlePlan(boss, pool, setMode) {
   // Keep each combatant's source index in `pool` so plan usage can be mapped
   // back onto the recommended cards (filter would otherwise misalign indices).
   const party = [];
-  pool.forEach((p, idx) => { const c = pCombatant(p); if (c) { c.flags = planFlags(p); c.label = p.nickname || p.species; c._srcIdx = idx; party.push(c); } });
+  pool.forEach((p, idx) => { const c = pCombatant(p); if (c) { c.flags = planFlags(p); c.flags.potionOK = itemsOK; c.label = p.nickname || p.species; c._srcIdx = idx; party.push(c); } });
   const bossC = team.map(b => { const c = bossCombatant(b, boss); if (c) c.label = b.species; return c; }).filter(Boolean);
   if (!party.length || !bossC.length) return null;
 
-  const moveNameOf = (P, B) => { const t = (bestHitFraction(P, B) || {}).type; if (!t) return ''; let best = null, bp = -1; for (const m of normMovesList(P._moves || [])) { const c = resolveMove(m); if (!c || STATUS_MOVES.has(c) || MOVES[c] !== t) continue; const pw = movePower(c) || 0; if (pw > bp) { bp = pw; best = c; } } return best ? ` <span class="bp-plan-mv">${best}</span>` : ` <span class="bp-plan-mv">${t}</span>`; };
+  // best-move chip A would use vs B (highest-damage type's strongest matching move)
+  const mv = (A, B) => { const t = (bestHitFraction(A, B) || {}).type; if (!t) return ''; let best = null, bp = -1; for (const m of normMovesList(A._moves || [])) { const c = resolveMove(m); if (!c || STATUS_MOVES.has(c) || MOVES[c] !== t) continue; const pw = movePower(c) || 0; if (pw > bp) { bp = pw; best = c; } } return `<span class="bp-plan-mv">${best || t}</span>`; };
   party.forEach(p => p._moves = normMovesList(pool[p._srcIdx] ? pool[p._srcIdx].moves : p.moves));
+  bossC.forEach(c => c._moves = normMovesList(c.moves || []));   // so foe move names (not just types) show in the turn log
   // Per-party-member usage in THIS (mode-aware) plan — surfaced on the cards so
   // a card never contradicts the plan (e.g. "good" on a mon the plan sacks).
   const usage = party.map(() => ({ entered: false, sacked: false, pivoted: false, kos: 0, isLead: false }));
 
   const pHP = party.map(() => 1), bHP = bossC.map(() => 1), bSlp = bossC.map(() => 0), sUsed = party.map(() => false);
   let pIdx = planChooseLead(party, bossC, mode), bIdx = 0, lastTo = -1, guard = 0, anySack = false;
+  let potBudget = (itemsOK && party.some(p => p.flags && p.flags.potionOK)) ? PLAN_POTION_BUDGET : 0, potLast = false;
   usage[pIdx].isLead = true; usage[pIdx].entered = true;
   const heal = (pi, amt) => { if (pHP[pi] > 0) pHP[pi] = Math.min(1, pHP[pi] + amt); };
-  const hit = (P, B, pi) => { const h = bestHitFraction(P, B); bHP[bIdx] -= h.frac; if (h.drain) heal(pi, 0.5 * h.frac * ((B.stats[0] || 1) / (P.stats[0] || 1))); };
+  const hit = (P, B, pi) => { const h = bestHitFraction(P, B); const before = bHP[bIdx]; bHP[bIdx] -= h.frac; if (h.drain) heal(pi, 0.5 * Math.min(h.frac, Math.max(0, before)) * ((B.stats[0] || 1) / (P.stats[0] || 1))); };
   const endTurn = (pi) => { if (pHP[pi] > 0) { if (party[pi].flags.lefto) heal(pi, 1 / 16); if (party[pi].flags.sitrus && !sUsed[pi] && pHP[pi] < 0.5) { sUsed[pi] = true; heal(pi, 0.25); } } };
-  const steps = [];
-  const dangerNoted = new Set(); // (pIdx#bIdx) pairs already flagged as a near-OHKO gamble
-  // ONE phase per boss Pokémon: record how we enter, any mid-phase events, and
-  // who delivers the KO; flush only when the opponent faints (or the fight ends).
-  let enterVerb = 'Lead', enterIdx = pIdx, notes = [], phaseAlt = null;
-  const flush = () => {
-    const ko = pIdx;
-    if (bHP[bIdx] <= 0) usage[ko].kos++; // credit only when the foe actually fainted
-    usage[enterIdx].entered = true; usage[ko].entered = true;
-    let chain = `${enterVerb} <b>${party[enterIdx].label}</b>`;
-    if (ko !== enterIdx) chain += ` → <b>${party[ko].label}</b>`;
-    const n = notes.length ? ` · ${notes.join(' · ')}` : '';
-    steps.push(`${chain} vs ${bossC[bIdx].label}${moveNameOf(party[ko], bossC[bIdx])}${n}${phaseAlt || ''}`);
-    notes = []; phaseAlt = null;
-  };
   const bossAtk = (pi) => { if (bSlp[bIdx] > 0) { bSlp[bIdx]--; return; } pHP[pi] -= planFrac(bossC[bIdx], party[pi]); };
+  const dangerNoted = new Set(); // (pIdx#bIdx) pairs already flagged as a near-OHKO gamble
+
+  // Turn-by-turn log, grouped into one PHASE per boss Pokémon (turns restart at T1
+  // within each phase). Sim mechanics are unchanged — only what we record differs.
+  const phases = [];
+  let curPhase = null, phaseTurn = 0;
+  const startPhase = (entry) => { curPhase = { enemy: bossC[bIdx].label, entry, turns: [], alt: null }; phases.push(curPhase); phaseTurn = 0; };
+  const addTurn = (parts) => { if (!curPhase) return; phaseTurn++; curPhase.turns.push(`<span class="bp-tn">T${phaseTurn}</span> ${parts.filter(Boolean).join(' <span class="bp-sep">·</span> ')}`); };
+  startPhase(`Lead <b>${party[pIdx].label}</b>`);
 
   while (guard++ < 100) {
-    if (!bHP.some(h => h > 0)) { flush(); break; }
-    if (!pHP.some(h => h > 0)) { flush(); steps.push(`<span class="bp-plan-risk">⚠ team gets worn down — no clean win here</span>`); break; }
-    if (bHP[bIdx] <= 0) { // opponent KO'd → close this phase, set up the next
-      flush();
+    if (!bHP.some(h => h > 0)) { usage[pIdx].kos++; break; }       // KO'd the last foe
+    if (!pHP.some(h => h > 0)) { if (curPhase) curPhase.turns.push(`<span class="bp-plan-risk">⚠ team gets worn down — no clean win here</span>`); break; }
+    if (bHP[bIdx] <= 0) { // foe fainted → credit the KO, open the next phase
+      usage[pIdx].kos++;
       let nx = -1; for (let j = 0; j < bossC.length; j++) if (bHP[j] > 0) { nx = j; break; } if (nx < 0) break; bIdx = nx;
-      if (mode !== 'set') { const r = planBestRepl(party, pHP, bossC[bIdx], bHP[bIdx]); if (r >= 0 && r !== pIdx) { pIdx = r; enterVerb = 'Free-switch to'; } else enterVerb = 'Stay in'; }
-      else { enterVerb = 'Stay in <span class="bp-plan-mv">(Set: no free switch)</span>'; }
-      enterIdx = pIdx; usage[pIdx].entered = true; lastTo = -1; continue;
+      let entry;
+      if (mode !== 'set') { const r = planBestRepl(party, pHP, bossC[bIdx], bHP[bIdx]); if (r >= 0 && r !== pIdx) { pIdx = r; entry = `Send <b>${party[pIdx].label}</b>`; } else entry = `<b>${party[pIdx].label}</b> stays in`; }
+      else { entry = `<b>${party[pIdx].label}</b> stays in <span class="bp-plan-mv">(Set: no free switch)</span>`; }
+      usage[pIdx].entered = true; lastTo = -1; startPhase(entry); continue;
     }
-    if (pHP[pIdx] <= 0) { // our mon fainted mid-phase → note the sack, send next (no new line)
+    if (pHP[pIdx] <= 0) { // our mon fainted → sack, send the next
       const r = planBestRepl(party, pHP, bossC[bIdx], bHP[bIdx]); if (r < 0) break;
-      notes.push(`<b>${party[pIdx].label}</b> likely sacked`); usage[pIdx].sacked = true; anySack = true; pIdx = r; usage[r].entered = true; lastTo = -1; continue;
+      addTurn([`<span class="bp-plan-risk"><b>${party[pIdx].label}</b> faints → send <b>${party[r].label}</b></span>`]);
+      usage[pIdx].sacked = true; anySack = true; pIdx = r; usage[r].entered = true; lastTo = -1; continue;
     }
     usage[pIdx].entered = true;
     const act = planChooseAction(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, lastTo);
     let P = party[pIdx], B = bossC[bIdx];
-    if (act.type === 'switch') { notes.push(`${setMode ? 'switch (eats a hit) to' : 'pivot to'} <b>${party[act.idx].label}</b>`); lastTo = act.idx; pIdx = act.idx; usage[pIdx].entered = true; bossAtk(pIdx); endTurn(pIdx); continue; }
-    if (act.type === 'pivot') { notes.push(`<b>${P.label}</b> ${P.flags.pivot || 'pivot'} → switch to <b>${party[act.idx].label}</b>`); usage[pIdx].pivoted = true; hit(P, B, pIdx); lastTo = act.idx; pIdx = act.idx; usage[pIdx].entered = true; if (bHP[bIdx] > 0) bossAtk(pIdx); endTurn(pIdx); continue; }
-    if (act.type === 'sleepStay') { notes.push(`put ${B.label} to sleep → free turns`); bSlp[bIdx] = 2; endTurn(pIdx); continue; }
-    if (act.type === 'sleepSwitch') { notes.push(`sleep ${B.label}, switch in <b>${party[act.idx].label}</b> safely`); bSlp[bIdx] = 2; lastTo = act.idx; pIdx = act.idx; usage[pIdx].entered = true; endTurn(pIdx); continue; }
-    if (act.type === 'protect') { notes.push(`Protect to stall`); if (bSlp[bIdx] > 0) bSlp[bIdx]--; endTurn(pIdx); continue; }
-    if (act.type === 'heal') { notes.push(`<b>${P.label}</b> heals up`); heal(pIdx, 0.5); bossAtk(pIdx); endTurn(pIdx); continue; }
+    const wasPot = potLast; potLast = false;   // block two Potions in a row
+    // foe's move vs a given target (or asleep note)
+    const foeVs = (T) => (bSlp[bIdx] > 0) ? `<i>${B.label} asleep</i>` : `${B.label}: ${mv(B, T)}`;
+    const foePart = () => foeVs(P);
+    if (act.type === 'switch') { const inMon = party[act.idx]; addTurn([`switch <b>${P.label}</b> → <b>${inMon.label}</b>${setMode ? ' <span class="bp-plan-mv">(eats a hit)</span>' : ''}`, foeVs(inMon)]); lastTo = pIdx; pIdx = act.idx; usage[pIdx].entered = true; bossAtk(pIdx); endTurn(pIdx); continue; }
+    if (act.type === 'pivot') { const inMon = party[act.idx], pv = P.flags.pivot || 'pivot'; usage[pIdx].pivoted = true; hit(P, B, pIdx); const pvKO = bHP[bIdx] <= 0; lastTo = pIdx; pIdx = act.idx; usage[pIdx].entered = true; if (bHP[bIdx] > 0) bossAtk(pIdx); endTurn(pIdx); addTurn([`<b>${P.label}</b> ${pv}${pvKO ? ' <b>(KO)</b>' : ''} → <b>${inMon.label}</b>`, pvKO ? null : foeVs(inMon)]); continue; }
+    if (act.type === 'sleepStay') { addTurn([`<b>${P.label}</b> puts ${B.label} to sleep`]); bSlp[bIdx] = 2; endTurn(pIdx); continue; }
+    if (act.type === 'sleepSwitch') { addTurn([`<b>${P.label}</b> sleeps ${B.label} → switch in <b>${party[act.idx].label}</b>`]); bSlp[bIdx] = 2; lastTo = pIdx; pIdx = act.idx; usage[pIdx].entered = true; endTurn(pIdx); continue; }
+    if (act.type === 'protect') { addTurn([`<b>${P.label}</b> Protect (stall)`]); if (bSlp[bIdx] > 0) bSlp[bIdx]--; endTurn(pIdx); continue; }
+    if (act.type === 'heal') { addTurn([`<b>${P.label}</b>: heal up`, foePart()]); heal(pIdx, 0.5); bossAtk(pIdx); endTurn(pIdx); continue; }
     // attack (drain moves siphon HP back via hit())
     const pF = (P.stats[5] || 0) >= (B.stats[5] || 0);
-    // Fragile-commit warning: `frac` is the MAX-roll, crit-excluded estimate, so a
-    // foe hit ≥85% means "survives only barely" — a crit, a high roll, or model
-    // imprecision turns it into a OHKO. If that foe actually swings at us (it's
-    // faster, or we can't KO it first), flag the gamble once per matchup.
+    // Reactive Potion: if the foe's hit would otherwise faint us and a Potion lets us
+    // survive (and we can't KO it first), spend one instead of attacking — narrated as
+    // its own turn, matching how a player commits + heals through a chip war.
+    { const incF = planFrac(B, P), ourF0 = planFrac(P, B), weKO0 = pF && ourF0 >= bHP[bIdx];
+      if (potBudget > 0 && (!PLAN_POT_NOCONSEC || !wasPot) && !weKO0 && ourF0 >= 0.15 && incF >= pHP[pIdx] && Math.min(1, pHP[pIdx] + PLAN_HEAL_FRAC) > incF) {
+        potBudget--; potLast = true; const fpP = foePart(); heal(pIdx, PLAN_HEAL_FRAC); bossAtk(pIdx); endTurn(pIdx);
+        addTurn([`<b>${P.label}</b>: <b>Potion</b>`, fpP]); continue;
+      } }
+    // Fragile-commit warning: `frac` is the MAX-roll, crit-EXCLUDED estimate — the gamble
+    // is when our mon SURVIVES a normal hit but a CRIT (×1.5, ~6%) would KO it.
     const inc = bestHitFraction(B, P);
     const weKOfirst = pF && bestHitFraction(P, B).frac >= bHP[bIdx];
-    if (inc && inc.frac >= 0.85 && !weKOfirst) {
+    const hpNow = pHP[pIdx];
+    let warn = '';
+    if (inc && inc.frac && !weKOfirst && inc.frac < hpNow && inc.frac * 1.5 >= hpNow) {
       const dk = pIdx + '#' + bIdx;
       if (!dangerNoted.has(dk)) {
         dangerNoted.add(dk);
-        notes.push(`<span class="bp-plan-risk">⚠ ${P.label} is in OHKO range from ${B.label}'s ${inc.move || 'hit'} — a high roll or crit kills it, so committing here is a gamble</span>`);
-        // Roster Shield: if a teammate can cleanly clear this foe (via a one-potion
-        // bridge if needed), surface it as a distinct, optional alternative line so
-        // the matchup advice matches the per-foe "best counter" card.
-        if (itemsOK && !phaseAlt) {
+        warn = ` <span class="bp-plan-risk">⚠ a crit (~6%) would KO ${P.label}</span>`;
+        // Roster Shield: prefer the simplest safe answer (potion the mon already in over
+        // a pointless switch); only suggest a switch when a different mon is genuinely safer.
+        if (itemsOK && curPhase && !curPhase.alt) {
           const alt = rosterShieldAlt(party, B, mode, pIdx);
-          if (alt) phaseAlt = `<div class="bp-alt"><span class="bp-alt-tag">🎒 Safer alternative</span> switch to <b>${alt.label}</b>${alt.needsPotion ? ' and use a <b>Potion</b>' : ''} — it clears ${B.label} without the crit gamble${alt.needsPotion ? ' (heal it once when it drops low to absorb the extra hit)' : ''}.</div>`;
+          if (alt && !alt.inPlace) curPhase.alt = `<span class="bp-alt-tag">🎒 Safer</span> switch to <b>${alt.label}</b>${alt.needsPotion ? ' + <b>Potion</b>' : ''} — ${alt.critSafe ? 'handles' : 'clears'} ${B.label} without the crit gamble.`;
+          else if (alt && alt.inPlace && alt.needsPotion) curPhase.alt = `<span class="bp-alt-tag">🎒 Tip</span> keep a <b>Potion</b> for <b>${alt.label}</b> — heal when it drops low; clears ${B.label} with no switch.`;
         }
       }
     }
+    const ourMv = mv(P, B), fp = foePart(), wasAsleep = bSlp[bIdx] > 0;
     if (pF) { hit(P, B, pIdx); if (bHP[bIdx] > 0) bossAtk(pIdx); } else { bossAtk(pIdx); if (pHP[pIdx] > 0) hit(P, B, pIdx); }
     endTurn(pIdx);
+    const weKO = bHP[bIdx] <= 0, weFainted = pHP[pIdx] <= 0;
+    const ourPart = weFainted ? `<span class="bp-plan-risk"><b>${P.label}</b> goes down</span>` : `<b>${P.label}</b>: ${ourMv}${weKO ? ' → KO' : ''}${warn}`;
+    const showFoe = wasAsleep || !(pF && weKO);   // foe acts unless we KO'd it first while faster (or it's asleep — show the sleep note)
+    addTurn(pF ? [ourPart, showFoe ? fp : null] : [showFoe ? fp : null, ourPart]);
   }
-  if (anySack) steps.push(`<span class="bp-plan-note">Assumes no in-battle healing — a Sitrus Berry / Leftovers on the switch-in could let you pivot instead of sacking.</span>`);
-  if (!steps.length) return null;
+  if (!phases.length || !phases.some(ph => ph.turns.length)) return null;
+  const note = anySack ? `Assumes no in-battle healing — a Sitrus Berry / Leftovers on the switch-in could let you pivot instead of sacking.` : null;
   // Map each party member's usage back onto the recommended-card index (pool
   // index via _srcIdx), so renderMatchup can tag each card with its plan role.
   const usageBySrc = pool.map(() => null);
@@ -8036,7 +8138,7 @@ function buildBattlePlan(boss, pool, setMode) {
   // `risky` = the planned line commits a mon to a near-OHKO matchup (a flagged
   // gamble) or sacks one — a reliable, deterministic signal the readiness band
   // uses so it never calls such a fight a "clean sweep".
-  return { steps, usage: usageBySrc, risky: dangerNoted.size > 0 || anySack };
+  return { phases, note, usage: usageBySrc, risky: dangerNoted.size > 0 || anySack };
 }
 
 /* ──────────────────────────────────────────────────────────────────────
@@ -8073,23 +8175,32 @@ function _readyHit(A, B, rng) {
 function _readyBattle(party, bossC, mode, rng) {
   const pHP = party.map(() => 1), bHP = bossC.map(() => 1), bSlp = bossC.map(() => 0), sUsed = party.map(() => false);
   let pIdx = planChooseLead(party, bossC, mode), bIdx = 0, lastTo = -1, guard = 0;
+  let potBudget = party.some(p => p.flags && p.flags.potionOK) ? PLAN_POTION_BUDGET : 0, potLast = false;   // in-battle potions a real player would spend
   const heal = (pi, a) => { if (pHP[pi] > 0) pHP[pi] = Math.min(1, pHP[pi] + a); };
   const endTurn = (pi) => { if (pHP[pi] > 0) { if (party[pi].flags.lefto) heal(pi, 1 / 16); if (party[pi].flags.sitrus && !sUsed[pi] && pHP[pi] < 0.5) { sUsed[pi] = true; heal(pi, 0.25); } } };
   const bossAtk = (pi) => { if (bSlp[bIdx] > 0) { bSlp[bIdx]--; return; } const r = _readyHit(bossC[bIdx], party[pi], rng); if (r && !r.miss) pHP[pi] -= r.dmg; };
-  const pHit = (pi) => { const r = _readyHit(party[pi], bossC[bIdx], rng); if (r && !r.miss) { bHP[bIdx] -= r.dmg; if (r.drain) heal(pi, 0.5 * r.dmg * ((bossC[bIdx].stats[0] || 1) / (party[pi].stats[0] || 1))); } };
+  const pHit = (pi) => { const r = _readyHit(party[pi], bossC[bIdx], rng); if (r && !r.miss) { const before = bHP[bIdx]; bHP[bIdx] -= r.dmg; if (r.drain) heal(pi, 0.5 * Math.min(r.dmg, Math.max(0, before)) * ((bossC[bIdx].stats[0] || 1) / (party[pi].stats[0] || 1))); } };
   while (guard++ < 200) {
     if (!bHP.some(h => h > 0) || !pHP.some(h => h > 0)) break;
     if (bHP[bIdx] <= 0) { let n = -1; for (let j = 0; j < bossC.length; j++) if (bHP[j] > 0) { n = j; break; } if (n < 0) break; bIdx = n; if (mode !== 'set') { const r = planBestRepl(party, pHP, bossC[bIdx], bHP[bIdx]); if (r >= 0) pIdx = r; } lastTo = -1; continue; }
     if (pHP[pIdx] <= 0) { const r = planBestRepl(party, pHP, bossC[bIdx], bHP[bIdx]); if (r < 0) break; pIdx = r; lastTo = -1; continue; }
     const act = planChooseAction(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, lastTo);
     const P = party[pIdx], B = bossC[bIdx];
-    if (act.type === 'switch') { pIdx = act.idx; lastTo = act.idx; bossAtk(pIdx); endTurn(pIdx); continue; }
-    if (act.type === 'pivot') { pHit(pIdx); pIdx = act.idx; lastTo = act.idx; if (bHP[bIdx] > 0) bossAtk(pIdx); endTurn(pIdx); continue; }
+    const wasPot = potLast; potLast = false;   // block two Potions in a row (re-armed only on a Potion)
+    if (act.type === 'switch') { lastTo = pIdx; pIdx = act.idx; bossAtk(pIdx); endTurn(pIdx); continue; }
+    if (act.type === 'pivot') { pHit(pIdx); lastTo = pIdx; pIdx = act.idx; if (bHP[bIdx] > 0) bossAtk(pIdx); endTurn(pIdx); continue; }
     if (act.type === 'sleepStay') { bSlp[bIdx] = 1 + Math.floor(rng() * 3); endTurn(pIdx); continue; }
-    if (act.type === 'sleepSwitch') { bSlp[bIdx] = 1 + Math.floor(rng() * 3); pIdx = act.idx; lastTo = act.idx; endTurn(pIdx); continue; }
+    if (act.type === 'sleepSwitch') { bSlp[bIdx] = 1 + Math.floor(rng() * 3); lastTo = pIdx; pIdx = act.idx; endTurn(pIdx); continue; }
     if (act.type === 'protect') { if (bSlp[bIdx] > 0) bSlp[bIdx]--; endTurn(pIdx); continue; }
     if (act.type === 'heal') { heal(pIdx, 0.5); bossAtk(pIdx); endTurn(pIdx); continue; }
     const pF = (P.stats[5] || 0) >= (B.stats[5] || 0);
+    // Reactive Potion: if the foe's hit would otherwise faint us this turn and a Potion
+    // lets us survive it (and we can't KO the foe first), spend one instead of attacking
+    // — how a player actually plays a chip war. Budget-limited so it can't stall.
+    const incoming = planFrac(B, P), ourF = planFrac(P, B), weKO = pF && ourF >= bHP[bIdx];
+    if (potBudget > 0 && (!PLAN_POT_NOCONSEC || !wasPot) && !weKO && ourF >= 0.15 && incoming >= pHP[pIdx] && Math.min(1, pHP[pIdx] + PLAN_HEAL_FRAC) > incoming) {
+      potBudget--; potLast = true; heal(pIdx, PLAN_HEAL_FRAC); bossAtk(pIdx); endTurn(pIdx); continue;   // potion only to extend a fight we can win (chip ≥15%), and never twice in a row
+    }
     if (pF) { pHit(pIdx); if (bHP[bIdx] > 0) bossAtk(pIdx); } else { bossAtk(pIdx); if (pHP[pIdx] > 0) pHit(pIdx); }
     endTurn(pIdx);
   }
@@ -8103,6 +8214,8 @@ function _readyBattle(party, bossC, mode, rng) {
 function _lruGet(map, key) { if (!map.has(key)) return undefined; const v = map.get(key); map.delete(key); map.set(key, v); return v; }
 function _lruSet(map, key, val, cap) { if (map.has(key)) map.delete(key); map.set(key, val); while (map.size > cap) map.delete(map.keys().next().value); return val; }
 const _readinessLRU = new Map(); const RD_LRU_CAP = 32;
+let _readinessFetchToken = 0;   // guards the async live-meter fill (discard stale boss/team-edit results)
+let _lastReadinessByCap = {};   // last computed readiness per cap → shown dimmed while a recalc (mode/cap toggle, edit) is in flight, so the meter never blanks
 const READINESS_N = 100; // enough samples that low-probability deaths (crit OHKOs) register reliably rather than depending on one lucky seed
 // opts.n overrides the sample count (lower = faster, used for the projection
 // delta sims). opts.noCache skips the shared single-slot cache entirely so a
@@ -8114,7 +8227,8 @@ const READINESS_N = 100; // enough samples that low-probability deaths (crit OHK
 function _buildSimInputs(boss, pool, mode) {
   const team = boss.team || [];
   if (!team.length || !pool || !pool.length) return null;
-  const party = []; for (const p of pool) { const c = pCombatant(p); if (c) { c.flags = planFlags(p); party.push(c); } }
+  const itemsOK = (typeof curRules === 'function') ? (curRules().banBattleItems !== true) : true;
+  const party = []; for (const p of pool) { const c = pCombatant(p); if (c) { c.flags = planFlags(p); c.flags.potionOK = itemsOK; party.push(c); } }
   const bossC = team.map(b => bossCombatant(b, boss)).filter(Boolean);
   if (bossC.length !== team.length || !party.length) return null;
   return { party, bossC };
@@ -8124,17 +8238,41 @@ function _buildSimInputs(boss, pool, mode) {
 // Web Worker — the worker and this sync path run identical code → identical results.
 function _scoreFromSims(party, bossC, mode, n, seed) {
   const rng = _mulberry32(seed);
-  let wins = 0, marginSum = 0, deathSum = 0;
-  for (let i = 0; i < n; i++) { const r = _readyBattle(party, bossC, mode, rng); deathSum += r.deaths; if (r.won) { wins++; marginSum += r.endHP; } }
-  const w = wins / n, marginWon = wins ? marginSum / wins : 0, avgDeaths = deathSum / n;
-  // Win probability gates the score; surviving-team-HP margin separates a clean
-  // sweep from a costly grind. Dead mons contribute 0 HP, so `marginWon` ALREADY
-  // reflects losses — we deliberately do NOT apply a separate death multiplier.
-  return { score: Math.round(100 * w * (0.45 + 0.55 * marginWon)), winRate: Math.round(w * 100), margin: Math.round(marginWon * 100), deaths: +avgDeaths.toFixed(2) };
+  let wins = 0, cleanWins = 0, marginSum = 0, deathSum = 0;
+  for (let i = 0; i < n; i++) { const r = _readyBattle(party, bossC, mode, rng); deathSum += r.deaths; if (r.won) { wins++; marginSum += r.endHP; if (r.deaths === 0) cleanWins++; } }
+  const w = wins / n, cw = cleanWins / n, marginWon = wins ? marginSum / wins : 0, avgDeaths = deathSum / n;
+  // SCORE = CLEAN-CLEAR probability: a "win" is the whole boss team KO'd with ZERO
+  // of our mons fainting (the no-two-Potions-in-a-row rule is already enforced in
+  // _readyBattle, so a line that needs back-to-back Potions can't count as clean).
+  // This is the Nuzlocke-honest metric — a 100%-win fight that always costs a mon
+  // reads 0 here. winRate/margin/deaths ride alongside so the sub-line can show
+  // "100% win · ~1.4 losses" and a 0 never reads as "you'll lose the battle".
+  return { score: Math.round(100 * cw), winRate: Math.round(w * 100), margin: Math.round(marginWon * 100), deaths: +avgDeaths.toFixed(2) };
+}
+// Why a boss can't be simulated, or null if it can. Distinguishes PERMANENT gaps —
+// no level data anywhere (the -2 sentinel hacks: Radical Red / Inclement Emerald /
+// Unbound / Insurgence with no cap to borrow), or a species that 404'd on PokéAPI
+// (Insurgence fakemon) — from TRANSIENT ones (Gen-5+ species still backfilling).
+// renderMatchup uses this so the meter shows an honest "can't simulate" instead of
+// hanging on "Calculating…" forever (404 species) or computing garbage at level -2.
+function _bossDataMissing(boss) {
+  if (!boss || !(boss.team || []).length) return null;
+  const ace = bossAceLevel(boss);
+  for (const m of boss.team) {
+    if ((m.lv > 0 ? m.lv : ace) <= 0) return { reason: 'level' };
+    const inf = pokeInfo(m.species);
+    const ok = inf && inf.s && inf.s.length === 6 && inf.s.every(x => x != null);
+    if (!ok) {
+      const c = (typeof backfilledPokemon !== 'undefined') ? backfilledPokemon[speciesSlug(m.species)] : null;
+      if (isErrorRecord(c)) return { reason: 'species', species: m.species };   // 404'd → permanent; 'loading'/absent → still resolving, keep the spinner
+    }
+  }
+  return null;
 }
 function computeReadiness(boss, pool, setMode, opts) {
   const N = (opts && opts.n) || READINESS_N;
   const noCache = !!(opts && opts.noCache);
+  const cacheOnly = !!(opts && opts.cacheOnly);   // render path: return cached or null, NEVER run the heavy sync sim (keeps edits/level-ups instant — the worker fills it async)
   if (!(boss.team || []).length || !pool || !pool.length) return null;
   const mode = setMode ? 'set' : 'shift';
   const seed = _readinessSeed(boss, pool, mode);
@@ -8142,6 +8280,7 @@ function computeReadiness(boss, pool, setMode, opts) {
   // same LRU under the same seed via simReadinessAsync). Lower-N projection sims
   // pass noCache so they can never overwrite/return the LIVE team's result.
   if (!noCache && N === READINESS_N) { const hit = _lruGet(_readinessLRU, seed); if (hit) return hit; }
+  if (cacheOnly) return null;
   const inp = _buildSimInputs(boss, pool, mode);
   if (!inp) return null;   // data not ready — cheap bail; recomputes on onBackfill
   const result = _scoreFromSims(inp.party, inp.bossC, mode, N, seed);
@@ -8167,7 +8306,7 @@ const _POOL_SIZE = Math.max(1, Math.min(4, (typeof navigator !== 'undefined' && 
 // is EXCLUDED — it reads curGame()/GAMES, so the worker gets an override instead.
 function _simWorkerFnList() {
   return [_scoreFromSims, _readyBattle, _readyHit, _mulberry32, bestHitFraction,
-    planFlags, planFrac, planTKO, planWins, planBestRepl, planRollout, planActions,
+    planFlags, planFrac, planTKO, planWins, planBestRepl, _planCritKORisk, planRollout, planActions,
     planChooseAction, planChooseLead, resolveMove, getMoveType, moveData, movePower,
     moveCategory, moveEffect, effectiveCategory, moveHasPriority, moveAccuracy,
     itemDamageMult, itemAccuracyMult, effectiveness, effectivenessWithAbility,
@@ -8178,20 +8317,20 @@ function _buildWorkerSource() {
   // OR const-arrow) — f.name supplies the binding either way.
   const fnSrc = _simWorkerFnList().map(f => 'const ' + f.name + ' = ' + f.toString()).join(';\n') + ';';
   return [
-    'let MOVES,MOVE_DATA,MOVE_ACCURACY,TYPE_BOOST_ITEM,TYPE_CHART,MM_DEFAULT_POWER,PLAN_SWITCH_PEN,MOVES_NORMALIZED,backfilledMoves={},__PRESPLIT=false;',
+    'let MOVES,MOVE_DATA,MOVE_ACCURACY,TYPE_BOOST_ITEM,TYPE_CHART,MM_DEFAULT_POWER,PLAN_SWITCH_PEN,PLAN_CRIT_P,PLAN_RISK_PEN,PLAN_POTION_BUDGET,PLAN_HEAL_FRAC,PLAN_POT_NOCONSEC,MOVES_NORMALIZED,backfilledMoves={},__PRESPLIT=false;',
     'let STATUS_MOVES=new Set(),PHYSICAL_TYPES_PRE_SPLIT=new Set(),PLAN_PIVOT=new Set(),PLAN_SLEEP=new Set(),PLAN_RECOVER=new Set();',
     'var NUZ_DATA={};',
     'const gameIsPreSplit=()=>__PRESPLIT;',   // override: orig reads curGame()/GAMES
     fnSrc,
     'onmessage=function(e){var m=e.data;',
-    ' if(m.type==="init"){var d=m.data;MOVES=d.MOVES;MOVE_DATA=d.MOVE_DATA;MOVE_ACCURACY=d.MOVE_ACCURACY;TYPE_BOOST_ITEM=d.TYPE_BOOST_ITEM;TYPE_CHART=d.TYPE_CHART;MM_DEFAULT_POWER=d.MM_DEFAULT_POWER;PLAN_SWITCH_PEN=d.PLAN_SWITCH_PEN;MOVES_NORMALIZED=d.MOVES_NORMALIZED;backfilledMoves=d.backfilledMoves||{};STATUS_MOVES=new Set(d.STATUS_MOVES);PHYSICAL_TYPES_PRE_SPLIT=new Set(d.PHYSICAL_TYPES_PRE_SPLIT);PLAN_PIVOT=new Set(d.PLAN_PIVOT);PLAN_SLEEP=new Set(d.PLAN_SLEEP);PLAN_RECOVER=new Set(d.PLAN_RECOVER);NUZ_DATA={moveStats:d.moveStats};postMessage({type:"ready"});return;}',
+    ' if(m.type==="init"){var d=m.data;MOVES=d.MOVES;MOVE_DATA=d.MOVE_DATA;MOVE_ACCURACY=d.MOVE_ACCURACY;TYPE_BOOST_ITEM=d.TYPE_BOOST_ITEM;TYPE_CHART=d.TYPE_CHART;MM_DEFAULT_POWER=d.MM_DEFAULT_POWER;PLAN_SWITCH_PEN=d.PLAN_SWITCH_PEN;PLAN_CRIT_P=d.PLAN_CRIT_P;PLAN_RISK_PEN=d.PLAN_RISK_PEN;PLAN_POTION_BUDGET=d.PLAN_POTION_BUDGET;PLAN_HEAL_FRAC=d.PLAN_HEAL_FRAC;PLAN_POT_NOCONSEC=d.PLAN_POT_NOCONSEC;MOVES_NORMALIZED=d.MOVES_NORMALIZED;backfilledMoves=d.backfilledMoves||{};STATUS_MOVES=new Set(d.STATUS_MOVES);PHYSICAL_TYPES_PRE_SPLIT=new Set(d.PHYSICAL_TYPES_PRE_SPLIT);PLAN_PIVOT=new Set(d.PLAN_PIVOT);PLAN_SLEEP=new Set(d.PLAN_SLEEP);PLAN_RECOVER=new Set(d.PLAN_RECOVER);NUZ_DATA={moveStats:d.moveStats};postMessage({type:"ready"});return;}',
     ' if(m.type==="sim"){__PRESPLIT=!!m.preSplit;var r=null,err=null;try{r=_scoreFromSims(m.party,m.bossC,m.mode,m.n,m.seed);}catch(ex){err=String(ex&&ex.message||ex);}postMessage({type:"simDone",id:m.id,result:r,err:err});return;}',
     '};'
   ].join('\n');
 }
 function _workerInitPayload() {
   return {
-    MOVES, MOVE_DATA, MOVE_ACCURACY, TYPE_BOOST_ITEM, TYPE_CHART, MM_DEFAULT_POWER, PLAN_SWITCH_PEN, MOVES_NORMALIZED,
+    MOVES, MOVE_DATA, MOVE_ACCURACY, TYPE_BOOST_ITEM, TYPE_CHART, MM_DEFAULT_POWER, PLAN_SWITCH_PEN, PLAN_CRIT_P, PLAN_RISK_PEN, PLAN_POTION_BUDGET, PLAN_HEAL_FRAC, PLAN_POT_NOCONSEC, MOVES_NORMALIZED,
     moveStats: (typeof NUZ_DATA !== 'undefined' && NUZ_DATA.moveStats) || {},
     backfilledMoves: (typeof backfilledMoves !== 'undefined' && backfilledMoves) || {},
     STATUS_MOVES: [...STATUS_MOVES], PHYSICAL_TYPES_PRE_SPLIT: [...PHYSICAL_TYPES_PRE_SPLIT],
@@ -8408,15 +8547,19 @@ function schedulePrecompute() {
 // Band label + colour class for a readiness score. `deaths` = expected mons lost
 // per run: even a high-scoring fight that routinely trades a teammate is NOT a
 // clean sweep in a Nuzlocke, so the top band is gated on near-zero deaths.
-function readinessBand(score, deaths, risky) {
-  const d = deaths || 0;
+// score = CLEAN-CLEAR % (no-death sweep). winRate disambiguates the low band:
+// a 0% clean fight you still WIN 100% of the time is a "costly win" (expect a
+// casualty), NOT unwinnable — only call it unwinnable when the win itself is shaky.
+function readinessBand(score, deaths, risky, winRate) {
+  const d = deaths || 0, w = (winRate == null) ? 100 : winRate;
   if (score >= 85) return (d < 0.08 && !risky)
-    ? { label: 'Elite — clean sweep predicted', cls: 'rd-elite' }
-    : { label: 'Strong — usually clean, but a roll can cost a mon', cls: 'rd-safe' };
-  if (score >= 65) return { label: 'Safe — clean win, expect some chip', cls: 'rd-safe' };
-  if (score >= 40) return { label: 'Pyrrhic — winnable but fragile; a bad roll could wipe you', cls: 'rd-pyrrhic' };
-  if (score >= 18) return { label: 'Danger — likely to lose Pokémon', cls: 'rd-danger' };
-  return { label: 'Unwinnable — no reliable path to victory', cls: 'rd-dead' };
+    ? { label: 'Flawless — clean sweep predicted', cls: 'rd-elite', color: '#4ade80' }
+    : { label: 'Strong — usually no losses, a roll can cost a mon', cls: 'rd-safe', color: '#86efac' };
+  if (score >= 65) return { label: 'Safe — usually no losses, expect some chip', cls: 'rd-safe', color: '#bef264' };
+  if (score >= 40) return { label: 'Coin-flip — real chance you lose a mon', cls: 'rd-pyrrhic', color: '#facc15' };
+  if (score >= 18) return { label: 'Risky — likely to lose a Pokémon', cls: 'rd-danger', color: '#fb923c' };
+  if (w >= 50) return { label: 'Costly — you should win, but expect a casualty', cls: 'rd-danger', color: '#f97316' };
+  return { label: 'No reliable path to a clean sweep', cls: 'rd-dead', color: '#f87171' };
 }
 
 /* ──────────────────────────────────────────────────────────────────────
@@ -8634,7 +8777,7 @@ async function scoreAdviceGems(boss, recommended, candidates, setMode, baseScore
     const team = _projectedTeamWith(recommended, g.projMon, boss, g.replaceRef);
     const res = await simReadinessAsync(boss, team, setMode, { n: ADVICE_SIM_N, workerOnly });
     const ps = res ? res.score : baseScore;
-    return { ...g, projScore: ps, delta: ps - baseScore };
+    return { ...g, projScore: ps, projWinRate: res ? res.winRate : null, projDeaths: res ? res.deaths : null, delta: ps - baseScore };
   }));
   scored.sort((a, b) => b.delta - a.delta || (b.rank || 0) - (a.rank || 0));
   return scored;
@@ -8645,7 +8788,7 @@ async function scoreAdviceGems(boss, recommended, candidates, setMode, baseScore
 // Returns { items, projScore, projDelta } — projScore drives the meter's ghost
 // bar + delta badge (best single high-impact swap).
 function renderAdviceItems(analysis, scored, baseScore) {
-  const items = []; let projScore = null, projDelta = null;
+  const items = []; let projScore = null, projDelta = null, projWinRate = null, projDeaths = null;
   // Hopeless case: the cap-legal team can't realistically win AND there's nothing
   // to suggest (no candidates, no positive-delta gem). Coverage-gap / blind-spot
   // advice is misleading here — you might "hit super-effectively" yet still get
@@ -8690,7 +8833,7 @@ function renderAdviceItems(analysis, scored, baseScore) {
     (g.kind === 'upgrade' ? pickU : pickB).push(g);
   }
   pickU.sort(byDelta); pickB.sort(byDelta);
-  if (positive.length) { projScore = positive[0].projScore; projDelta = positive[0].delta; } // badge = best overall
+  if (positive.length) { projScore = positive[0].projScore; projDelta = positive[0].delta; projWinRate = positive[0].projWinRate; projDeaths = positive[0].projDeaths; } // badge = best overall
 
   const deltaTag = g => ` · <span style="color:#4ade80;font-weight:600">+${g.delta} readiness</span>`;
   for (const g of pickU) {
@@ -8714,7 +8857,7 @@ function renderAdviceItems(analysis, scored, baseScore) {
     items.push({ icon: '⚠', html: `Nothing in your box hits <strong>${analysis.blindSpots.join(', ')}</strong> super-effectively — out-bulk or chip ${analysis.blindSpots.length > 1 ? 'them' : 'it'}.` });
   }
   if (analysis.levelGap) items.push(analysis.levelGap);
-  return { items, projScore, projDelta, measuring: false };
+  return { items, projScore, projDelta, projWinRate, projDeaths, measuring: false };
 }
 
 function renderMatchup() {
@@ -8768,21 +8911,42 @@ function renderMatchup() {
   // species (used to suggest "switch to <Z>" in the bait-&-switch sequence).
   const specialistForSpecies = {};
   specialists.forEach((speciesList, idx) => { for (const s of speciesList) if (!(s in specialistForSpecies)) specialistForSpecies[s] = recommended[idx]; });
+  // Plan + readiness both use the DETERMINISTIC, crit-risk-aware planner so they agree
+  // and the plan stays clean (the stochastic planner's death-aversion churned mons /
+  // rotated to preserve them, which disagreed with the meter and read as flip-flopping).
   const planResult = buildBattlePlan(boss, recommended, _r.setMode);
-  const planSteps = planResult && planResult.steps;
+  const planPhases = planResult && planResult.phases;
   const planUsage = (planResult && planResult.usage) || [];
-  const planHtml = (planSteps && planSteps.length) ? `<div class="battle-plan">
+  const planHtml = (planPhases && planPhases.length) ? `<div class="battle-plan">
       <div class="bp-plan-hdr">🎯 Battle plan <span class="bp-plan-sub">expected order${_r.setMode ? ' · Set mode' : ''}</span></div>
-      <ol class="bp-plan-steps">${planSteps.map(s => `<li>${s}</li>`).join('')}</ol>
+      ${planPhases.map(ph => `<div class="bp-phase">
+        <div class="bp-phase-hdr">vs <b>${ph.enemy}</b>${ph.entry ? ` <span class="bp-phase-entry">${ph.entry}</span>` : ''}</div>
+        <ul class="bp-turns">${ph.turns.map(t => `<li>${t}</li>`).join('')}</ul>
+        ${ph.alt ? `<div class="bp-alt">${ph.alt}</div>` : ''}
+      </div>`).join('')}
+      ${planResult.note ? `<div class="bp-plan-note">${planResult.note}</div>` : ''}
     </div>` : '';
   // Readiness meter — seeded Monte Carlo over the recommended team (see computeReadiness).
-  const readiness = computeReadiness(boss, recommended, _r.setMode);
+  // Read CACHE-ONLY so the render never blocks on the heavy sim: if it's warmed
+  // (precompute or a prior view) we show it instantly; on a miss (e.g. right after you
+  // edit a stat or level up) we render a "calculating" meter and let the worker compute
+  // it off-thread, then re-render once — so saving/editing always feels instant.
+  const readiness = computeReadiness(boss, recommended, _r.setMode, { cacheOnly: true });
+  if (!readiness) {
+    const rToken = ++_readinessFetchToken;
+    const rStateHash = _adviceTeamStateHash();
+    simReadinessAsync(boss, recommended, _r.setMode).then((r) => {
+      if (!r) return;   // data not ready (backfill pending) → don't re-render (avoids a loop); a later backfill render retries
+      if (rToken !== _readinessFetchToken || curCap() !== cap || _adviceTeamStateHash() !== rStateHash) return;
+      renderMatchup();   // LRU now warm → instant + accurate
+    }).catch(() => {});
+  }
 
   // How-to-improve advice (read-only; never feeds the live readiness score).
   // Computed on EVERY render (sims warm in the background) but hidden behind a
   // toggle: revealing it slides the panel in + animates the ghost bar/badge.
   // Cached delta-scoring is keyed to the boss + full team state.
-  let adviceHtml = '', projScore = null, projDelta = null;
+  let adviceHtml = '', projScore = null, projDelta = null, projWinRate = null, projDeaths = null;
   if (readiness) {
     const analysis = analyzeAdvice(boss, recommended, eligibleRoster);
     const stateHash = _adviceTeamStateHash();
@@ -8790,7 +8954,7 @@ function renderMatchup() {
     const scored = _lruGet(_adviceLRU, advKey) || null;
     const measuring = !scored && analysis.candidates.length > 0;
     const rendered = renderAdviceItems(analysis, scored, readiness.score);
-    projScore = rendered.projScore; projDelta = rendered.projDelta;
+    projScore = rendered.projScore; projDelta = rendered.projDelta; projWinRate = rendered.projWinRate; projDeaths = rendered.projDeaths;
     if (rendered.items.length) {
       const refining = rendered.measuring ? ` <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text3)">⟳ measuring…</span>` : '';
       adviceHtml = `<div class="rd-advice-frame${showAdvice ? ' open' : ''}" id="rd-advice-frame">
@@ -8823,7 +8987,8 @@ function renderMatchup() {
 
   let readinessHtml = '';
   if (readiness) {
-    const band = readinessBand(readiness.score, readiness.deaths, planResult && planResult.risky);
+    _lastReadinessByCap[cap] = readiness;   // remember so a later recalc (mode/cap toggle) can show this dimmed instead of blanking
+    const band = readinessBand(readiness.score, readiness.deaths, planResult && planResult.risky, readiness.winRate);
     // Ghost bar + badge are ALWAYS rendered when there's headroom (so the toggle
     // can animate them in/out via the CSS transitions), but visually collapsed
     // (width 0 / max-width 0) until the advice is revealed. Ghost geometry: tucked
@@ -8835,10 +9000,14 @@ function renderMatchup() {
     const reveal = hasProj && showAdvice && !animBar;          // resting, revealed
     const ghostHtml = hasProj ? `<span class="rd-ghost" id="rd-ghost" data-target="${ghostW}" style="left:calc(${readiness.score}% - 5px);width:${reveal ? `calc(${ghostW}% + 10px)` : '0'}"></span>` : '';
     const projBadge = hasProj ? `<span class="rd-proj${reveal ? ' show' : ''}" id="rd-proj-badge" title="Best single high-impact swap from the advice below" style="color:#4ade80;font-weight:700;font-size:13px">→ ${projScore} <span style="font-size:11px">(+${projDelta})</span></span>` : '';
-    readinessHtml = `<div class="readiness ${band.cls}" title="From ${READINESS_N} simulated battles of your recommended team (with random damage rolls &amp; misses): wins ${readiness.winRate}% of the time, surviving team HP ${readiness.margin}% on average. Edit a stat / EV / item to watch it move.">
-      <div class="rd-top"><span class="rd-num">${readiness.score}</span><span class="rd-of">/100</span>${projBadge}<span class="rd-label">Battle readiness — ${band.label}</span></div>
-      <div class="rd-bar">${ghostHtml}<span class="rd-fill" style="width:${readiness.score}%"></span></div>
-      <div class="rd-sub">${readiness.winRate}% win rate · ${readiness.margin}% avg team HP left${(readiness.deaths >= 0.05 || (planResult && planResult.risky)) && readiness.deaths > 0 ? ` · <span style="color:var(--red)">≈${readiness.deaths} deaths/run</span>` : ''}${_r.setMode ? ' · Set mode' : ''}</div>
+    // When the advice panel is open + there's an upside, the verdict text previews
+    // what you'd BECOME with the best swap (e.g. "Costly" → "Strong").
+    const projBandData = (hasProj && projScore != null) ? readinessBand(projScore, projDeaths != null ? projDeaths : readiness.deaths, false, projWinRate != null ? projWinRate : readiness.winRate) : null;
+    const shownBand = (showAdvice && projBandData) ? projBandData : band;   // displayed text follows the toggle; data-attrs (below) always carry both so toggleAdvice can swap instantly
+    readinessHtml = `<div class="readiness ${band.cls}" title="From ${READINESS_N} simulated battles of your recommended team (random damage rolls, crits &amp; misses): this is the % that end as a CLEAN clear — whole boss team KO'd with zero of your Pokémon fainting. It wins ${readiness.winRate}% of the time overall, losing ≈${readiness.deaths} Pokémon per run on average. Edit a stat / EV / item to watch it move.">
+      <div class="rd-top"><span class="rd-num" style="color:${band.color}">${readiness.score}</span><span class="rd-of">%</span><span class="rd-pctlabel">chance to win without losses</span>${projBadge}<span id="rd-verdict" class="rd-verdict" style="color:${shownBand.color}"${projBandData ? ` data-cur="${band.label}" data-proj="${projBandData.label}" data-curcol="${band.color}" data-projcol="${projBandData.color}"` : ''}>${shownBand.label}</span></div>
+      <div class="rd-bar">${ghostHtml}<span class="rd-fill" style="width:${readiness.score}%;background:${band.color}"></span></div>
+      <div class="rd-sub"><span style="color:${readiness.winRate >= 90 ? 'var(--green)' : readiness.winRate >= 60 ? 'var(--amber)' : 'var(--red)'};font-weight:600">${readiness.winRate}% win rate</span>${(readiness.deaths > 0) ? ` with <span style="color:var(--red)">≈${readiness.deaths} losses/run</span>` : ', no losses'}, ${readiness.margin}% average team HP left${_r.setMode ? ', Set mode' : ''}</div>
     </div>`;
     // One-shot grow-in for the SETTLE case (toggled open while still measuring):
     // render hidden, then reveal shortly after innerHTML lands so the CSS
@@ -8850,6 +9019,37 @@ function renderMatchup() {
         const g = document.getElementById('rd-ghost'); if (g) g.style.width = `calc(${ghostW}% + 10px)`;
         const b = document.getElementById('rd-proj-badge'); if (b) b.classList.add('show');
       }, 30);
+    }
+  } else {
+    // Readiness not cached yet (fresh edit / mode-or-cap toggle / first view). If we
+    // have a prior value for this boss, keep it on screen DIMMED with an "updating…"
+    // cue (so the meter never blanks and the recalc reads as reliable); the async fill
+    // above re-renders with the fresh value when the worker finishes. Only the very
+    // first-ever view (no prior value) shows the bare spinner placeholder.
+    const miss = _bossDataMissing(boss);
+    const last = _lastReadinessByCap[cap];
+    if (miss) {
+      // PERMANENT data gap — don't hang on a spinner or compute garbage. Be honest.
+      const detail = miss.reason === 'level'
+        ? `We don't have this trainer's Pokémon levels in our dataset yet, so a readiness estimate would be meaningless. The team is shown below.`
+        : `Couldn't load Pokédex data for <b>${miss.species}</b> (not on PokéAPI), so this fight can't be simulated. The team is shown below.`;
+      readinessHtml = `<div class="readiness" style="border-style:dashed;opacity:.9" title="${miss.reason === 'level' ? 'Missing boss level data' : 'Missing Pokédex data'}">
+        <div class="rd-top"><span class="rd-num" style="font-size:18px;color:var(--text3)">—</span><span class="rd-pctlabel">readiness</span><span class="rd-verdict" style="color:var(--text2);font-size:13px">Can't simulate this fight ${miss.reason === 'level' ? '— no level data' : '— missing Pokémon data'}</span></div>
+        <div class="rd-sub" style="color:var(--text3)">${detail}</div>
+      </div>`;
+    } else if (last) {
+      const lb = readinessBand(last.score, last.deaths, false, last.winRate);
+      readinessHtml = `<div class="readiness ${lb.cls}" style="opacity:.5" title="Recalculating for the new settings…">
+        <div class="rd-top"><span class="rd-num" style="color:${lb.color}">${last.score}</span><span class="rd-of">%</span><span class="rd-pctlabel">chance to win without losses</span><span class="rd-verdict" style="color:${lb.color}">${lb.label}</span> <span style="font-size:10.5px;color:var(--text3)">⟳ updating…</span></div>
+        <div class="rd-bar"><span class="rd-fill" style="width:${last.score}%;background:${lb.color}"></span></div>
+        <div class="rd-sub" style="color:var(--text3)">recalculating for the new settings…</div>
+      </div>`;
+    } else {
+      readinessHtml = `<div class="readiness rd-safe" style="opacity:.7">
+        <div class="rd-top"><span class="rd-num" style="font-size:18px;color:var(--text3)">⟳</span><span class="rd-label">Calculating…</span></div>
+        <div class="rd-bar"><span class="rd-fill" style="width:0%"></span></div>
+        <div class="rd-sub" style="color:var(--text3)">simulating your recommended team…</div>
+      </div>`;
     }
   }
   const overCapCount = ignoreCap ? 0 : curTeam().filter(p=>p.alive && boss.cap && (p.level||0) > boss.cap).length;
