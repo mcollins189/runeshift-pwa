@@ -8213,7 +8213,7 @@ function _readyBattle(party, bossC, mode, rng) {
 // precompute pass can warm many bosses ahead of time.
 function _lruGet(map, key) { if (!map.has(key)) return undefined; const v = map.get(key); map.delete(key); map.set(key, v); return v; }
 function _lruSet(map, key, val, cap) { if (map.has(key)) map.delete(key); map.set(key, val); while (map.size > cap) map.delete(map.keys().next().value); return val; }
-const _readinessLRU = new Map(); const RD_LRU_CAP = 32;
+const _readinessLRU = new Map(); const RD_LRU_CAP = 128;  // ≥ the biggest game's boss count (Glazed 66) with 2-mode headroom, so precomputed boss readiness is never evicted before it's viewed (entries are tiny {score,winRate,margin,deaths})
 let _readinessFetchToken = 0;   // guards the async live-meter fill (discard stale boss/team-edit results)
 let _lastReadinessByCap = {};   // last computed readiness per cap → shown dimmed while a recalc (mode/cap toggle, edit) is in flight, so the meter never blanks
 const READINESS_N = 100; // enough samples that low-probability deaths (crit OHKOs) register reliably rather than depending on one lucky seed
@@ -8489,7 +8489,7 @@ async function _precomputeBoss(realBoss, allowFetch) {
   if (_lruGet(_adviceLRU, advKey)) return worked;   // already warmed
   if (analysis.pending.length) await Promise.all(analysis.pending.map(s => fetchLearnset(s).catch(()=>null)));
   const a2 = analyzeAdvice(boss, recommended, eligibleRoster);
-  const sc = await scoreAdviceGems(boss, recommended, a2.candidates, setMode, readiness.score, true);
+  const sc = await scoreAdviceGems(boss, recommended, a2.candidates, setMode, readiness, true);
   if (_adviceTeamStateHash() !== stateHash) return worked;   // team edited mid-pass → discard (stale)
   _lruSet(_adviceLRU, advKey, sc, ADV_LRU_CAP);
   return true;
@@ -8595,6 +8595,22 @@ function cachedLearnsetSync(species) {
 // strongest-by-BST branch — a CONTEXT-BLIND heuristic (e.g. vs a special
 // attacker Slowking out-walls Slowbro, and the Eeveelutions / Glaceon-Leafeon
 // can flip by boss type). Good enough for v1; revisit if it mis-picks.
+// Is an evolution METHOD achievable solo, so it's worth recommending a player grind
+// toward? Level-up (a number, or "level up" incl. location evos like Magneton→Magnezone
+// at Mt. Coronet) and friendship are doable. TRADE and STONE/held-ITEM evolutions are
+// NOT (no trade partner / may lack the item), so we stop the projection at the last
+// reachable form rather than recommend a form they can't get (Onix→Steelix needs a
+// traded Metal Coat; Haunter→Gengar needs a trade).
+function _evoActionable(method) {
+  if (method == null) return true;
+  if (typeof method === 'number') return true;
+  const m = String(method).toLowerCase();
+  if (/^\d+$/.test(m)) return true;                       // numeric string = level
+  if (m.includes('trade')) return false;                 // trade (incl. trade-with-held-item)
+  // use-item evolutions store the item's name — exclude the common evo items.
+  if (/stone|coat|scale|king'?s rock|up-?grade|dubious|electirizer|magmarizer|protector|reaper|sachet|whipped|razor (claw|fang)|prism|oval|galarica|augurite|peat block|metal alloy|linking cord|leader'?s crest|teacup|auspicious armor|malicious armor|sweet apple|tart apple|syrupy apple|cracked pot|chipped pot/.test(m)) return false;
+  return true;                                            // "level up" / location / friendship → solo-achievable
+}
 function projectSpeciesAtLevel(species, targetLevel) {
   let cur = species, evolved = false, guard = 0;
   while (guard++ < 6) {
@@ -8612,6 +8628,7 @@ function projectSpeciesAtLevel(species, targetLevel) {
       if (evo) { const hit = evo.find(x => x[0] === speciesSlug(chosen)); if (hit) method = hit[1]; }
       target = chosen;
     }
+    if (!_evoActionable(method)) break;   // trade/stone/item evo — stop at the reachable form
     if (!target || !evoAvailable(target)) break;
     const lvReq = (typeof method === 'number') ? method : (/^\d+$/.test(String(method)) ? +method : null);
     if (lvReq != null && targetLevel < lvReq) break;          // level evo not yet reached
@@ -8625,7 +8642,7 @@ function projectSpeciesAtLevel(species, targetLevel) {
 // signature of the boss + the FULL current team state, so a boss switch OR a
 // mid-sim team edit invalidates it (stale results are discarded on resolve).
 let _adviceFetchToken = 0;
-const _adviceLRU = new Map(); const ADV_LRU_CAP = 24;
+const _adviceLRU = new Map(); const ADV_LRU_CAP = 72;  // hold advice for a full big-game boss list so revisits don't re-measure
 function _adviceTeamStateHash() {
   return curTeam().map(p => `${p.species}:${p.level}:${p.moves}:${(p.ivs||[]).join('')}:${(p.evs||[]).join('')}:${p.held||''}:${p.ability||''}:${p.nature||''}:${p.alive?1:0}:${p.inParty?1:0}`).join('|');
 }
@@ -8711,7 +8728,13 @@ function analyzeAdvice(boss, recommended, roster) {
       const projP = { species: proj.species, level: projLevel, type1: projTypes[0] || null, type2: projTypes[1] || null, ability: p.ability, held: p.held, ivs: p.ivs, evs: p.evs };
       const bait = coverageBaitVs(projP, boss);
       const caution = (bait && bait.mult >= 2) ? `${bait.type} (${bait.species}) hits it ${bait.mult}×${baitGlyph(bait)}` : '';
-      out.candidates.push({ kind: 'bench', name: p.nickname || p.species, curLevel: p.level || 1, projLevel, evolved: proj.evolved, projSpecies: proj.species, type: bringT, move: coverMove, hits: seCount(bringT), caution, rank: seCount(bringT) * 3, replaceRef: null, projMon: _projGemMon(p, proj.species, projLevel, coverMove, projTypes) });
+      const projMon = _projGemMon(p, proj.species, projLevel, coverMove, projTypes);
+      // Rank by the DETERMINISTIC matchup quality of the projected mon (bulk, typing,
+      // resistances/immunities + its coverage move) — not just "brings a wanted type".
+      // Many bench mons tie on the latter (e.g. every Dark-mon vs an all-Ghost gym), so
+      // the old rank cut good gems (a Ghost-immune wall like Bibarel) before they were
+      // ever simmed. scoreMatchup separates them so the strongest get measured.
+      out.candidates.push({ kind: 'bench', name: p.nickname || p.species, curLevel: p.level || 1, projLevel, evolved: proj.evolved, projSpecies: proj.species, type: bringT, move: coverMove, hits: seCount(bringT), caution, rank: scoreMatchup(projMon, boss, boss.cap), replaceRef: null, projMon });
     }
   }
 
@@ -8767,17 +8790,37 @@ function _projectedTeamWith(recommended, gemMon, boss, replaceRef) {
 // AND are precomputed in the background, we match the live meter's N=100 for tighter,
 // more stable gem rankings (delta noise ~±1 vs ~±1.3 at N=60) at no felt cost.
 const ADVICE_SIM_N = 100;
-async function scoreAdviceGems(boss, recommended, candidates, setMode, baseScore, workerOnly) {
-  const pre = candidates.slice().sort((a, b) => (b.rank || 0) - (a.rank || 0)).slice(0, 8);
+async function scoreAdviceGems(boss, recommended, candidates, setMode, base, workerOnly) {
+  // COMPOSITE scoring: rank/show gems by OVERALL team improvement (clean-clear% + win%
+  // + surviving team HP), not just the binary flawless-clear%. So a PIVOT that takes you
+  // from 2 losses to 1 — still 0% clean — now shows a positive delta and surfaces. The
+  // headline meter stays pure clean-clear%; `cleanDelta` (below) feeds its ghost bar/badge.
+  const baseScore = (base && typeof base === 'object') ? (base.score || 0) : (+base || 0);
+  const compOf = r => (r && typeof r === 'object') ? (r.score + 0.4 * r.winRate + 0.5 * r.margin) : 0;
+  const baseComp = compOf(base);
+  // Measure the best of EACH kind separately so a strong slate of in-team upgrades
+  // can't crowd every bench gem out of the (cost-limited) sim budget — the display
+  // wants up to 3 of each, so we must actually score ≥3 of each when they exist.
+  const byRank = (a, b) => (b.rank || 0) - (a.rank || 0);
+  const ups = candidates.filter(g => g.kind === 'upgrade').sort(byRank).slice(0, 4);
+  const bes = candidates.filter(g => g.kind !== 'upgrade').sort(byRank).slice(0, 6);
+  const pre = [...ups, ...bes];
   // Fire all sims at once — the worker pool runs them in PARALLEL (off-thread).
   // (In the no-worker fallback, simReadinessAsync yields per call so the sync
   // sims stay chunked and don't freeze the UI.) workerOnly = the idle precompute
   // path, which must never run a sync sim (it would jank the live UI).
   const scored = await Promise.all(pre.map(async (g) => {
     const team = _projectedTeamWith(recommended, g.projMon, boss, g.replaceRef);
-    const res = await simReadinessAsync(boss, team, setMode, { n: ADVICE_SIM_N, workerOnly });
+    // noCache: these are HYPOTHETICAL projected teams (a gem swapped in). Without this
+    // each of the ~8 projections/boss would write to the readiness LRU under its own
+    // seed (ADVICE_SIM_N === READINESS_N → cacheable), flooding it and EVICTING the real
+    // boss-readiness entries the precompute just warmed — so revisiting a boss showed
+    // "Calculating…" again. The advice RESULT is cached in _adviceLRU separately.
+    const res = await simReadinessAsync(boss, team, setMode, { n: ADVICE_SIM_N, workerOnly, noCache: true });
     const ps = res ? res.score : baseScore;
-    return { ...g, projScore: ps, projWinRate: res ? res.winRate : null, projDeaths: res ? res.deaths : null, delta: ps - baseScore };
+    // delta = composite improvement (ranking + which gems show + the "+X" tag);
+    // cleanDelta = flawless-clear% gain (the meter's ghost bar / badge).
+    return { ...g, projScore: ps, projWinRate: res ? res.winRate : null, projDeaths: res ? res.deaths : null, cleanDelta: ps - baseScore, delta: Math.round((res ? compOf(res) : baseComp) - baseComp) };
   }));
   scored.sort((a, b) => b.delta - a.delta || (b.rank || 0) - (a.rank || 0));
   return scored;
@@ -8833,9 +8876,11 @@ function renderAdviceItems(analysis, scored, baseScore) {
     (g.kind === 'upgrade' ? pickU : pickB).push(g);
   }
   pickU.sort(byDelta); pickB.sort(byDelta);
-  if (positive.length) { projScore = positive[0].projScore; projDelta = positive[0].delta; projWinRate = positive[0].projWinRate; projDeaths = positive[0].projDeaths; } // badge = best overall
+  if (positive.length) { projScore = positive[0].projScore; projDelta = positive[0].cleanDelta; projWinRate = positive[0].projWinRate; projDeaths = positive[0].projDeaths; } // badge/ghost = clean-clear% (matches the meter); list uses composite delta
 
-  const deltaTag = g => ` · <span style="color:#4ade80;font-weight:600">+${g.delta} readiness</span>`;
+  // Qualitative impact tier (the composite delta is an internal score, not a meter %;
+  // a bare "+115" read as "the meter jumps 115", which was misleading).
+  const deltaTag = g => { const d = g.delta || 0; const t = d >= 40 ? ['High impact', '#4ade80'] : d >= 15 ? ['Medium impact', '#a3e635'] : ['Low impact', '#fbbf24']; return ` · <span style="color:${t[1]};font-weight:600">${t[0]}</span>`; };
   for (const g of pickU) {
     const bits = [];
     if (g.projLevel > g.curLevel) bits.push(`level ${g.curLevel}→${g.projLevel}`);
@@ -8977,7 +9022,7 @@ function renderMatchup() {
       (async () => {
         if (analysis.pending.length) await Promise.all(analysis.pending.map(s => fetchLearnset(s).catch(()=>null)));
         const a2 = analyzeAdvice(boss, recommended, eligibleRoster);     // learnsets may add candidates
-        const sc = await scoreAdviceGems(boss, recommended, a2.candidates, _r.setMode, readiness.score);
+        const sc = await scoreAdviceGems(boss, recommended, a2.candidates, _r.setMode, readiness);
         if (token !== _adviceFetchToken || curCap() !== cap || _adviceTeamStateHash() !== stateHash) return;
         _lruSet(_adviceLRU, advKey, sc, ADV_LRU_CAP);
         renderMatchup();
