@@ -14024,7 +14024,10 @@ function submitPoke() {
     }
   }
 
-  save(); render(); closeModal();
+  // Persist FIRST (data is safe the instant save() runs), then close the card so it
+  // dismisses immediately, then repaint. render() reads from the already-saved team
+  // data — not from the modal — so the order is purely about perceived snappiness.
+  save(); closeModal(); render();
   showToast(editIdx!==null?'Changes saved':`${nick} added`,'success');
 }
 
@@ -14042,7 +14045,7 @@ function submitRoute() {
   } else {
     r.push(obj);
   }
-  save(); render(); closeModal();
+  save(); closeModal(); render();   // persist → dismiss card → repaint
   showToast(editRouteIdx!==null?'Entry updated':'Encounter logged','success');
 }
 
@@ -14057,8 +14060,7 @@ function toggleShiny(idx) {
   const team = curRun().team;
   if (!team[idx]) return;
   team[idx].isShiny = !team[idx].isShiny;
-  save(); render();
-  openEdit(idx); // re-open detail so sparkle + button label refresh live
+  save(); openEdit(idx); render();   // refresh the open detail (sparkle + label) FIRST, then repaint tabs
 }
 function markDead(idx) {
   const team = curRun().team;
@@ -14066,7 +14068,7 @@ function markDead(idx) {
   if (cause === null) return; // user hit Cancel — do NOT send to the graveyard
   team[idx].alive = false; team[idx].inParty = false; team[idx].causeOfDeath = cause.trim() || 'Unknown';
   team[idx].deathAt = Date.now();
-  save(); render(); closeModal();
+  save(); closeModal(); render();   // data persisted first → dismiss card → repaint (snappy)
   showToast(`${team[idx].nickname} moved to graveyard`,'error');
 }
 function revivePoke(idx) {
@@ -14094,7 +14096,7 @@ function deletePoke(idx) {
     }
   }
   run.team.splice(idx, 1);
-  save(); render(); closeModal();
+  save(); closeModal(); render();   // persist → dismiss card → repaint
 }
 function deleteRoute(idx) { curRun().routes.splice(idx,1); save(); renderRoutes(); }
 
