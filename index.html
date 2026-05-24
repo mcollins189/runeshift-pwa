@@ -4888,6 +4888,58 @@ function capFirst(s) {
 // otherwise persist for the entire session and force the user to refresh.
 const backfilledPokemon = {};
 const backfilledMoves = {};
+// ── Persisted species-data cache (v5.2) ──────────────────────────────────────
+// backfilledPokemon is in-memory and lost on every reload, so a returning run
+// re-fetches every Gen-5+/not-in-DB species (its roster AND every boss team) from
+// PokeAPI on cold load — fetch waves that repaint sprite tabs (flicker) and delay the
+// readiness warm-up. We persist successful entries to localStorage and reload them on
+// boot so a continuing run starts with its data already present: no fetches, no flicker,
+// instant warm-up.
+//   GEN-PARTITIONED: an entry's `types` are gen-adjusted at fetch time (past_types — see
+//   fetchPokemonFromApi). The in-memory map is keyed by bare slug for the CURRENT game's
+//   gen, so the STORE is partitioned by gen and we only hydrate the current gen's slice.
+//   That keeps gen-correct typing across reloads and when switching different-gen games,
+//   with no extra fetches for the common "continue my run" case.
+const BACKFILL_LS_KEY = 'nuz-backfill-v1';
+const BACKFILL_LS_CAP = 4000;   // total entries across all gen slices (graceful quota fallback below)
+let _backfillSaveT = null, _backfillLoadedGame = null;
+function _readBackfillStore() {
+  try { const raw = localStorage.getItem(BACKFILL_LS_KEY); if (!raw) return null; const o = JSON.parse(raw); return (o && o.v === 1 && o.gens) ? o : null; } catch (e) { return null; }
+}
+// Hydrate the current game's gen slice into the live map. Cheap + idempotent (guarded by
+// game key); call freely from render/precompute entry points.
+function loadBackfillCacheIfNeeded() {
+  let g; try { g = curGame(); } catch (e) { return; }
+  if (g === _backfillLoadedGame) return;
+  _backfillLoadedGame = g;
+  const store = _readBackfillStore(); if (!store) return;
+  const slice = store.gens[String(getGameGen() || 0)]; if (!slice) return;
+  let n = 0;
+  for (const slug in slice) {
+    if (backfilledPokemon[slug]) continue;                       // never clobber a fresh in-session fetch
+    const e = slice[slug];
+    if (!e || e === 'loading' || e.status === 'error' || !Array.isArray(e.stats)) continue;
+    backfilledPokemon[slug] = e; n++;
+  }
+  if (n && typeof _bossesCache !== 'undefined') _bossesCache = {};  // more species available → more bosses derivable
+}
+// Persist the current gen's successful entries (debounced; fires after a fetch burst).
+function persistBackfillCache() {
+  clearTimeout(_backfillSaveT);
+  _backfillSaveT = setTimeout(() => {
+    try {
+      const gen = String(getGameGen() || 0);
+      const store = _readBackfillStore() || { v: 1, gens: {} };
+      const slice = {};
+      for (const slug in backfilledPokemon) { const e = backfilledPokemon[slug]; if (e && e !== 'loading' && e.status !== 'error' && Array.isArray(e.stats)) slice[slug] = e; }
+      store.gens[gen] = slice;
+      let total = 0; for (const g in store.gens) total += Object.keys(store.gens[g]).length;
+      if (total > BACKFILL_LS_CAP) store.gens = { [gen]: slice };   // over budget → keep only the current gen
+      try { localStorage.setItem(BACKFILL_LS_KEY, JSON.stringify(store)); }
+      catch (e2) { try { localStorage.setItem(BACKFILL_LS_KEY, JSON.stringify({ v: 1, gens: { [gen]: slice } })); } catch (e3) {} }
+    } catch (e) {}
+  }, 4000);
+}
 // Retry-with-backoff for transient failures. Schedule is per-attempt: after the
 // Nth failure we wait BACKOFF_MS[N-1] before re-attempting. Caps at 5 attempts
 // total — by then it's overwhelmingly likely the resource genuinely 404s
@@ -4912,6 +4964,7 @@ let _bfPrecomputeT = null;
 function fireBackfill() {
   for (const fn of backfillSubscribers) try { fn(); } catch(e) {}
   if (typeof _refreshSimWorker === 'function') _refreshSimWorker();
+  if (typeof persistBackfillCache === 'function') persistBackfillCache();   // newly-fetched species → save (debounced)
   // Backfill makes more bosses computable + changes move data → bump the precompute
   // epoch (debounced; backfill fires many times on cold load) so the idle pass
   // re-runs against fresh data and picks up bosses that were't ready before.
@@ -6790,6 +6843,7 @@ function setRosterSearch(q) { rosterSearch = q; withRenderStability(document.get
 // trigger backfill itself. Called from every team-rendering function so a
 // tab switch is enough to prime everything.
 function _primeBackfillForTeam() {
+  if (typeof loadBackfillCacheIfNeeded === 'function') loadBackfillCacheIfNeeded();   // hydrate persisted species data before priming → fewer cold fetches
   if (typeof ensurePokemonBackfilled !== 'function') return;
   const team = curTeam();
   if (!team) return;
@@ -8696,6 +8750,7 @@ async function _runPrecompute(gen, key) {
 // to finish and self-restart for the new state.
 function schedulePrecompute() {
   if (typeof Worker === 'undefined' || _workerOK === false) return;
+  if (typeof loadBackfillCacheIfNeeded === 'function') loadBackfillCacheIfNeeded();   // hydrate persisted species data so the warm-up walk fires few/no fetches
   let game, key;
   try { game = curGame(); key = game + '#' + _backfillEpoch + '#' + _adviceTeamStateHash(); } catch (e) { return; }
   if (key === _precomputeKey) return;
