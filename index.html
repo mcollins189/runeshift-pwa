@@ -456,6 +456,9 @@
   .bp-body{padding:2px 14px 12px}
   .bp-plan-hdr{font-size:13px;font-weight:700;color:var(--accent);margin-bottom:8px}
   .bp-plan-sub{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;margin-left:6px}
+  .bp-pot-toggle{display:flex;align-items:center;gap:7px;margin:10px 14px 2px;padding-top:9px;border-top:1px solid rgba(108,143,255,.18);font-size:11.5px;color:var(--text2);cursor:pointer}
+  .bp-pot-toggle input{cursor:pointer;flex-shrink:0}
+  .bp-pot-toggle span{color:var(--text3);font-size:10.5px}
   .bp-plan-steps{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:5px;font-size:12.5px;color:var(--text2);line-height:1.5}
   .bp-plan-steps b{color:var(--text);font-weight:600}
   /* Turn-by-turn plan (v5.1): one phase per boss mon, numbered turns inside */
@@ -471,6 +474,7 @@
   .bp-sep{color:var(--text3);margin:0 2px;opacity:.6}
   .bp-plan-mv{color:var(--accent);font-weight:600}
   .bp-plan-risk{color:var(--amber);font-weight:600;font-size:11px}
+  .bp-plan-heal{color:#38bdf8;font-weight:600;font-size:11px}
   .bp-plan-note{display:block;margin-top:6px;font-size:10.5px;color:var(--text3);font-style:italic;list-style:none}
   .bp-alt{display:block;margin-top:7px;padding:6px 9px;font-size:11.5px;line-height:1.5;color:var(--text2);background:var(--green-bg);border-left:3px solid var(--green);border-radius:5px}
   .bp-alt-tag{display:inline-block;font-weight:700;color:var(--green);text-transform:uppercase;font-size:9.5px;letter-spacing:.04em;margin-right:5px}
@@ -7864,14 +7868,23 @@ function planBestRepl(party, pHP, B, bHP) {
 // Models HEALING: drain moves (Giga Drain) siphon HP back, Leftovers/Black
 // Sludge tick each turn, Sitrus heals once at <50%, and a recovery move can be
 // used to restore HP — so attrition is judged with sustain factored in.
-function planRollout(party, bossC, pHP0, bHP0, bSlp0, pIdx0, bIdx0, mode, first) {
+function planRollout(party, bossC, pHP0, bHP0, bSlp0, pIdx0, bIdx0, mode, first, bossItems) {
   const pHP = pHP0.slice(), bHP = bHP0.slice(), bSlp = bSlp0.slice(), sUsed = party.map(() => false);
   let pIdx = pIdx0, bIdx = bIdx0, fd = false, g = 0;
   let potBudget = party.some(p => p.flags && p.flags.potionOK) ? PLAN_POTION_BUDGET : 0, potLast = false;
+  let bPot = bossItems ? bossItems.budget : 0; const bThr = bossItems ? bossItems.threshold : 0, bHealF = bossItems ? bossItems.healFrac : 0;
+  const bBerry = (bossItems && bossItems.berry) ? bossItems.berry : null; const bUsed = (bossItems && bossItems.berryUsed) ? bossItems.berryUsed.slice() : (bBerry ? bBerry.map(() => false) : null);
   const aP = () => pHP.some(h => h > 0), aB = () => bHP.some(h => h > 0);
   const heal = (pi, amt) => { if (pHP[pi] > 0) pHP[pi] = Math.min(1, pHP[pi] + amt); };
-  const bossAtk = (pi) => { if (bSlp[bIdx] > 0) { bSlp[bIdx]--; return; } pHP[pi] -= planFrac(bossC[bIdx], party[pi]); };
-  const hit = (P, B, pi) => { const h = bestHitFraction(P, B); const before = bHP[bIdx]; bHP[bIdx] -= h.frac; if (h.drain) heal(pi, 0.5 * Math.min(h.frac, Math.max(0, before)) * ((B.stats[0] || 1) / (P.stats[0] || 1))); };
+  // Boss turn: spend a trainer item (heal, NO attack — a free turn for us) when low and
+  // budget remains; otherwise attack. Mirrors _readyBattle so plan == sim policy.
+  const bossAtk = (pi) => { if (bSlp[bIdx] > 0) { bSlp[bIdx]--; return; } if (bPot > 0 && bHP[bIdx] > 0 && bHP[bIdx] < bThr) { bHP[bIdx] = Math.min(1, bHP[bIdx] + bHealF); bPot--; return; } pHP[pi] -= planFrac(bossC[bIdx], party[pi]); };
+  // Our hit, with the boss's PASSIVE held berry (one-time): type-resist halves the first
+  // SE hit of its type; healing berry restores HP once below threshold. Mirrors _readyBattle.
+  const hit = (P, B, pi) => { const h = bestHitFraction(P, B); let f = h.frac; const berry = bBerry ? bBerry[bIdx] : null;
+    if (berry && berry.resist && bUsed && !bUsed[bIdx] && (h.eff >= 2 || berry.resist === 'normal') && String(h.type).toLowerCase() === berry.resist) { f *= 0.5; bUsed[bIdx] = true; }
+    const before = bHP[bIdx]; bHP[bIdx] -= f; if (h.drain) heal(pi, 0.5 * Math.min(f, Math.max(0, before)) * ((B.stats[0] || 1) / (P.stats[0] || 1)));
+    if (berry && berry.heal && bUsed && !bUsed[bIdx] && bHP[bIdx] > 0 && bHP[bIdx] < 0.5) { bHP[bIdx] = Math.min(1, bHP[bIdx] + berry.heal); bUsed[bIdx] = true; } };
   const endTurn = (pi) => { if (pHP[pi] > 0) { if (party[pi].flags.lefto) heal(pi, 1 / 16); if (party[pi].flags.sitrus && !sUsed[pi] && pHP[pi] < 0.5) { sUsed[pi] = true; heal(pi, 0.25); } } };
   while (g++ < 200) {
     if (!aB() || !aP()) break;
@@ -7903,6 +7916,72 @@ let PLAN_SWITCH_PEN = 1500; // hysteresis: a switch must clearly beat staying
 let PLAN_POTION_BUDGET = 3; // in-battle Potions the planner/sim will spend reactively (per battle) to model real item use
 let PLAN_HEAL_FRAC = 0.5;   // fraction of max HP a reactive Potion restores (≈ a Super/Hyper Potion mid-game)
 let PLAN_POT_NOCONSEC = true; // forbid two Potions in a row (if you'd potion twice, you should have switched)
+// ── Boss in-battle healing items (v5.2) ──────────────────────────────────────
+// Trainer AI (gym leaders / Elite Four / champions) carry healing items. Unlike a
+// held Berry (passive, end-of-turn, free), a Hyper Potion / Full Restore COSTS the
+// boss its whole turn — it heals INSTEAD of attacking, handing us a free turn. We
+// model exactly that (see the bossAtk closures in _readyBattle / planRollout): when
+// the boss's active mon starts a turn below the threshold and it still has an item,
+// it heals and does NOT attack. Budget is per-BATTLE (a shared item bag), so it can
+// raise the cost of a slow chip-KO line without stalling forever. The planner sees
+// this too, so it stops valuing paper-thin 3-turn KOs and hunts for secure hits.
+let BOSS_ITEMS_ON = true;       // master switch for boss trainer-item modelling
+let BOSS_POT_THRESHOLD = 0.5;   // boss heals when its active mon starts a turn below this HP fraction
+// Tier of a boss for item purposes. Prefer the explicit battleType (derived games +
+// B2W2/USUM hand-coded + rivals all carry it); fall back to the display name for the
+// hand-coded games that DON'T tag it (BDSP gyms/E4/champion have only theme+cap).
+// rival / mini-boss / evil-team → null (no trainer healing items — totems SOS instead).
+function _bossTier(boss) {
+  if (!boss) return null;
+  const bt = (boss.battleType || '').toLowerCase();
+  if (bt) return (bt === 'champion' || bt === 'elite-four' || bt === 'gym-leader') ? bt : null;
+  const n = boss.name || '';
+  if (/champion/i.test(n)) return 'champion';
+  if (/\(e4\)|elite\s*four/i.test(n)) return 'elite-four';
+  return (boss.cap || 0) > 0 ? 'gym-leader' : null;   // untagged + capped + not rival ⇒ a gym leader
+}
+// Explicit per-boss potion overrides for games where we have FACTUAL data (count 0 =
+// "this trainer provably carries none"). Keyed VANILLA_POTION_DATA[gameKey][bossName] =
+// { budget, healFrac } | { budget: 0 }. Empty for now — a hook so known data can drop in
+// without inventing numbers. Overrides win over both the toggle and the tier heuristic.
+const VANILLA_POTION_DATA = {};
+// Is the tier-guessed potion layer active? OPT-IN per run (DEFAULT_RULES.bossPotions=false)
+// so we never fabricate a heal turn for early-gen leaders / no-item hacks. Held berries are
+// NOT gated by this — they're read from real boss data and modelled unconditionally.
+function _bossPotionsOn() { try { return curRules().bossPotions === true; } catch (e) { return false; } }
+// → { budget, threshold, healFrac } for the boss's in-battle POTION use, or null for none.
+// Resolution: explicit override → else (toggle ON) tier heuristic → else null (fail-safe 0).
+// Game-agnostic heuristic (we can't source per-leader item bags for hack ROMs): champions
+// carry 2 Full Restores (heal to full), Elite Four 1 Full Restore, gym leaders 1 Hyper Potion
+// (≈+0.66). banBattleItems is a PLAYER rule and does NOT disarm the opponent AI.
+function _bossItemPlan(boss) {
+  if (!BOSS_ITEMS_ON || !boss) return null;
+  const ov = VANILLA_POTION_DATA[curGame()] && VANILLA_POTION_DATA[curGame()][boss.name];
+  if (ov !== undefined) return (ov && ov.budget > 0) ? { budget: ov.budget, threshold: BOSS_POT_THRESHOLD, healFrac: ov.healFrac != null ? ov.healFrac : 1 } : null;
+  if (!_bossPotionsOn()) return null;   // no factual data + user hasn't opted in → assume none
+  const tier = _bossTier(boss);
+  if (tier === 'champion') return { budget: 2, threshold: BOSS_POT_THRESHOLD, healFrac: 1 };
+  if (tier === 'elite-four') return { budget: 1, threshold: BOSS_POT_THRESHOLD, healFrac: 1 };
+  if (tier === 'gym-leader') return { budget: 1, threshold: BOSS_POT_THRESHOLD, healFrac: 0.66 };
+  return null;
+}
+// ── Boss HELD berries (v5.2) — PASSIVE, opposite rules to potions ─────────────
+// A held Berry costs NO turn: it fires mid-turn the instant a threshold is crossed,
+// and is one-time (consumable). Two kinds we model (state lives in the battle loop,
+// NOT in stateless bestHitFraction — a consumable can't be a permanent damage factor):
+//   • healing (Sitrus/Oran/…)  → +HP once when the mon drops below BERRY_HEAL_THRESHOLD
+//   • type-resist (Yache/Occa/…) → halves the FIRST super-effective hit of its type
+// Returns { heal } | { resist:'<type lowercase>' } | null. itemKey is already
+// lowercased + stripped of non-alphanumerics by buildCombatant.
+const BERRY_HEAL_THRESHOLD = 0.5, BERRY_HEAL_FRAC = 0.25;
+const _HEAL_BERRIES = new Set(['sitrusberry', 'oranberry', 'berryjuice', 'figyberry', 'wikiberry', 'magoberry', 'aguavberry', 'iapapaberry', 'enigmaberry']);
+const _RESIST_BERRIES = { occaberry: 'fire', passhoberry: 'water', wacanberry: 'electric', rindoberry: 'grass', yacheberry: 'ice', chopleberry: 'fighting', kebiaberry: 'poison', shucaberry: 'ground', cobaberry: 'flying', payapaberry: 'psychic', tangaberry: 'bug', chartiberry: 'rock', kasibberry: 'ghost', habanberry: 'dragon', colburberry: 'dark', babiriberry: 'steel', chilanberry: 'normal', roseliberry: 'fairy' };
+function _bossBerry(itemKey) {
+  if (!BOSS_ITEMS_ON || !itemKey) return null;
+  if (_HEAL_BERRIES.has(itemKey)) return { heal: BERRY_HEAL_FRAC };
+  if (_RESIST_BERRIES[itemKey]) return { resist: _RESIST_BERRIES[itemKey] };
+  return null;
+}
 const PLAN_CRIT_P = 1 / 16;   // crit chance baked into _readyHit (the sim we score against)
 // Nuzlocke risk-aversion weight for the crit-KO gamble the max-roll, crit-EXCLUDED
 // deterministic rollout is BLIND to. A permanent mon loss is worth avoiding well above
@@ -7925,14 +8004,14 @@ function _planCritKORisk(party, bossC, pHP, bHP, bIdx, k, weKOfirst) {
 // and a genuine SAFETY switch (staying gambles, the target is safe) is freed from most
 // of the anti-thrash hysteresis so the planner will actually take it — the "switch to a
 // resist instead of gambling the mon" play.
-function planActions(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, lastTo) {
+function planActions(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, lastTo, bossItems) {
   const P = party[pIdx], B = bossC[bIdx];
   const pFast = (P.stats[5] || 0) >= (B.stats[5] || 0);
   const weKOfirst = pFast && planFrac(P, B) >= bHP[bIdx];
   // Value of a candidate action: one max-roll rollout, docked by the analytic crit-KO
   // gamble for the mon left exposed (riskIdx) — the Phase-1 risk-aware deterministic plan.
   const score = (first, riskIdx, weFirst) => {
-    const base = planRollout(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, first);
+    const base = planRollout(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, first, bossItems);
     const risk = (riskIdx == null) ? 0 : _planCritKORisk(party, bossC, pHP, bHP, bIdx, riskIdx, weFirst || false);
     return base - risk * PLAN_RISK_PEN;
   };
@@ -7943,7 +8022,7 @@ function planActions(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, lastTo) {
     // crit-risk docked on the POST-heal HP (a recovery MOVE, distinct from item Potions)
     const hHP = pHP.slice(); hHP[pIdx] = Math.min(1, pHP[pIdx] + 0.5);
     const healRisk = _planCritKORisk(party, bossC, hHP, bHP, bIdx, pIdx, false);
-    const v = planRollout(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, { type: 'heal' }) - healRisk * PLAN_RISK_PEN - 100;
+    const v = planRollout(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, { type: 'heal' }, bossItems) - healRisk * PLAN_RISK_PEN - 100;
     if (v > best.v) best = { a: { type: 'heal' }, v };
   }
   if (P.flags.sleep && bSlp[bIdx] === 0) { const v = score({ type: 'sleepStay' }, null, false) - 200; if (v > best.v) best = { a: { type: 'sleepStay' }, v }; }
@@ -7958,13 +8037,13 @@ function planActions(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, lastTo) {
   }
   return best;
 }
-function planChooseAction(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, lastTo) { return planActions(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, lastTo).a; }
+function planChooseAction(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, lastTo, bossItems) { return planActions(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, lastTo, bossItems).a; }
 // Lead = the mon whose BEST opening line (incl. utility, e.g. lead a sleeper to
 // set up a safe switch) yields the highest projected outcome — utility-aware.
-function planChooseLead(party, bossC, mode) {
+function planChooseLead(party, bossC, mode, bossItems) {
   const pHP = party.map(() => 1), bHP = bossC.map(() => 1), bSlp = bossC.map(() => 0);
   let bi = 0, bv = -1e18;
-  for (let i = 0; i < party.length; i++) { if (pHP[i] <= 0) continue; const v = planActions(party, bossC, pHP, bHP, bSlp, i, 0, mode, -1).v; if (v > bv) { bv = v; bi = i; } }
+  for (let i = 0; i < party.length; i++) { if (pHP[i] <= 0) continue; const v = planActions(party, bossC, pHP, bHP, bSlp, i, 0, mode, -1, bossItems).v; if (v > bv) { bv = v; bi = i; } }
   return bi;
 }
 
@@ -8048,14 +8127,28 @@ function buildBattlePlan(boss, pool, setMode) {
   // a card never contradicts the plan (e.g. "good" on a mon the plan sacks).
   const usage = party.map(() => ({ entered: false, sacked: false, pivoted: false, kos: 0, isLead: false }));
 
+  const _potCfg = _bossItemPlan(boss);   // trainer healing items (gym/E4/champion) — null for none
+  const _berry = bossC.map(c => _bossBerry(c.itemKey)); const _hasBerry = _berry.some(Boolean);
+  const bossItems = (_potCfg || _hasBerry) ? Object.assign({ budget: 0, threshold: BOSS_POT_THRESHOLD, healFrac: 0 }, _potCfg || {}, _hasBerry ? { berry: _berry } : {}) : null;
+  const bossPotName = (bossItems && bossItems.budget) ? (bossItems.healFrac >= 1 ? 'Full Restore' : 'Hyper Potion') : '';
+  let bPot = bossItems ? bossItems.budget : 0; const bThr = bossItems ? bossItems.threshold : 0, bHealF = bossItems ? bossItems.healFrac : 0;
+  const bBerry = _hasBerry ? _berry : null; const bBerryUsed = bBerry ? bBerry.map(() => false) : null;
+  const planBI = () => bossItems ? { budget: bPot, threshold: bThr, healFrac: bHealF, berry: bBerry, berryUsed: bBerryUsed ? bBerryUsed.slice() : null } : null;
   const pHP = party.map(() => 1), bHP = bossC.map(() => 1), bSlp = bossC.map(() => 0), sUsed = party.map(() => false);
-  let pIdx = planChooseLead(party, bossC, mode), bIdx = 0, lastTo = -1, guard = 0, anySack = false, koCredited = false;
+  let pIdx = planChooseLead(party, bossC, mode, planBI()), bIdx = 0, lastTo = -1, guard = 0, anySack = false, koCredited = false;
   let potBudget = (itemsOK && party.some(p => p.flags && p.flags.potionOK)) ? PLAN_POTION_BUDGET : 0, potLast = false;
+  let bossPotioned = false, bossBerried = false;   // set when the foe heals via potion (turn) / berry (passive) — drives narration
   usage[pIdx].isLead = true; usage[pIdx].entered = true;
   const heal = (pi, amt) => { if (pHP[pi] > 0) pHP[pi] = Math.min(1, pHP[pi] + amt); };
-  const hit = (P, B, pi) => { const h = bestHitFraction(P, B); const before = bHP[bIdx]; bHP[bIdx] -= h.frac; if (h.drain) heal(pi, 0.5 * Math.min(h.frac, Math.max(0, before)) * ((B.stats[0] || 1) / (P.stats[0] || 1))); };
+  // Our hit + the boss's passive held berry (one-time): type-resist halves the first SE
+  // hit of its type; healing berry restores HP once below 50%. Sets bossBerried for narration.
+  const hit = (P, B, pi) => { const h = bestHitFraction(P, B); let f = h.frac; const berry = bBerry ? bBerry[bIdx] : null;
+    if (berry && berry.resist && !bBerryUsed[bIdx] && (h.eff >= 2 || berry.resist === 'normal') && String(h.type).toLowerCase() === berry.resist) { f *= 0.5; bBerryUsed[bIdx] = true; }
+    const before = bHP[bIdx]; bHP[bIdx] -= f; if (h.drain) heal(pi, 0.5 * Math.min(f, Math.max(0, before)) * ((B.stats[0] || 1) / (P.stats[0] || 1)));
+    if (berry && berry.heal && !bBerryUsed[bIdx] && bHP[bIdx] > 0 && bHP[bIdx] < 0.5) { bHP[bIdx] = Math.min(1, bHP[bIdx] + berry.heal); bBerryUsed[bIdx] = true; bossBerried = true; } };
   const endTurn = (pi) => { if (pHP[pi] > 0) { if (party[pi].flags.lefto) heal(pi, 1 / 16); if (party[pi].flags.sitrus && !sUsed[pi] && pHP[pi] < 0.5) { sUsed[pi] = true; heal(pi, 0.25); } } };
-  const bossAtk = (pi) => { if (bSlp[bIdx] > 0) { bSlp[bIdx]--; return; } pHP[pi] -= planFrac(bossC[bIdx], party[pi]); };
+  // Boss turn: heal instead of attacking when low + items remain (free turn for us).
+  const bossAtk = (pi) => { if (bSlp[bIdx] > 0) { bSlp[bIdx]--; return; } if (bPot > 0 && bHP[bIdx] > 0 && bHP[bIdx] < bThr) { bHP[bIdx] = Math.min(1, bHP[bIdx] + bHealF); bPot--; bossPotioned = true; return; } pHP[pi] -= planFrac(bossC[bIdx], party[pi]); };
   const dangerNoted = new Set(); // (pIdx#bIdx) pairs already flagged as a near-OHKO gamble
 
   // Turn-by-turn log, grouped into one PHASE per boss Pokémon (turns restart at T1
@@ -8084,9 +8177,11 @@ function buildBattlePlan(boss, pool, setMode) {
       usage[pIdx].sacked = true; anySack = true; pIdx = r; usage[r].entered = true; lastTo = -1; continue;
     }
     usage[pIdx].entered = true;
-    const act = planChooseAction(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, lastTo);
+    bossPotioned = false; bossBerried = false;   // re-armed each turn; flipped by bossAtk (potion) / hit (berry)
+    const act = planChooseAction(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, lastTo, planBI());
     let P = party[pIdx], B = bossC[bIdx];
     const wasPot = potLast; potLast = false;   // block two Potions in a row
+    const bHealLbl = `<span class="bp-plan-heal">${B.label}: <b>${bossPotName}</b></span>`;   // foe heal label (shown when bossPotioned)
     // foe's move vs a given target (or asleep note)
     const foeVs = (T) => (bSlp[bIdx] > 0) ? `<i>${B.label} asleep</i>` : `${B.label}: ${mv(B, T)}`;
     const foePart = () => foeVs(P);
@@ -8129,12 +8224,15 @@ function buildBattlePlan(boss, pool, setMode) {
         }
       }
     }
-    const ourMv = mv(P, B), fp = foePart(), wasAsleep = bSlp[bIdx] > 0;
+    const ourMv = mv(P, B), fp0 = foePart(), wasAsleep = bSlp[bIdx] > 0;
     if (pF) { hit(P, B, pIdx); if (bHP[bIdx] > 0) bossAtk(pIdx); } else { bossAtk(pIdx); if (pHP[pIdx] > 0) hit(P, B, pIdx); }
     endTurn(pIdx);
     const weKO = bHP[bIdx] <= 0, weFainted = pHP[pIdx] <= 0;
+    const fp = bossPotioned ? bHealLbl : fp0;   // foe healed instead of attacking → show the item
+    if (bossPotioned && curPhase && !curPhase.healNote) { curPhase.healNote = true; curPhase.turns.push(`<span class="bp-plan-heal">↳ ${B.label} heals back — chip won't stick; you need to KO through the ${bossPotName}.</span>`); }
+    if (bossBerried && curPhase && !curPhase.berryNote) { curPhase.berryNote = true; curPhase.turns.push(`<span class="bp-plan-heal">↳ ${B.label} eats a held Berry (heals ~25%) — bank one extra hit to finish it.</span>`); }
     const ourPart = weFainted ? `<span class="bp-plan-risk"><b>${P.label}</b> goes down</span>` : `<b>${P.label}</b>: ${ourMv}${weKO ? ' → KO' : ''}${warn}`;
-    const showFoe = wasAsleep || !(pF && weKO);   // foe acts unless we KO'd it first while faster (or it's asleep — show the sleep note)
+    const showFoe = wasAsleep || !(pF && weKO) || bossPotioned;   // foe acts unless we KO'd it first while faster (or it healed / is asleep)
     addTurn(pF ? [ourPart, showFoe ? fp : null] : [showFoe ? fp : null, ourPart]);
   }
   if (!phases.length || !phases.some(ph => ph.turns.length)) return null;
@@ -8172,7 +8270,11 @@ function buildBattlePlan(boss, pool, setMode) {
 function _mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 function _readinessSeed(boss, pool, mode) {
   let h = 2166136261 >>> 0;
-  const s = `${boss.name || ''}#${boss.cap || ''}#${mode}|` + pool.map(p => `${p.species},${p.level},${p.held || ''},${(p.ivs || []).join('.')},${(p.evs || []).join('.')},${p.nature || ''},${p.ability || ''},${p.moves}`).join(';');
+  // Boss-potion toggle changes the sim outcome for a fixed boss, so it MUST vary the cache
+  // key (berries don't — they're constant per boss). Main-thread only, so reading the rule
+  // here is safe (this fn is not in _simWorkerFnList).
+  const bp = (() => { try { return curRules().bossPotions === true ? '1' : '0'; } catch (e) { return '0'; } })();
+  const s = `${boss.name || ''}#${boss.cap || ''}#${mode}#p${bp}|` + pool.map(p => `${p.species},${p.level},${p.held || ''},${(p.ivs || []).join('.')},${(p.evs || []).join('.')},${p.nature || ''},${p.ability || ''},${p.moves}`).join(';');
   for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
   return h >>> 0;
 }
@@ -8186,23 +8288,35 @@ function _readyHit(A, B, rng) {
   const raw = h.frac * 100 / Math.max(1, acc);
   let dmg = raw * (0.85 + rng() * 0.15);
   if (rng() < 1 / 16) dmg *= 1.5; // critical hit — this is what lets a "barely survives" hit actually KO
-  return { dmg, drain: h.drain };
+  return { dmg, drain: h.drain, type: h.type, eff: h.eff };   // type/eff → lets the caller apply a boss type-resist berry
 }
 // Simulate one battle in fractional HP, player driven by the shipped planner,
 // boss by greedy best-expected damage. Returns { won, endHP (avg team HP frac) }.
-function _readyBattle(party, bossC, mode, rng) {
+function _readyBattle(party, bossC, mode, rng, bossItems) {
   const pHP = party.map(() => 1), bHP = bossC.map(() => 1), bSlp = bossC.map(() => 0), sUsed = party.map(() => false);
-  let pIdx = planChooseLead(party, bossC, mode), bIdx = 0, lastTo = -1, guard = 0;
+  let bPot = bossItems ? bossItems.budget : 0; const bThr = bossItems ? bossItems.threshold : 0, bHealF = bossItems ? bossItems.healFrac : 0;
+  const bBerry = (bossItems && bossItems.berry) ? bossItems.berry : null; const bBerryUsed = bBerry ? bBerry.map(() => false) : null;
+  const planBI = () => bossItems ? { budget: bPot, threshold: bThr, healFrac: bHealF, berry: bBerry, berryUsed: bBerryUsed ? bBerryUsed.slice() : null } : null;   // planner sees the boss's REMAINING items
+  let pIdx = planChooseLead(party, bossC, mode, planBI()), bIdx = 0, lastTo = -1, guard = 0;
   let potBudget = party.some(p => p.flags && p.flags.potionOK) ? PLAN_POTION_BUDGET : 0, potLast = false;   // in-battle potions a real player would spend
   const heal = (pi, a) => { if (pHP[pi] > 0) pHP[pi] = Math.min(1, pHP[pi] + a); };
   const endTurn = (pi) => { if (pHP[pi] > 0) { if (party[pi].flags.lefto) heal(pi, 1 / 16); if (party[pi].flags.sitrus && !sUsed[pi] && pHP[pi] < 0.5) { sUsed[pi] = true; heal(pi, 0.25); } } };
-  const bossAtk = (pi) => { if (bSlp[bIdx] > 0) { bSlp[bIdx]--; return; } const r = _readyHit(bossC[bIdx], party[pi], rng); if (r && !r.miss) pHP[pi] -= r.dmg; };
-  const pHit = (pi) => { const r = _readyHit(party[pi], bossC[bIdx], rng); if (r && !r.miss) { const before = bHP[bIdx]; bHP[bIdx] -= r.dmg; if (r.drain) heal(pi, 0.5 * Math.min(r.dmg, Math.max(0, before)) * ((bossC[bIdx].stats[0] || 1) / (party[pi].stats[0] || 1))); } };
+  // Boss turn: spend a trainer item (heal to threshold+, NO attack — a free turn for us)
+  // when its active mon is low and the bag isn't empty; otherwise attack. The free turn
+  // is what makes a slow chip-KO line fail, pushing the planner toward secure hits.
+  const bossAtk = (pi) => { if (bSlp[bIdx] > 0) { bSlp[bIdx]--; return; } if (bPot > 0 && bHP[bIdx] > 0 && bHP[bIdx] < bThr) { bHP[bIdx] = Math.min(1, bHP[bIdx] + bHealF); bPot--; return; } const r = _readyHit(bossC[bIdx], party[pi], rng); if (r && !r.miss) pHP[pi] -= r.dmg; };
+  // Our hit on the boss. Held berries (PASSIVE, one-time): a type-resist berry halves
+  // the FIRST super-effective hit of its type; a healing berry restores HP once the mon
+  // drops below the threshold. Neither costs the boss a turn.
+  const pHit = (pi) => { const r = _readyHit(party[pi], bossC[bIdx], rng); if (!r || r.miss) return; let dmg = r.dmg; const berry = bBerry ? bBerry[bIdx] : null;
+    if (berry && berry.resist && !bBerryUsed[bIdx] && (r.eff >= 2 || berry.resist === 'normal') && String(r.type).toLowerCase() === berry.resist) { dmg *= 0.5; bBerryUsed[bIdx] = true; }
+    const before = bHP[bIdx]; bHP[bIdx] -= dmg; if (r.drain) heal(pi, 0.5 * Math.min(dmg, Math.max(0, before)) * ((bossC[bIdx].stats[0] || 1) / (party[pi].stats[0] || 1)));
+    if (berry && berry.heal && !bBerryUsed[bIdx] && bHP[bIdx] > 0 && bHP[bIdx] < 0.5) { bHP[bIdx] = Math.min(1, bHP[bIdx] + berry.heal); bBerryUsed[bIdx] = true; } };
   while (guard++ < 200) {
     if (!bHP.some(h => h > 0) || !pHP.some(h => h > 0)) break;
     if (bHP[bIdx] <= 0) { let n = -1; for (let j = 0; j < bossC.length; j++) if (bHP[j] > 0) { n = j; break; } if (n < 0) break; bIdx = n; if (mode !== 'set') { const r = planBestRepl(party, pHP, bossC[bIdx], bHP[bIdx]); if (r >= 0) pIdx = r; } lastTo = -1; continue; }
     if (pHP[pIdx] <= 0) { const r = planBestRepl(party, pHP, bossC[bIdx], bHP[bIdx]); if (r < 0) break; pIdx = r; lastTo = -1; continue; }
-    const act = planChooseAction(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, lastTo);
+    const act = planChooseAction(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, lastTo, planBI());
     const P = party[pIdx], B = bossC[bIdx];
     const wasPot = potLast; potLast = false;   // block two Potions in a row (re-armed only on a Potion)
     if (act.type === 'switch') { lastTo = pIdx; pIdx = act.idx; bossAtk(pIdx); endTurn(pIdx); continue; }
@@ -8249,15 +8363,24 @@ function _buildSimInputs(boss, pool, mode) {
   const party = []; for (const p of pool) { const c = pCombatant(p); if (c) { c.flags = planFlags(p); c.flags.potionOK = itemsOK; party.push(c); } }
   const bossC = team.map(b => bossCombatant(b, boss)).filter(Boolean);
   if (bossC.length !== team.length || !party.length) return null;
-  return { party, bossC };
+  // Boss item state, built once on the MAIN thread (keeps _bossBerry out of the worker)
+  // and passed verbatim into the sims. berry[] is aligned to bossC. Potion tier and held
+  // berries are independent — a rival (no potions) may still field a Sitrus holder.
+  const potCfg = _bossItemPlan(boss);
+  const berry = bossC.map(c => _bossBerry(c.itemKey));
+  const hasBerry = berry.some(Boolean);
+  const bossItems = (potCfg || hasBerry)
+    ? Object.assign({ budget: 0, threshold: BOSS_POT_THRESHOLD, healFrac: 0 }, potCfg || {}, hasBerry ? { berry } : {})
+    : null;
+  return { party, bossC, bossItems };
 }
 // The pure Monte-Carlo loop + score formula. Self-contained (uses only _mulberry32
 // + _readyBattle + the pre-built combatants), so it is SHIPPED VERBATIM into the
 // Web Worker — the worker and this sync path run identical code → identical results.
-function _scoreFromSims(party, bossC, mode, n, seed) {
+function _scoreFromSims(party, bossC, mode, n, seed, bossItems) {
   const rng = _mulberry32(seed);
   let wins = 0, cleanWins = 0, marginSum = 0, deathSum = 0;
-  for (let i = 0; i < n; i++) { const r = _readyBattle(party, bossC, mode, rng); deathSum += r.deaths; if (r.won) { wins++; marginSum += r.endHP; if (r.deaths === 0) cleanWins++; } }
+  for (let i = 0; i < n; i++) { const r = _readyBattle(party, bossC, mode, rng, bossItems); deathSum += r.deaths; if (r.won) { wins++; marginSum += r.endHP; if (r.deaths === 0) cleanWins++; } }
   const w = wins / n, cw = cleanWins / n, marginWon = wins ? marginSum / wins : 0, avgDeaths = deathSum / n;
   // SCORE = CLEAN-CLEAR probability: a "win" is the whole boss team KO'd with ZERO
   // of our mons fainting (the no-two-Potions-in-a-row rule is already enforced in
@@ -8301,7 +8424,7 @@ function computeReadiness(boss, pool, setMode, opts) {
   if (cacheOnly) return null;
   const inp = _buildSimInputs(boss, pool, mode);
   if (!inp) return null;   // data not ready — cheap bail; recomputes on onBackfill
-  const result = _scoreFromSims(inp.party, inp.bossC, mode, N, seed);
+  const result = _scoreFromSims(inp.party, inp.bossC, mode, N, seed, inp.bossItems);
   if (!noCache && N === READINESS_N) _lruSet(_readinessLRU, seed, result, RD_LRU_CAP);
   return result;
 }
@@ -8342,7 +8465,7 @@ function _buildWorkerSource() {
     fnSrc,
     'onmessage=function(e){var m=e.data;',
     ' if(m.type==="init"){var d=m.data;MOVES=d.MOVES;MOVE_DATA=d.MOVE_DATA;MOVE_ACCURACY=d.MOVE_ACCURACY;TYPE_BOOST_ITEM=d.TYPE_BOOST_ITEM;TYPE_CHART=d.TYPE_CHART;MM_DEFAULT_POWER=d.MM_DEFAULT_POWER;PLAN_SWITCH_PEN=d.PLAN_SWITCH_PEN;PLAN_CRIT_P=d.PLAN_CRIT_P;PLAN_RISK_PEN=d.PLAN_RISK_PEN;PLAN_POTION_BUDGET=d.PLAN_POTION_BUDGET;PLAN_HEAL_FRAC=d.PLAN_HEAL_FRAC;PLAN_POT_NOCONSEC=d.PLAN_POT_NOCONSEC;MOVES_NORMALIZED=d.MOVES_NORMALIZED;backfilledMoves=d.backfilledMoves||{};STATUS_MOVES=new Set(d.STATUS_MOVES);PHYSICAL_TYPES_PRE_SPLIT=new Set(d.PHYSICAL_TYPES_PRE_SPLIT);PLAN_PIVOT=new Set(d.PLAN_PIVOT);PLAN_SLEEP=new Set(d.PLAN_SLEEP);PLAN_RECOVER=new Set(d.PLAN_RECOVER);NUZ_DATA={moveStats:d.moveStats};postMessage({type:"ready"});return;}',
-    ' if(m.type==="sim"){__PRESPLIT=!!m.preSplit;var r=null,err=null;try{r=_scoreFromSims(m.party,m.bossC,m.mode,m.n,m.seed);}catch(ex){err=String(ex&&ex.message||ex);}postMessage({type:"simDone",id:m.id,result:r,err:err});return;}',
+    ' if(m.type==="sim"){__PRESPLIT=!!m.preSplit;var r=null,err=null;try{r=_scoreFromSims(m.party,m.bossC,m.mode,m.n,m.seed,m.bossItems);}catch(ex){err=String(ex&&ex.message||ex);}postMessage({type:"simDone",id:m.id,result:r,err:err});return;}',
     '};'
   ].join('\n');
 }
@@ -8389,13 +8512,13 @@ function _refreshSimWorker() {
   _wkRefreshT = setTimeout(() => { if (_pool.length && _workerOK !== false) { const payload = _workerInitPayload(); for (const w of _pool) w.postMessage({ type: 'init', data: payload }); } }, 1500);
 }
 // Round-robin a sim across the pool (each worker drains its own queue FIFO).
-function _runSimInPool(party, bossC, mode, n, seed, preSplit) {
+function _runSimInPool(party, bossC, mode, n, seed, preSplit, bossItems) {
   return new Promise((resolve) => {
     if (!_pool.length) { resolve(null); return; }
     const id = ++_simJobId, w = _pool[id % _pool.length]; let done = false;
     const to = setTimeout(() => { if (!done) { done = true; _simPending.delete(id); resolve(null); } }, 12000);
     _simPending.set(id, (m) => { if (done) return; done = true; clearTimeout(to); resolve(m.err ? null : m.result); });
-    try { w.postMessage({ type: 'sim', id, party, bossC, mode, n, seed, preSplit }); }
+    try { w.postMessage({ type: 'sim', id, party, bossC, mode, n, seed, preSplit, bossItems }); }
     catch (e) { done = true; clearTimeout(to); _simPending.delete(id); resolve(null); }
   });
 }
@@ -8404,8 +8527,8 @@ function _runSimInPool(party, bossC, mode, n, seed, preSplit) {
 // a fixed fixture would miss). Memoized so concurrent callers share one test.
 async function _selfTestWorker(inp, mode, seed, preSplit) {
   const n = 24;
-  const sync = _scoreFromSims(inp.party, inp.bossC, mode, n, seed);
-  const wk = await _runSimInPool(inp.party, inp.bossC, mode, n, seed, preSplit);
+  const sync = _scoreFromSims(inp.party, inp.bossC, mode, n, seed, inp.bossItems);
+  const wk = await _runSimInPool(inp.party, inp.bossC, mode, n, seed, preSplit, inp.bossItems);
   return !!(wk && sync && wk.score === sync.score && wk.winRate === sync.winRate && wk.margin === sync.margin && wk.deaths === sync.deaths);
 }
 function _ensureSelfTest(inp, mode, seed, preSplit) {
@@ -8428,11 +8551,11 @@ async function simReadinessAsync(boss, pool, setMode, opts) {
   if (_ensurePool()) {
     try { await _poolReadyP; } catch (e) {}
     if (_workerOK === null) await _ensureSelfTest(inp, mode, seed, preSplit);
-    if (_workerOK) { const r = await _runSimInPool(inp.party, inp.bossC, mode, N, seed, preSplit); if (r) { if (cacheable) _lruSet(_readinessLRU, seed, r, RD_LRU_CAP); return r; } }
+    if (_workerOK) { const r = await _runSimInPool(inp.party, inp.bossC, mode, N, seed, preSplit, inp.bossItems); if (r) { if (cacheable) _lruSet(_readinessLRU, seed, r, RD_LRU_CAP); return r; } }
   }
   if (workerOnly) return null;                // worker unavailable/untrusted → caller skips (no main-thread sim)
   await new Promise(r => setTimeout(r, 0));   // fallback yield (keeps the sync path from janking)
-  const r = _scoreFromSims(inp.party, inp.bossC, mode, N, seed);
+  const r = _scoreFromSims(inp.party, inp.bossC, mode, N, seed, inp.bossItems);
   if (cacheable) _lruSet(_readinessLRU, seed, r, RD_LRU_CAP);
   return r;
 }
@@ -8685,7 +8808,10 @@ function projectSpeciesAtLevel(species, targetLevel) {
 let _adviceFetchToken = 0;
 const _adviceLRU = new Map(); const ADV_LRU_CAP = 72;  // hold advice for a full big-game boss list so revisits don't re-measure
 function _adviceTeamStateHash() {
-  return curTeam().map(p => `${p.species}:${p.level}:${p.moves}:${(p.ivs||[]).join('')}:${(p.evs||[]).join('')}:${p.held||''}:${p.ability||''}:${p.nature||''}:${p.alive?1:0}:${p.inParty?1:0}`).join('|');
+  // Suffix the boss-potion toggle so advice (and the precompute key, which reuses this)
+  // recompute when it flips — same reasoning as _readinessSeed.
+  const bp = (() => { try { return curRules().bossPotions === true ? '1' : '0'; } catch (e) { return '0'; } })();
+  return curTeam().map(p => `${p.species}:${p.level}:${p.moves}:${(p.ivs||[]).join('')}:${(p.evs||[]).join('')}:${p.held||''}:${p.ability||''}:${p.nature||''}:${p.alive?1:0}:${p.inParty?1:0}`).join('|') + '#p' + bp;
 }
 // SINGLE SOURCE OF TRUTH for the advice-cache key. Both the live matchup render
 // AND the idle precompute pass MUST build the key here so they can never drift
@@ -9012,6 +9138,9 @@ function renderMatchup() {
         ${ph.alt ? `<div class="bp-alt">${ph.alt}</div>` : ''}
       </div>`).join('')}
       ${planResult.note ? `<div class="bp-plan-note">${planResult.note}</div>` : ''}
+      <label class="bp-pot-toggle" title="Gym leaders / Elite Four / champions in many games spend a Hyper Potion or Full Restore at ~50% HP. It COSTS them a turn (they heal instead of attacking), so it's double-edged: it can lower your odds in a close fight, but RAISE them when you out-damage the boss (a wasted enemy turn). It's a guess — some leaders + no-item difficulty hacks carry none — so it's off by default. Held berries are always modelled from real boss data.">
+        <input type="checkbox" ${_r.bossPotions ? 'checked' : ''} onchange="setRule('bossPotions', this.checked)"> Assume boss uses healing items <span>(A guess — costs the boss a turn. This can raise or lower your readiness depending on who wins the damage race.)</span>
+      </label>
       </div></div></div>
     </div>` : '';
   // Readiness meter — seeded Monte Carlo over the recommended team (see computeReadiness).
@@ -10410,6 +10539,7 @@ const DEFAULT_RULES = {
   noLegendaries: false,
   setMode: false,           // Battle style: false=Shift (free switch on KO), true=Set (no free switch)
   banBattleItems: false,    // When true, hide the Roster Shield potion-bridge alternatives (item-clause run)
+  bossPotions: false,       // OPT-IN: assume gym/E4/champion AI spends healing items (a conservative guess). OFF by default — many early-gen leaders + no-item difficulty hacks carry none, so we never invent a heal turn. Held BERRIES are always modelled (read from real boss data); only this tier-guessed potion layer is gated.
   notes: ''
 };
 // Helper: are nuzlocke rules currently enforced? Optional toggles short-circuit
@@ -10438,6 +10568,9 @@ function setRule(key, value) {
     renderEncounters();
   } else if (key === 'setMode' || key === 'banBattleItems') {
     renderMatchup();   // switch plays + potion-bridge alternatives change the plan
+  } else if (key === 'bossPotions') {
+    schedulePrecompute();   // warm the now-different scores in the background
+    renderMatchup();        // readiness + plan recompute (seed/advice keys already vary on the flag)
   }
   renderRules();
 }
