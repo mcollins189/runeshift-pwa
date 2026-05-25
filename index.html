@@ -13,8 +13,15 @@
 <meta name="theme-color" content="#0f0f10">
 <title>NuzTracker</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+<!-- Fonts load NON-render-blocking (media=print → swap to all onload): the page (and the
+     boot splash, which uses system fonts) paints immediately instead of waiting on the
+     stylesheet. A blocking <link> here was holding the whole body — incl. the splash —
+     behind a network/cache round-trip on iOS, producing a long black screen on launch. -->
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"></noscript>
+<!-- defer: SortableJS is only needed for drag (Active/Roster reorder), never at first
+     paint — deferring it stops the parser-blocking script from delaying the splash. -->
+<script defer src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 <style>
   :root {
     --bg:#0f0f10;--bg2:#18181b;--bg3:#222228;--bg4:#2a2a32;
