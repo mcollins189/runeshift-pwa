@@ -15,7 +15,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
-<script src="data.bundle.js?v=1779561145121" onerror="window.__NUZ_BUNDLE_MISSING=true"></script>
 <style>
   :root {
     --bg:#0f0f10;--bg2:#18181b;--bg3:#222228;--bg4:#2a2a32;
@@ -1054,6 +1053,19 @@
 </style>
 </head>
 <body>
+
+<!-- Boot splash: paints IMMEDIATELY (plain inline styles, no font/CSS dependency) so the
+     user sees feedback while the big data bundle parses + the save loads — instead of a
+     blank/black screen on a slow device. Removed by hideBootSplash() once the app (or the
+     login screen) is ready. The data bundle is loaded right AFTER this so the splash paints
+     before the 6 MB parse blocks. -->
+<div id="boot-splash" style="position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;background:#0f0f10;color:#f0eff4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif">
+  <div style="font-size:27px;font-weight:600;letter-spacing:.5px">NuzTracker</div>
+  <div style="width:34px;height:34px;border:3px solid rgba(108,143,255,.25);border-top-color:#6c8fff;border-radius:50%;animation:bootspin .8s linear infinite"></div>
+  <div style="font-size:12px;color:#5a5a6e">loading your run…</div>
+  <style>@keyframes bootspin{to{transform:rotate(360deg)}}</style>
+</div>
+<script src="data.bundle.js?v=1779561145121" onerror="window.__NUZ_BUNDLE_MISSING=true"></script>
 
 <div id="rotate-guard" aria-hidden="true">
   <div class="rotate-guard-icon">📱↻</div>
@@ -6226,6 +6238,7 @@ async function doLogin() {
     localStorage.setItem('nuzlocke_key', key);
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('app').style.display = 'block';
+    hideBootSplash();
     document.getElementById('key-display').textContent = key;
     loadedAt = (typeof data?.lastModified === 'number') ? data.lastModified : Date.now();
     if (createdOffline) {
@@ -14825,24 +14838,42 @@ onBackfill(() => {
     fire('tab-routes', typeof renderRoutes === 'function' ? renderRoutes : null);
     fire('tab-grave', typeof renderGrave === 'function' ? renderGrave : null);
     fire('tab-stats', typeof renderStats === 'function' ? renderStats : null);
-    // Refresh the open detail modal (pokeView) too — newly-backfilled move data
-    // changes move scores. Skip when the EDIT FORM is open (no .pv-header) so we
-    // don't clobber in-progress form edits.
+    // Refresh the open detail modal (pokeView) ONLY when the displayed mon's OWN
+    // species data is still pending (a Gen-5+/form species mid-backfill). Rebuilding
+    // it on every UNRELATED backfill — e.g. the background warm-up fetching dozens of
+    // boss species — flickered the whole card, recomputed the recommendations, and
+    // reset scroll to the top. The mon's own data resolving is the only thing that
+    // changes this view; the learnset section refreshes itself via renderPokeViewLearnset.
     const ov = document.getElementById('overlay');
     if (ov && ov.classList.contains('open') && editIdx != null) {
+      const mon = curTeam()[editIdx];
       const body = document.getElementById('modal-body');
-      if (body && body.querySelector('.pv-header') && curTeam()[editIdx]) {
-        body.innerHTML = pokeView(curTeam()[editIdx], editIdx);
+      if (mon && body && body.querySelector('.pv-header') && !pokeInfo(mon.species)) {
+        const sc = body.scrollTop;
+        body.innerHTML = pokeView(mon, editIdx);
+        body.scrollTop = sc;   // preserve scroll position across the rebuild
         if (typeof renderPokeViewLearnset === 'function') setTimeout(() => renderPokeViewLearnset(editIdx), 50);
       }
     }
   }, 150);
 });
 
+// Remove the boot splash (idempotent). Called once the app is shown (doLogin success)
+// or the login screen is ready, plus a safety timeout so a stuck load never traps it.
+function hideBootSplash() { const s = document.getElementById('boot-splash'); if (s) s.remove(); }
 window.addEventListener('load', () => {
   const cached = localStorage.getItem('nuzlocke_key');
-  if (cached) { document.getElementById('key-input').value = cached; doLogin(); }
+  if (cached) {
+    document.getElementById('key-input').value = cached;
+    // hideBootSplash also runs inside doLogin on success; .finally covers the
+    // error/return paths so a failed auto-login still reveals the login screen.
+    Promise.resolve(doLogin()).finally(hideBootSplash);
+  } else {
+    hideBootSplash();   // no saved key → show the login screen
+  }
 });
+// Safety net: never let the splash trap the UI if something hangs during boot.
+setTimeout(hideBootSplash, 12000);
 
 // Phase 1 smoke test: surface NUZ_DATA load status in dev tools. Not wired into
 // rendering yet — that comes in Phase 2.
