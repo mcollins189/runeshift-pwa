@@ -4314,11 +4314,17 @@ function buildToolsPillHtml(gameKey) {
    This way the ★ badges are location-wide rather than per-pool.            */
 let _recoBuffer = null;
 let _recoPlaceholderCounter = 0;
+// True when the last encounter render showed a species whose sprite or stat data
+// (for the ★ recommendation tier) hasn't resolved yet — the ONLY reason to repaint
+// the Encounters tab on a backfill. Lets the onBackfill handler ignore the background
+// warm-up's boss-species fetches (which never appear here) and avoid sprite churn.
+let _encounterDataPending = false;
 function startLocationRecoPass() {
   _recoBuffer = [];
   _recoPlaceholderCounter = 0;
 }
 function finishLocationRecoPass(html) {
+  _encounterDataPending = false;   // recomputed below from the species actually shown
   if (_recoBuffer === null) return html;
   const buffered = _recoBuffer;
   _recoBuffer = null;
@@ -4332,6 +4338,10 @@ function finishLocationRecoPass(html) {
     const season = selectedEncSeason;
     for (const e of dp.list) {
       if (!e.p) continue;
+      // A shown species whose sprite OR stat data (for the ★ tier) isn't ready yet → the
+      // Encounters tab should repaint once it lands. Checked across ALL shown species
+      // (dupes/caught render too), not just winner-eligible ones.
+      if (!_encounterDataPending && (!spriteUrl(e.p) || !pokeInfo(e.p))) _encounterDataPending = true;
       // Skip dupe/dead/caught — they can't be a fresh catch target.
       const lc = e.p.toLowerCase();
       if (dp.deadSpecies && dp.deadSpecies.has(lc)) continue;
@@ -8204,13 +8214,13 @@ function buildBattlePlan(boss, pool, setMode) {
   const pHP = party.map(() => 1), bHP = bossC.map(() => 1), bSlp = bossC.map(() => 0), sUsed = party.map(() => false);
   let pIdx = planChooseLead(party, bossC, mode, planBI()), bIdx = 0, lastTo = -1, guard = 0, anySack = false, koCredited = false;
   let potBudget = (itemsOK && party.some(p => p.flags && p.flags.potionOK)) ? PLAN_POTION_BUDGET : 0, potLast = false;
-  let bossPotioned = false, bossBerried = false;   // set when the foe heals via potion (turn) / berry (passive) — drives narration
+  let bossPotioned = false, bossBerried = false, bossBerryType = '';   // set when the foe heals (potion/heal-berry) or a type-resist berry softens a hit — drives narration
   usage[pIdx].isLead = true; usage[pIdx].entered = true;
   const heal = (pi, amt) => { if (pHP[pi] > 0) pHP[pi] = Math.min(1, pHP[pi] + amt); };
   // Our hit + the boss's passive held berry (one-time): type-resist halves the first SE
   // hit of its type; healing berry restores HP once below 50%. Sets bossBerried for narration.
   const hit = (P, B, pi) => { const h = bestHitFraction(P, B); let f = h.frac; const berry = bBerry ? bBerry[bIdx] : null;
-    if (berry && berry.resist && !bBerryUsed[bIdx] && (h.eff >= 2 || berry.resist === 'normal') && String(h.type).toLowerCase() === berry.resist) { f *= 0.5; bBerryUsed[bIdx] = true; }
+    if (berry && berry.resist && !bBerryUsed[bIdx] && (h.eff >= 2 || berry.resist === 'normal') && String(h.type).toLowerCase() === berry.resist) { f *= 0.5; bBerryUsed[bIdx] = true; bossBerryType = h.type || berry.resist; }
     const before = bHP[bIdx]; bHP[bIdx] -= f; if (h.drain) heal(pi, 0.5 * Math.min(f, Math.max(0, before)) * ((B.stats[0] || 1) / (P.stats[0] || 1)));
     if (berry && berry.heal && !bBerryUsed[bIdx] && bHP[bIdx] > 0 && bHP[bIdx] < 0.5) { bHP[bIdx] = Math.min(1, bHP[bIdx] + berry.heal); bBerryUsed[bIdx] = true; bossBerried = true; } };
   const endTurn = (pi) => { if (pHP[pi] > 0) { if (party[pi].flags.lefto) heal(pi, 1 / 16); if (party[pi].flags.sitrus && !sUsed[pi] && pHP[pi] < 0.5) { sUsed[pi] = true; heal(pi, 0.25); } } };
@@ -8244,7 +8254,7 @@ function buildBattlePlan(boss, pool, setMode) {
       usage[pIdx].sacked = true; anySack = true; pIdx = r; usage[r].entered = true; lastTo = -1; continue;
     }
     usage[pIdx].entered = true;
-    bossPotioned = false; bossBerried = false;   // re-armed each turn; flipped by bossAtk (potion) / hit (berry)
+    bossPotioned = false; bossBerried = false; bossBerryType = '';   // re-armed each turn; flipped by bossAtk (potion) / hit (berry)
     const act = planChooseAction(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, lastTo, planBI());
     let P = party[pIdx], B = bossC[bIdx];
     const wasPot = potLast; potLast = false;   // block two Potions in a row
@@ -8298,6 +8308,7 @@ function buildBattlePlan(boss, pool, setMode) {
     const fp = bossPotioned ? bHealLbl : fp0;   // foe healed instead of attacking → show the item
     if (bossPotioned && curPhase && !curPhase.healNote) { curPhase.healNote = true; curPhase.turns.push(`<span class="bp-plan-heal">↳ ${B.label} heals back — chip won't stick; you need to KO through the ${bossPotName}.</span>`); }
     if (bossBerried && curPhase && !curPhase.berryNote) { curPhase.berryNote = true; curPhase.turns.push(`<span class="bp-plan-heal">↳ ${B.label} eats a held Berry (heals ~25%) — bank one extra hit to finish it.</span>`); }
+    if (bossBerryType && curPhase && !curPhase.berryResistNote) { curPhase.berryResistNote = true; curPhase.turns.push(`<span class="bp-plan-heal">↳ ${B.label}'s held Berry halves your first super-effective ${bossBerryType} hit — expect one extra hit to KO.</span>`); }
     const ourPart = weFainted ? `<span class="bp-plan-risk"><b>${P.label}</b> goes down</span>` : `<b>${P.label}</b>: ${ourMv}${weKO ? ' → KO' : ''}${warn}`;
     const showFoe = wasAsleep || !(pF && weKO) || bossPotioned;   // foe acts unless we KO'd it first while faster (or it healed / is asleep)
     addTurn(pF ? [ourPart, showFoe ? fp : null] : [showFoe ? fp : null, ourPart]);
@@ -14823,21 +14834,46 @@ onBackfill(() => {
       const t = document.getElementById(tabId);
       if (t && t.classList.contains('active') && typeof fn === 'function') fn();
     };
-    fire('tab-matchup', typeof renderMatchup === 'function' ? renderMatchup : null);
+    // Matchup repaints on backfill ONLY when the current boss's team or the roster
+    // still has a sprite/stat that hasn't resolved yet. The background warm-up fetches
+    // dozens of boss species and fired this on every one — that rapid <img> churn made
+    // iOS drop the boss sprites (lazy-load / onerror races). The readiness meter updates
+    // via its own simReadinessAsync path, so gating this doesn't delay the score.
+    const _matchupDataPending = () => {
+      try {
+        const cap = curCap(); if (!cap) return false;
+        const boss = (getBosses(curGame()) || []).find(b => b.name === cap);
+        const bteam = boss ? (boss.team || []) : [];
+        if (bteam.some(m => m && m.species && (!pokeInfo(m.species) || !spriteUrl(m.species)))) return true;
+        return curTeam().some(p => p && p.alive && p.species && !spriteUrl(p.species));
+      } catch (e) { return true; }   // on error, default to repainting (safe)
+    };
+    if (_matchupDataPending()) fire('tab-matchup', typeof renderMatchup === 'function' ? renderMatchup : null);
     // Roster/Active cards render entirely from STORED fields (type1/type2, level, moves)
     // + a sprite that resolves locally via dexIdBySlug for every base species. So a
     // backfill almost never changes their output — repainting on each one just recreates
     // the <img>s and FLICKERS. Only repaint when a roster sprite genuinely can't resolve
     // yet (the ~14 form-default species, e.g. Mimikyu, that need the backfilled apiId).
+    // Roster / Active / Graveyard cards render from STORED fields (type1/type2, level,
+    // moves) + a sprite that resolves locally via dexIdBySlug for every base species. A
+    // backfill almost never changes their output — repainting recreates the <img>s and
+    // FLICKERS. Only repaint when a team sprite genuinely can't resolve yet (the ~14
+    // form-default species, e.g. Mimikyu, that need the backfilled apiId). curTeam()
+    // includes dead mons, so this also covers the graveyard.
     const _rosterSpriteMissing = () => { try { return curTeam().some(p => p && p.species && !spriteUrl(p.species)); } catch (e) { return false; } };
     if (_rosterSpriteMissing()) {
       fire('tab-roster', typeof renderRoster === 'function' ? renderRoster : null);
       fire('tab-active', typeof renderActive === 'function' ? renderActive : null);
+      fire('tab-grave', typeof renderGrave === 'function' ? renderGrave : null);
     }
-    fire('tab-encounters', typeof renderEncounters === 'function' ? renderEncounters : null);
-    fire('tab-routes', typeof renderRoutes === 'function' ? renderRoutes : null);
-    fire('tab-grave', typeof renderGrave === 'function' ? renderGrave : null);
-    fire('tab-stats', typeof renderStats === 'function' ? renderStats : null);
+    // Encounters depends on backfill (sprites + the recommendation tier from BST), but
+    // ONLY for the species shown at the CURRENT location. The background warm-up fetches
+    // boss species, which don't appear here — so only repaint when this render still has
+    // an encounter species waiting on data (flag set by the reco pass). Otherwise the
+    // boss-species fetches would churn + flicker the encounter sprites.
+    if (_encounterDataPending) fire('tab-encounters', typeof renderEncounters === 'function' ? renderEncounters : null);
+    // Route Log (text only) and Stats (stored counts/types) never depend on backfill, so
+    // they're not repainted here — they re-render on tab switch / mutation as needed.
     // Refresh the open detail modal (pokeView) ONLY when the displayed mon's OWN
     // species data is still pending (a Gen-5+/form species mid-backfill). Rebuilding
     // it on every UNRELATED backfill — e.g. the background warm-up fetching dozens of
