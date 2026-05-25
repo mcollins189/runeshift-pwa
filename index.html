@@ -14225,9 +14225,12 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('sw.js').then(reg => {
       _swRegistration = reg;
-      // Initial cache-status request so the Rules tab can populate even on
-      // first open. Wait a tick for the SW to be 'active' before posting.
-      setTimeout(requestCacheStatus, 500);
+      // NOTE: do NOT request cache-status here. Counting cache entries makes the SW
+      // enumerate the entire cache (cache.keys()), and after a full pre-cache that's
+      // 4100+ entries — slow on iOS WebKit. The SW is single-threaded, so doing it on
+      // launch BLOCKS the SW from serving the shell → a multi-second black screen on a
+      // pre-cached iOS PWA. The Rules tab requests the count itself when opened
+      // (renderRules → requestCacheStatus), which is the only place it's shown.
     }).catch(err => console.warn('[sw] register failed:', err));
   });
 }
