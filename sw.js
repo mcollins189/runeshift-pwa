@@ -55,7 +55,12 @@
 // v8 — manifest.json orientation set to "portrait" (hard lock for installed
 // Android PWAs; the JS screen.orientation.lock fallback alone was unreliable).
 // Re-cache the new manifest.
-const SHELL_CACHE = 'nuz-shell-v8';
+// v9 — HTML shell is now CACHE-FIRST + background-revalidate (was network-first):
+// the launch navigate serves the cached index.html instantly (no network wait), which
+// kills the long iOS launch black screen. Bump forces installed clients to adopt the
+// new SW + re-cache the current index.html (boot splash, non-blocking head, body-loaded
+// bundle). Deployed HTML now lands one launch later (the bg fetch caches it).
+const SHELL_CACHE = 'nuz-shell-v9';
 // v2 — all self-hosted artwork sprites (sprites/art*, sprites/pixel* unchanged)
 // were regenerated (trimmed/normalized). Sprites are served cache-first as
 // "immutable", so without a bump existing clients would keep the old artwork
@@ -148,11 +153,13 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Shell HTML -> network-first, but TIMEOUT-BOUNDED so a slow launch network
-  // (iPad PWA cold-launch) serves the cached shell instantly instead of hanging
-  // on a black screen. Fresh HTML still wins whenever the network is quick.
+  // Shell HTML -> CACHE-FIRST + background revalidate (app-shell model). The PWA
+  // launch (a navigate) is served INSTANTLY from the cached index.html — no network
+  // wait — which is what was leaving iOS on a long black screen before the page (and
+  // its boot splash) could paint. The network copy is fetched in the background to
+  // refresh the cache for the NEXT launch, so updates still land (one launch later).
   if (isShellHtml(req, url)) {
-    event.respondWith(networkFirst(req, SHELL_CACHE, 1500));
+    event.respondWith(cacheFirstRevalidate(req, SHELL_CACHE));
     return;
   }
 
@@ -242,6 +249,25 @@ async function networkFirst(req, cacheName, timeoutMs) {
   // fall back to any cache on failure.
   try { return await net; }
   catch (e) { const hit = await matchCached(); if (hit) return hit; throw e; }
+}
+
+// App-shell HTML strategy: serve the cached index.html INSTANTLY (zero network wait),
+// and refresh the cache in the BACKGROUND for the next launch. This is what makes the
+// PWA launch instant — a navigate never blocks on the network (the iOS black-screen
+// cause). Trade-off: a freshly deployed index.html lands one launch later (the bg
+// fetch caches it; the following launch serves it). First-ever load (cold, no cache)
+// still awaits the network since there's nothing to serve yet.
+async function cacheFirstRevalidate(req, cacheName) {
+  const cache = await caches.open(cacheName);
+  const cached = (await cache.match(req)) || (await cache.match('index.html')) || (await cache.match('/index.html'));
+  const net = fetch(req, { cache: 'no-store' }).then((res) => {
+    if (res && res.ok) cache.put(req, res.clone());
+    return res;
+  }).catch(() => null);
+  if (cached) return cached;            // INSTANT — background fetch updates the cache for next time
+  const res = await net;                // cold first load → must wait for the network
+  if (res) return res;
+  throw new Error('offline: no cached shell');
 }
 
 async function staleWhileRevalidate(req, cacheName) {
