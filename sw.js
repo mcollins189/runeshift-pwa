@@ -274,21 +274,6 @@ async function networkFirst(req, cacheName, timeoutMs) {
 // fire-and-forget put keeps the offline copy warm for not-yet-pre-cached sprites without
 // blocking the response.
 async function spriteNetworkFirst(req, cacheName) {
-  // OFFLINE FAST-PATH: when we already know there's no network, skip the doomed
-  // fetch and serve the cached sprite directly. On iOS WebKit an offline fetch()
-  // does NOT reject instantly — it stalls before throwing, and stacking that stall
-  // in front of the cache lookup is what makes sprites flash/vanish on a re-render
-  // in an offline PWA (e.g. toggling boss potions rebuilds the matchup sprites; the
-  // request burst also pressures WebKit into re-requesting already-painted sprites
-  // on other tabs like the active team). Android rejects the offline fetch instantly,
-  // so the flash never shows there. navigator.onLine===false is a reliable "offline"
-  // signal (false positives only go the other way), so this only changes the offline
-  // case — online still uses network-first below, keeping the hot path off the big cache.
-  if (self.navigator && self.navigator.onLine === false) {
-    const cache = await caches.open(cacheName);
-    const hit = await cache.match(req);
-    return hit || new Response('', { status: 504 });
-  }
   let netRes = null;
   try { netRes = await fetch(req); }   // default cache mode → browser HTTP cache hit when warm
   catch (e) { netRes = null; }         // ONLY a thrown fetch means offline/network error

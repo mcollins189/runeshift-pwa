@@ -9226,6 +9226,45 @@ function renderAdviceItems(analysis, scored, baseScore) {
   return { items, projScore, projDelta, projWinRate, projDeaths, projMargin, measuring: false };
 }
 
+// Re-render a container WITHOUT tearing down already-decoded sprite images.
+// `el.innerHTML = html` rebuilds every <img> from scratch; a brand-new <img> re-initiates
+// its load through the service worker, and on iOS WebKit that async path leaves the image
+// blank for a beat — the "sprites flash / disappear" the user sees when toggling boss
+// potions (which re-renders the whole matchup even though the recommended team, and thus
+// every sprite, is unchanged). The request burst also pressures WebKit into dropping +
+// re-requesting already-painted sprites on other tabs. Android repaints cached <img>s
+// synchronously, so the flash never shows there. Fix: snapshot the live, fully-loaded
+// sprite nodes, set the new HTML, then graft each loaded node back in place of its
+// freshly-created (still-loading) twin — matched by absolute src. A detached-then-
+// reattached COMPLETE <img> repaints instantly with no refetch, so iOS never round-trips
+// the SW and never flashes. Nodes with no loaded twin (new species, lazy/offscreen) just
+// load normally.
+function _setHtmlPreservingSprites(el, html) {
+  const pool = new Map();   // absolute src -> [already-loaded <img> nodes]
+  el.querySelectorAll('img').forEach((img) => {
+    if (img.complete && img.naturalWidth > 0) {
+      const k = img.src;
+      let arr = pool.get(k); if (!arr) { arr = []; pool.set(k, arr); }
+      arr.push(img);
+    }
+  });
+  el.innerHTML = html;
+  if (!pool.size) return;
+  el.querySelectorAll('img').forEach((img) => {
+    const arr = pool.get(img.src);
+    if (!arr || !arr.length) return;
+    const reuse = arr.shift();
+    // Make the reused (already-decoded) node match the new markup exactly: drop any
+    // attribute the new node doesn't have, then copy the new node's attributes over.
+    for (let i = reuse.attributes.length - 1; i >= 0; i--) {
+      const n = reuse.attributes[i].name;
+      if (n !== 'src' && !img.hasAttribute(n)) reuse.removeAttribute(n);
+    }
+    for (const at of img.attributes) { if (at.name !== 'src') reuse.setAttribute(at.name, at.value); }
+    img.replaceWith(reuse);
+  });
+}
+
 function renderMatchup() {
   const el = document.getElementById('matchup-content');
   const cap = curCap();
@@ -9597,7 +9636,7 @@ function renderMatchup() {
   }
   // ── Speed tier comparison ──
   html += buildSpeedTierSection(party, boss);
-  el.innerHTML = html;
+  _setHtmlPreservingSprites(el, html);
   initRecoSortable();
   // Warm the readiness + advice caches for every boss in the background (off-thread,
   // on idle) so switching to any boss is instant. Cheap + idempotent per state.
