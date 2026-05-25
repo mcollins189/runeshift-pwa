@@ -1072,13 +1072,32 @@
   <div style="font-size:12px;color:#5a5a6e">loading your run…</div>
   <style>@keyframes bootspin{to{transform:rotate(360deg)}}</style>
 </div>
-<!-- defer: the 6 MB data bundle is the single biggest blocker on launch. Deferred, the
-     parser paints the body (boot splash) BEFORE this heavy parse instead of after — so the
-     splash is visible for the whole load instead of flashing at the end (iOS offline PWA).
-     Safe to defer: no top-level code reads NUZ_DATA at parse time (all reads are inside
-     functions + guarded), and window 'load' (→ doLogin) still waits for deferred scripts,
-     so NUZ_DATA is present by the time the app actually renders. -->
-<script defer src="data.bundle.js?v=1779561145121" onerror="window.__NUZ_BUNDLE_MISSING=true"></script>
+<!-- The 6 MB data bundle is loaded AFTER the first paint, NOT as a static/deferred <script>.
+     On iOS WebKit the first paint is gated until ALL parse-time AND deferred scripts finish,
+     so even a deferred bundle parses BEFORE the boot splash can paint → multi-second black
+     screen, then the splash flashes at the very end (Android paints the splash first; iOS
+     does not). This placeholder is NON-executing (unknown type → the browser neither fetches
+     nor runs it) but keeps the `src="data.bundle.js?v=NNN"` attribute that build-data.mjs
+     rewrites for cache-busting. The bootstrap below injects the REAL bundle after a double
+     rAF (post first-paint), so the splash is visible for the whole load, then the app boots
+     on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
+     at parse time (all reads are inside guarded functions). -->
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1779561145121"></script>
+<script>
+(function () {
+  function bootBundle() {
+    var ph = document.getElementById('nuz-bundle-src');
+    var s = document.createElement('script');
+    s.src = (ph && ph.getAttribute('src')) || 'data.bundle.js';
+    s.onload = function () { if (window.__nuzAppReady) window.__nuzAppReady(); };
+    s.onerror = function () { window.__NUZ_BUNDLE_MISSING = true; if (window.__nuzAppReady) window.__nuzAppReady(); };
+    document.body.appendChild(s);
+  }
+  // Double rAF guarantees a paint happened (the splash is up) before the heavy bundle loads.
+  if (window.requestAnimationFrame) requestAnimationFrame(function () { requestAnimationFrame(bootBundle); });
+  else setTimeout(bootBundle, 32);
+})();
+</script>
 
 <div id="rotate-guard" aria-hidden="true">
   <div class="rotate-guard-icon">📱↻</div>
@@ -14958,17 +14977,28 @@ onBackfill(() => {
 // Remove the boot splash (idempotent). Called once the app is shown (doLogin success)
 // or the login screen is ready, plus a safety timeout so a stuck load never traps it.
 function hideBootSplash() { const s = document.getElementById('boot-splash'); if (s) s.remove(); }
-window.addEventListener('load', () => {
+// App boot. Called by the post-first-paint bundle injector (the bootstrap near the boot
+// splash) on the bundle's onload — NOT on window 'load' — so the heavy bundle parses with
+// the splash already visible (iOS gates first paint until parse-time/deferred scripts
+// finish, so booting off window 'load' put the whole parse before the first paint). Guarded
+// against double-invocation. NUZ_DATA is present here (the bundle just loaded).
+let _nuzBooted = false;
+window.__nuzAppReady = function () {
+  if (_nuzBooted) return; _nuzBooted = true;
   const cached = localStorage.getItem('nuzlocke_key');
   if (cached) {
-    document.getElementById('key-input').value = cached;
+    const ki = document.getElementById('key-input'); if (ki) ki.value = cached;
     // hideBootSplash also runs inside doLogin on success; .finally covers the
     // error/return paths so a failed auto-login still reveals the login screen.
     Promise.resolve(doLogin()).finally(hideBootSplash);
   } else {
     hideBootSplash();   // no saved key → show the login screen
   }
-});
+};
+// Fallbacks: if the bundle was already cached/parsed before this script defined the hook
+// (NUZ_DATA present), boot now; and a window-load safety in case onload never fires.
+if (typeof NUZ_DATA !== 'undefined') window.__nuzAppReady();
+window.addEventListener('load', () => { if (!_nuzBooted && typeof NUZ_DATA !== 'undefined') window.__nuzAppReady(); });
 // Safety net: never let the splash trap the UI if something hangs during boot.
 setTimeout(hideBootSplash, 12000);
 
