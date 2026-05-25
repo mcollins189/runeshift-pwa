@@ -1072,7 +1072,13 @@
   <div style="font-size:12px;color:#5a5a6e">loading your run…</div>
   <style>@keyframes bootspin{to{transform:rotate(360deg)}}</style>
 </div>
-<script src="data.bundle.js?v=1779561145121" onerror="window.__NUZ_BUNDLE_MISSING=true"></script>
+<!-- defer: the 6 MB data bundle is the single biggest blocker on launch. Deferred, the
+     parser paints the body (boot splash) BEFORE this heavy parse instead of after — so the
+     splash is visible for the whole load instead of flashing at the end (iOS offline PWA).
+     Safe to defer: no top-level code reads NUZ_DATA at parse time (all reads are inside
+     functions + guarded), and window 'load' (→ doLogin) still waits for deferred scripts,
+     so NUZ_DATA is present by the time the app actually renders. -->
+<script defer src="data.bundle.js?v=1779561145121" onerror="window.__NUZ_BUNDLE_MISSING=true"></script>
 
 <div id="rotate-guard" aria-hidden="true">
   <div class="rotate-guard-icon">📱↻</div>
