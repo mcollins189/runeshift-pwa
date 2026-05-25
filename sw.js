@@ -60,7 +60,12 @@
 // kills the long iOS launch black screen. Bump forces installed clients to adopt the
 // new SW + re-cache the current index.html (boot splash, non-blocking head, body-loaded
 // bundle). Deployed HTML now lands one launch later (the bg fetch caches it).
-const SHELL_CACHE = 'nuz-shell-v9';
+// v10 — sprites are NETWORK-FIRST (browser HTTP cache) with SW-cache offline fallback,
+// and the on-launch cache-status enumeration was removed. Both stop the launch/render
+// path from touching the huge POKEAPI_CACHE, which is slow on iOS once fully pre-cached
+// (was: launch black screen + sprites vanishing on re-render, ONLY with a full pre-cache).
+// The activate keep-set preserves POKEAPI_CACHE, so the user's downloaded pre-cache stays.
+const SHELL_CACHE = 'nuz-shell-v10';
 // v2 — all self-hosted artwork sprites (sprites/art*, sprites/pixel* unchanged)
 // were regenerated (trimmed/normalized). Sprites are served cache-first as
 // "immutable", so without a bump existing clients would keep the old artwork
@@ -145,11 +150,16 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Self-hosted sprites (same-origin ./sprites/*) -> cache-first; immutable so
-  // never revalidated. Shares POKEAPI_CACHE so pre-cached + on-view entries
-  // resolve from one place offline.
+  // Self-hosted sprites (same-origin ./sprites/*) -> NETWORK-FIRST via the browser's
+  // HTTP cache, with the SW Cache Storage only as an OFFLINE fallback. Sprites are
+  // immutable, so the browser HTTP cache serves them instantly when warm — and crucially
+  // it does NOT touch the SW Cache Storage, which on iOS WebKit gets slow once a full
+  // pre-cache has filled it with thousands of entries. Cache-first there made every
+  // sprite lookup slow post-precache → launch black screen + sprites vanishing on
+  // re-render. This keeps the online hot path off the big slow cache; offline still
+  // resolves from the pre-cached entries.
   if (url.origin === self.location.origin && url.pathname.startsWith(SPRITES_PATH)) {
-    event.respondWith(cacheFirst(req, POKEAPI_CACHE));
+    event.respondWith(spriteNetworkFirst(req, POKEAPI_CACHE));
     return;
   }
 
@@ -257,6 +267,34 @@ async function networkFirst(req, cacheName, timeoutMs) {
 // cause). Trade-off: a freshly deployed index.html lands one launch later (the bg
 // fetch caches it; the following launch serves it). First-ever load (cold, no cache)
 // still awaits the network since there's nothing to serve yet.
+// Sprites: serve from the network (= browser HTTP cache for these immutable files) and
+// only fall back to the SW Cache Storage when offline. Lets the browser's fast HTTP cache
+// satisfy sprites without an iOS-slow Cache Storage match against a huge pre-cache. Uses
+// the DEFAULT fetch cache mode (not no-store) so the HTTP cache is actually used. A
+// fire-and-forget put keeps the offline copy warm for not-yet-pre-cached sprites without
+// blocking the response.
+async function spriteNetworkFirst(req, cacheName) {
+  let netRes = null;
+  try { netRes = await fetch(req); }   // default cache mode → browser HTTP cache hit when warm
+  catch (e) { netRes = null; }         // ONLY a thrown fetch means offline/network error
+  if (netRes) {
+    // We're online (got a response, even a 404). Return it directly and NEVER touch the
+    // big SW Cache Storage — that keeps the online path off the iOS-slow cache even for a
+    // missing sprite (a 404 → the page's <img onerror> just hides it). Warm the offline
+    // copy fire-and-forget only for real hits.
+    if (netRes.ok || netRes.type === 'opaque') {
+      const copy = netRes.clone();
+      caches.open(cacheName).then((c) => c.put(req, copy)).catch(() => {});
+    }
+    return netRes;
+  }
+  // Offline ONLY: fall back to the (possibly large, slow-on-iOS) SW cache — acceptable
+  // since there's no network and this path isn't hit while online.
+  const cache = await caches.open(cacheName);
+  const hit = await cache.match(req);
+  return hit || new Response('', { status: 504 });
+}
+
 async function cacheFirstRevalidate(req, cacheName) {
   const cache = await caches.open(cacheName);
   const cached = (await cache.match(req)) || (await cache.match('index.html')) || (await cache.match('/index.html'));
