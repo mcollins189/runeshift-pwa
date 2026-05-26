@@ -7192,12 +7192,14 @@ function detectStarterType() {
     if (!/starter/i.test(rt.route || '')) continue;
     const idx = rt.linkedTeamIdx;
     const linked = (typeof idx === 'number') ? team[idx] : null;
-    // Try the linked roster mon first, then the recorded encounter species. The
-    // index link can go STALE (shifts when a mon is deleted/reordered) while the
-    // encounter string stays accurate, so falling back to it recovers the pick.
-    // Starter evolutions preserve primary type (Chimchar/Monferno/Infernape = Fire),
-    // so either source yields the right answer when it resolves to a starter tag.
-    for (const sp of [linked && linked.species, rt.encounter]) {
+    // Prefer the recorded encounter species, THEN fall back to the linked roster
+    // mon. The linkedTeamIdx can go STALE (shifts when a mon is deleted/reordered)
+    // and drift onto an UNRELATED mon that happens to share a starter-eligible type
+    // (e.g. idx now points at Roselia → 'grass'), which silently returned the wrong
+    // starter. The encounter string is what was logged at the Starter route and never
+    // drifts. Starter evolutions preserve primary type (Chimchar/Monferno/Infernape =
+    // Fire), so either source yields the right tag when it resolves to a starter.
+    for (const sp of [rt.encounter, linked && linked.species]) {
       const tag = tagOf(sp);
       if (tag) return tag;
     }
