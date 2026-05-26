@@ -9009,8 +9009,13 @@ function analyzeAdvice(boss, recommended, roster) {
   const dmgMoveTypes = (p) => normMovesList(p.moves).map(m => { const c = resolveMove(m); const cat = c ? moveCategory(c) : null; if (cat === 'U' || (c && STATUS_MOVES.has(c))) return null; return c ? MOVES[c] : getMoveType(m); }).filter(Boolean);
   const hitsSE = (p, C) => dmgMoveTypes(p).some(t => effectivenessWithAbility(t, C.type1, C.type2, C.abil) >= 2);
 
-  // Blind spots: boss mons with no super-effective answer on the recommended team.
-  out.blindSpots = bossCs.filter(({ C }) => !(recommended || []).some(p => hitsSE(p, C))).map(({ b }) => b.species);
+  // Blind spots: boss mons with no super-effective answer in your whole eligible BOX
+  // (bench included) — NOT merely none on the recommended six. Checking only the
+  // recommended team falsely flagged e.g. a Fire mon as un-answerable while a Water
+  // attacker sat on your bench, even though the message says "nothing in your box."
+  // Falls back to the recommended team if no roster was passed.
+  const _answerPool = (roster && roster.length) ? roster : (recommended || []);
+  out.blindSpots = bossCs.filter(({ C }) => !_answerPool.some(p => hitsSE(p, C))).map(({ b }) => b.species);
 
   // Shared weaknesses + how thinly the recommended team covers each.
   const coverCount = {};
