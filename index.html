@@ -1802,9 +1802,9 @@ const GAMES = {
     },
     bosses: [
       {name:'Roark', location:'Oreburgh City Gym', cap:14, theme:'Rock', team:[
-        {species:'Geodude', lv:12, types:['Rock','Ground']},
-        {species:'Onix', lv:12, types:['Rock','Ground']},
-        {species:'Cranidos', lv:14, types:['Rock'], note:'Sturdy + Mold Breaker'}
+        {species:'Geodude', lv:12, types:['Rock','Ground'], ability:'Rock Head'},
+        {species:'Onix', lv:12, types:['Rock','Ground'], ability:'Sturdy'},
+        {species:'Cranidos', lv:14, types:['Rock'], ability:'Mold Breaker', note:'Mold Breaker — ignores Sturdy / Levitate'}
       ], rematch:[
         {species:'Tyranitar', lv:68, types:['Rock','Dark'], ability:'Sand Stream', item:'Smooth Rock', nature:'Adamant', moves:['Crunch','Stone Edge','Roar','Stealth Rock']},
         {species:'Aerodactyl', lv:66, types:['Rock','Flying'], ability:'Unnerve', item:'Scope Lens', nature:'Jolly', moves:['Stone Edge','Roar','Roost','Stealth Rock']},
@@ -1814,9 +1814,9 @@ const GAMES = {
         {species:'Rampardos', lv:72, types:['Rock'], ability:'Sheer Force', item:'Life Orb', nature:'Adamant', moves:['Stone Edge','Iron Tail','Zen Headbutt','Head Smash']}
       ]},
       {name:'Gardenia', location:'Eterna City Gym', cap:22, theme:'Grass', team:[
-        {species:'Cherubi', lv:19, types:['Grass']},
-        {species:'Turtwig', lv:19, types:['Grass']},
-        {species:'Roserade', lv:22, types:['Grass','Poison'], note:'Sitrus Berry + Poison Sting'}
+        {species:'Cherubi', lv:19, types:['Grass'], ability:'Chlorophyll'},
+        {species:'Turtwig', lv:19, types:['Grass'], ability:'Shell Armor'},
+        {species:'Roserade', lv:22, types:['Grass','Poison'], ability:'Technician', note:'Sitrus Berry + Poison Sting'}
       ], rematch:[
         {species:'Jumpluff', lv:66, types:['Grass','Flying'], ability:'Chlorophyll', item:'Heat Rock', nature:'Timid', moves:['Giga Drain','Sleep Powder','Leech Seed','Sunny Day']},
         {species:'Sunflora', lv:70, types:['Grass'], ability:'Solar Power', item:'Choice Scarf', nature:'Timid', moves:['Solar Beam']},
@@ -1826,9 +1826,9 @@ const GAMES = {
         {species:'Roserade', lv:72, types:['Grass','Poison'], ability:'Natural Cure', item:'Power Herb', nature:'Modest', moves:['Solar Beam','Sludge Bomb','Grassy Terrain','Sunny Day']}
       ]},
       {name:'Maylene', location:'Veilstone City Gym', cap:30, theme:'Fighting', team:[
-        {species:'Meditite', lv:27, types:['Fighting','Psychic'], note:'Pure Power'},
-        {species:'Machoke', lv:27, types:['Fighting']},
-        {species:'Lucario', lv:30, types:['Fighting','Steel'], note:'Big Root + Drain Punch'}
+        {species:'Meditite', lv:27, types:['Fighting','Psychic'], ability:'Pure Power', note:'Pure Power — Atk effectively doubled'},
+        {species:'Machoke', lv:27, types:['Fighting'], ability:'Guts'},
+        {species:'Lucario', lv:30, types:['Fighting','Steel'], ability:'Steadfast', note:'Big Root + Drain Punch'}
       ], rematch:[
         {species:'Hitmontop', lv:64, types:['Fighting'], ability:'Intimidate', item:'Expert Belt', nature:'Adamant', moves:['Close Combat','Stone Edge','Sucker Punch','Brick Break']},
         {species:'Breloom', lv:66, types:['Grass','Fighting'], ability:'Technician', item:'Life Orb', nature:'Adamant', moves:['Bullet Seed','Mach Punch','Rock Tomb','Force Palm']},
@@ -1838,9 +1838,9 @@ const GAMES = {
         {species:'Lucario', lv:74, types:['Fighting','Steel'], ability:'Justified', item:'Focus Sash', nature:'Modest', moves:['Aura Sphere','Flash Cannon','Water Pulse','Vacuum Wave']}
       ]},
       {name:'Crasher Wake', location:'Pastoria City Gym', cap:30, theme:'Water', team:[
-        {species:'Gyarados', lv:27, types:['Water','Flying']},
-        {species:'Quagsire', lv:27, types:['Water','Ground']},
-        {species:'Floatzel', lv:30, types:['Water'], note:'Swift Swim + Brine'}
+        {species:'Gyarados', lv:27, types:['Water','Flying'], ability:'Intimidate'},
+        {species:'Quagsire', lv:27, types:['Water','Ground'], ability:'Damp'},
+        {species:'Floatzel', lv:30, types:['Water'], ability:'Swift Swim', note:'Swift Swim + Brine'}
       ], rematch:[
         {species:'Politoed', lv:68, types:['Water'], ability:'Drizzle', item:'Damp Rock', nature:'Timid', moves:['Surf','Ice Beam','Focus Blast','Perish Song']},
         {species:'Kingdra', lv:68, types:['Water','Dragon'], ability:'Swift Swim', item:'Chesto Berry', nature:'Timid', moves:['Hydro Pump','Dragon Pulse','Ice Beam','Rest']},
@@ -1850,9 +1850,9 @@ const GAMES = {
         {species:'Floatzel', lv:72, types:['Water'], ability:'Swift Swim', item:'Life Orb', nature:'Jolly', moves:['Aqua Tail','Brick Break','Crunch','Ice Fang']}
       ]},
       {name:'Fantina', location:'Hearthome City Gym', cap:36, theme:'Ghost', team:[
-        {species:'Drifblim', lv:32, types:['Ghost','Flying']},
-        {species:'Gengar', lv:34, types:['Ghost','Poison']},
-        {species:'Mismagius', lv:36, types:['Ghost'], note:'Magical Leaf + Psybeam'}
+        {species:'Drifblim', lv:32, types:['Ghost','Flying'], ability:'Aftermath'},
+        {species:'Gengar', lv:34, types:['Ghost','Poison'], ability:'Cursed Body'},
+        {species:'Mismagius', lv:36, types:['Ghost'], ability:'Levitate', note:'Magical Leaf + Psybeam'}
       ], rematch:[
         {species:'Drifblim', lv:68, types:['Ghost','Flying'], ability:'Flare Boost', item:'Flame Orb', nature:'Modest', moves:['Shadow Ball','Thunderbolt','Psychic','Strength Sap']},
         {species:'Banette', lv:65, types:['Ghost'], ability:'Cursed Body', item:'Iron Ball', nature:'Adamant', moves:['Shadow Sneak','Sucker Punch','Payback','Trick']},
@@ -1862,9 +1862,9 @@ const GAMES = {
         {species:'Gengar', lv:72, types:['Ghost','Poison'], ability:'Cursed Body', item:'Life Orb', nature:'Timid', moves:['Hex','Sludge Bomb','Focus Blast','Toxic']}
       ]},
       {name:'Byron', location:'Canalave City Gym', cap:39, theme:'Steel', team:[
-        {species:'Bronzor', lv:36, types:['Steel','Psychic']},
-        {species:'Steelix', lv:35, types:['Steel','Ground']},
-        {species:'Bastiodon', lv:39, types:['Rock','Steel'], note:'Metal Burst danger'}
+        {species:'Bronzor', lv:36, types:['Steel','Psychic'], ability:'Levitate'},
+        {species:'Steelix', lv:35, types:['Steel','Ground'], ability:'Sturdy'},
+        {species:'Bastiodon', lv:39, types:['Rock','Steel'], ability:'Sturdy', note:'Metal Burst danger · Sturdy'}
       ], rematch:[
         {species:'Skarmory', lv:69, types:['Steel','Flying'], ability:'Sturdy', item:'Leftovers', nature:'Impish', moves:['Steel Wing','Stealth Rock','Iron Defense','Taunt']},
         {species:'Steelix', lv:69, types:['Steel','Ground'], ability:'Sheer Force', item:'Life Orb', nature:'Adamant', moves:['Iron Tail','Earthquake','Ice Fang','Crunch']},
@@ -1874,10 +1874,10 @@ const GAMES = {
         {species:'Bastiodon', lv:72, types:['Rock','Steel'], ability:'Sturdy', item:'Lum Berry', nature:'Brave', moves:['Heavy Slam','Metal Burst','Roar','Stealth Rock']}
       ]},
       {name:'Candice', location:'Snowpoint City Gym', cap:42, theme:'Ice', team:[
-        {species:'Snover', lv:38, types:['Grass','Ice']},
-        {species:'Sneasel', lv:38, types:['Dark','Ice']},
-        {species:'Medicham', lv:40, types:['Fighting','Psychic']},
-        {species:'Abomasnow', lv:42, types:['Grass','Ice'], note:'Snow Warning'}
+        {species:'Snover', lv:38, types:['Grass','Ice'], ability:'Snow Warning'},
+        {species:'Sneasel', lv:38, types:['Dark','Ice'], ability:'Pickpocket'},
+        {species:'Medicham', lv:40, types:['Fighting','Psychic'], ability:'Pure Power'},
+        {species:'Abomasnow', lv:42, types:['Grass','Ice'], ability:'Snow Warning', note:'Snow Warning — hail until KO'}
       ], rematch:[
         {species:'Abomasnow', lv:68, types:['Grass','Ice'], ability:'Snow Warning', item:'Icy Rock', nature:'Brave', moves:['Wood Hammer','Ice Punch','Earthquake','Aurora Veil']},
         {species:'Jynx', lv:70, types:['Ice','Psychic'], ability:'Dry Skin', item:'Focus Sash', nature:'Modest', moves:['Blizzard','Focus Blast','Sweet Kiss','Lovely Kiss']},
@@ -1887,10 +1887,10 @@ const GAMES = {
         {species:'Weavile', lv:72, types:['Dark','Ice'], ability:'Pressure', item:'Life Orb', nature:'Adamant', moves:['Ice Shard','Night Slash','Brick Break','X-Scissor']}
       ]},
       {name:'Volkner', location:'Sunyshore City Gym', cap:49, theme:'Electric', team:[
-        {species:'Raichu', lv:46, types:['Electric']},
-        {species:'Ambipom', lv:47, types:['Normal'], note:'Technician + Fake Out'},
-        {species:'Octillery', lv:47, types:['Water']},
-        {species:'Luxray', lv:49, types:['Electric'], note:'Intimidate, high Atk'}
+        {species:'Raichu', lv:46, types:['Electric'], ability:'Static'},
+        {species:'Ambipom', lv:47, types:['Normal'], ability:'Technician', note:'Technician + Fake Out'},
+        {species:'Octillery', lv:47, types:['Water'], ability:'Sniper'},
+        {species:'Luxray', lv:49, types:['Electric'], ability:'Intimidate', note:'Intimidate, high Atk'}
       ], rematch:[
         {species:'Pelipper', lv:70, types:['Water','Flying'], ability:'Drizzle', item:'Damp Rock', nature:'Modest', moves:['Hydro Pump','Hurricane','Ice Beam','U-turn']},
         {species:'Raichu', lv:70, types:['Electric'], ability:'Lightning Rod', item:'Choice Scarf', nature:'Timid', moves:['Thunder','Surf','Focus Blast','Volt Switch']},
@@ -1900,11 +1900,11 @@ const GAMES = {
         {species:'Electivire', lv:75, types:['Electric'], ability:'Motor Drive', item:'Life Orb', nature:'Mild', moves:['Thunder','Flamethrower','Cross Chop','Earthquake']}
       ]},
       {name:'Aaron (E4)', location:'Pokémon League', cap:57, theme:'Bug', team:[
-        {species:'Yanmega', lv:53, types:['Bug','Flying']},
-        {species:'Heracross', lv:54, types:['Bug','Fighting']},
-        {species:'Vespiquen', lv:54, types:['Bug','Flying']},
-        {species:'Drapion', lv:55, types:['Poison','Dark']},
-        {species:'Scizor', lv:57, types:['Bug','Steel'], note:'Technician + Bullet Punch'}
+        {species:'Dustox', lv:53, types:['Bug','Poison'], ability:'Shield Dust'},
+        {species:'Beautifly', lv:53, types:['Bug','Flying'], ability:'Swarm'},
+        {species:'Vespiquen', lv:54, types:['Bug','Flying'], ability:'Unnerve'},
+        {species:'Heracross', lv:54, types:['Bug','Fighting'], ability:'Guts'},
+        {species:'Drapion', lv:57, types:['Poison','Dark'], ability:'Sniper'}
       ], rematch:[
         {species:'Vespiquen', lv:66, types:['Bug','Flying'], ability:'Pressure', item:'Leftovers', nature:'Impish', moves:['Attack Order','Defend Order','Roost','Toxic']},
         {species:'Venomoth', lv:66, types:['Bug','Poison'], ability:'Tinted Lens', item:'Black Sludge', nature:'Timid', moves:['Bug Buzz','Sludge Bomb','Sleep Powder','Psychic']},
@@ -1914,11 +1914,11 @@ const GAMES = {
         {species:'Scizor', lv:72, types:['Bug','Steel'], ability:'Technician', item:'Life Orb', nature:'Adamant', moves:['Bullet Punch','X-Scissor','Bug Bite','Swords Dance']}
       ]},
       {name:'Bertha (E4)', location:'Pokémon League', cap:59, theme:'Ground', team:[
-        {species:'Whiscash', lv:55, types:['Water','Ground']},
-        {species:'Gliscor', lv:56, types:['Ground','Flying']},
-        {species:'Hippowdon', lv:59, types:['Ground'], note:'Sand Stream'},
-        {species:'Golem', lv:56, types:['Rock','Ground']},
-        {species:'Rhyperior', lv:57, types:['Ground','Rock'], note:'Solid Rock'}
+        {species:'Quagsire', lv:55, types:['Water','Ground'], ability:'Water Absorb'},
+        {species:'Sudowoodo', lv:56, types:['Rock'], ability:'Rock Head'},
+        {species:'Golem', lv:56, types:['Rock','Ground'], ability:'Sturdy'},
+        {species:'Whiscash', lv:55, types:['Water','Ground'], ability:'Hydration'},
+        {species:'Hippowdon', lv:59, types:['Ground'], ability:'Sand Stream', note:'Sand Stream — sand until KO'}
       ], rematch:[
         {species:'Quagsire', lv:66, types:['Water','Ground'], ability:'Unaware', item:'Leftovers', nature:'Relaxed', moves:['Earthquake','Scald','Recover','Toxic']},
         {species:'Whiscash', lv:66, types:['Water','Ground'], ability:'Oblivious', item:'Sitrus Berry', nature:'Adamant', moves:['Earthquake','Waterfall','Zen Headbutt','Dragon Dance']},
@@ -1928,11 +1928,11 @@ const GAMES = {
         {species:'Hippowdon', lv:72, types:['Ground'], ability:'Sand Stream', item:'Smooth Rock', nature:'Impish', moves:['Earthquake','Stone Edge','Slack Off','Stealth Rock']}
       ]},
       {name:'Flint (E4)', location:'Pokémon League', cap:61, theme:'Fire', team:[
-        {species:'Houndoom', lv:58, types:['Dark','Fire']},
-        {species:'Flareon', lv:58, types:['Fire']},
-        {species:'Rapidash', lv:58, types:['Fire']},
-        {species:'Infernape', lv:61, types:['Fire','Fighting']},
-        {species:'Magmortar', lv:59, types:['Fire']}
+        {species:'Rapidash', lv:58, types:['Fire'], ability:'Flame Body'},
+        {species:'Steelix', lv:57, types:['Steel','Ground'], ability:'Sheer Force', note:'Steelix without Sturdy — Sheer Force boosts Rock/Ground/Fang moves'},
+        {species:'Drifblim', lv:58, types:['Ghost','Flying'], ability:'Unburden'},
+        {species:'Lopunny', lv:57, types:['Normal'], ability:'Cute Charm'},
+        {species:'Infernape', lv:61, types:['Fire','Fighting'], ability:'Iron Fist'}
       ], rematch:[
         {species:'Flareon', lv:66, types:['Fire'], ability:'Guts', item:'Toxic Orb', nature:'Adamant', moves:['Flare Blitz','Facade','Superpower','Quick Attack']},
         {species:'Rapidash', lv:66, types:['Fire'], ability:'Flash Fire', item:'Life Orb', nature:'Jolly', moves:['Flare Blitz','Wild Charge','Megahorn','High Horsepower']},
@@ -1942,11 +1942,11 @@ const GAMES = {
         {species:'Infernape', lv:72, types:['Fire','Fighting'], ability:'Blaze', item:'Life Orb', nature:'Naive', moves:['Flare Blitz','Close Combat','Mach Punch','Stone Edge']}
       ]},
       {name:'Lucian (E4)', location:'Pokémon League', cap:63, theme:'Psychic', team:[
-        {species:'Mr. Mime', lv:59, types:['Psychic','Fairy']},
-        {species:'Espeon', lv:60, types:['Psychic']},
-        {species:'Bronzong', lv:60, types:['Steel','Psychic']},
-        {species:'Alakazam', lv:60, types:['Psychic']},
-        {species:'Gallade', lv:63, types:['Psychic','Fighting']}
+        {species:'Mr. Mime', lv:59, types:['Psychic','Fairy'], ability:'Filter'},
+        {species:'Girafarig', lv:59, types:['Normal','Psychic'], ability:'Sap Sipper'},
+        {species:'Medicham', lv:60, types:['Fighting','Psychic'], ability:'Pure Power'},
+        {species:'Alakazam', lv:60, types:['Psychic'], ability:'Magic Guard'},
+        {species:'Bronzong', lv:63, types:['Steel','Psychic'], ability:'Levitate'}
       ], rematch:[
         {species:'Girafarig', lv:66, types:['Normal','Psychic'], ability:'Sap Sipper', item:'Life Orb', nature:'Modest', moves:['Psychic','Hyper Voice','Thunderbolt','Nasty Plot']},
         {species:'Mr. Mime', lv:66, types:['Psychic','Fairy'], ability:'Filter', item:'Light Clay', nature:'Bold', moves:['Psychic','Dazzling Gleam','Reflect','Light Screen']},
@@ -1956,12 +1956,12 @@ const GAMES = {
         {species:'Gallade', lv:72, types:['Psychic','Fighting'], ability:'Steadfast', item:'Life Orb', nature:'Adamant', moves:['Psycho Cut','Close Combat','Knock Off','Swords Dance']}
       ]},
       {name:'Cynthia (Champion)', location:'Pokémon League', cap:66, theme:'Mixed', team:[
-        {species:'Spiritomb', lv:61, types:['Ghost','Dark'], note:'No weaknesses (pre-Fairy era data — Fairy hits it)'},
-        {species:'Roserade', lv:60, types:['Grass','Poison']},
-        {species:'Togekiss', lv:60, types:['Fairy','Flying']},
-        {species:'Lucario', lv:63, types:['Fighting','Steel']},
-        {species:'Milotic', lv:63, types:['Water']},
-        {species:'Garchomp', lv:66, types:['Dragon','Ground'], note:'The threat. Outspeeds almost everything.'}
+        {species:'Spiritomb', lv:61, types:['Ghost','Dark'], ability:'Pressure', note:'Only Fairy hits Spiritomb super-effectively'},
+        {species:'Roserade', lv:60, types:['Grass','Poison'], ability:'Poison Point'},
+        {species:'Gastrodon', lv:60, types:['Water','Ground'], ability:'Storm Drain'},
+        {species:'Lucario', lv:63, types:['Fighting','Steel'], ability:'Inner Focus'},
+        {species:'Milotic', lv:63, types:['Water'], ability:'Marvel Scale'},
+        {species:'Garchomp', lv:66, types:['Dragon','Ground'], ability:'Rough Skin', note:'The threat — outspeeds almost everything; Rough Skin chips contact attackers'}
       ], rematch:[
         {species:'Spiritomb', lv:72, types:['Ghost','Dark'], ability:'Pressure', item:'Leftovers', nature:'Calm', moves:['Shadow Ball','Dark Pulse','Will-O-Wisp','Calm Mind']},
         {species:'Roserade', lv:72, types:['Grass','Poison'], ability:'Natural Cure', item:'Choice Specs', nature:'Timid', moves:['Leaf Storm','Sludge Bomb','Sleep Powder','Energy Ball']},
@@ -2010,12 +2010,12 @@ const GAMES = {
         {species:'Lillipup', lv:13, types:['Normal'], note:'Work Up'}
       ]},
       {name:'Roxie', location:'Virbank City Gym', cap:18, theme:'Poison', team:[
-        {species:'Koffing', lv:16, types:['Poison']},
+        {species:'Koffing', lv:16, types:['Poison'], ability:'Levitate'},
         {species:'Whirlipede', lv:18, types:['Bug','Poison'], note:'Poison Tail + Pursuit'}
       ]},
       {name:'Burgh', location:'Castelia City Gym', cap:24, theme:'Bug', team:[
         {species:'Swadloon', lv:21, types:['Bug','Grass']},
-        {species:'Dwebble', lv:21, types:['Bug','Rock']},
+        {species:'Dwebble', lv:21, types:['Bug','Rock'], ability:'Sturdy'},
         {species:'Leavanny', lv:24, types:['Bug','Grass']}
       ]},
       {name:'Elesa', location:'Nimbasa City Gym', cap:30, theme:'Electric', team:[
@@ -2024,9 +2024,9 @@ const GAMES = {
         {species:'Zebstrika', lv:30, types:['Electric'], note:'Volt Switch'}
       ]},
       {name:'Clay', location:'Driftveil City Gym', cap:33, theme:'Ground', team:[
-        {species:'Krokorok', lv:31, types:['Ground','Dark']},
-        {species:'Sandslash', lv:31, types:['Ground']},
-        {species:'Excadrill', lv:33, types:['Ground','Steel'], note:'Sand Throw + Rock Slide'}
+        {species:'Krokorok', lv:31, types:['Ground','Dark'], ability:'Intimidate'},
+        {species:'Sandslash', lv:31, types:['Ground'], ability:'Sand Veil'},
+        {species:'Excadrill', lv:33, types:['Ground','Steel'], ability:'Sand Rush', note:'Sand Rush + Rock Slide'}
       ]},
       {name:'Skyla', location:'Mistralton City Gym', cap:39, theme:'Flying', team:[
         {species:'Swoobat', lv:37, types:['Psychic','Flying']},
@@ -2039,7 +2039,7 @@ const GAMES = {
         {species:'Haxorus', lv:48, types:['Dragon'], note:'Dragon Dance threat'}
       ]},
       {name:'Marlon', location:'Humilau City Gym', cap:51, theme:'Water', team:[
-        {species:'Carracosta', lv:49, types:['Water','Rock'], note:'Sturdy'},
+        {species:'Carracosta', lv:49, types:['Water','Rock'], ability:'Sturdy', note:'Sturdy'},
         {species:'Wailord', lv:49, types:['Water']},
         {species:'Jellicent', lv:51, types:['Water','Ghost']}
       ]},
@@ -2051,7 +2051,7 @@ const GAMES = {
       ]},
       {name:'Grimsley (E4)', location:'Pokémon League', cap:56, theme:'Dark', team:[
         {species:'Liepard', lv:56, types:['Dark']},
-        {species:'Krookodile', lv:56, types:['Ground','Dark']},
+        {species:'Krookodile', lv:56, types:['Ground','Dark'], ability:'Intimidate'},
         {species:'Scrafty', lv:56, types:['Dark','Fighting']},
         {species:'Bisharp', lv:56, types:['Dark','Steel']}
       ]},
@@ -2063,14 +2063,14 @@ const GAMES = {
       ]},
       {name:'Marshal (E4)', location:'Pokémon League', cap:58, theme:'Fighting', team:[
         {species:'Throh', lv:56, types:['Fighting']},
-        {species:'Sawk', lv:56, types:['Fighting']},
+        {species:'Sawk', lv:56, types:['Fighting'], ability:'Sturdy'},
         {species:'Mienshao', lv:56, types:['Fighting']},
         {species:'Conkeldurr', lv:58, types:['Fighting']}
       ]},
       {name:'Iris (Champion)', location:'Pokémon League', cap:59, theme:'Dragon', team:[
-        {species:'Hydreigon', lv:57, types:['Dark','Dragon']},
+        {species:'Hydreigon', lv:57, types:['Dark','Dragon'], ability:'Levitate'},
         {species:'Druddigon', lv:57, types:['Dragon']},
-        {species:'Aggron', lv:57, types:['Steel','Rock']},
+        {species:'Aggron', lv:57, types:['Steel','Rock'], ability:'Sturdy'},
         {species:'Archeops', lv:57, types:['Rock','Flying']},
         {species:'Lapras', lv:57, types:['Water','Ice']},
         {species:'Haxorus', lv:59, types:['Dragon'], note:'Mold Breaker + Outrage threat'}
@@ -2099,9 +2099,9 @@ const GAMES = {
       ]},
       {name:'Hala (Grand Trial)', location:'Iki Town', cap:16, theme:'Fighting', team:[
         {species:'Mankey', lv:14, types:['Fighting']},
-        {species:'Makuhita', lv:14, types:['Fighting']},
+        {species:'Makuhita', lv:14, types:['Fighting'], ability:'Thick Fat'},
         {species:'Crabrawler', lv:15, types:['Fighting']},
-        {species:'Hariyama', lv:16, types:['Fighting'], note:'Z-move user'}
+        {species:'Hariyama', lv:16, types:['Fighting'], ability:'Thick Fat', note:'Z-move user'}
       ]},
       {name:'Lana (Trial)', location:'Brooklet Hill', cap:20, theme:'Water', team:[
         {species:'Wishiwashi', lv:20, types:['Water'], note:'Schooling Form — huge stats'}
@@ -2113,38 +2113,38 @@ const GAMES = {
         {species:'Lurantis', lv:24, types:['Grass'], note:'Solar Blade + Sunny Day'}
       ]},
       {name:'Olivia (Grand Trial)', location:'Memorial Hill', cap:28, theme:'Rock', team:[
-        {species:'Nosepass', lv:26, types:['Rock']},
-        {species:'Boldore', lv:27, types:['Rock']},
+        {species:'Nosepass', lv:26, types:['Rock'], ability:'Sturdy'},
+        {species:'Boldore', lv:27, types:['Rock'], ability:'Sturdy'},
         {species:'Lycanroc', lv:28, types:['Rock'], note:'Z-move user'}
       ]},
       {name:'Sophocles (Trial)', location:'Hokulani Observatory', cap:33, theme:'Electric', team:[
-        {species:'Vikavolt', lv:33, types:['Bug','Electric']}
+        {species:'Vikavolt', lv:33, types:['Bug','Electric'], ability:'Levitate'}
       ]},
       {name:'Acerola (Trial)', location:'Thrifty Megamart', cap:35, theme:'Ghost', team:[
         {species:'Mimikyu', lv:35, types:['Ghost','Fairy'], note:'Disguise blocks first hit'}
       ]},
       {name:'Nanu (Grand Trial)', location:'Po Town', cap:44, theme:'Dark', team:[
         {species:'Sableye', lv:43, types:['Dark','Ghost']},
-        {species:'Krokorok', lv:43, types:['Ground','Dark']},
+        {species:'Krokorok', lv:43, types:['Ground','Dark'], ability:'Intimidate'},
         {species:'Alolan Persian', lv:44, types:['Dark'], note:'Z-move user'}
       ]},
       {name:'Mina (Trial)', location:'Poni Island', cap:55, theme:'Fairy', team:[
-        {species:'Granbull', lv:51, types:['Fairy']},
+        {species:'Granbull', lv:51, types:['Fairy'], ability:'Intimidate'},
         {species:'Wigglytuff', lv:51, types:['Normal','Fairy']},
         {species:'Ribombee', lv:53, types:['Bug','Fairy']},
         {species:'Clefable', lv:55, types:['Fairy']}
       ]},
       {name:'Hapu (Grand Trial)', location:'Poni Plains', cap:54, theme:'Ground', team:[
-        {species:'Dugtrio', lv:51, types:['Ground']},
+        {species:'Dugtrio', lv:51, types:['Ground'], ability:'Sand Veil'},
         {species:'Gastrodon', lv:51, types:['Water','Ground']},
-        {species:'Flygon', lv:53, types:['Ground','Dragon']},
+        {species:'Flygon', lv:53, types:['Ground','Dragon'], ability:'Levitate'},
         {species:'Mudsdale', lv:54, types:['Ground'], note:'Z-move user'}
       ]},
       {name:'Ultra Necrozma', location:'Megalo Tower', cap:60, theme:'Psychic', team:[
         {species:'Ultra Necrozma', lv:60, types:['Psychic','Dragon'], note:'Photon Geyser destroys most teams'}
       ]},
       {name:'Hala (E4)', location:'Pokémon League', cap:55, theme:'Fighting', team:[
-        {species:'Hariyama', lv:54, types:['Fighting']},
+        {species:'Hariyama', lv:54, types:['Fighting'], ability:'Thick Fat'},
         {species:'Bewear', lv:54, types:['Normal','Fighting']},
         {species:'Primeape', lv:54, types:['Fighting']},
         {species:'Poliwrath', lv:54, types:['Water','Fighting']},
@@ -2153,15 +2153,15 @@ const GAMES = {
       {name:'Olivia (E4)', location:'Pokémon League', cap:55, theme:'Rock', team:[
         {species:'Armaldo', lv:54, types:['Rock','Bug']},
         {species:'Cradily', lv:54, types:['Rock','Grass']},
-        {species:'Relicanth', lv:54, types:['Water','Rock']},
+        {species:'Relicanth', lv:54, types:['Water','Rock'], ability:'Swift Swim'},
         {species:'Lycanroc', lv:54, types:['Rock']},
-        {species:'Probopass', lv:55, types:['Rock','Steel']}
+        {species:'Probopass', lv:55, types:['Rock','Steel'], ability:'Sturdy'}
       ]},
       {name:'Acerola (E4)', location:'Pokémon League', cap:56, theme:'Ghost', team:[
         {species:'Banette', lv:54, types:['Ghost']},
         {species:'Drifblim', lv:54, types:['Ghost','Flying']},
         {species:'Dhelmise', lv:54, types:['Ghost','Grass']},
-        {species:'Froslass', lv:54, types:['Ice','Ghost']},
+        {species:'Froslass', lv:54, types:['Ice','Ghost'], ability:'Snow Cloak'},
         {species:'Palossand', lv:56, types:['Ghost','Ground']}
       ]},
       {name:'Kahili (E4)', location:'Pokémon League', cap:57, theme:'Flying', team:[
@@ -2174,7 +2174,7 @@ const GAMES = {
       {name:'Champion (Hau)', location:'Pokémon League', cap:60, theme:'Mixed', team:[
         {species:'Alolan Raichu', lv:58, types:['Electric','Psychic']},
         {species:'Noivern', lv:58, types:['Flying','Dragon']},
-        {species:'Tauros', lv:58, types:['Normal']},
+        {species:'Tauros', lv:58, types:['Normal'], ability:'Intimidate'},
         {species:'Komala', lv:58, types:['Normal']},
         {species:'Primarina/Decidueye/Incineroar', lv:60, types:['Water/Grass/Fire','Fairy/Ghost/Dark'], note:'Counter to your starter'},
         {species:'Crabominable', lv:59, types:['Fighting','Ice']}
@@ -8024,13 +8024,17 @@ function planRollout(party, bossC, pHP0, bHP0, bSlp0, pIdx0, bIdx0, mode, first,
   const pHP = pHP0.slice(), bHP = bHP0.slice(), bSlp = bSlp0.slice(), sUsed = party.map(() => false);
   let pIdx = pIdx0, bIdx = bIdx0, fd = false, g = 0;
   let potBudget = party.some(p => p.flags && p.flags.potionOK) ? PLAN_POTION_BUDGET : 0, potLast = false;
-  let bPot = bossItems ? bossItems.budget : 0; const bThr = bossItems ? bossItems.threshold : 0, bHealF = bossItems ? bossItems.healFrac : 0;
+  // bPot is the TRAINER POOL: a shared scalar (1 for gym/E4, 2 for champion) consumed by
+  // whichever boss mon drops below threshold first. Mirrors a real item bag.
+  let bPot = bossItems ? (bossItems.budget || 0) : 0;
+  const bThr = bossItems ? bossItems.threshold : 0, bHealF = bossItems ? bossItems.healFrac : 0;
   const bBerry = (bossItems && bossItems.berry) ? bossItems.berry : null; const bUsed = (bossItems && bossItems.berryUsed) ? bossItems.berryUsed.slice() : (bBerry ? bBerry.map(() => false) : null);
   const bEnd = (bossItems && bossItems.endure) ? bossItems.endure : null; const bEndU = (bossItems && bossItems.endureUsed) ? bossItems.endureUsed.slice() : (bEnd ? bEnd.map(() => false) : null);
   const aP = () => pHP.some(h => h > 0), aB = () => bHP.some(h => h > 0);
   const heal = (pi, amt) => { if (pHP[pi] > 0) pHP[pi] = Math.min(1, pHP[pi] + amt); };
-  // Boss turn: spend a trainer item (heal, NO attack — a free turn for us) when low and
-  // budget remains; otherwise attack. Mirrors _readyBattle so plan == sim policy.
+  // Boss turn: spend a trainer item (heal, NO attack — a free turn for us) when active mon
+  // is low and the SHARED pool has charges; otherwise attack. Full Restore heals to 1.0
+  // which re-arms Sturdy on the next OHKO attempt. Mirrors _readyBattle so plan == sim policy.
   const bossAtk = (pi) => { if (bSlp[bIdx] > 0) { bSlp[bIdx]--; return; } if (bPot > 0 && bHP[bIdx] > 0 && bHP[bIdx] < bThr) { bHP[bIdx] = Math.min(1, bHP[bIdx] + bHealF); bPot--; return; } pHP[pi] -= planFrac(bossC[bIdx], party[pi]); };
   // Our hit, with the boss's PASSIVE held berry (one-time): type-resist halves the first
   // SE hit of its type; healing berry restores HP once below threshold. Mirrors _readyBattle.
@@ -8089,6 +8093,8 @@ let BOSS_POT_THRESHOLD = 0.5;   // boss heals when its active mon starts a turn 
 function _bossTier(boss) {
   if (!boss) return null;
   const bt = (boss.battleType || '').toLowerCase();
+  // Rivals get the same item treatment as gym leaders (1 Full Restore pool).
+  if (bt === 'rival') return 'gym-leader';
   if (bt) return (bt === 'champion' || bt === 'elite-four' || bt === 'gym-leader') ? bt : null;
   const n = boss.name || '';
   if (/champion/i.test(n)) return 'champion';
@@ -8106,9 +8112,12 @@ const VANILLA_POTION_DATA = {};
 function _bossPotionsOn() { try { return curRules().bossPotions === true; } catch (e) { return false; } }
 // → { budget, threshold, healFrac } for the boss's in-battle POTION use, or null for none.
 // Resolution: explicit override → else (toggle ON) tier heuristic → else null (fail-safe 0).
-// Game-agnostic heuristic (we can't source per-leader item bags for hack ROMs): champions
-// carry 2 Full Restores (heal to full), Elite Four 1 Full Restore, gym leaders 1 Hyper Potion
-// (≈+0.66). banBattleItems is a PLAYER rule and does NOT disarm the opponent AI.
+// Game-agnostic heuristic (we can't source per-leader item bags for hack ROMs): every boss
+// trainer carries a SHARED Full Restore pool — gym/E4 = 1, champion = 2 — spent on whichever
+// of their mons drops below threshold (NOT a per-mon budget; a real trainer item bag).
+// healFrac stays at 1.0 (Full Restore, even gyms) — over-estimate on purpose: a Full Restore
+// re-arms Sturdy on its way back to 100%, which doubles the cost of clearing Sturdy mons.
+// banBattleItems is a PLAYER rule and does NOT disarm the opponent AI.
 function _bossItemPlan(boss, forcePotions) {
   if (!BOSS_ITEMS_ON || !boss) return null;
   const ov = VANILLA_POTION_DATA[curGame()] && VANILLA_POTION_DATA[curGame()][boss.name];
@@ -8119,9 +8128,11 @@ function _bossItemPlan(boss, forcePotions) {
   const on = (forcePotions != null) ? forcePotions : _bossPotionsOn();
   if (!on) return null;   // no factual data + not opted in (and not force-on) → assume none
   const tier = _bossTier(boss);
+  // budget is now PER-MON (consumed by the consuming loops as bossC.map(() => budget)).
+  // budget is PER-TRAINER (a shared item bag spent on whichever mon drops first).
   if (tier === 'champion') return { budget: 2, threshold: BOSS_POT_THRESHOLD, healFrac: 1 };
   if (tier === 'elite-four') return { budget: 1, threshold: BOSS_POT_THRESHOLD, healFrac: 1 };
-  if (tier === 'gym-leader') return { budget: 1, threshold: BOSS_POT_THRESHOLD, healFrac: 0.66 };
+  if (tier === 'gym-leader') return { budget: 1, threshold: BOSS_POT_THRESHOLD, healFrac: 1 };
   return null;
 }
 // ── Boss HELD berries (v5.2) — PASSIVE, opposite rules to potions ─────────────
@@ -8190,6 +8201,39 @@ function _planDefBias(mon, foes) {
     if (eff === 0) s += 700; else if (eff <= 0.5) s += 350; else if (eff >= 4) s -= 2200; else if (eff >= 2) s -= 1400;
   }
   return s;
+}
+// SHARED per-turn decision (the user's framework, Rules 1 / 1.5 / 2). Pure function so the
+// SAME physical lines run in buildBattlePlan (plan narration), _readyBattle (Monte Carlo),
+// and any future caller — no lockstep drift risk from manual mirroring. Returns an action
+// object {type, idx?} or null (null = "no override, defer to caller's planChooseAction").
+//   Rule 1   : stay & attack if we're faster AND our hardest hit ≥ foe HP AND no Sturdy/Sash
+//              blocks the OHKO from full → we KO before they act, taking ZERO damage.
+//   Rule 1.5 : stay & attack if WE ARE the precomputed best counter for this foe AND the foe
+//              is SE on us. The rollout's HP-preservation bias would otherwise swap us out
+//              for a defensive wall (e.g. switching Slimeball off Bastiodon for Magnezone
+//              even though Slimeball's Earth Power 4× SE was the cleanest line). We're the
+//              right tool — eat the SE hit, don't trade tempo for marginal HP savings.
+//   Rule 2   : else, if the foe's hardest move on us is ≥2× AND a DIFFERENT alive counter
+//              exists → switch to it (Set mode = manual, switched-in eats one hit).
+// counterIdx is resolved by the caller (buildBattlePlan recomputes via _bcIndex; _readyBattle
+// reads precomputed bossItems.counter[bIdx]). Passing it in keeps this fn closure-free so
+// it stringifies cleanly for the worker.
+function _pickPerTurnAction(party, bossC, pHP, bHP, pIdx, bIdx, bEndure, bEndUsed, counterIdx) {
+  const P = party[pIdx], B = bossC[bIdx];
+  const pF = (P.stats[5] || 0) >= (B.stats[5] || 0);
+  const ourF = (bestHitFraction(P, B) || {}).frac || 0;
+  // Sturdy/Sash from full HP blocks the OHKO. Sash (=2) is one-use; if it's already spent
+  // (bEndUsed flag) the block no longer applies. Sturdy (=1) re-arms whenever HP ≥ ~100%.
+  const endBlocks = !!(bEndure && bEndure[bIdx] && !(bEndure[bIdx] === 2 && bEndUsed && bEndUsed[bIdx]) && bHP[bIdx] >= 0.999);
+  if (pF && ourF >= bHP[bIdx] && !endBlocks) return { type: 'attack' };
+  const foeSE = ((bestHitFraction(B, P) || {}).eff || 1) >= 2;
+  // Rule 1.5 — we ARE the counter; don't let the rollout swap us for a wall. Gated by
+  // a survival check so a chipped-down counter still gets tactically switched out by the
+  // rollout when staying = death. (incF < pHP[pIdx] = we'd take the hit and live.)
+  const incF = (bestHitFraction(B, P) || {}).frac || 0;
+  if (foeSE && counterIdx === pIdx && incF < pHP[pIdx]) return { type: 'attack' };
+  if (foeSE && counterIdx >= 0 && counterIdx !== pIdx && pHP[counterIdx] > 0) return { type: 'switch', idx: counterIdx };
+  return null;
 }
 function planActions(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, lastTo, bossItems, leadEval) {
   const P = party[pIdx], B = bossC[bIdx];
@@ -8345,7 +8389,11 @@ function buildBattlePlan(boss, pool, setMode) {
   const _endure = bossC.map(c => _bossEndure(c, _planGen)); const _hasEndure = _endure.some(Boolean);
   const bossItems = (_potCfg || _hasBerry || _hasEndure) ? Object.assign({ budget: 0, threshold: BOSS_POT_THRESHOLD, healFrac: 0 }, _potCfg || {}, _hasBerry ? { berry: _berry } : {}, _hasEndure ? { endure: _endure } : {}) : null;
   const bossPotName = (bossItems && bossItems.budget) ? (bossItems.healFrac >= 1 ? 'Full Restore' : 'Hyper Potion') : '';
-  let bPot = bossItems ? bossItems.budget : 0; const bThr = bossItems ? bossItems.threshold : 0, bHealF = bossItems ? bossItems.healFrac : 0;
+  // bPot is the SHARED trainer pool (scalar) — a real item bag spent on whichever foe drops
+  // below threshold first. Snapshots flow through planBI() as a scalar to keep mutations
+  // isolated to the local sim copy.
+  let bPot = bossItems ? (bossItems.budget || 0) : 0;
+  const bThr = bossItems ? bossItems.threshold : 0, bHealF = bossItems ? bossItems.healFrac : 0;
   const bBerry = _hasBerry ? _berry : null; const bBerryUsed = bBerry ? bBerry.map(() => false) : null;
   const bEndure = _hasEndure ? _endure : null; const bEndUsed = bEndure ? bEndure.map(() => false) : null;
   const planBI = () => bossItems ? { budget: bPot, threshold: bThr, healFrac: bHealF, berry: bBerry, berryUsed: bBerryUsed ? bBerryUsed.slice() : null, endure: bEndure, endureUsed: bEndUsed ? bEndUsed.slice() : null } : null;
@@ -8393,7 +8441,8 @@ function buildBattlePlan(boss, pool, setMode) {
     bHP[bIdx] = nv; if (h.drain) heal(pi, 0.5 * Math.min(f, Math.max(0, before)) * ((B.stats[0] || 1) / (P.stats[0] || 1)));
     if (berry && berry.heal && !bBerryUsed[bIdx] && bHP[bIdx] > 0 && bHP[bIdx] < 0.5) { bHP[bIdx] = Math.min(1, bHP[bIdx] + berry.heal); bBerryUsed[bIdx] = true; bossBerried = true; } };
   const endTurn = (pi) => { if (pHP[pi] > 0) { if (party[pi].flags.lefto) heal(pi, 1 / 16); if (party[pi].flags.sitrus && !sUsed[pi] && pHP[pi] < 0.5) { sUsed[pi] = true; heal(pi, 0.25); } } };
-  // Boss turn: heal instead of attacking when low + items remain (free turn for us).
+  // Boss turn: heal instead of attacking when low + the shared trainer pool has charges.
+  // Full Restore heals to 1.0 → Sturdy re-arms on the next OHKO from full HP.
   const bossAtk = (pi) => { if (bSlp[bIdx] > 0) { bSlp[bIdx]--; return; } if (bPot > 0 && bHP[bIdx] > 0 && bHP[bIdx] < bThr) { bHP[bIdx] = Math.min(1, bHP[bIdx] + bHealF); bPot--; bossPotioned = true; return; } pHP[pi] -= planFrac(bossC[bIdx], party[pi]); };
   const dangerNoted = new Set(); // (pIdx#bIdx) pairs already flagged as a near-OHKO gamble
 
@@ -8423,33 +8472,13 @@ function buildBattlePlan(boss, pool, setMode) {
       usage[pIdx].sacked = true; anySack = true; pIdx = r; usage[r].entered = true; lastTo = -1; continue;
     }
     usage[pIdx].entered = true;
-    bossPotioned = false; bossBerried = false; bossBerryType = '';   // re-armed each turn; flipped by bossAtk (potion) / hit (berry)
-    // PER-TURN DECISION (overrides the rollout planner with the user's framework):
-    //   Rule 1 (highest priority): "Stay if you'll KO THIS TURN." If we're faster and our
-    //     hardest hit ≥ the foe's remaining HP (and the foe doesn't have Sturdy/Sash from
-    //     full HP that'd survive it), attacking is strictly free — we KO before they act,
-    //     so we take ZERO damage. Don't switch out, even if we'll be weak to the NEXT foe
-    //     (that gets handled at the phase transition by Rule 2). This is what stops a
-    //     "lead Picante, immediately switch" loop that wastes Picante's free Bronzor KO.
-    //   Rule 2: BEST-COUNTER SWITCH. If we're move-weak to the current foe (its hardest
-    //     move on us is ≥2×) AND a different alive mon is the foe's best counter
-    //     (bestCounterFor — same data the card shows), switch to it. Set mode = manual
-    //     switch, eats the switch-in hit (modeled by the 'switch' handler at line ~8405).
-    //   Otherwise: defer to the rollout planChooseAction.
-    let act;
-    const _P = party[pIdx], _B = bossC[bIdx];
-    const _pF = (_P.stats[5] || 0) >= (_B.stats[5] || 0);
-    const _ourFrac = (bestHitFraction(_P, _B) || {}).frac || 0;
-    const _bossEnd = !!(bEndure && bEndure[bIdx] && !(bEndure[bIdx] === 2 && bEndUsed[bIdx]) && bHP[bIdx] >= 0.999);   // Sturdy/Sash from full HP blocks the OHKO
-    const _weKO = _pF && _ourFrac >= bHP[bIdx] && !_bossEnd;
-    if (_weKO) {
-      act = { type: 'attack' };   // Rule 1: free KO this turn — never switch
-    } else {
-      const _foeSE = ((bestHitFraction(_B, _P) || {}).eff || 1) >= 2;
-      const _swBC = _foeSE ? _bcIndex(team[bIdx]) : -1;
-      if (_swBC >= 0 && _swBC !== pIdx && pHP[_swBC] > 0) act = { type: 'switch', idx: _swBC };   // Rule 2: switch to the wall
-      else act = planChooseAction(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, lastTo, planBI());   // else defer to rollout
-    }
+    bossPotioned = false; bossBerried = false; bossBerryType = ''; bossEndured = false;   // re-armed each turn; flipped by bossAtk (potion) / hit (berry/Sturdy)
+    // PER-TURN DECISION — extracted into shared _pickPerTurnAction so plan + sim run
+    // identical code. We resolve the counter index via _bcIndex (live recompute);
+    // _readyBattle resolves it via bossItems.counter[bIdx] (precomputed array). Either
+    // way the same Rules 1+2 fire on the same inputs.
+    let act = _pickPerTurnAction(party, bossC, pHP, bHP, pIdx, bIdx, bEndure, bEndUsed, _bcIndex(team[bIdx]));
+    if (!act) act = planChooseAction(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, lastTo, planBI());
     let P = party[pIdx], B = bossC[bIdx];
     const wasPot = potLast; potLast = false;   // block two Potions in a row
     const bHealLbl = `<span class="bp-plan-heal">${B.label}: <b>${bossPotName}</b></span>`;   // foe heal label (shown when bossPotioned)
@@ -8500,12 +8529,23 @@ function buildBattlePlan(boss, pool, setMode) {
     endTurn(pIdx);
     const weKO = bHP[bIdx] <= 0, weFainted = pHP[pIdx] <= 0;
     const fp = bossPotioned ? bHealLbl : fp0;   // foe healed instead of attacking → show the item
-    if (bossPotioned && curPhase && !curPhase.healNote) { curPhase.healNote = true; curPhase.turns.push(`<span class="bp-plan-heal">↳ ${B.label} heals back — chip won't stick; you need to KO through the ${bossPotName}.</span>`); }
-    if (bossBerried && curPhase && !curPhase.berryNote) { curPhase.berryNote = true; curPhase.turns.push(`<span class="bp-plan-heal">↳ ${B.label} eats a held Berry (heals ~25%) — bank one extra hit to finish it.</span>`); }
-    if (bossBerryType && curPhase && !curPhase.berryResistNote) { curPhase.berryResistNote = true; curPhase.turns.push(`<span class="bp-plan-heal">↳ ${B.label}'s held Berry halves your first super-effective ${bossBerryType} hit — expect one extra hit to KO.</span>`); }
     const ourPart = weFainted ? `<span class="bp-plan-risk"><b>${P.label}</b> goes down</span>` : `<b>${P.label}</b>: ${ourMv}${weKO ? ' → KO' : ''}${warn}`;
     const showFoe = wasAsleep || !(pF && weKO) || bossPotioned;   // foe acts unless we KO'd it first while faster (or it healed / is asleep)
     addTurn(pF ? [ourPart, showFoe ? fp : null] : [showFoe ? fp : null, ourPart]);
+    // Inline item/Sturdy narration: pushed AFTER the T# line so it describes what just happened,
+    // not what's about to happen. Each note fires once per phase to avoid spam.
+    if (bossEndured && curPhase && !curPhase.endureNote) { curPhase.endureNote = true; curPhase.turns.push(`<span class="bp-plan-heal">↳ ${B.label} survived at 1 HP (Sturdy / Focus Sash) — needs one more hit.</span>`); }
+    if (bossBerryType && curPhase && !curPhase.berryResistNote) { curPhase.berryResistNote = true; curPhase.turns.push(`<span class="bp-plan-heal">↳ ${B.label}'s held Berry halved that super-effective ${bossBerryType} hit — expect one extra hit to KO.</span>`); }
+    if (bossBerried && curPhase && !curPhase.berryNote) { curPhase.berryNote = true; curPhase.turns.push(`<span class="bp-plan-heal">↳ ${B.label} ate a held Berry — healed ~25%, needs one more hit to finish.</span>`); }
+    if (bossPotioned && curPhase && !curPhase.healNote) {
+      curPhase.healNote = true;
+      curPhase.turns.push(`<span class="bp-plan-heal">↳ ${B.label} used ${bossPotName} — chip won't stick; KO through the heal.</span>`);
+      // Full Restore heals to 100% → Sturdy re-arms for the next OHKO attempt. Clear the
+      // endure-flag so the SECOND ↳ "survived at 1 HP" line fires next turn (otherwise the
+      // narration silently swallows the second Sturdy and the plan reads like "2 hits to KO"
+      // when it's actually 3).
+      curPhase.endureNote = false;
+    }
   }
   if (!phases.length || !phases.some(ph => ph.turns.length)) return null;
   const note = anySack ? `A held Sitrus Berry or Leftovers on the sacked mon could let it survive a hit and pivot out instead.` : null;
@@ -8567,7 +8607,10 @@ function _readyHit(A, B, rng) {
 // boss by greedy best-expected damage. Returns { won, endHP (avg team HP frac) }.
 function _readyBattle(party, bossC, mode, rng, bossItems) {
   const pHP = party.map(() => 1), bHP = bossC.map(() => 1), bSlp = bossC.map(() => 0), sUsed = party.map(() => false);
-  let bPot = bossItems ? bossItems.budget : 0; const bThr = bossItems ? bossItems.threshold : 0, bHealF = bossItems ? bossItems.healFrac : 0;
+  // bPot is the SHARED trainer pool (scalar). Real-trainer model: one item bag for the
+  // whole team, spent on whichever foe drops below threshold first. Snapshots flow as scalar.
+  let bPot = bossItems ? (bossItems.budget || 0) : 0;
+  const bThr = bossItems ? bossItems.threshold : 0, bHealF = bossItems ? bossItems.healFrac : 0;
   const bBerry = (bossItems && bossItems.berry) ? bossItems.berry : null; const bBerryUsed = bBerry ? bBerry.map(() => false) : null;
   const bEndure = (bossItems && bossItems.endure) ? bossItems.endure : null; const bEndUsed = bEndure ? bEndure.map(() => false) : null;
   const planBI = () => bossItems ? { budget: bPot, threshold: bThr, healFrac: bHealF, berry: bBerry, berryUsed: bBerryUsed ? bBerryUsed.slice() : null, endure: bEndure, endureUsed: bEndUsed ? bEndUsed.slice() : null } : null;   // planner sees the boss's REMAINING items
@@ -8594,26 +8637,13 @@ function _readyBattle(party, bossC, mode, rng, bossItems) {
     if (!bHP.some(h => h > 0) || !pHP.some(h => h > 0)) break;
     if (bHP[bIdx] <= 0) { let n = -1; for (let j = 0; j < bossC.length; j++) if (bHP[j] > 0) { n = j; break; } if (n < 0) break; bIdx = n; if (mode !== 'set') { const r = planBestRepl(party, pHP, bossC[bIdx], bHP[bIdx]); if (r >= 0) pIdx = r; } lastTo = -1; continue; }
     if (pHP[pIdx] <= 0) { const r = planBestRepl(party, pHP, bossC[bIdx], bHP[bIdx]); if (r < 0) break; pIdx = r; lastTo = -1; continue; }
-    // LOCKSTEP RULES 1+2 (mirrors buildBattlePlan; uses precomputed bossItems.counter to
-    // stay worker-safe — no pCombatant/duelOutcome calls inside _readyBattle):
-    //   Rule 1: if we're faster AND our hardest hit ≥ foe HP AND no Sturdy/Sash blocks
-    //           it from full → stay & attack (free KO this turn, zero damage taken).
-    //   Rule 2: else if foe's hardest move on us is ≥2× AND a different alive counter
-    //           exists → switch to it (Set mode = manual, switched-in eats the hit).
-    //   Else  : defer to planChooseAction (rollout).
-    let act; { const _P = party[pIdx], _B = bossC[bIdx];
-      const _pF = (_P.stats[5] || 0) >= (_B.stats[5] || 0);
-      const _ourF = (bestHitFraction(_P, _B) || {}).frac || 0;
-      const _endBlocks = !!(bEndure && bEndure[bIdx] && !(bEndure[bIdx] === 2 && bEndUsed[bIdx]) && bHP[bIdx] >= 0.999);
-      const _weKO = _pF && _ourF >= bHP[bIdx] && !_endBlocks;
-      if (_weKO) { act = { type: 'attack' }; }
-      else {
-        const _foeSE = ((bestHitFraction(_B, _P) || {}).eff || 1) >= 2;
-        const _cIdx = (_foeSE && bossItems && bossItems.counter) ? bossItems.counter[bIdx] : -1;
-        if (_cIdx >= 0 && _cIdx !== pIdx && pHP[_cIdx] > 0) act = { type: 'switch', idx: _cIdx };
-        else act = planChooseAction(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, lastTo, planBI());
-      }
-    }
+    // LOCKSTEP via shared _pickPerTurnAction (same physical lines as buildBattlePlan).
+    // Counter index comes from precomputed bossItems.counter — worker-safe (no main-thread
+    // pCombatant/duelOutcome calls inside _readyBattle). Falls through to planChooseAction
+    // when neither Rule 1 nor Rule 2 fires.
+    const _ctrIdx = (bossItems && bossItems.counter) ? bossItems.counter[bIdx] : -1;
+    let act = _pickPerTurnAction(party, bossC, pHP, bHP, pIdx, bIdx, bEndure, bEndUsed, _ctrIdx);
+    if (!act) act = planChooseAction(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, lastTo, planBI());
     const P = party[pIdx], B = bossC[bIdx];
     const wasPot = potLast; potLast = false;   // block two Potions in a row (re-armed only on a Potion)
     if (act.type === 'switch') { lastTo = pIdx; pIdx = act.idx; bossAtk(pIdx); endTurn(pIdx); continue; }
@@ -8774,7 +8804,8 @@ const _POOL_SIZE = Math.max(1, Math.min(4, (typeof navigator !== 'undefined' && 
 // is EXCLUDED — it reads curGame()/GAMES, so the worker gets an override instead.
 function _simWorkerFnList() {
   return [_scoreFromSims, _readyBattle, _readyHit, _mulberry32, bestHitFraction,
-    planFlags, planFrac, planTKO, planWins, planBestRepl, _planCritKORisk, planRollout, planActions,
+    planFlags, planFrac, planTKO, planWins, planBestRepl, _planCritKORisk, _pickPerTurnAction,
+    _planDefBias, planRollout, planActions,
     planChooseAction, planChooseLead, resolveMove, getMoveType, moveData, movePower,
     moveCategory, moveEffect, effectiveCategory, moveHasPriority, moveAccuracy,
     itemDamageMult, itemAccuracyMult, effectiveness, effectivenessWithAbility,
@@ -8937,7 +8968,18 @@ function _precomputeCtx(realBoss, allowFetch) {
   const bossCount = (boss.team||[]).length;
   const recoSlots = recoMatchCount ? bossCount : 6;
   const recommended = recommendTeam(eligibleRoster, boss, recoSlots);
-  if (!recommended || !recommended.length) return null;
+  // Past-fight short-circuit: no cap-legal team can be assembled because the user's
+  // whole alive roster is above this fight's cap. Distinguish from "no alive roster
+  // at all" (also legitimate but different signal). Caller (renderMatchup / warmer /
+  // gauntlet) reads isPastFight and skips the readiness + plan + advice sims entirely.
+  if (!recommended || !recommended.length) {
+    const alive = curTeam().filter(p => p.alive);
+    const teamMin = alive.length ? alive.reduce((m, p) => Math.min(m, p.level || 0), Infinity) : 0;
+    if (alive.length && boss.cap && teamMin > boss.cap) {
+      return { realBoss, boss, showRematch, setMode, isPastFight: true, eligibleCount: 0, teamMin, cap: boss.cap, aliveTotal: alive.length };
+    }
+    return null;
+  }
   return { realBoss, boss, showRematch, setMode, eligibleRoster, recommended };
 }
 
@@ -8948,7 +8990,7 @@ function _precomputeCtx(realBoss, allowFetch) {
 // fully cached / nothing to do (so restarts skip warmed bosses with no idle cost).
 async function _precomputeBoss(realBoss, allowFetch) {
   const ctx = _precomputeCtx(realBoss, allowFetch);
-  if (!ctx) return false;
+  if (!ctx || ctx.isPastFight) return false;   // past-fight: no team to sim → skip warmup
   const { boss, recommended, eligibleRoster, setMode, showRematch } = ctx;
   const mode = setMode ? 'set' : 'shift';
   const seed = _readinessSeed(boss, recommended, mode);
@@ -9148,6 +9190,13 @@ function projectSpeciesAtLevel(species, targetLevel) {
 // mid-sim team edit invalidates it (stale results are discarded on resolve).
 let _adviceFetchToken = 0;
 const _adviceLRU = new Map(); const ADV_LRU_CAP = 72;  // hold advice for a full big-game boss list so revisits don't re-measure
+// Over-grind advisor cache + token. Only fires when baseScore<25 + noUpside (the
+// expensive "would over-leveling save this?" projection). N=50 instead of 100 — just
+// needs to tell "yes/no it moves the needle" with low noise. Token follows the same
+// stale-discard pattern as the regular advice token.
+let _overGrindFetchToken = 0;
+const _overGrindLRU = new Map(); const OG_LRU_CAP = 48;
+const OVERGRIND_BUMP = 3, OVERGRIND_SIM_N = 50;
 function _adviceTeamStateHash() {
   // Suffix the boss-potion toggle so advice (and the precompute key, which reuses this)
   // recompute when it flips — same reasoning as _readinessSeed.
@@ -9160,6 +9209,22 @@ function _adviceTeamStateHash() {
 // display name (also the cap value). See renderMatchup + _precomputeBoss.
 function _advCacheKey(bossName, showRematch, bossTeam, stateHash) {
   return `${bossName}|${showRematch}|${(bossTeam||[]).map(b=>b.species+b.lv).join(',')}|${stateHash}`;
+}
+// Same shape as the advice key with an "og" tag so over-grind results never collide
+// with regular advice (different sim — would clobber via state hash otherwise).
+function _ogCacheKey(bossName, showRematch, bossTeam, stateHash) {
+  return `og|${bossName}|${showRematch}|${(bossTeam||[]).map(b=>b.species+b.lv).join(',')}|${stateHash}`;
+}
+// Run a secondary sim with the recommended team bumped by OVERGRIND_BUMP levels.
+// Light sample (N=50) — we only need "does it move the needle" with low variance.
+// Returns the sim result {score, winRate, deaths, margin} or null on failure.
+async function _scoreOverGrind(boss, recommended, setMode) {
+  if (!recommended || !recommended.length) return null;
+  const grindTeam = recommended.map(p => ({ ...p, level: (p.level || 1) + OVERGRIND_BUMP }));
+  try {
+    const r = await simReadinessAsync(boss, grindTeam, setMode, { n: OVERGRIND_SIM_N, workerOnly: true, noCache: true });
+    return r || null;
+  } catch (e) { return null; }
 }
 
 // Build a synthetic roster-mon for the projected gem so computeReadiness can sim
@@ -9273,6 +9338,20 @@ function analyzeAdvice(boss, recommended, roster) {
     const aceMon = boss.team.reduce((m, b) => ((b.lv || 0) > (m.lv || 0) ? b : m), boss.team[0]);
     out.levelGap = { icon: '📉', html: `Your team tops out at <strong>Lv ${teamMax}</strong> vs ${aceMon.species} (<strong>Lv ${ace}</strong>) — closing that gap lifts every damage roll.` };
   }
+  // Out-levelled detection — count alive party mons above the fight's cap. When most
+  // of the team has already grown past this fight (typical when looking back at an
+  // early gym from mid-game), the right advice isn't "level up more" — it's "field
+  // lower-level Pokémon" (or just accept that you've out-grown the cap-legal pool).
+  // Wrapped in try/catch in case curTeam isn't available in some sim contexts.
+  try {
+    if (boss && boss.cap && typeof curTeam === 'function') {
+      const alive = curTeam().filter(p => p.alive);
+      const overCap = alive.filter(p => (p.level || 0) > boss.cap).length;
+      out.aliveTotal = alive.length;
+      out.overCap = overCap;
+      out.cap = boss.cap;
+    }
+  } catch (e) {}
   return out;
 }
 
@@ -9352,10 +9431,26 @@ function renderAdviceItems(analysis, scored, baseScore) {
   // defeated boss you've since out-levelled (your strong mons are over the cap).
   const noCandidates = !analysis.candidates.length;
   const noUpside = scored ? !scored.some(g => g.delta > 0) : noCandidates;
+  // Two-tier over-cap detection. The SOFT tier (40-59%) appends a non-blocking warning
+  // alongside the normal advice (lots of mons over-cap, but enough cap-legal alternatives
+  // still exist to give useful gem suggestions). The HARD tier (≥60%) suppresses everything
+  // else — past-fight territory, no point listing coverage gaps the user can't act on.
+  const _capLegal = analysis.cap ? (analysis.aliveTotal - analysis.overCap) : null;
+  const overCapPct = analysis.cap && analysis.aliveTotal >= 3 ? (analysis.overCap / analysis.aliveTotal) : 0;
+  const outLevHard = analysis.cap && analysis.aliveTotal >= 3 && overCapPct >= 0.60;
+  const outLevSoft = analysis.cap && analysis.aliveTotal >= 3 && overCapPct >= 0.40 && overCapPct < 0.60;
+  // HARD tier — past-fight signal dominates every other diagnosis when readiness is low.
+  if (outLevHard && baseScore < 25) {
+    return { items: [{ icon: '⚠', html: `You've out-levelled this fight — <strong>${analysis.overCap} of ${analysis.aliveTotal}</strong> alive mons are above the Lv ${analysis.cap} cap. Bring lower-level Pokémon (or just accept this as a past fight).` }], projScore: null, projDelta: null, measuring: false };
+  }
   if (baseScore < 15 && noCandidates && noUpside) {
     return { items: [{ icon: '⚠', html: `Your cap-legal team can't win this as it stands — you've likely out-levelled this fight, or you'd need a stronger Pokémon at or under the cap.` }], projScore: null, projDelta: null, measuring: false };
   }
+  // SOFT tier — append a heads-up. Pushed AFTER headline so the user reads the matchup
+  // diagnosis first; the over-cap line frames "and here's a Nuzlocke-integrity nudge."
+  const _softCapNote = outLevSoft ? { icon: '⚠', html: `<strong>Soft cap warning</strong> — <strong>${analysis.overCap} of ${analysis.aliveTotal}</strong> alive mons are above the Lv ${analysis.cap} cap. Consider boxing them and bringing cap-legal alternatives to preserve Nuzlocke integrity.` } : null;
   if (analysis.headline) items.push(analysis.headline);
+  if (_softCapNote) items.push(_softCapNote);
   // No scored gems yet. Only "measuring" if there are candidates whose impact is
   // actually being simulated; with zero candidates (e.g. nothing cap-legal to
   // suggest) there's nothing to wait for — show the stable items and stop.
@@ -9368,12 +9463,36 @@ function renderAdviceItems(analysis, scored, baseScore) {
   }
   const positive = scored.filter(g => g.delta > 0);
   const bestDelta = scored.length ? Math.max(0, ...scored.map(g => g.delta)) : 0;
-  // Soft suppression: when nothing meaningfully helps AND there's no genuine
-  // blind spot, collapse to a single reassuring line.
+  // Soft suppression: when no single swap meaningfully helps AND there's no genuine
+  // blind spot, we still need to be HONEST about the base readiness. A "strong shape"
+  // line on a 0% fight contradicts the meter (with per-mon Full Restores + Sturdy a
+  // lot of fights land here: every gem delta:0 because the team can't out-damage the
+  // heal cycle no matter which one mon you swap). Split by baseScore so the message
+  // matches reality. PRESERVE the headline/levelGap that was already pushed onto `items`.
   if (bestDelta < 4 && !analysis.blindSpots.length) {
-    const out = [{ icon: '✓', html: `You’re in strong shape — no high-impact swaps found for this fight.` }];
-    if (analysis.levelGap) out.push(analysis.levelGap);
-    return { items: out, projScore, projDelta, measuring: false };
+    // outLev with baseScore < 25 was already handled by the early return above;
+    // here we only need the generic "single swap / no upgrade" tiers.
+    if (baseScore >= 60) items.push({ icon: '✓', html: `You're in strong shape — no high-impact swaps found for this fight.` });
+    else if (baseScore >= 25) items.push({ icon: '⚠', html: `No single swap moves the needle much — try over-leveling your recommended six (or holding for an evolution) to lift every damage roll at once.` });
+    else items.push({ icon: '⚠', html: `<strong>No single upgrade fixes this fight</strong> — the boss out-heals or out-damages every variation of your current box. Over-level past the cap, wait for evolutions, or come back with a broader team composition.` });
+    // Over-grind diagnostic — when readiness is bad, we already know "no single swap helps".
+    // The user's real question is: "would over-leveling save this, or is the team itself wrong?"
+    // analysis._overGrind is precomputed by the caller (renderMatchup) so we just render it.
+    if (baseScore < 25 && analysis._overGrind) {
+      const og = analysis._overGrind;
+      if (og.score >= 25 || (og.winRate || 0) >= 40) {
+        items.push({ icon: '💎', html: `<strong>Over-grinding helps.</strong> Pushing your six to <strong>Lv +${OVERGRIND_BUMP}</strong> (past the cap) lifts readiness from <strong>${baseScore}%</strong> → <strong>${og.score}%</strong> (win rate ${og.winRate || 0}%). The fight is a level problem, not a team problem.` });
+        // Drive the meter's ghost bar + delta badge from the OG projection so the message
+        // matches the visual (otherwise the panel says "0→64%" but the ghost stays at 0).
+        projScore = og.score; projWinRate = og.winRate; projDeaths = og.deaths; projMargin = og.margin; projDelta = og.score - baseScore;
+      } else {
+        items.push({ icon: '⚠', html: `<strong>Over-grinding alone won't save this.</strong> Even at <strong>Lv +${OVERGRIND_BUMP}</strong> the team still scores ${og.score}%. The bottleneck is type/bulk composition — pull different Pokémon from your box.` });
+      }
+    } else if (baseScore < 25 && analysis._overGrindMeasuring) {
+      items.push({ icon: '⟳', html: `<span style="color:var(--text3)">measuring whether over-grinding would help…</span>` });
+    }
+    if (analysis.levelGap) items.push(analysis.levelGap);
+    return { items, projScore, projDelta, projWinRate, projDeaths, projMargin, measuring: false };
   }
   // Show up to 6, guaranteeing a MIX: leveling/evolving mons already on your team
   // (💡) AND "diamonds in the rough" still on the bench (💎). Take up to 3 of each
@@ -9527,7 +9646,7 @@ function renderMatchup() {
         ${ph.alt ? `<div class="bp-alt">${ph.alt}</div>` : ''}
       </div>`).join('')}
       ${planResult.note ? `<div class="bp-plan-note">${planResult.note}</div>` : ''}
-      <label class="bp-pot-toggle" title="Gym leaders / Elite Four / champions in many games spend a Hyper Potion or Full Restore at ~50% HP. It COSTS them a turn (they heal instead of attacking), so it's double-edged: it can lower your odds in a close fight, but RAISE them when you out-damage the boss (a wasted enemy turn). It's a guess — some leaders + no-item difficulty hacks carry none — so it's off by default. Held berries are always modelled from real boss data.">
+      <label class="bp-pot-toggle" title="Gym leaders / Elite Four / champions in many games spend a Full Restore at ~50% HP (heal to full). It COSTS them a turn (they heal instead of attacking), so it's double-edged: it can lower your odds in a close fight, but RAISE them when you out-damage the boss (a wasted enemy turn). It's a guess — some leaders + no-item difficulty hacks carry none — so it's off by default. Held berries are always modelled from real boss data.">
         <input type="checkbox" ${_r.bossPotions ? 'checked' : ''} onchange="setRule('bossPotions', this.checked)"> Assume boss uses healing items <span>(A guess — costs the boss a turn. This can raise or lower your readiness depending on who wins the damage race.)</span>
       </label>
       </div></div></div>
@@ -9559,6 +9678,28 @@ function renderMatchup() {
     const advKey = _advCacheKey(boss.name, showRematch, boss.team, stateHash);
     const scored = _lruGet(_adviceLRU, advKey) || null;
     const measuring = !scored && analysis.candidates.length > 0;
+    // Over-grind advisor: only fires when readiness is bad AND no single swap helps.
+    // The user's real question at that point is "would over-leveling save this?" — and the
+    // answer (yes vs no) splits "grind problem" from "team composition problem."
+    const _bestDelta = scored ? Math.max(0, ...scored.map(g => g.delta)) : 0;
+    const _noUp = scored && !scored.some(g => g.delta > 0);
+    const ogShouldRun = scored && readiness.score < 25 && _noUp;
+    if (ogShouldRun) {
+      const ogKey = _ogCacheKey(boss.name, showRematch, boss.team, stateHash);
+      const og = _lruGet(_overGrindLRU, ogKey);
+      if (og) {
+        analysis._overGrind = og;
+      } else {
+        analysis._overGrindMeasuring = true;
+        const ogToken = ++_overGrindFetchToken;
+        (async () => {
+          const r = await _scoreOverGrind(boss, recommended, _r.setMode);
+          if (ogToken !== _overGrindFetchToken || curCap() !== cap || _adviceTeamStateHash() !== stateHash) return;
+          if (r) _lruSet(_overGrindLRU, ogKey, r, OG_LRU_CAP);
+          renderMatchup();
+        })();
+      }
+    }
     const rendered = renderAdviceItems(analysis, scored, readiness.score);
     projScore = rendered.projScore; projDelta = rendered.projDelta; projWinRate = rendered.projWinRate; projDeaths = rendered.projDeaths; projMargin = rendered.projMargin;
     if (rendered.items.length) {
@@ -14502,9 +14643,40 @@ window.addEventListener('offline', () => {
 });
 
 if ('serviceWorker' in navigator) {
+  // Auto-update SW pipeline: a deployed update should reach installed PWAs without the
+  // user manually unregistering or hard-refreshing. Three pieces work together:
+  //   1) controllerchange listener (page side) — when a new SW activates and takes over
+  //      this client, reload the page EXACTLY ONCE so we start running the new code.
+  //   2) updatefound listener (registration side) — when the SW finds an update, post
+  //      SKIP_WAITING the moment the installing worker enters 'installed' state so it
+  //      activates immediately instead of sitting in 'waiting' until every tab closes.
+  //   3) visibilitychange poll — call reg.update() when the tab regains focus. Browsers
+  //      auto-check the SW script every ~24h; this makes the check happen as soon as the
+  //      user actually opens the tab so a deploy lands within seconds, not a day.
+  // _swReloading flag prevents a reload-loop if controllerchange fires twice in succession.
+  let _swReloading = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (_swReloading) return;
+    _swReloading = true;
+    location.reload();
+  });
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('sw.js').then(reg => {
       _swRegistration = reg;
+      // If there's ALREADY a waiting worker on launch (e.g. an update installed during
+      // last session), activate it immediately — controllerchange will fire and reload.
+      if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+      // When the SW finds an update, watch the installing worker; SKIP_WAITING the moment
+      // it's installed so it doesn't sit idle until the user closes every tab.
+      reg.addEventListener('updatefound', () => {
+        const nw = reg.installing;
+        if (!nw) return;
+        nw.addEventListener('statechange', () => {
+          if (nw.state === 'installed' && navigator.serviceWorker.controller) {
+            nw.postMessage({ type: 'SKIP_WAITING' });
+          }
+        });
+      });
       // NOTE: do NOT request cache-status here. Counting cache entries makes the SW
       // enumerate the entire cache (cache.keys()), and after a full pre-cache that's
       // 4100+ entries — slow on iOS WebKit. The SW is single-threaded, so doing it on
@@ -14512,6 +14684,14 @@ if ('serviceWorker' in navigator) {
       // pre-cached iOS PWA. The Rules tab requests the count itself when opened
       // (renderRules → requestCacheStatus), which is the only place it's shown.
     }).catch(err => console.warn('[sw] register failed:', err));
+  });
+  // Tab-focus update check: a tab left open in the background for hours still picks up
+  // a fresh deploy the moment the user returns. Cheap network call (HEAD-style 304 on
+  // unchanged sw.js); if a new version exists, the updatefound flow above takes over.
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && _swRegistration) {
+      try { _swRegistration.update(); } catch (e) {}
+    }
   });
 }
 
