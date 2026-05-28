@@ -309,6 +309,7 @@
   .boss-poke-hdr .boss-types{margin-top:0}
   .boss-poke-hdr.typed{display:block;position:relative;overflow:visible;margin:-12px -14px 2px;padding:13px 14px 12px;border-radius:var(--radius-sm) var(--radius-sm) 0 0}
   .boss-ability{font-size:10px;color:var(--text2);font-weight:600;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+  .boss-item{font-size:10px;color:var(--amber);font-weight:600;letter-spacing:.02em;white-space:nowrap}
   .bph-types{position:absolute;top:-11px;left:14px;display:flex;gap:5px;z-index:3}
   .bph-type{font-size:12px;font-weight:700;padding:3px 11px;border-radius:20px;color:#1c1c1c;letter-spacing:.04em;text-transform:uppercase;box-shadow:0 2px 5px rgba(0,0,0,.45)}
   .bph-row{display:flex;align-items:flex-end;justify-content:space-between;gap:8px}
@@ -7996,7 +7997,23 @@ function planWins(A, aHP, B, bHP) {
 }
 function planBestRepl(party, pHP, B, bHP) {
   let bi = -1, bs = -1e18;
-  for (let i = 0; i < party.length; i++) { if (pHP[i] <= 0) continue; const win = planWins(party[i], pHP[i], B, bHP); const f = planFrac(party[i], B); const sc = (win ? 1e6 : 0) + f * 100 + pHP[i] * 5; if (sc > bs) { bs = sc; bi = i; } }
+  for (let i = 0; i < party.length; i++) {
+    if (pHP[i] <= 0) continue;
+    const win = planWins(party[i], pHP[i], B, bHP);
+    const f = planFrac(party[i], B);
+    // DEFENSIVE SAFETY: heavily prefer a mon that RESISTS / is IMMUNE to this foe's
+    // moves over a frail one it hits super-effectively, when offense is comparable. A
+    // mon that wins the KO race only on a speed tiebreak while eating a 2× hit is a
+    // Nuzlocke trap (one crit / high roll = a dead mon). bh = the foe's hardest hit on
+    // this candidate; eff = its type effectiveness. Mirrors how a careful player picks
+    // the safe pivot (e.g. Gastrodon — neutral to Earthquake, immune to Thunderbolt —
+    // over a Fire/Fighting mon that EQ 2×-shots).
+    const bh = bestHitFraction(B, party[i]); const inF = bh ? bh.frac : 0; const eff = bh ? bh.eff : 1;
+    let safe = -inF * 120;
+    if (eff === 0) safe += 80; else if (eff <= 0.5) safe += 40; else if (eff >= 4) safe -= 90; else if (eff >= 2) safe -= 55;
+    const sc = (win ? 1e6 : 0) + f * 100 + pHP[i] * 5 + safe;
+    if (sc > bs) { bs = sc; bi = i; }
+  }
   return bi;
 }
 // deterministic 1-ply rollout from a state with a forced first action.
@@ -8009,6 +8026,7 @@ function planRollout(party, bossC, pHP0, bHP0, bSlp0, pIdx0, bIdx0, mode, first,
   let potBudget = party.some(p => p.flags && p.flags.potionOK) ? PLAN_POTION_BUDGET : 0, potLast = false;
   let bPot = bossItems ? bossItems.budget : 0; const bThr = bossItems ? bossItems.threshold : 0, bHealF = bossItems ? bossItems.healFrac : 0;
   const bBerry = (bossItems && bossItems.berry) ? bossItems.berry : null; const bUsed = (bossItems && bossItems.berryUsed) ? bossItems.berryUsed.slice() : (bBerry ? bBerry.map(() => false) : null);
+  const bEnd = (bossItems && bossItems.endure) ? bossItems.endure : null; const bEndU = (bossItems && bossItems.endureUsed) ? bossItems.endureUsed.slice() : (bEnd ? bEnd.map(() => false) : null);
   const aP = () => pHP.some(h => h > 0), aB = () => bHP.some(h => h > 0);
   const heal = (pi, amt) => { if (pHP[pi] > 0) pHP[pi] = Math.min(1, pHP[pi] + amt); };
   // Boss turn: spend a trainer item (heal, NO attack — a free turn for us) when low and
@@ -8018,7 +8036,9 @@ function planRollout(party, bossC, pHP0, bHP0, bSlp0, pIdx0, bIdx0, mode, first,
   // SE hit of its type; healing berry restores HP once below threshold. Mirrors _readyBattle.
   const hit = (P, B, pi) => { const h = bestHitFraction(P, B); let f = h.frac; const berry = bBerry ? bBerry[bIdx] : null;
     if (berry && berry.resist && bUsed && !bUsed[bIdx] && (h.eff >= 2 || berry.resist === 'normal') && String(h.type).toLowerCase() === berry.resist) { f *= 0.5; bUsed[bIdx] = true; }
-    const before = bHP[bIdx]; bHP[bIdx] -= f; if (h.drain) heal(pi, 0.5 * Math.min(f, Math.max(0, before)) * ((B.stats[0] || 1) / (P.stats[0] || 1)));
+    const before = bHP[bIdx]; let nv = before - f; const end = bEnd ? bEnd[bIdx] : 0;
+    if (nv <= 0 && before >= 0.999 && end && !(end === 2 && bEndU[bIdx])) { nv = 1 / (B.stats[0] || 100); if (end === 2) bEndU[bIdx] = true; }   // Sturdy / Focus Sash: survive a OHKO from full HP
+    bHP[bIdx] = nv; if (h.drain) heal(pi, 0.5 * Math.min(f, Math.max(0, before)) * ((B.stats[0] || 1) / (P.stats[0] || 1)));
     if (berry && berry.heal && bUsed && !bUsed[bIdx] && bHP[bIdx] > 0 && bHP[bIdx] < 0.5) { bHP[bIdx] = Math.min(1, bHP[bIdx] + berry.heal); bUsed[bIdx] = true; } };
   const endTurn = (pi) => { if (pHP[pi] > 0) { if (party[pi].flags.lefto) heal(pi, 1 / 16); if (party[pi].flags.sitrus && !sUsed[pi] && pHP[pi] < 0.5) { sUsed[pi] = true; heal(pi, 0.25); } } };
   while (g++ < 200) {
@@ -8121,6 +8141,18 @@ function _bossBerry(itemKey) {
   if (_RESIST_BERRIES[itemKey]) return { resist: _RESIST_BERRIES[itemKey] };
   return null;
 }
+// Survive-the-OHKO state for a boss mon. 0 = none, 1 = Sturdy (ABILITY: re-arms
+// whenever the mon is back at full HP), 2 = Focus Sash (ITEM: one-time, consumed on
+// use). Like the held berry, this is STATEFUL — applied in the sim's damage step (NOT
+// in stateless bestHitFraction) and only triggers FROM FULL HP. Gen-gated: new-Sturdy
+// (survive a OHKO) only exists Gen 5+ (pre-Gen-5 Sturdy merely blocked OHKO moves like
+// Fissure), and Focus Sash is a Gen 4+ item — so older games correctly model neither.
+function _bossEndure(c, gen) {
+  if (!c) return 0;
+  if (c.abilityKey === 'sturdy' && (gen == null || gen >= 5)) return 1;
+  if (c.itemKey === 'focussash' && (gen == null || gen >= 4)) return 2;
+  return 0;
+}
 const PLAN_CRIT_P = 1 / 16;   // crit chance baked into _readyHit (the sim we score against)
 // Nuzlocke risk-aversion weight for the crit-KO gamble the max-roll, crit-EXCLUDED
 // deterministic rollout is BLIND to. A permanent mon loss is worth avoiding well above
@@ -8143,7 +8175,23 @@ function _planCritKORisk(party, bossC, pHP, bHP, bIdx, k, weKOfirst) {
 // and a genuine SAFETY switch (staying gambles, the target is safe) is freed from most
 // of the anti-thrash hysteresis so the planner will actually take it — the "switch to a
 // resist instead of gambling the mon" play.
-function planActions(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, lastTo, bossItems) {
+// Defensive-safety bias on the planRollout value scale (~2000 per surviving mon). Rewards
+// a mon that RESISTS / is IMMUNE to the foe team's moves; penalizes being hit super-
+// effectively. The deterministic rollout + single-turn crit-risk dock UNDER-weight the
+// Nuzlocke danger of a frail mon eating repeated 2× hits ("one unlucky AI roll = a dead
+// mon"), so this nudges lead + switch choices toward the safe wall — even in SET mode,
+// where there's no free switch and the lead/manual-switch is the only lever. Tier-
+// preserving: small vs the rollout's +1e6 win term, so it only separates already-viable
+// options (a winner still beats a non-winner). `foes` = the (alive) boss mons to weigh.
+function _planDefBias(mon, foes) {
+  let s = 0;
+  for (const B of (foes || [])) {
+    const bh = bestHitFraction(B, mon); const eff = bh ? bh.eff : 1;
+    if (eff === 0) s += 700; else if (eff <= 0.5) s += 350; else if (eff >= 4) s -= 2200; else if (eff >= 2) s -= 1400;
+  }
+  return s;
+}
+function planActions(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, lastTo, bossItems, leadEval) {
   const P = party[pIdx], B = bossC[bIdx];
   const pFast = (P.stats[5] || 0) >= (B.stats[5] || 0);
   const weKOfirst = pFast && planFrac(P, B) >= bHP[bIdx];
@@ -8165,12 +8213,22 @@ function planActions(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, lastTo, bos
     if (v > best.v) best = { a: { type: 'heal' }, v };
   }
   if (P.flags.sleep && bSlp[bIdx] === 0) { const v = score({ type: 'sleepStay' }, null, false) - 200; if (v > best.v) best = { a: { type: 'sleepStay' }, v }; }
+  // Defensive bias for SWITCHING to a wall (mid-battle only — see leadEval). REACTIVE:
+  // weigh safety against the CURRENT foe's actual MOVES only (B, via _planDefBias →
+  // bestHitFraction, which iterates the foe's real moves — so Bronzor, with no damaging
+  // Psychic move, never reads as a threat to a Fire/Fighting mon). Reward bringing in a
+  // mon that resists/ is immune to THIS foe over leaving a frail one exposed (the "eat one
+  // switch-in hit to put the wall in when the dangerous foe arrives" play — correct even
+  // in Set mode). Weighing the whole remaining team here made the lead flee the FIRST foe
+  // preemptively (e.g. bail on Bronzor because Steelix is coming) — wrong. NOT applied
+  // during lead eval (leadEval), so it never benches the fast 1HKO opener.
   for (let j = 0; j < party.length; j++) { if (j === pIdx || pHP[j] <= 0) continue;
     const swRisk = _planCritKORisk(party, bossC, pHP, bHP, bIdx, j, false);
     // A safety switch (staying gambles, this target is safe) isn't blocked by the
     // anti-thrash hysteresis — that's the "switch to a resist" play we want to allow.
     const pen = (stayRisk > 0 && swRisk === 0) ? 0 : PLAN_SWITCH_PEN;
-    let v = score({ type: 'switch', idx: j }, j, false) - pen; if (j === lastTo) v -= 3000; if (v > best.v) best = { a: { type: 'switch', idx: j }, v };
+    const swBias = leadEval ? 0 : (_planDefBias(party[j], [B]) - _planDefBias(P, [B]));
+    let v = score({ type: 'switch', idx: j }, j, false) - pen + swBias; if (j === lastTo) v -= 3000; if (v > best.v) best = { a: { type: 'switch', idx: j }, v };
     if (P.flags.pivot) { let vp = score({ type: 'pivot', idx: j }, j, false) - PLAN_SWITCH_PEN * 0.4; if (j === lastTo) vp -= 3000; if (vp > best.v) best = { a: { type: 'pivot', idx: j }, v: vp }; }
     if (P.flags.sleep && bSlp[bIdx] === 0) { let vs = score({ type: 'sleepSwitch', idx: j }, null, false) - PLAN_SWITCH_PEN * 0.5; if (vs > best.v) best = { a: { type: 'sleepSwitch', idx: j }, v: vs }; }
   }
@@ -8182,7 +8240,22 @@ function planChooseAction(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, lastTo
 function planChooseLead(party, bossC, mode, bossItems) {
   const pHP = party.map(() => 1), bHP = bossC.map(() => 1), bSlp = bossC.map(() => 0);
   let bi = 0, bv = -1e18;
-  for (let i = 0; i < party.length; i++) { if (pHP[i] <= 0) continue; const v = planActions(party, bossC, pHP, bHP, bSlp, i, 0, mode, -1, bossItems).v; if (v > bv) { bv = v; bi = i; } }
+  // The lead (esp. in Set mode, where it can't freely switch out) faces the WHOLE boss
+  // team, so weigh its defensive safety against all of them — prefer the wall that
+  // resists/ is immune over a frail attacker that gets 2×-shot.
+  // Bias toward a defensively-safe lead ONLY in Set mode, where the lead is committed
+  // (no free switch on a KO) and faces the whole team. In Shift the lead can pivot after
+  // each KO, so the post-KO switch chooser (planBestRepl, already safety-weighted) brings
+  // the wall in — leaving the lead free to be the efficient cleaner (e.g. lead Picante to
+  // free-KO Bronzor, then pivot to Slimeball). Over-biasing the lead in Shift wrongly
+  // benched that fast opener.
+  // leadEval=true → switch safety-bias OFF here, so the lead is the best UNBIASED opener:
+  // a fast 1HKO of the first foe (no damage taken, denies it a turn of setup like Trick
+  // Room). Defensive safety is applied where it belongs — the mid-battle switch
+  // (planActions) + post-KO chooser (planBestRepl) — which bring the wall in once a frail
+  // mon faces a foe it's weak to. (Earlier a Set-mode lead bias here wrongly led the wall,
+  // surrendering the Bronzor 1HKO + inviting Trick Room — reverted.)
+  for (let i = 0; i < party.length; i++) { if (pHP[i] <= 0) continue; const v = planActions(party, bossC, pHP, bHP, bSlp, i, 0, mode, -1, bossItems, true).v; if (v > bv) { bv = v; bi = i; } }
   return bi;
 }
 
@@ -8268,22 +8341,56 @@ function buildBattlePlan(boss, pool, setMode) {
 
   const _potCfg = _bossItemPlan(boss);   // trainer healing items (gym/E4/champion) — null for none
   const _berry = bossC.map(c => _bossBerry(c.itemKey)); const _hasBerry = _berry.some(Boolean);
-  const bossItems = (_potCfg || _hasBerry) ? Object.assign({ budget: 0, threshold: BOSS_POT_THRESHOLD, healFrac: 0 }, _potCfg || {}, _hasBerry ? { berry: _berry } : {}) : null;
+  const _planGen = (typeof GAMES !== 'undefined' && typeof curGame === 'function') ? ((GAMES[curGame()] || {}).gen) : null;
+  const _endure = bossC.map(c => _bossEndure(c, _planGen)); const _hasEndure = _endure.some(Boolean);
+  const bossItems = (_potCfg || _hasBerry || _hasEndure) ? Object.assign({ budget: 0, threshold: BOSS_POT_THRESHOLD, healFrac: 0 }, _potCfg || {}, _hasBerry ? { berry: _berry } : {}, _hasEndure ? { endure: _endure } : {}) : null;
   const bossPotName = (bossItems && bossItems.budget) ? (bossItems.healFrac >= 1 ? 'Full Restore' : 'Hyper Potion') : '';
   let bPot = bossItems ? bossItems.budget : 0; const bThr = bossItems ? bossItems.threshold : 0, bHealF = bossItems ? bossItems.healFrac : 0;
   const bBerry = _hasBerry ? _berry : null; const bBerryUsed = bBerry ? bBerry.map(() => false) : null;
-  const planBI = () => bossItems ? { budget: bPot, threshold: bThr, healFrac: bHealF, berry: bBerry, berryUsed: bBerryUsed ? bBerryUsed.slice() : null } : null;
+  const bEndure = _hasEndure ? _endure : null; const bEndUsed = bEndure ? bEndure.map(() => false) : null;
+  const planBI = () => bossItems ? { budget: bPot, threshold: bThr, healFrac: bHealF, berry: bBerry, berryUsed: bBerryUsed ? bBerryUsed.slice() : null, endure: bEndure, endureUsed: bEndUsed ? bEndUsed.slice() : null } : null;
   const pHP = party.map(() => 1), bHP = bossC.map(() => 1), bSlp = bossC.map(() => 0), sUsed = party.map(() => false);
-  let pIdx = planChooseLead(party, bossC, mode, planBI()), bIdx = 0, lastTo = -1, guard = 0, anySack = false, koCredited = false;
+  // ── BEST-COUNTER-DRIVEN PLAN (v2) ──────────────────────────────────────────
+  // The displayed plan follows the per-foe "Best counter" the matchup cards already
+  // show (bestCounterFor). _bcIndex(foeMember) → the party index of that foe's best
+  // counter among CURRENTLY-ALIVE mons, or -1 if none qualifies. (bestCounterFor only
+  // returns a mon that has a super-effective MOVE on the foe + wins/best-trades the 1v1
+  // — see its scoring; so a defensive wall with no SE move won't be returned.)
+  const _bcIndex = (foeMember) => {
+    const _fi = foeMember ? team.indexOf(foeMember) : -1;
+    const _fC = (_fi >= 0) ? bossC[_fi] : null;
+    const alive = [];
+    for (let ci = 0; ci < party.length; ci++) {
+      if (pHP[ci] <= 0) continue;
+      // KNOB #4 — SWITCH-IN LETHALITY FILTER: strip any candidate whose incoming hit from
+      // the foe's HARDEST move would do >80% of its CURRENT HP. A counter that faints on
+      // entry is no counter at all — force the selection to a bulkier alternative pivot.
+      if (_fC) {
+        const inc = (bestHitFraction(_fC, party[ci]) || {}).frac || 0;
+        if (inc > 0.80 * pHP[ci]) continue;
+      }
+      alive.push(pool[party[ci]._srcIdx]);
+    }
+    const bc = foeMember ? bestCounterFor(foeMember, alive) : null;
+    if (!bc) return -1;
+    return party.findIndex(c => c._srcIdx === pool.indexOf(bc.pokemon));
+  };
+  // LEAD = the FIRST foe's best counter — it 1HKOs / wins the opener and (by KOing fast)
+  // denies the foe a setup turn like Trick Room. Fall back to the rollout lead chooser
+  // only when no SE counter exists for the lead foe.
+  const _leadBC = _bcIndex(team[0]);
+  let pIdx = (_leadBC >= 0 ? _leadBC : planChooseLead(party, bossC, mode, planBI())), bIdx = 0, lastTo = -1, guard = 0, anySack = false, koCredited = false;
   let potBudget = (itemsOK && party.some(p => p.flags && p.flags.potionOK)) ? PLAN_POTION_BUDGET : 0, potLast = false;
-  let bossPotioned = false, bossBerried = false, bossBerryType = '';   // set when the foe heals (potion/heal-berry) or a type-resist berry softens a hit — drives narration
+  let bossPotioned = false, bossBerried = false, bossBerryType = '', bossEndured = false;   // set when the foe heals (potion/heal-berry), a type-resist berry softens a hit, or a Sturdy/Sash mon survives a OHKO — drives narration
   usage[pIdx].isLead = true; usage[pIdx].entered = true;
   const heal = (pi, amt) => { if (pHP[pi] > 0) pHP[pi] = Math.min(1, pHP[pi] + amt); };
   // Our hit + the boss's passive held berry (one-time): type-resist halves the first SE
   // hit of its type; healing berry restores HP once below 50%. Sets bossBerried for narration.
   const hit = (P, B, pi) => { const h = bestHitFraction(P, B); let f = h.frac; const berry = bBerry ? bBerry[bIdx] : null;
     if (berry && berry.resist && !bBerryUsed[bIdx] && (h.eff >= 2 || berry.resist === 'normal') && String(h.type).toLowerCase() === berry.resist) { f *= 0.5; bBerryUsed[bIdx] = true; bossBerryType = h.type || berry.resist; }
-    const before = bHP[bIdx]; bHP[bIdx] -= f; if (h.drain) heal(pi, 0.5 * Math.min(f, Math.max(0, before)) * ((B.stats[0] || 1) / (P.stats[0] || 1)));
+    const before = bHP[bIdx]; let nv = before - f; const end = bEndure ? bEndure[bIdx] : 0;
+    if (nv <= 0 && before >= 0.999 && end && !(end === 2 && bEndUsed[bIdx])) { nv = 1 / (B.stats[0] || 100); if (end === 2) bEndUsed[bIdx] = true; bossEndured = true; }   // Sturdy / Focus Sash: survive a OHKO from full HP
+    bHP[bIdx] = nv; if (h.drain) heal(pi, 0.5 * Math.min(f, Math.max(0, before)) * ((B.stats[0] || 1) / (P.stats[0] || 1)));
     if (berry && berry.heal && !bBerryUsed[bIdx] && bHP[bIdx] > 0 && bHP[bIdx] < 0.5) { bHP[bIdx] = Math.min(1, bHP[bIdx] + berry.heal); bBerryUsed[bIdx] = true; bossBerried = true; } };
   const endTurn = (pi) => { if (pHP[pi] > 0) { if (party[pi].flags.lefto) heal(pi, 1 / 16); if (party[pi].flags.sitrus && !sUsed[pi] && pHP[pi] < 0.5) { sUsed[pi] = true; heal(pi, 0.25); } } };
   // Boss turn: heal instead of attacking when low + items remain (free turn for us).
@@ -8317,7 +8424,32 @@ function buildBattlePlan(boss, pool, setMode) {
     }
     usage[pIdx].entered = true;
     bossPotioned = false; bossBerried = false; bossBerryType = '';   // re-armed each turn; flipped by bossAtk (potion) / hit (berry)
-    const act = planChooseAction(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, lastTo, planBI());
+    // PER-TURN DECISION (overrides the rollout planner with the user's framework):
+    //   Rule 1 (highest priority): "Stay if you'll KO THIS TURN." If we're faster and our
+    //     hardest hit ≥ the foe's remaining HP (and the foe doesn't have Sturdy/Sash from
+    //     full HP that'd survive it), attacking is strictly free — we KO before they act,
+    //     so we take ZERO damage. Don't switch out, even if we'll be weak to the NEXT foe
+    //     (that gets handled at the phase transition by Rule 2). This is what stops a
+    //     "lead Picante, immediately switch" loop that wastes Picante's free Bronzor KO.
+    //   Rule 2: BEST-COUNTER SWITCH. If we're move-weak to the current foe (its hardest
+    //     move on us is ≥2×) AND a different alive mon is the foe's best counter
+    //     (bestCounterFor — same data the card shows), switch to it. Set mode = manual
+    //     switch, eats the switch-in hit (modeled by the 'switch' handler at line ~8405).
+    //   Otherwise: defer to the rollout planChooseAction.
+    let act;
+    const _P = party[pIdx], _B = bossC[bIdx];
+    const _pF = (_P.stats[5] || 0) >= (_B.stats[5] || 0);
+    const _ourFrac = (bestHitFraction(_P, _B) || {}).frac || 0;
+    const _bossEnd = !!(bEndure && bEndure[bIdx] && !(bEndure[bIdx] === 2 && bEndUsed[bIdx]) && bHP[bIdx] >= 0.999);   // Sturdy/Sash from full HP blocks the OHKO
+    const _weKO = _pF && _ourFrac >= bHP[bIdx] && !_bossEnd;
+    if (_weKO) {
+      act = { type: 'attack' };   // Rule 1: free KO this turn — never switch
+    } else {
+      const _foeSE = ((bestHitFraction(_B, _P) || {}).eff || 1) >= 2;
+      const _swBC = _foeSE ? _bcIndex(team[bIdx]) : -1;
+      if (_swBC >= 0 && _swBC !== pIdx && pHP[_swBC] > 0) act = { type: 'switch', idx: _swBC };   // Rule 2: switch to the wall
+      else act = planChooseAction(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, lastTo, planBI());   // else defer to rollout
+    }
     let P = party[pIdx], B = bossC[bIdx];
     const wasPot = potLast; potLast = false;   // block two Potions in a row
     const bHealLbl = `<span class="bp-plan-heal">${B.label}: <b>${bossPotName}</b></span>`;   // foe heal label (shown when bossPotioned)
@@ -8437,8 +8569,11 @@ function _readyBattle(party, bossC, mode, rng, bossItems) {
   const pHP = party.map(() => 1), bHP = bossC.map(() => 1), bSlp = bossC.map(() => 0), sUsed = party.map(() => false);
   let bPot = bossItems ? bossItems.budget : 0; const bThr = bossItems ? bossItems.threshold : 0, bHealF = bossItems ? bossItems.healFrac : 0;
   const bBerry = (bossItems && bossItems.berry) ? bossItems.berry : null; const bBerryUsed = bBerry ? bBerry.map(() => false) : null;
-  const planBI = () => bossItems ? { budget: bPot, threshold: bThr, healFrac: bHealF, berry: bBerry, berryUsed: bBerryUsed ? bBerryUsed.slice() : null } : null;   // planner sees the boss's REMAINING items
-  let pIdx = planChooseLead(party, bossC, mode, planBI()), bIdx = 0, lastTo = -1, guard = 0;
+  const bEndure = (bossItems && bossItems.endure) ? bossItems.endure : null; const bEndUsed = bEndure ? bEndure.map(() => false) : null;
+  const planBI = () => bossItems ? { budget: bPot, threshold: bThr, healFrac: bHealF, berry: bBerry, berryUsed: bBerryUsed ? bBerryUsed.slice() : null, endure: bEndure, endureUsed: bEndUsed ? bEndUsed.slice() : null } : null;   // planner sees the boss's REMAINING items
+  // LOCKSTEP LEAD — first foe's best counter (precomputed in _buildSimInputs with the
+  // switch-in lethality filter). Falls back to the rollout chooser if no SE counter.
+  let pIdx = (bossItems && bossItems.counter && bossItems.counter[0] >= 0 && pHP[bossItems.counter[0]] > 0) ? bossItems.counter[0] : planChooseLead(party, bossC, mode, planBI()), bIdx = 0, lastTo = -1, guard = 0;
   let potBudget = party.some(p => p.flags && p.flags.potionOK) ? PLAN_POTION_BUDGET : 0, potLast = false;   // in-battle potions a real player would spend
   const heal = (pi, a) => { if (pHP[pi] > 0) pHP[pi] = Math.min(1, pHP[pi] + a); };
   const endTurn = (pi) => { if (pHP[pi] > 0) { if (party[pi].flags.lefto) heal(pi, 1 / 16); if (party[pi].flags.sitrus && !sUsed[pi] && pHP[pi] < 0.5) { sUsed[pi] = true; heal(pi, 0.25); } } };
@@ -8451,13 +8586,34 @@ function _readyBattle(party, bossC, mode, rng, bossItems) {
   // drops below the threshold. Neither costs the boss a turn.
   const pHit = (pi) => { const r = _readyHit(party[pi], bossC[bIdx], rng); if (!r || r.miss) return; let dmg = r.dmg; const berry = bBerry ? bBerry[bIdx] : null;
     if (berry && berry.resist && !bBerryUsed[bIdx] && (r.eff >= 2 || berry.resist === 'normal') && String(r.type).toLowerCase() === berry.resist) { dmg *= 0.5; bBerryUsed[bIdx] = true; }
-    const before = bHP[bIdx]; bHP[bIdx] -= dmg; if (r.drain) heal(pi, 0.5 * Math.min(dmg, Math.max(0, before)) * ((bossC[bIdx].stats[0] || 1) / (party[pi].stats[0] || 1)));
+    const before = bHP[bIdx]; let nv = before - dmg; const end = bEndure ? bEndure[bIdx] : 0;
+    if (nv <= 0 && before >= 0.999 && end && !(end === 2 && bEndUsed[bIdx])) { nv = 1 / (bossC[bIdx].stats[0] || 100); if (end === 2) bEndUsed[bIdx] = true; }   // Sturdy / Focus Sash: survive a OHKO from full HP at ~1 HP
+    bHP[bIdx] = nv; if (r.drain) heal(pi, 0.5 * Math.min(dmg, Math.max(0, before)) * ((bossC[bIdx].stats[0] || 1) / (party[pi].stats[0] || 1)));
     if (berry && berry.heal && !bBerryUsed[bIdx] && bHP[bIdx] > 0 && bHP[bIdx] < 0.5) { bHP[bIdx] = Math.min(1, bHP[bIdx] + berry.heal); bBerryUsed[bIdx] = true; } };
   while (guard++ < 200) {
     if (!bHP.some(h => h > 0) || !pHP.some(h => h > 0)) break;
     if (bHP[bIdx] <= 0) { let n = -1; for (let j = 0; j < bossC.length; j++) if (bHP[j] > 0) { n = j; break; } if (n < 0) break; bIdx = n; if (mode !== 'set') { const r = planBestRepl(party, pHP, bossC[bIdx], bHP[bIdx]); if (r >= 0) pIdx = r; } lastTo = -1; continue; }
     if (pHP[pIdx] <= 0) { const r = planBestRepl(party, pHP, bossC[bIdx], bHP[bIdx]); if (r < 0) break; pIdx = r; lastTo = -1; continue; }
-    const act = planChooseAction(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, lastTo, planBI());
+    // LOCKSTEP RULES 1+2 (mirrors buildBattlePlan; uses precomputed bossItems.counter to
+    // stay worker-safe — no pCombatant/duelOutcome calls inside _readyBattle):
+    //   Rule 1: if we're faster AND our hardest hit ≥ foe HP AND no Sturdy/Sash blocks
+    //           it from full → stay & attack (free KO this turn, zero damage taken).
+    //   Rule 2: else if foe's hardest move on us is ≥2× AND a different alive counter
+    //           exists → switch to it (Set mode = manual, switched-in eats the hit).
+    //   Else  : defer to planChooseAction (rollout).
+    let act; { const _P = party[pIdx], _B = bossC[bIdx];
+      const _pF = (_P.stats[5] || 0) >= (_B.stats[5] || 0);
+      const _ourF = (bestHitFraction(_P, _B) || {}).frac || 0;
+      const _endBlocks = !!(bEndure && bEndure[bIdx] && !(bEndure[bIdx] === 2 && bEndUsed[bIdx]) && bHP[bIdx] >= 0.999);
+      const _weKO = _pF && _ourF >= bHP[bIdx] && !_endBlocks;
+      if (_weKO) { act = { type: 'attack' }; }
+      else {
+        const _foeSE = ((bestHitFraction(_B, _P) || {}).eff || 1) >= 2;
+        const _cIdx = (_foeSE && bossItems && bossItems.counter) ? bossItems.counter[bIdx] : -1;
+        if (_cIdx >= 0 && _cIdx !== pIdx && pHP[_cIdx] > 0) act = { type: 'switch', idx: _cIdx };
+        else act = planChooseAction(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, lastTo, planBI());
+      }
+    }
     const P = party[pIdx], B = bossC[bIdx];
     const wasPot = potLast; potLast = false;   // block two Potions in a row (re-armed only on a Potion)
     if (act.type === 'switch') { lastTo = pIdx; pIdx = act.idx; bossAtk(pIdx); endTurn(pIdx); continue; }
@@ -8508,7 +8664,8 @@ function _buildSimInputs(boss, pool, mode, forcePotions) {
   const team = boss.team || [];
   if (!team.length || !pool || !pool.length) return null;
   const itemsOK = (typeof curRules === 'function') ? (curRules().banBattleItems !== true) : true;
-  const party = []; for (const p of pool) { const c = pCombatant(p); if (c) { c.flags = planFlags(p); c.flags.potionOK = itemsOK; party.push(c); } }
+  const party = []; const _srcIdx = [];
+  pool.forEach((p, i) => { const c = pCombatant(p); if (c) { c.flags = planFlags(p); c.flags.potionOK = itemsOK; party.push(c); _srcIdx.push(i); } });
   const bossC = team.map(b => bossCombatant(b, boss)).filter(Boolean);
   if (bossC.length !== team.length || !party.length) return null;
   // Boss item state, built once on the MAIN thread (keeps _bossBerry out of the worker)
@@ -8517,8 +8674,30 @@ function _buildSimInputs(boss, pool, mode, forcePotions) {
   const potCfg = _bossItemPlan(boss, forcePotions);
   const berry = bossC.map(c => _bossBerry(c.itemKey));
   const hasBerry = berry.some(Boolean);
-  const bossItems = (potCfg || hasBerry)
-    ? Object.assign({ budget: 0, threshold: BOSS_POT_THRESHOLD, healFrac: 0 }, potCfg || {}, hasBerry ? { berry } : {})
+  const _gen = (typeof GAMES !== 'undefined' && typeof curGame === 'function') ? ((GAMES[curGame()] || {}).gen) : null;
+  const endure = bossC.map(c => _bossEndure(c, _gen));
+  const hasEndure = endure.some(Boolean);
+  // KNOB #1 LOCKSTEP — precompute the best-counter PARTY INDEX per boss mon (full HP
+  // assumed). Uses bestCounterFor (main-thread only, references pCombatant/duelOutcome)
+  // with the same switch-in lethality filter as the plan's _bcIndex. The sim loops
+  // (_readyBattle) then read bossItems.counter[bIdx] for their Rules 1+2 override —
+  // identical policy to buildBattlePlan, so the readiness % and the displayed plan
+  // run the SAME script (lead the safe wall, switch to it on a fragile-weak entry).
+  const counter = bossC.map((bC, bi) => {
+    const alivePool = [];
+    for (let ci = 0; ci < party.length; ci++) {
+      const inc = (bestHitFraction(bC, party[ci]) || {}).frac || 0;
+      if (inc > 0.80) continue;   // would faint on entry from full HP — strip
+      alivePool.push(pool[_srcIdx[ci]]);
+    }
+    const bc = bestCounterFor(team[bi], alivePool);
+    if (!bc) return -1;
+    const si = pool.indexOf(bc.pokemon);
+    return _srcIdx.indexOf(si);
+  });
+  const hasCounter = counter.some(c => c >= 0);
+  const bossItems = (potCfg || hasBerry || hasEndure || hasCounter)
+    ? Object.assign({ budget: 0, threshold: BOSS_POT_THRESHOLD, healFrac: 0 }, potCfg || {}, hasBerry ? { berry } : {}, hasEndure ? { endure } : {}, hasCounter ? { counter } : {})
     : null;
   return { party, bossC, bossItems };
 }
@@ -9822,6 +10001,11 @@ function baitPlanFor(b, boss, roster) {
     if (frac > Mfrac) { Mfrac = frac; M = { move: mc, type: t, mult: effDef(t, C.type1, C.type2, Cmod) }; }
   }
   if (!M) return null;
+  // The counter must SURVIVE M for the bait to make sense. Baiting draws M once onto
+  // the lure, but the AI re-clicks M on the counter (M is still its hardest move vs it),
+  // so a counter that M OHKOs is a death trap, not a play — e.g. "switch your Fire mon
+  // in to bait Earthquake" just feeds it a 1-shot. Require ≥2 hits to faint from M.
+  if (Mfrac > 0 && Math.ceil(1 / Mfrac) < 2) return null;
 
   // Baiting only helps if, with M removed, the counter SURVIVES the boss's
   // next-best move (otherwise it gets KO'd anyway).
@@ -9929,6 +10113,7 @@ function renderBossCard(b, boss, roster, detailMode, recoTeam) {
   const hdrHex = hdrType ? TYPE_COLOR[hdrType] : null;
   const hdrStyle = hdrHex ? ` style="background:linear-gradient(100deg, ${hdrHex}30, ${hdrHex}08 60%, transparent)"` : '';
   const abilityHtml = b.ability ? `<span class="boss-ability">${prettyLabel(b.ability)}</span>` : '';
+  const itemHtml = b.item ? `<span class="boss-item" title="Held item — factored into the matchup, battle plan &amp; readiness">@ ${prettyLabel(b.item)}</span>` : '';
   return `<div class="boss-poke boss-poke-rich">
     <div class="boss-poke-hdr typed"${hdrStyle}>
       <div class="bph-types">${bTypes.map(t => `<span class="bph-type" style="background:${TYPE_COLOR[t]||'#777'}">${t}</span>`).join('')}</div>
@@ -9936,7 +10121,7 @@ function renderBossCard(b, boss, roster, detailMode, recoTeam) {
         <div class="bph-text">
           <div class="pc-lv"><span class="pc-lv-lbl">Lv</span><span class="pc-lv-num">${b.lv}</span></div>
           <div class="bph-nameblock">
-            ${abilityHtml ? `<div class="bph-meta">${abilityHtml}</div>` : ''}
+            ${(abilityHtml || itemHtml) ? `<div class="bph-meta">${abilityHtml}${abilityHtml && itemHtml ? ' · ' : ''}${itemHtml}</div>` : ''}
             <div class="boss-name">${b.species}</div>
           </div>
         </div>
