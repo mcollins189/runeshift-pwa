@@ -7126,6 +7126,14 @@ let showAdvice = false, _adviceAnimBar = false;
 let showPlan = false;   // battle plan starts collapsed (like the advice panel); reset to collapsed per boss / on matchup-tab entry.
 function togglePlan() {
   showPlan = !showPlan;
+  // v5.4b lazy gate: when opening the panel AND the plan isn't cached yet, the body
+  // we previously rendered was empty (just the toggle button). Class-toggling doesn't
+  // populate it — we need to re-render the whole matchup so renderMatchup's conditional
+  // fires the async compute (which paints the spinner, then replaces with the real plan).
+  if (showPlan && typeof renderMatchup === 'function') {
+    renderMatchup();
+    return;   // renderMatchup re-paints the bp-frame fresh; nothing to class-toggle.
+  }
   const f = document.getElementById('bp-frame'), w = document.getElementById('bp-wrap');
   if (!f || !w) { renderMatchup(); return; }
   f.classList.toggle('open', showPlan);
@@ -7554,7 +7562,7 @@ function bestHitFraction(A, B, opts) {
     for (const type of [A.type1, A.type2].filter(Boolean)) candidates.push({ type, cat: null, power: MM_DEFAULT_POWER, prio: false, drain: false });
   }
   const lvTerm = (2 * A.lv / 5 + 2) / 50;
-  let best = 0, bestType = null, bestEff = 0, bestPrio = false, bestDrain = false, bestCanon = null, bestAcc = 100;
+  let best = 0, bestType = null, bestEff = 0, bestPrio = false, bestDrain = false, bestCanon = null, bestAcc = 100, bestMulti = false;
   for (const c of candidates) {
     const eff = effectivenessWithAbility(c.type, B.type1, B.type2, B.abil);
     // Pre-Gen-4 (vanilla Gen ≤3) games decide physical/special by TYPE, not move.
@@ -7589,14 +7597,24 @@ function bestHitFraction(A, B, opts) {
     frac *= itemDamageMult(A.itemKey, c.type, physical, eff);
     const accEff = Math.min(100, moveAccuracy(c.canon) * itemAccuracyMult(A.itemKey));
     frac *= accEff / 100;
-    if (frac > best) { best = frac; bestType = c.type; bestEff = eff; bestPrio = c.prio; bestDrain = c.drain; bestCanon = c.canon; bestAcc = accEff; }
+    // Multi-turn moves (Dig/Fly/Solar Beam/...) spread their damage across TWO turns: the
+    // user wastes a charge/dive turn dealing no damage (often becoming semi-invulnerable),
+    // then hits on turn 2. Average DPS is roughly half the single-hit power, so we halve
+    // frac here. The chosen-move flag (multiTurn) propagates so the plan narrator can call
+    // out the whiff cycle. Power Herb consumes itself to skip the charge turn — could be
+    // a follow-up, but a held-item check would need to thread through here cleanly.
+    const isMulti = c.canon && MULTI_TURN_MOVES.has(c.canon);
+    if (isMulti) frac *= 0.5;
+    if (frac > best) { best = frac; bestType = c.type; bestEff = eff; bestPrio = c.prio; bestDrain = c.drain; bestCanon = c.canon; bestAcc = accEff; bestMulti = isMulti; }
   }
   // prio = the chosen (hardest-hitting) move itself has positive priority, so it
   // strikes first regardless of Speed. A weak priority move that ISN'T our best
   // damage option doesn't count — it wouldn't be the move we'd actually click.
   // drain = the chosen move siphons HP (Giga Drain etc.) → the attacker sustains.
   // move/acc = the chosen move and its effective accuracy (for variance warnings).
-  return { frac: best, type: bestType, eff: bestEff, prio: bestPrio, drain: bestDrain, move: bestCanon, acc: bestAcc };
+  // multiTurn = the chosen move is a two-turn move (Dig/Fly/Solar Beam/…) → plan
+  // narrator annotates the charge cycle so the user knows to expect a whiff turn.
+  return { frac: best, type: bestType, eff: bestEff, prio: bestPrio, drain: bestDrain, move: bestCanon, acc: bestAcc, multiTurn: bestMulti };
 }
 
 // One-on-one outcome between our mon P and a boss mon B. duel > 1 favours us
@@ -7977,12 +7995,38 @@ function varianceWarn(p, boss) {
   return worst;
 }
 const PLAN_PIVOT = new Set(['U-turn', 'Volt Switch', 'Flip Turn']);
-const PLAN_SLEEP = new Set(['Hypnosis', 'Yawn', 'Spore', 'Sleep Powder', 'Lovely Kiss', 'Sing', 'Grass Whistle']);
+const PLAN_SLEEP = new Set(['Hypnosis', 'Yawn', 'Spore', 'Sleep Powder', 'Lovely Kiss', 'Sing', 'Grass Whistle', 'Dark Void']);
+// Per-move accuracy for sleep-inducing moves. Used by the MCTS rollout to randomly miss
+// or land sleep, so a rollout that bets on Hypnosis (60% acc) gets penalized vs Spore
+// (100% acc) — the planner won't recommend a sleep gambit it can't actually pull off
+// reliably. Default 60 for an unknown sleep move. THIS IS THE PATTERN for future status
+// moves: add PARALYZE_MOVE_ACCURACY, BURN_MOVE_ACCURACY, etc. and consume the same way.
+const SLEEP_MOVE_ACCURACY = {
+  'Hypnosis': 60,
+  'Sleep Powder': 75,
+  'Sing': 55,
+  'Spore': 100,
+  'Lovely Kiss': 75,
+  'Yawn': 100,         // always succeeds; the sleep itself triggers next turn
+  'Grass Whistle': 55,
+  'Dark Void': 50
+};
+const SLEEP_DEFAULT_ACC = 60;
 const PLAN_RECOVER = new Set(['Recover', 'Roost', 'Synthesis', 'Moonlight', 'Morning Sun', 'Soft-Boiled', 'Milk Drink', 'Slack Off', 'Rest', 'Shore Up', 'Heal Order', 'Strength Sap']);
+// Two-turn attacks: charge turn (untargetable by most moves; no damage dealt), then hit
+// next turn. Effective DPS is ~half the listed power because the user wastes a turn going
+// underground/airborne. bestHitFraction halves frac for these so the planner's "best move"
+// choice (and the rollout's expected damage) reflects the two-turn average — and the plan
+// narration calls out the wasted-turn cycle so the user knows to expect a whiff turn.
+const MULTI_TURN_MOVES = new Set(['Dig', 'Fly', 'Dive', 'Bounce', 'Shadow Force', 'Phantom Force', 'Sky Drop', 'Solar Beam', 'Solar Blade', 'Razor Wind', 'Skull Bash', 'Sky Attack', 'Geomancy', 'Freeze Shock', 'Ice Burn', 'Meteor Beam']);
 function planFlags(p) {
-  const f = { pivot: null, protect: false, sleep: false, recover: false, lefto: false, sitrus: false };
+  const f = { pivot: null, protect: false, sleep: false, sleepMove: null, recover: false, lefto: false, sitrus: false };
   for (const m of normMovesList(p.moves)) { const c = resolveMove(m) || m;
-    if (PLAN_PIVOT.has(c)) f.pivot = c; else if (c === 'Protect' || c === 'Detect') f.protect = true; else if (PLAN_SLEEP.has(c)) f.sleep = true; else if (PLAN_RECOVER.has(c)) f.recover = true; }
+    if (PLAN_PIVOT.has(c)) f.pivot = c;
+    else if (c === 'Protect' || c === 'Detect') f.protect = true;
+    else if (PLAN_SLEEP.has(c)) { f.sleep = true; if (!f.sleepMove) f.sleepMove = c; }
+    else if (PLAN_RECOVER.has(c)) f.recover = true;
+  }
   const it = (p.held || '').toLowerCase();
   if (/leftovers|black\s?sludge/.test(it)) f.lefto = true;
   if (/sitrus|berry\s?juice|oran/.test(it)) f.sitrus = true;
@@ -8070,6 +8114,192 @@ function planRollout(party, bossC, pHP0, bHP0, bSlp0, pIdx0, bIdx0, mode, first,
   let oh = 0; for (const h of pHP) oh += Math.max(0, h);
   let bh = 0; for (const h of bHP) bh += Math.max(0, h);
   return (!aB() ? 1e6 : 0) - (!aP() ? 1e5 : 0) + pHP.filter(h => h > 0).length * 2000 + oh * 200 - bh * 200;
+}
+// ── MCTS-style plan picker (v5.4) ────────────────────────────────────────────
+// The greedy planChooseAction misses creative lines (sleep-then-switch, ability-bait
+// pivots, sack-to-set-up sweepers) because its rollout assumes "always attack with the
+// hardest hit" for future turns. The MCTS picker fixes that: it enumerates every legal
+// first action, then for EACH candidate runs N=30 stochastic rollouts where future turns
+// sample from a mixed policy (mostly attack, sometimes switch / sleep / protect). The
+// candidate with the highest MEAN rollout score wins. With enough rollouts, creative
+// lines that win cleanly bubble up because their average outperforms the greedy line.
+//
+// Cost: ~30 candidates × 30 rollouts × ~15 turns = ~13,500 sim ops per decision ≈ 50-150ms.
+// Acceptable for the plan (cached in _planLRU); NOT used by _readyBattle (which keeps the
+// fast greedy planChooseAction so readiness sims stay <250ms).
+//
+// Deterministic via a seeded _mulberry32 RNG — same boss + team config → same plan, so
+// the LRU cache is meaningful and the plan doesn't flip between renders.
+function _randomizedRollout(party, bossC, pHP0, bHP0, bSlp0, pIdx0, bIdx0, mode, first, bossItems, rng) {
+  // Mirror planRollout's state setup verbatim — same boss model, same sustain mechanics.
+  const pHP = pHP0.slice(), bHP = bHP0.slice(), bSlp = bSlp0.slice(), sUsed = party.map(() => false);
+  let pIdx = pIdx0, bIdx = bIdx0, fd = false, g = 0;
+  let potBudget = party.some(p => p.flags && p.flags.potionOK) ? PLAN_POTION_BUDGET : 0, potLast = false;
+  let bPot = bossItems ? (bossItems.budget || 0) : 0;
+  const bThr = bossItems ? bossItems.threshold : 0, bHealF = bossItems ? bossItems.healFrac : 0;
+  const bBerry = (bossItems && bossItems.berry) ? bossItems.berry : null; const bUsed = (bossItems && bossItems.berryUsed) ? bossItems.berryUsed.slice() : (bBerry ? bBerry.map(() => false) : null);
+  const bEnd = (bossItems && bossItems.endure) ? bossItems.endure : null; const bEndU = (bossItems && bossItems.endureUsed) ? bossItems.endureUsed.slice() : (bEnd ? bEnd.map(() => false) : null);
+  const aP = () => pHP.some(h => h > 0), aB = () => bHP.some(h => h > 0);
+  const heal = (pi, amt) => { if (pHP[pi] > 0) pHP[pi] = Math.min(1, pHP[pi] + amt); };
+  const bossAtk = (pi) => { if (bSlp[bIdx] > 0) { bSlp[bIdx]--; return; } if (bPot > 0 && bHP[bIdx] > 0 && bHP[bIdx] < bThr) { bHP[bIdx] = Math.min(1, bHP[bIdx] + bHealF); bPot--; return; } pHP[pi] -= planFrac(bossC[bIdx], party[pi]); };
+  const hit = (P, B, pi) => { const h = bestHitFraction(P, B); let f = h.frac; const berry = bBerry ? bBerry[bIdx] : null;
+    if (berry && berry.resist && bUsed && !bUsed[bIdx] && (h.eff >= 2 || berry.resist === 'normal') && String(h.type).toLowerCase() === berry.resist) { f *= 0.5; bUsed[bIdx] = true; }
+    const before = bHP[bIdx]; let nv = before - f; const end = bEnd ? bEnd[bIdx] : 0;
+    if (nv <= 0 && before >= 0.999 && end && !(end === 2 && bEndU[bIdx])) { nv = 1 / (B.stats[0] || 100); if (end === 2) bEndU[bIdx] = true; }
+    bHP[bIdx] = nv; if (h.drain) heal(pi, 0.5 * Math.min(f, Math.max(0, before)) * ((B.stats[0] || 1) / (P.stats[0] || 1)));
+    if (berry && berry.heal && bUsed && !bUsed[bIdx] && bHP[bIdx] > 0 && bHP[bIdx] < 0.5) { bHP[bIdx] = Math.min(1, bHP[bIdx] + berry.heal); bUsed[bIdx] = true; } };
+  const endTurn = (pi) => { if (pHP[pi] > 0) { if (party[pi].flags.lefto) heal(pi, 1 / 16); if (party[pi].flags.sitrus && !sUsed[pi] && pHP[pi] < 0.5) { sUsed[pi] = true; heal(pi, 0.25); } } };
+  // RANDOM POLICY for future turns: weighted sample biased toward attack (60%), with
+  // 20% IMMUNITY-AWARE switch (foe's hardest move type → mons that resist/immune to it
+  // get picked more often, so ability-bait pivots like Steve-vs-Sneasel-Dig surface),
+  // 15% sleep move (if available), 5% protect. The variance is the point — many rollouts
+  // find lines the greedy never tries.
+  // Pre-compute switch weights ONCE per foe entry (foe type doesn't change mid-phase).
+  const _foeHit = bestHitFraction(bossC[bIdx], party[pIdx]);
+  const _foeType = (_foeHit && _foeHit.type) || null;
+  // Bias = inverse of effectiveness vs the foe's type. eff 0 (immune) → weight 8 (very
+  // attractive bait), eff 0.5 (resist) → weight 3, eff 1 (neutral) → weight 1, eff ≥ 2
+  // → weight 0.25 (avoid switching INTO a SE hit). Forms a per-foe distribution that
+  // disproportionately tries Levitate/Flash Fire/Volt Absorb pivots.
+  const _switchWeights = party.map((p, i) => {
+    if (i === pIdx || pHP[i] <= 0 || !_foeType) return 0;
+    const eff = effectivenessWithAbility(_foeType, p.type1, p.type2, p.abil);
+    if (eff === 0) return 8;
+    if (eff <= 0.5) return 3;
+    if (eff >= 2) return 0.25;
+    return 1;
+  });
+  const _swTotal = _switchWeights.reduce((s, w) => s + w, 0);
+  const sampleWeightedSwitch = () => {
+    if (_swTotal <= 0) return -1;
+    let r = rng() * _swTotal;
+    for (let i = 0; i < _switchWeights.length; i++) { r -= _switchWeights[i]; if (r <= 0) return i; }
+    return -1;
+  };
+  const pickRandom = (P) => {
+    const r = rng();
+    if (r < 0.60) return { type: 'attack' };
+    if (r < 0.80) {                                         // immunity-aware switch
+      const idx = sampleWeightedSwitch();
+      if (idx >= 0) return { type: 'switch', idx };
+      return { type: 'attack' };
+    }
+    if (r < 0.95 && P.flags && P.flags.sleep && bSlp[bIdx] === 0) {
+      if (rng() < 0.4) return { type: 'sleepStay' };
+      const idx = sampleWeightedSwitch();
+      if (idx >= 0) return { type: 'sleepSwitch', idx };
+      return { type: 'sleepStay' };
+    }
+    if (P.flags && P.flags.protect) return { type: 'protect' };
+    return { type: 'attack' };
+  };
+  while (g++ < 200) {
+    if (!aB() || !aP()) break;
+    if (bHP[bIdx] <= 0) { let nx = -1; for (let j = 0; j < bossC.length; j++) if (bHP[j] > 0) { nx = j; break; } if (nx < 0) break; bIdx = nx; if (mode !== 'set') { const r = planBestRepl(party, pHP, bossC[bIdx], bHP[bIdx]); if (r >= 0) pIdx = r; } continue; }
+    if (pHP[pIdx] <= 0) { const r = planBestRepl(party, pHP, bossC[bIdx], bHP[bIdx]); if (r < 0) break; pIdx = r; continue; }
+    let P = party[pIdx], B = bossC[bIdx];
+    const wasPot = potLast; potLast = false;
+    let act = fd ? pickRandom(P) : first; fd = true;
+    if (act.type === 'switch' && pHP[act.idx] > 0) { pIdx = act.idx; bossAtk(pIdx); endTurn(pIdx); continue; }
+    if (act.type === 'pivot' && P.flags.pivot && pHP[act.idx] > 0) { hit(P, B, pIdx); pIdx = act.idx; if (bHP[bIdx] > 0) bossAtk(pIdx); endTurn(pIdx); continue; }
+    // Sleep: sample accuracy (move-specific) + duration (1-3 turns). On miss the user
+    // wasted their turn but the foe still attacks. On land, foe is asleep for the rolled
+    // duration. This is the right shape for any future status move (paralyze etc.) —
+    // sample acc, sample duration, gate the effect.
+    if (act.type === 'sleepStay') {
+      const acc = (P.flags && P.flags.sleepMove) ? (SLEEP_MOVE_ACCURACY[P.flags.sleepMove] || SLEEP_DEFAULT_ACC) : SLEEP_DEFAULT_ACC;
+      if (rng() * 100 < acc) bSlp[bIdx] = 1 + Math.floor(rng() * 3);   // landed: 1-3 turns
+      bossAtk(pIdx);                                                    // foe still acts if move missed (and immediately if asleep, bossAtk consumes a sleep turn)
+      endTurn(pIdx); continue;
+    }
+    if (act.type === 'sleepSwitch' && pHP[act.idx] > 0) {
+      const acc = (P.flags && P.flags.sleepMove) ? (SLEEP_MOVE_ACCURACY[P.flags.sleepMove] || SLEEP_DEFAULT_ACC) : SLEEP_DEFAULT_ACC;
+      if (rng() * 100 < acc) bSlp[bIdx] = 1 + Math.floor(rng() * 3);
+      pIdx = act.idx; endTurn(pIdx); continue;                          // free switch on the same turn — the user pivots regardless
+    }
+    if (act.type === 'protect') { if (bSlp[bIdx] > 0) bSlp[bIdx]--; endTurn(pIdx); continue; }
+    if (act.type === 'heal') { heal(pIdx, 0.5); bossAtk(pIdx); endTurn(pIdx); continue; }
+    const pF = (P.stats[5] || 0) >= (B.stats[5] || 0);
+    if (potBudget > 0 && (!PLAN_POT_NOCONSEC || !wasPot) && planFrac(P, B) >= 0.15 && !(pF && planFrac(P, B) >= bHP[bIdx]) && planFrac(B, P) >= pHP[pIdx] && Math.min(1, pHP[pIdx] + PLAN_HEAL_FRAC) > planFrac(B, P)) {
+      potBudget--; potLast = true; heal(pIdx, PLAN_HEAL_FRAC); bossAtk(pIdx); endTurn(pIdx); continue;
+    }
+    if (pF) { hit(P, B, pIdx); if (bHP[bIdx] > 0) bossAtk(pIdx); } else { bossAtk(pIdx); if (pHP[pIdx] > 0) hit(P, B, pIdx); }
+    endTurn(pIdx);
+  }
+  let oh = 0; for (const h of pHP) oh += Math.max(0, h);
+  let bh = 0; for (const h of bHP) bh += Math.max(0, h);
+  const aliveCount = pHP.filter(h => h > 0).length;
+  const won = !aB(), wiped = !aP();
+  const deaths = party.length - aliveCount;
+  const score = (won ? 1e6 : 0) - (wiped ? 1e5 : 0) + aliveCount * 2000 + oh * 200 - bh * 200;
+  // Return rich result so mctsPickAction can do pessimistic clean-win selection (filter
+  // to won + deaths===0, pick the candidate whose WORST such rollout is still highest).
+  return { score, won, deaths };
+}
+const MCTS_ROLLOUTS = 500;  // per candidate — user-requested high-fidelity mode. K=500
+// gives ~500ms on easy fights, ~3-5s on hard ones. Spinner covers the wait. If this feels
+// too slow in practice, dial back to 100-200.
+function mctsPickAction(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, lastTo, bossItems, seedRng) {
+  // v5.4g — APPLES-TO-APPLES rollout comparison. Previously all candidates shared one rng,
+  // so the "attack" candidate's 500 rollouts saw one random sequence while the "switch to
+  // Picante" candidate's saw a different one. Tiebreaking was unreliable — a chip-then-
+  // switch line could beat an immediate-switch line just because its rollouts got luckier
+  // rng. Fix: extract a SEED from the passed-in rng (one advance), then reset each
+  // candidate's rng to that same seed. All candidates roll over IDENTICAL random futures
+  // and the score difference reflects ONLY the structural difference between actions.
+  const seed = Math.floor(seedRng() * 0xFFFFFFFF);
+  const P = party[pIdx];
+  // Legal candidates: attack, switch to any alive, sleepStay/sleepSwitch (if we have a
+  // sleep move and foe isn't already asleep), protect (if we have it), pivot moves.
+  const candidates = [{ type: 'attack' }];
+  for (let i = 0; i < party.length; i++) { if (i === pIdx || pHP[i] <= 0) continue; candidates.push({ type: 'switch', idx: i }); }
+  if (P.flags && P.flags.sleep && bSlp[bIdx] === 0) {
+    candidates.push({ type: 'sleepStay' });
+    for (let i = 0; i < party.length; i++) { if (i === pIdx || pHP[i] <= 0) continue; candidates.push({ type: 'sleepSwitch', idx: i }); }
+  }
+  if (P.flags && P.flags.protect) candidates.push({ type: 'protect' });
+  if (P.flags && P.flags.pivot) {
+    for (let i = 0; i < party.length; i++) { if (i === pIdx || pHP[i] <= 0) continue; candidates.push({ type: 'pivot', idx: i }); }
+  }
+  // v5.4e — PESSIMISTIC CLEAN-WIN SCORING. Goal: pick the action whose WORST clean-sweep
+  // rollout is still the highest among candidates. That favors actions guaranteed to win
+  // cleanly even when RNG is bad (sleep misses, foe crits, our attack misses) rather than
+  // actions that win cleanly *on average*. The math:
+  //   1. Run K=500 rollouts per candidate
+  //   2. Filter to (won && deaths===0) — true clean sweeps
+  //   3. Require ≥ MIN_CLEAN_RATE of K to qualify (10% — avoids picking a freak-lucky
+  //      candidate that clean-swept once out of 500)
+  //   4. For qualified candidates, score = MIN clean-win score (worst case where opponent
+  //      did the most damage but we still cleared without losses)
+  //   5. For unqualified candidates (no reliable clean sweep), score = mean — best of bad
+  //      options. Pessimistic clean-win scores are ~1e6+ so they beat any mean fallback.
+  const MIN_CLEAN_RATE = 0.10;
+  const minCleanCount = Math.max(1, Math.floor(MCTS_ROLLOUTS * MIN_CLEAN_RATE));
+  let bestAct = candidates[0], bestScore = -Infinity;
+  for (const cand of candidates) {
+    // Reset rng to the same seed for every candidate → all candidates roll the SAME random
+    // futures, so score differences reflect structural advantages only.
+    const candRng = _mulberry32(seed);
+    const cleanScores = [];
+    let totalScore = 0;
+    for (let n = 0; n < MCTS_ROLLOUTS; n++) {
+      const r = _randomizedRollout(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, cand, bossItems, candRng);
+      totalScore += r.score;
+      if (r.won && r.deaths === 0) cleanScores.push(r.score);
+    }
+    let score;
+    if (cleanScores.length >= minCleanCount) {
+      // Worst-case clean sweep — sort ascending and take the floor.
+      cleanScores.sort((a, b) => a - b);
+      score = cleanScores[0];
+    } else {
+      // Doesn't reliably clean-sweep — fall back to mean. Clean-sweep candidates score
+      // ~1e6+ so they always beat mean-fallback candidates (scored ~5000-50000).
+      score = totalScore / MCTS_ROLLOUTS;
+    }
+    if (score > bestScore) { bestScore = score; bestAct = cand; }
+  }
+  return bestAct;
 }
 let PLAN_SWITCH_PEN = 1500; // hysteresis: a switch must clearly beat staying
 let PLAN_POTION_BUDGET = 3; // in-battle Potions the planner/sim will spend reactively (per battle) to model real item use
@@ -8218,7 +8448,7 @@ function _planDefBias(mon, foes) {
 // counterIdx is resolved by the caller (buildBattlePlan recomputes via _bcIndex; _readyBattle
 // reads precomputed bossItems.counter[bIdx]). Passing it in keeps this fn closure-free so
 // it stringifies cleanly for the worker.
-function _pickPerTurnAction(party, bossC, pHP, bHP, pIdx, bIdx, bEndure, bEndUsed, counterIdx) {
+function _pickPerTurnAction(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, bEndure, bEndUsed, counterIdx) {
   const P = party[pIdx], B = bossC[bIdx];
   const pF = (P.stats[5] || 0) >= (B.stats[5] || 0);
   const ourF = (bestHitFraction(P, B) || {}).frac || 0;
@@ -8226,12 +8456,20 @@ function _pickPerTurnAction(party, bossC, pHP, bHP, pIdx, bIdx, bEndure, bEndUse
   // (bEndUsed flag) the block no longer applies. Sturdy (=1) re-arms whenever HP ≥ ~100%.
   const endBlocks = !!(bEndure && bEndure[bIdx] && !(bEndure[bIdx] === 2 && bEndUsed && bEndUsed[bIdx]) && bHP[bIdx] >= 0.999);
   if (pF && ourF >= bHP[bIdx] && !endBlocks) return { type: 'attack' };
+  // v5.4h audit fix #2 — when foe is asleep, no SE hit is coming, so Rule 2 (switch to
+  // counter) wastes a free attack turn. Just stay and attack. Rule 1 still fires above
+  // if we'd KO this turn; otherwise return attack and let the planner work.
+  if (bSlp && bSlp[bIdx] > 0) return { type: 'attack' };
   const foeSE = ((bestHitFraction(B, P) || {}).eff || 1) >= 2;
   // Rule 1.5 — we ARE the counter; don't let the rollout swap us for a wall. Gated by
-  // a survival check so a chipped-down counter still gets tactically switched out by the
-  // rollout when staying = death. (incF < pHP[pIdx] = we'd take the hit and live.)
+  // a CRIT-AWARE survival check (v5.4h audit fix #3): a crit is ~×1.5 the expected hit,
+  // so a counter that barely survives the expected hit might still die to a crit. Match
+  // the user's "be safe" stance — only stay if a CRIT also doesn't KO us. _planCritKORisk
+  // models this analytically downstream, but Rule 1.5 fires before that; absorb the same
+  // signal inline so the rule doesn't lock in a crit-gamble.
   const incF = (bestHitFraction(B, P) || {}).frac || 0;
-  if (foeSE && counterIdx === pIdx && incF < pHP[pIdx]) return { type: 'attack' };
+  const incFCrit = incF * 1.5;
+  if (foeSE && counterIdx === pIdx && incFCrit < pHP[pIdx]) return { type: 'attack' };
   if (foeSE && counterIdx >= 0 && counterIdx !== pIdx && pHP[counterIdx] > 0) return { type: 'switch', idx: counterIdx };
   return null;
 }
@@ -8368,6 +8606,17 @@ function buildBattlePlan(boss, pool, setMode) {
   if (!team.length || !pool || !pool.length) return null;
   const mode = setMode ? 'set' : 'shift';
   const itemsOK = curRules().banBattleItems !== true; // potions assumed unless the run bans in-battle items
+  // MCTS rng (v5.4): seeded from boss + team config so the plan is deterministic and the
+  // _planLRU cache is meaningful. Same boss + team → same seed → same plan. The rng
+  // advances through every decision in the plan and across every rollout, so 30 rollouts
+  // per candidate × ~30 candidates × ~10 decisions = ~9000 rng pulls per plan compute.
+  const _mctsSeed = (() => {
+    let h = 2166136261 >>> 0;
+    const s = `${boss.name || ''}#${mode}|` + pool.map(p => `${p.species},${p.level},${p.moves}`).join(';');
+    for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+    return h >>> 0;
+  })();
+  const _mctsRng = _mulberry32(_mctsSeed);
   // Keep each combatant's source index in `pool` so plan usage can be mapped
   // back onto the recommended cards (filter would otherwise misalign indices).
   const party = [];
@@ -8376,7 +8625,24 @@ function buildBattlePlan(boss, pool, setMode) {
   if (!party.length || !bossC.length) return null;
 
   // best-move chip A would use vs B (highest-damage type's strongest matching move)
-  const mv = (A, B) => { const t = (bestHitFraction(A, B) || {}).type; if (!t) return ''; let best = null, bp = -1; for (const m of normMovesList(A._moves || [])) { const c = resolveMove(m); if (!c || STATUS_MOVES.has(c) || MOVES[c] !== t) continue; const pw = movePower(c) || 0; if (pw > bp) { bp = pw; best = c; } } return `<span class="bp-plan-mv">${best || t}</span>`; };
+  // mv() renders the move the attacker would choose (bestHitFraction's pick), plus two
+  // small annotations the user cares about: accuracy <100% (variance warning) and the
+  // multi-turn cycle (Dig/Fly/Solar Beam — wastes a turn). Falls back to the highest-BP
+  // STAB move if bestHitFraction didn't surface a canonical name (e.g. blank-moveset boss).
+  const mv = (A, B) => {
+    const h = bestHitFraction(A, B) || {};
+    let label = h.move;
+    if (!label) {
+      const t = h.type; if (!t) return '';
+      let best = null, bp = -1;
+      for (const m of normMovesList(A._moves || [])) { const c = resolveMove(m); if (!c || STATUS_MOVES.has(c) || MOVES[c] !== t) continue; const pw = movePower(c) || 0; if (pw > bp) { bp = pw; best = c; } }
+      label = best || t;
+    }
+    const annots = [];
+    if (h.acc != null && h.acc < 100) annots.push(`<span class="bp-plan-mv" style="opacity:.75;font-size:10px"> ${Math.round(h.acc)}% acc</span>`);
+    if (h.multiTurn) annots.push(`<span class="bp-plan-mv" style="opacity:.75;font-size:10px"> · 2-turn: whiff T1</span>`);
+    return `<span class="bp-plan-mv">${label}</span>${annots.join('')}`;
+  };
   party.forEach(p => p._moves = normMovesList(pool[p._srcIdx] ? pool[p._srcIdx].moves : p.moves));
   bossC.forEach(c => c._moves = normMovesList(c.moves || []));   // so foe move names (not just types) show in the turn log
   // Per-party-member usage in THIS (mode-aware) plan — surfaced on the cards so
@@ -8473,19 +8739,35 @@ function buildBattlePlan(boss, pool, setMode) {
     }
     usage[pIdx].entered = true;
     bossPotioned = false; bossBerried = false; bossBerryType = ''; bossEndured = false;   // re-armed each turn; flipped by bossAtk (potion) / hit (berry/Sturdy)
-    // PER-TURN DECISION — extracted into shared _pickPerTurnAction so plan + sim run
-    // identical code. We resolve the counter index via _bcIndex (live recompute);
-    // _readyBattle resolves it via bossItems.counter[bIdx] (precomputed array). Either
-    // way the same Rules 1+2 fire on the same inputs.
-    let act = _pickPerTurnAction(party, bossC, pHP, bHP, pIdx, bIdx, bEndure, bEndUsed, _bcIndex(team[bIdx]));
-    if (!act) act = planChooseAction(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, lastTo, planBI());
+    // PER-TURN DECISION — Rules 1/1.5/2 fast path, then MCTS fallback.
+    //   1. _pickPerTurnAction encodes the user's framework (stay if KO, stay if we ARE
+    //      the counter and survive, switch to counter on SE). When it returns an action,
+    //      it's strictly correct (the framework is hand-tuned) and we use it.
+    //   2. When the framework defers (returns null), v5.4 calls mctsPickAction instead of
+    //      the old greedy planChooseAction. MCTS runs N=30 stochastic rollouts per legal
+    //      candidate (attack/switch/sleep/protect/pivot) and picks the highest mean — so
+    //      creative lines like "Hypnosis Medicham → switch → KO with Bowlcut" surface
+    //      because some random rollouts try the sleep + switch and find they win cleaner.
+    //   Readiness sim (_readyBattle) still uses planChooseAction — only the displayed plan
+    //   gets the deeper search (caching makes it free on subsequent renders).
+    let act = _pickPerTurnAction(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, bEndure, bEndUsed, _bcIndex(team[bIdx]));
+    if (!act) act = mctsPickAction(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, lastTo, planBI(), _mctsRng);
     let P = party[pIdx], B = bossC[bIdx];
     const wasPot = potLast; potLast = false;   // block two Potions in a row
     const bHealLbl = `<span class="bp-plan-heal">${B.label}: <b>${bossPotName}</b></span>`;   // foe heal label (shown when bossPotioned)
     // foe's move vs a given target (or asleep note)
     const foeVs = (T) => (bSlp[bIdx] > 0) ? `<i>${B.label} asleep</i>` : `${B.label}: ${mv(B, T)}`;
     const foePart = () => foeVs(P);
-    if (act.type === 'switch') { const inMon = party[act.idx]; addTurn([`switch <b>${P.label}</b> → <b>${inMon.label}</b>${setMode ? ' <span class="bp-plan-mv">(eats a hit)</span>' : ''}`, foeVs(inMon)]); lastTo = pIdx; pIdx = act.idx; usage[pIdx].entered = true; bossAtk(pIdx); endTurn(pIdx); continue; }
+    if (act.type === 'switch') {
+      const inMon = party[act.idx];
+      // "(eats a hit)" only when foe will actually attack on the switch-in turn — Set mode
+      // gives the foe a free hit, but a sleeping/sashed foe doesn't connect, so labeling
+      // it "eats a hit" misleads. Set the annotation conditionally.
+      const foeAsleep = bSlp[bIdx] > 0;
+      const eatsHit = setMode && !foeAsleep;
+      addTurn([`switch <b>${P.label}</b> → <b>${inMon.label}</b>${eatsHit ? ' <span class="bp-plan-mv">(eats a hit)</span>' : ''}`, foeVs(inMon)]);
+      lastTo = pIdx; pIdx = act.idx; usage[pIdx].entered = true; bossAtk(pIdx); endTurn(pIdx); continue;
+    }
     if (act.type === 'pivot') { const inMon = party[act.idx], pv = P.flags.pivot || 'pivot'; hit(P, B, pIdx); const pvKO = bHP[bIdx] <= 0;
       if (pvKO && !bHP.some(h => h > 0)) { addTurn([`<b>${P.label}</b> ${pv} → <b>KO</b>`]); continue; }   // pivot move KO'd the LAST foe → battle won, no point pivoting anyone in
       usage[pIdx].pivoted = true; if (pvKO) { usage[pIdx].kos++; koCredited = true; }   // credit the PIVOTER's KO before we reassign pIdx to the switch-in
@@ -8563,10 +8845,62 @@ function buildBattlePlan(boss, pool, setMode) {
     else                 { role = 'backup';  tag = 'Plan: backup (not needed)';      cls = 'pr-backup'; }
     usageBySrc[c._srcIdx] = { role, tag, cls, kos: u.kos, sacked: u.sacked, entered: u.entered };
   });
+  // Collapse adjacent pure-switch turns. When the planner cycles A→B→C→D over consecutive
+  // turns (e.g. in Set mode after a sleep, swapping through pivots to get to the right
+  // attacker), the intermediate "switch in and immediately out" lines clutter the plan
+  // without adding info. Replace the chain with one line: "switch A → D" + range "T3–T5".
+  // Only collapses turns whose ENTIRE narration is a switch (no other foe-side notes that
+  // would be lost). Render-side only — sim already played those turns; we just hide them.
+  phases.forEach(ph => { ph.turns = _collapseSwitchChain(ph.turns); });
   // `risky` = the planned line commits a mon to a near-OHKO matchup (a flagged
   // gamble) or sacks one — a reliable, deterministic signal the readiness band
   // uses so it never calls such a fight a "clean sweep".
   return { phases, note, usage: usageBySrc, risky: dangerNoted.size > 0 || anySack };
+}
+// Switch-chain consolidation helper: scans an array of turn HTML strings and merges any
+// run of adjacent switch turns where the chain links. Two anchor patterns:
+//   (a) pure switch: "switch X → Y" — chain continues if next "switch Y → Z"
+//   (b) sleepSwitch: "X sleeps Foe → switch in Y" — same chaining rule
+// Replaces the chain with one collapsed line preserving the FIRST turn's structure but
+// using the FINAL destination mon and a T# range. Non-chain turns pass through unchanged.
+function _collapseSwitchChain(turns) {
+  const switchRe = /<span class="bp-tn">T(\d+)<\/span>\s*switch <b>([^<]+)<\/b> → <b>([^<]+)<\/b>/;
+  // sleepSwitch narration: "<b>Steve</b> sleeps Medicham → switch in <b>Bowlcut</b>".
+  // The foe name (Medicham) is rendered as plain text without <b> tags, so use a non-greedy
+  // match up to the arrow rather than expecting a bold wrapper.
+  const sleepSwitchRe = /<span class="bp-tn">T(\d+)<\/span>\s*<b>([^<]+)<\/b> sleeps ([^→]+?) → switch in <b>([^<]+)<\/b>/;
+  // Extract the "destination" of a chain-starter turn (whichever pattern matches), or null.
+  const startInfo = (s) => {
+    let m = s.match(switchRe);
+    if (m) return { turn: +m[1], to: m[3], replaceDest: /→ <b>[^<]+<\/b>/ };
+    m = s.match(sleepSwitchRe);
+    if (m) return { turn: +m[1], to: m[4], replaceDest: /→ switch in <b>[^<]+<\/b>/ };
+    return null;
+  };
+  const out = []; let i = 0;
+  while (i < turns.length) {
+    const info = startInfo(turns[i]);
+    if (!info) { out.push(turns[i]); i++; continue; }
+    let last = i, lastTo = info.to;
+    while (last + 1 < turns.length) {
+      const nm = turns[last + 1].match(switchRe);
+      if (!nm || nm[2] !== lastTo) break;
+      lastTo = nm[3]; last++;
+    }
+    if (last === i) { out.push(turns[i]); i++; continue; }
+    const firstStart = info.turn, lastTurnStart = turns[last].match(switchRe)[1];
+    // Replace destination using the pattern that originally matched (preserves "switch in"
+    // wording for sleepSwitch anchors). Bump the T# to a range.
+    const replaceWith = info.replaceDest.source.startsWith('→ switch in')
+      ? `→ switch in <b>${lastTo}</b>`
+      : `→ <b>${lastTo}</b>`;
+    const collapsed = turns[i]
+      .replace(info.replaceDest, replaceWith)
+      .replace(/T(\d+)/, `T${firstStart}–T${lastTurnStart}`);
+    out.push(collapsed);
+    i = last + 1;
+  }
+  return out;
 }
 
 /* ──────────────────────────────────────────────────────────────────────
@@ -8642,7 +8976,7 @@ function _readyBattle(party, bossC, mode, rng, bossItems) {
     // pCombatant/duelOutcome calls inside _readyBattle). Falls through to planChooseAction
     // when neither Rule 1 nor Rule 2 fires.
     const _ctrIdx = (bossItems && bossItems.counter) ? bossItems.counter[bIdx] : -1;
-    let act = _pickPerTurnAction(party, bossC, pHP, bHP, pIdx, bIdx, bEndure, bEndUsed, _ctrIdx);
+    let act = _pickPerTurnAction(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, bEndure, bEndUsed, _ctrIdx);
     if (!act) act = planChooseAction(party, bossC, pHP, bHP, bSlp, pIdx, bIdx, mode, lastTo, planBI());
     const P = party[pIdx], B = bossC[bIdx];
     const wasPot = potLast; potLast = false;   // block two Potions in a row (re-armed only on a Potion)
@@ -8817,12 +9151,12 @@ function _buildWorkerSource() {
   const fnSrc = _simWorkerFnList().map(f => 'const ' + f.name + ' = ' + f.toString()).join(';\n') + ';';
   return [
     'let MOVES,MOVE_DATA,MOVE_ACCURACY,TYPE_BOOST_ITEM,TYPE_CHART,MM_DEFAULT_POWER,PLAN_SWITCH_PEN,PLAN_CRIT_P,PLAN_RISK_PEN,PLAN_POTION_BUDGET,PLAN_HEAL_FRAC,PLAN_POT_NOCONSEC,MOVES_NORMALIZED,backfilledMoves={},__PRESPLIT=false;',
-    'let STATUS_MOVES=new Set(),PHYSICAL_TYPES_PRE_SPLIT=new Set(),PLAN_PIVOT=new Set(),PLAN_SLEEP=new Set(),PLAN_RECOVER=new Set();',
+    'let STATUS_MOVES=new Set(),PHYSICAL_TYPES_PRE_SPLIT=new Set(),PLAN_PIVOT=new Set(),PLAN_SLEEP=new Set(),PLAN_RECOVER=new Set(),MULTI_TURN_MOVES=new Set();',
     'var NUZ_DATA={};',
     'const gameIsPreSplit=()=>__PRESPLIT;',   // override: orig reads curGame()/GAMES
     fnSrc,
     'onmessage=function(e){var m=e.data;',
-    ' if(m.type==="init"){var d=m.data;MOVES=d.MOVES;MOVE_DATA=d.MOVE_DATA;MOVE_ACCURACY=d.MOVE_ACCURACY;TYPE_BOOST_ITEM=d.TYPE_BOOST_ITEM;TYPE_CHART=d.TYPE_CHART;MM_DEFAULT_POWER=d.MM_DEFAULT_POWER;PLAN_SWITCH_PEN=d.PLAN_SWITCH_PEN;PLAN_CRIT_P=d.PLAN_CRIT_P;PLAN_RISK_PEN=d.PLAN_RISK_PEN;PLAN_POTION_BUDGET=d.PLAN_POTION_BUDGET;PLAN_HEAL_FRAC=d.PLAN_HEAL_FRAC;PLAN_POT_NOCONSEC=d.PLAN_POT_NOCONSEC;MOVES_NORMALIZED=d.MOVES_NORMALIZED;backfilledMoves=d.backfilledMoves||{};STATUS_MOVES=new Set(d.STATUS_MOVES);PHYSICAL_TYPES_PRE_SPLIT=new Set(d.PHYSICAL_TYPES_PRE_SPLIT);PLAN_PIVOT=new Set(d.PLAN_PIVOT);PLAN_SLEEP=new Set(d.PLAN_SLEEP);PLAN_RECOVER=new Set(d.PLAN_RECOVER);NUZ_DATA={moveStats:d.moveStats};postMessage({type:"ready"});return;}',
+    ' if(m.type==="init"){var d=m.data;MOVES=d.MOVES;MOVE_DATA=d.MOVE_DATA;MOVE_ACCURACY=d.MOVE_ACCURACY;TYPE_BOOST_ITEM=d.TYPE_BOOST_ITEM;TYPE_CHART=d.TYPE_CHART;MM_DEFAULT_POWER=d.MM_DEFAULT_POWER;PLAN_SWITCH_PEN=d.PLAN_SWITCH_PEN;PLAN_CRIT_P=d.PLAN_CRIT_P;PLAN_RISK_PEN=d.PLAN_RISK_PEN;PLAN_POTION_BUDGET=d.PLAN_POTION_BUDGET;PLAN_HEAL_FRAC=d.PLAN_HEAL_FRAC;PLAN_POT_NOCONSEC=d.PLAN_POT_NOCONSEC;MOVES_NORMALIZED=d.MOVES_NORMALIZED;backfilledMoves=d.backfilledMoves||{};STATUS_MOVES=new Set(d.STATUS_MOVES);PHYSICAL_TYPES_PRE_SPLIT=new Set(d.PHYSICAL_TYPES_PRE_SPLIT);PLAN_PIVOT=new Set(d.PLAN_PIVOT);PLAN_SLEEP=new Set(d.PLAN_SLEEP);PLAN_RECOVER=new Set(d.PLAN_RECOVER);MULTI_TURN_MOVES=new Set(d.MULTI_TURN_MOVES);NUZ_DATA={moveStats:d.moveStats};postMessage({type:"ready"});return;}',
     ' if(m.type==="sim"){__PRESPLIT=!!m.preSplit;var r=null,err=null;try{r=_scoreFromSims(m.party,m.bossC,m.mode,m.n,m.seed,m.bossItems);}catch(ex){err=String(ex&&ex.message||ex);}postMessage({type:"simDone",id:m.id,result:r,err:err});return;}',
     '};'
   ].join('\n');
@@ -8833,7 +9167,8 @@ function _workerInitPayload() {
     moveStats: (typeof NUZ_DATA !== 'undefined' && NUZ_DATA.moveStats) || {},
     backfilledMoves: (typeof backfilledMoves !== 'undefined' && backfilledMoves) || {},
     STATUS_MOVES: [...STATUS_MOVES], PHYSICAL_TYPES_PRE_SPLIT: [...PHYSICAL_TYPES_PRE_SPLIT],
-    PLAN_PIVOT: [...PLAN_PIVOT], PLAN_SLEEP: [...PLAN_SLEEP], PLAN_RECOVER: [...PLAN_RECOVER]
+    PLAN_PIVOT: [...PLAN_PIVOT], PLAN_SLEEP: [...PLAN_SLEEP], PLAN_RECOVER: [...PLAN_RECOVER],
+    MULTI_TURN_MOVES: [...MULTI_TURN_MOVES]
   };
 }
 function _makeWorker() {
@@ -9632,12 +9967,45 @@ function renderMatchup() {
   // rotated to preserve them, which disagreed with the meter and read as flip-flopping).
   // Memoized by the readiness seed (same inputs) so the ~3 re-renders an action triggers
   // — and any revisit — reuse the plan instead of re-running the forward sim each time.
+  // LAZY PLAN COMPUTE (v5.4b): the K=200 MCTS plan takes ~300-500ms on a slow fight.
+  // Don't pay that cost on every matchup card render — only kick off the compute when
+  // the user actually opens the Battle plan panel. While the async compute runs we
+  // render a "🧠 Simulating battle…" spinner so the user knows it's thinking.
+  // Cached results are instant on every subsequent render.
   const _planSeed = _readinessSeed(boss, recommended, _r.setMode ? 'set' : 'shift');
   let planResult = _lruGet(_planLRU, _planSeed);
-  if (planResult === undefined) { planResult = buildBattlePlan(boss, recommended, _r.setMode); _lruSet(_planLRU, _planSeed, planResult, PLAN_LRU_CAP); }
+  if (planResult === undefined && showPlan) {
+    // User opened the panel, plan not cached — schedule async compute. setTimeout(0)
+    // yields to the browser so the spinner placeholder paints BEFORE the heavy compute
+    // blocks the main thread.
+    planResult = { computing: true, phases: [], usage: [] };
+    setTimeout(() => {
+      const real = buildBattlePlan(boss, recommended, _r.setMode);
+      _lruSet(_planLRU, _planSeed, real, PLAN_LRU_CAP);
+      if (curCap() === cap) renderMatchup();   // re-render only if the user is still on this boss
+    }, 0);
+  }
   const planPhases = planResult && planResult.phases;
   const planUsage = (planResult && planResult.usage) || [];
-  const planHtml = (planPhases && planPhases.length) ? `<div class="battle-plan${showPlan ? ' open' : ''}" id="bp-frame">
+  const planComputing = !!(planResult && planResult.computing);
+  // Battle plan markup: 3 render states.
+  //   1. Closed (showPlan=false, no plan cached): just the toggle button — no compute fired.
+  //   2. Open + computing: toggle + "🧠 Simulating battle…" spinner inside (~300-500ms).
+  //   3. Open + ready: toggle + the per-phase turn list + the bossPotions toggle.
+  let planHtml = '';
+  if (planComputing) {
+    planHtml = `<div class="battle-plan open" id="bp-frame">
+      <button class="rd-advice-toggle bp-toggle" id="bp-toggle" aria-expanded="true" onclick="togglePlan()" title="Turn-by-turn expected order">🎯 Battle plan<span class="bp-plan-sub">expected order${_r.setMode ? ' · Set mode' : ''}</span><span class="rd-tg-caret">▾</span></button>
+      <div class="rd-advice-wrap open" id="bp-wrap"><div class="rd-advice-inner"><div class="bp-body">
+        <div class="bp-loading" style="padding:24px 16px;text-align:center;color:var(--text2);font-size:13px">
+          <div style="font-size:28px;margin-bottom:8px;animation:bossBreathe 1.4s ease-in-out infinite">🧠</div>
+          <div><strong>Simulating battle…</strong></div>
+          <div style="font-size:11px;color:var(--text3);margin-top:4px">running ${MCTS_ROLLOUTS} random rollouts per decision to find the best line</div>
+        </div>
+      </div></div></div>
+    </div>`;
+  } else if (planPhases && planPhases.length) {
+    planHtml = `<div class="battle-plan${showPlan ? ' open' : ''}" id="bp-frame">
       <button class="rd-advice-toggle bp-toggle" id="bp-toggle" aria-expanded="${showPlan}" onclick="togglePlan()" title="Turn-by-turn expected order">🎯 Battle plan<span class="bp-plan-sub">expected order${_r.setMode ? ' · Set mode' : ''}</span><span class="rd-tg-caret">▾</span></button>
       <div class="rd-advice-wrap${showPlan ? ' open' : ''}" id="bp-wrap"><div class="rd-advice-inner"><div class="bp-body">
       ${planPhases.map(ph => `<div class="bp-phase">
@@ -9650,7 +10018,15 @@ function renderMatchup() {
         <input type="checkbox" ${_r.bossPotions ? 'checked' : ''} onchange="setRule('bossPotions', this.checked)"> Assume boss uses healing items <span>(A guess — costs the boss a turn. This can raise or lower your readiness depending on who wins the damage race.)</span>
       </label>
       </div></div></div>
-    </div>` : '';
+    </div>`;
+  } else if (planResult === undefined || (!planPhases && !planComputing)) {
+    // Plan not yet computed (panel closed) — just the toggle button, no body. Clicking
+    // it triggers togglePlan() → flips showPlan → re-render → the async compute fires.
+    planHtml = `<div class="battle-plan" id="bp-frame">
+      <button class="rd-advice-toggle bp-toggle" id="bp-toggle" aria-expanded="false" onclick="togglePlan()" title="Click to compute a turn-by-turn plan (uses Monte Carlo simulation, ~0.5s)">🎯 Battle plan<span class="bp-plan-sub">expected order${_r.setMode ? ' · Set mode' : ''}</span><span class="rd-tg-caret">▾</span></button>
+      <div class="rd-advice-wrap" id="bp-wrap"><div class="rd-advice-inner"></div></div>
+    </div>`;
+  }
   // Readiness meter — seeded Monte Carlo over the recommended team (see computeReadiness).
   // Read CACHE-ONLY so the render never blocks on the heavy sim: if it's warmed
   // (precompute or a prior view) we show it instantly; on a miss (e.g. right after you
