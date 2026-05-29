@@ -5,7 +5,7 @@
 bellsprout|12|cut,razor-leaf,growth,wrap|gluttony
 cherubi|12|flash,leech-seed,magical-leaf,morning-sun|chlorophyll
 chingling|12|flash,confusion,uproar,astonish|levitate
-hoothoot|14|confusion,aerial-ace,hypnosis,agility|
+hoothoot|14|confusion,aerial-ace,hypnosis,agility|insomnia
 
 --kimono|Kimono Girls||/leaders/gs-kimono
 umbreon|50|toxic,confuse-ray,protect,dark-pulse|synchronize|

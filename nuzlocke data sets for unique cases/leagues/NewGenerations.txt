@@ -1,227 +1,227 @@
 --r1|Rival
-rattata|5|tackle,tail-whip|||grass||docile
-sentret|5|tackle,tail-whip|||fire||docile
-zigzagoon|5|tackle,tail-whip|||water||docile
+rattata|5|tackle,tail-whip|run-away||grass||docile
+sentret|5|tackle,tail-whip|run-away||fire||docile
+zigzagoon|5|tackle,tail-whip|pickup||water||docile
 
 --r2|Rival
-pidgeotto|30|wing-attack,quick-attack,roost,sand-attack||sharp-beak|grass||docile
-gloom|30|poison-powder,sludge,mega-drain,hidden-power-ground||miracle-seed|grass||docile
-graveler|30|earthquake,rock-throw,hidden-power-grass,defense-curl||soft-sand|grass||docile
-raticate|30|tail-whip,hyper-fang,quick-attack,water-pulse||silk-scarf|grass||docile
+pidgeotto|30|wing-attack,quick-attack,roost,sand-attack|keen-eye|sharp-beak|grass||docile
+gloom|30|poison-powder,sludge,mega-drain,hidden-power-ground|chlorophyll|miracle-seed|grass||docile
+graveler|30|earthquake,rock-throw,hidden-power-grass,defense-curl|rock-head|soft-sand|grass||docile
+raticate|30|tail-whip,hyper-fang,quick-attack,water-pulse|run-away|silk-scarf|grass||docile
 
-noctowl|30|growl,take-down,reflect,air-cutter||black-glasses|fire||docile
-sunflora|30|sunny-day,flame-wheel,mega-drain,synthesis||charcoal|fire||docile
-pineco|30|rock-tomb,tackle,tail-whip,self-destruct||hard-stone|fire||docile
-furret|30|slam,quick-attack,defense-curl,water-pulse||silk-scarf|fire||docile
+noctowl|30|growl,take-down,reflect,air-cutter|insomnia|black-glasses|fire||docile
+sunflora|30|sunny-day,flame-wheel,mega-drain,synthesis|chlorophyll|charcoal|fire||docile
+pineco|30|rock-tomb,tackle,tail-whip,self-destruct|sturdy|hard-stone|fire||docile
+furret|30|slam,quick-attack,defense-curl,water-pulse|run-away|silk-scarf|fire||docile
 
-swellow|30|wing-attack,quick-attack,endeavor,double-team||sharp-beak|water||docile
-nuzleaf|30|fake-out,bullet-seed,nature-power,synthesis||miracle-seed|water||docile
-nosepass|30|metal-claw,rock-slide,mega-punch,thunder-wave||metal-coat|water||docile
-linoone|30|sand-attack,tail-whip,water-pulse,headbutt||silk-scarf|water||docile
+swellow|30|wing-attack,quick-attack,endeavor,double-team|guts|sharp-beak|water||docile
+nuzleaf|30|fake-out,bullet-seed,nature-power,synthesis|chlorophyll|miracle-seed|water||docile
+nosepass|30|metal-claw,rock-slide,mega-punch,thunder-wave|sturdy|metal-coat|water||docile
+linoone|30|sand-attack,tail-whip,water-pulse,headbutt|pickup|silk-scarf|water||docile
 
 --r3|Rival
-pidgeot|40|wing-attack,quick-attack,roost,steel-wing||sharp-beak|grass||docile
-vileplume|40|swords-dance,sleep-powder,synthesis,sludge||poison-barb|grass||docile
-graveler|40|earthquake,rock-throw,hidden-power-grass,defense-curl||soft-sand|grass||docile
-electabuzz|40|thunder-punch,swift,light-screen,mega-punch||magnet|grass||docile
-slowpoke|40|confusion,water-pulse,amnesia,defense-curl||mystic-water|grass||docile
-raticate|40|hyper-beam,hyper-fang,quick-attack,hidden-power-ground||silk-scarf|grass||docile
+pidgeot|40|wing-attack,quick-attack,roost,steel-wing|keen-eye|sharp-beak|grass||docile
+vileplume|40|swords-dance,sleep-powder,synthesis,sludge|chlorophyll|poison-barb|grass||docile
+graveler|40|earthquake,rock-throw,hidden-power-grass,defense-curl|rock-head|soft-sand|grass||docile
+electabuzz|40|thunder-punch,swift,light-screen,mega-punch|static|magnet|grass||docile
+slowpoke|40|confusion,water-pulse,amnesia,defense-curl|oblivious|mystic-water|grass||docile
+raticate|40|hyper-beam,hyper-fang,quick-attack,hidden-power-ground|run-away|silk-scarf|grass||docile
 
-noctowl|40|dark-pulse,hidden-power-ice,reflect,hypnosis||black-glasses|fire||docile
-sunflora|40|sunny-day,flame-wheel,mega-drain,synthesis||charcoal|fire||docile
-forretress|40|rock-tomb,zap-cannon,protect,explosion||hard-stone|fire||docile
-flaaffy|40|thunder,cotton-spore,light-screen,thunder-wave||magnet|fire||docile
-quagsire|40|earthquake,water-pulse,yawn,amnesia||mystic-water|fire||docile
-furret|40|slash,power-up-punch,defense-curl,rest||silk-scarf|fire||docile
+noctowl|40|dark-pulse,hidden-power-ice,reflect,hypnosis|insomnia|black-glasses|fire||docile
+sunflora|40|sunny-day,flame-wheel,mega-drain,synthesis|chlorophyll|charcoal|fire||docile
+forretress|40|rock-tomb,zap-cannon,protect,explosion|sturdy|hard-stone|fire||docile
+flaaffy|40|thunder,cotton-spore,light-screen,thunder-wave|static|magnet|fire||docile
+quagsire|40|earthquake,water-pulse,yawn,amnesia|damp|mystic-water|fire||docile
+furret|40|slash,power-up-punch,defense-curl,rest|run-away|silk-scarf|fire||docile
 
-swellow|40|aerial-ace,submission,facade,double-team||black-belt|water||docile
-shiftry|40|fake-out,razor-wind,nature-power,synthesis||sharp-beak|water||docile
-nosepass|40|metal-claw,rock-slide,rest,sandstorm||metal-coat|water||docile
-manectric|40|thunder,mega-drain,bite,quick-attack||magnet|water||docile
-wailord|40|water-pulse,rollout,rest,mist||mystic-water|water||docile
-linoone|40|curse,rest,magnitude,headbutt||silk-scarf|water||docile
+swellow|40|aerial-ace,submission,facade,double-team|guts|black-belt|water||docile
+shiftry|40|fake-out,razor-wind,nature-power,synthesis|chlorophyll|sharp-beak|water||docile
+nosepass|40|metal-claw,rock-slide,rest,sandstorm|sturdy|metal-coat|water||docile
+manectric|40|thunder,mega-drain,bite,quick-attack|static|magnet|water||docile
+wailord|40|water-pulse,rollout,rest,mist|water-veil|mystic-water|water||docile
+linoone|40|curse,rest,magnitude,headbutt|pickup|silk-scarf|water||docile
 
 --r4|Rival
 ==items:hyper-potion
-pidgeot|55|drill-peck,sand-attack,double-edge,roost||sharp-beak|grass||adamant
-blastoise|55|water-pulse,protect,iron-defense,hidden-power-ground||mystic-water|grass||docile
-paras|55|bug-slash,slash,mega-drain,spore||silver-powder|grass||docile
-electabuzz|55|thunder-punch,fire-punch,ice-punch,quick-attack||magnet|grass||docile
-magmar|55|flamethrower,mega-punch,sunny-day,smog||charcoal|grass||docile
-snorlax|55|body-slam,rest,snore,hidden-power-rock||silk-scarf|grass||docile
+pidgeot|55|drill-peck,sand-attack,double-edge,roost|keen-eye|sharp-beak|grass||adamant
+blastoise|55|water-pulse,protect,iron-defense,hidden-power-ground|torrent|mystic-water|grass||docile
+paras|55|bug-slash,slash,mega-drain,spore|effect-spore|silver-powder|grass||docile
+electabuzz|55|thunder-punch,fire-punch,ice-punch,quick-attack|static|magnet|grass||docile
+magmar|55|flamethrower,mega-punch,sunny-day,smog|flame-body|charcoal|grass||docile
+snorlax|55|body-slam,rest,snore,hidden-power-rock|immunity|silk-scarf|grass||docile
 
-noctowl|55|dark-pulse,hidden-power-ice,reflect,hypnosis||black-glasses|fire||docile
-meganium|55|body-slam,shadow-rage,razor-leaf,synthesis||charcoal|fire||docile
-azumarill|55|water-pulse,body-slam,rollout,hidden-power-ice||mystic-water|fire||docile
-ampharos|55|thunder,cotton-spore,dragon-breath,thunder-wave||magnet|fire||docile
-magcargo|55|flamethrower,amnesia,ancient-power,hidden-power-electric||charcoal|fire||docile
-granbull|55|meteor-mash,brick-break,double-edge,hidden-power-ground||silk-scarf|fire||docile
+noctowl|55|dark-pulse,hidden-power-ice,reflect,hypnosis|insomnia|black-glasses|fire||docile
+meganium|55|body-slam,shadow-rage,razor-leaf,synthesis|overgrow|charcoal|fire||docile
+azumarill|55|water-pulse,body-slam,rollout,hidden-power-ice|thick-fat|mystic-water|fire||docile
+ampharos|55|thunder,cotton-spore,dragon-breath,thunder-wave|static|magnet|fire||docile
+magcargo|55|flamethrower,amnesia,ancient-power,hidden-power-electric|magma-armor|charcoal|fire||docile
+granbull|55|meteor-mash,brick-break,double-edge,hidden-power-ground|intimidate|silk-scarf|fire||docile
 
-swellow|55|aerial-ace,submission,facade,double-team||black-belt|water||adamant
-blaziken|55|sky-uppercut,blaze-kick,bulk-up,protect||charcoal|water||docile
-cacturne|55|leech-seed,destiny-bond,needle-arm,sandstorm||miracle-seed|water||docile
-manectric|55|thunder,mega-drain,crunch,quick-attack||magnet|water||docile
-gorebyss|55|water-pulse,amnesia,iron-defense,baton-pass||mystic-water|water||docile
-slaking|55|slash,reversal,slack-off,hidden-power-rock||silk-scarf|water||docile
+swellow|55|aerial-ace,submission,facade,double-team|guts|black-belt|water||adamant
+blaziken|55|sky-uppercut,blaze-kick,bulk-up,protect|blaze|charcoal|water||docile
+cacturne|55|leech-seed,destiny-bond,needle-arm,sandstorm|sand-veil|miracle-seed|water||docile
+manectric|55|thunder,mega-drain,crunch,quick-attack|static|magnet|water||docile
+gorebyss|55|water-pulse,amnesia,iron-defense,baton-pass|swift-swim|mystic-water|water||docile
+slaking|55|slash,reversal,slack-off,hidden-power-rock|truant|silk-scarf|water||docile
 
 --r5|Rival
-snorlax|65|body-slam,rest,curse,hidden-power-rock||leftovers|grass||docile
-lapras|65|surf,ice-beam,hidden-power-electric,perish-song||never-melt-ice|grass||bold
-parasect|65|bug-slash,slash,mega-drain,spore||silver-powder|grass||adamant
-alakazam|65|psychic,dark-pulse,hidden-power-grass,reflect||twisted-spoon|grass||modest
-electabuzz|65|thunder-punch,fire-punch,ice-punch,light-screen||lum-berry|grass||calm
-mew|65|psychic,spore,recover,submission||leftovers|grass||docile
+snorlax|65|body-slam,rest,curse,hidden-power-rock|immunity|leftovers|grass||docile
+lapras|65|surf,ice-beam,hidden-power-electric,perish-song|water-absorb|never-melt-ice|grass||bold
+parasect|65|bug-slash,slash,mega-drain,spore|effect-spore|silver-powder|grass||adamant
+alakazam|65|psychic,dark-pulse,hidden-power-grass,reflect|synchronize|twisted-spoon|grass||modest
+electabuzz|65|thunder-punch,fire-punch,ice-punch,light-screen|static|lum-berry|grass||calm
+mew|65|psychic,spore,recover,submission|synchronize|leftovers|grass||docile
 
-granbull|65|strength,brick-break,double-edge,curse||silk-scarf|fire||docile
-sneasel|65|feint-attack,cut,ice-punch,protect||black-glasses|fire||timid
-azumarill|65|surf,body-slam,submission,substitute||black-belt|fire||adamant
-ampharos|65|thunder-punch,ultra-punch,fire-punch,thunder-wave||magnet|fire||calm
-steelix|65|strength,earthquake,sandstorm,iron-defense||leftovers|fire||impish
-celebi|65|leech-seed,ancient-power,giga-drain,psychic||leftovers|fire||docile
+granbull|65|strength,brick-break,double-edge,curse|intimidate|silk-scarf|fire||docile
+sneasel|65|feint-attack,cut,ice-punch,protect|inner-focus|black-glasses|fire||timid
+azumarill|65|surf,body-slam,submission,substitute|thick-fat|black-belt|fire||adamant
+ampharos|65|thunder-punch,ultra-punch,fire-punch,thunder-wave|static|magnet|fire||calm
+steelix|65|strength,earthquake,sandstorm,iron-defense|rock-head|leftovers|fire||impish
+celebi|65|leech-seed,ancient-power,giga-drain,psychic|natural-cure|leftovers|fire||docile
 
-slaking|65|slash,strength,slack-off,submission||silk-scarf|water||docile
-glalie|65|rock-blast,blizzard,double-team,hail||bright-powder|water||bold
-manectric|65|petal-dance,thunderbolt,quick-attack,hidden-power-ice||magnet|water||modest
-gorebyss|65|surf,amnesia,iron-defense,baton-pass||mystic-water|water||careful
-claydol|65|earthquake,psychic,light-screen,reflect||leftovers|water||modest
-jirachi|65|doom-desire,future-sight,wish,cosmic-power||leftovers|water||docile
+slaking|65|slash,strength,slack-off,submission|truant|silk-scarf|water||docile
+glalie|65|rock-blast,blizzard,double-team,hail|inner-focus|bright-powder|water||bold
+manectric|65|petal-dance,thunderbolt,quick-attack,hidden-power-ice|static|magnet|water||modest
+gorebyss|65|surf,amnesia,iron-defense,baton-pass|swift-swim|mystic-water|water||careful
+claydol|65|earthquake,psychic,light-screen,reflect|levitate|leftovers|water||modest
+jirachi|65|doom-desire,future-sight,wish,cosmic-power|serene-grace|leftovers|water||docile
 
 --r6|Rival
 ==items:full-restore,full-restore
-snorlax|85|body-slam,rest,curse,hidden-power-rock||leftovers|grass||docile
-lapras|85|surf,ice-beam,hidden-power-electric,perish-song||never-melt-ice|grass||bold
-parasect|85|bug-slash,slash,mega-drain,spore||silver-powder|grass||adamant
-dragonite|85|ultra-punch,aerial-ace,extreme-speed,dragon-dance||lum-berry|grass||careful
-zapdos|85|thunderbolt,overheat,roost,light-screen||lum-berry|grass||calm
-mew|85|psychic,spore,recover,submission||leftovers|grass||docile
+snorlax|85|body-slam,rest,curse,hidden-power-rock|immunity|leftovers|grass||docile
+lapras|85|surf,ice-beam,hidden-power-electric,perish-song|water-absorb|never-melt-ice|grass||bold
+parasect|85|bug-slash,slash,mega-drain,spore|effect-spore|silver-powder|grass||adamant
+dragonite|85|ultra-punch,aerial-ace,extreme-speed,dragon-dance|inner-focus|lum-berry|grass||careful
+zapdos|85|thunderbolt,overheat,roost,light-screen|pressure|lum-berry|grass||calm
+mew|85|psychic,spore,recover,submission|synchronize|leftovers|grass||docile
 
-granbull|85|strength,brick-break,double-edge,curse||silk-scarf|fire||docile
-sneasel|85|feint-attack,cut,ice-punch,protect||black-glasses|fire||timid
-suicune|85|surf,calm-mind,ice-beam,substitute||lum-berry|fire||calm
-tyranitar|85|earthquake,rock-slide,facade,brick-break||hard-stone|fire||adamant
-steelix|85|strength,earthquake,sandstorm,iron-defense||leftovers|fire||impish
-celebi|85|leech-seed,ancient-power,giga-drain,psychic||leftovers|fire||docile
+granbull|85|strength,brick-break,double-edge,curse|intimidate|silk-scarf|fire||docile
+sneasel|85|feint-attack,cut,ice-punch,protect|inner-focus|black-glasses|fire||timid
+suicune|85|surf,calm-mind,ice-beam,substitute|pressure|lum-berry|fire||calm
+tyranitar|85|earthquake,rock-slide,facade,brick-break|sand-stream|hard-stone|fire||adamant
+steelix|85|strength,earthquake,sandstorm,iron-defense|rock-head|leftovers|fire||impish
+celebi|85|leech-seed,ancient-power,giga-drain,psychic|natural-cure|leftovers|fire||docile
 
-slaking|85|slash,strength,slack-off,submission||silk-scarf|water||docile
-glalie|85|rock-blast,blizzard,double-team,hail||bright-powder|water||bold
-manectric|85|petal-dance,thunderbolt,quick-attack,hidden-power-ice||magnet|water||modest
-kyogre|85|water-spout,water-pulse,ice-beam,amnesia||mystic-water|water||modest
-salamence|85|dragon-claw,double-edge,fly,protect||leftovers|water||adamant
-jirachi|85|doom-desire,future-sight,wish,cosmic-power||leftovers|water||docile
+slaking|85|slash,strength,slack-off,submission|truant|silk-scarf|water||docile
+glalie|85|rock-blast,blizzard,double-team,hail|inner-focus|bright-powder|water||bold
+manectric|85|petal-dance,thunderbolt,quick-attack,hidden-power-ice|static|magnet|water||modest
+kyogre|85|water-spout,water-pulse,ice-beam,amnesia|drizzle|mystic-water|water||modest
+salamence|85|dragon-claw,double-edge,fly,protect|intimidate|leftovers|water||adamant
+jirachi|85|doom-desire,future-sight,wish,cosmic-power|serene-grace|leftovers|water||docile
 
 
 ## PEWTER CITY
 
 --1_a|Brock
 ==items:potion
-geodude|18|hidden-power-ice,defense-curl,rock-tomb,strength||focus-band|||docile
-onix|20|strength,slam,rock-tomb,sandstorm|||||docile
+geodude|18|hidden-power-ice,defense-curl,rock-tomb,strength|rock-head|focus-band|||docile
+onix|20|strength,slam,rock-tomb,sandstorm|rock-head||||docile
 
 --1_b|Roxanne
 ==items:potion
-corsola|18|rock-tomb,recover,harden,hidden-power-ice|||||docile
-nosepass|20|iron-tail,harden,rock-tomb,hidden-power-grass||oran-berry|||docile
+corsola|18|rock-tomb,recover,harden,hidden-power-ice|hustle||||docile
+nosepass|20|iron-tail,harden,rock-tomb,hidden-power-grass|sturdy|oran-berry|||docile
 
 --1_c|Gym Leader Joey
-rattata|1|endeavor,quick-attack||focus-band|||docile
-rattata|20|quick-attack||choice-band|||docile
+rattata|1|endeavor,quick-attack|run-away|focus-band|||docile
+rattata|20|quick-attack|run-away|choice-band|||docile
 
 ##CERULEAN CITY
 
 --2_a|Misty
 ==items:full-heal,super-potion
-poliwrath|27|ice-punch,rock-smash,mega-punch,water-pulse|||||docile
-tentacruel|28|sludge,barrier,hidden-power-grass,water-pulse||mystic-water|||docile
-starmie|30|swift,aurora-beam,recover,surf|||||docile
+poliwrath|27|ice-punch,rock-smash,mega-punch,water-pulse|water-absorb||||docile
+tentacruel|28|sludge,barrier,hidden-power-grass,water-pulse|clear-body|mystic-water|||docile
+starmie|30|swift,aurora-beam,recover,surf|illuminate||||docile
 
 --2_b|Brawly
 ==items:super-potion,super-potion
-aipom|27|bulk-up,karate-chop,sand-attack,hidden-power-ice|||||docile
-donphan|28|mud-slap,defense-curl,rollout,hidden-power-electric|||||docile
-hariyama|30|bulk-up,arm-thrust,feint-attack,hidden-power-rock||sitrus-berry|||docile
+aipom|27|bulk-up,karate-chop,sand-attack,hidden-power-ice|run-away||||docile
+donphan|28|mud-slap,defense-curl,rollout,hidden-power-electric|sturdy||||docile
+hariyama|30|bulk-up,arm-thrust,feint-attack,hidden-power-rock|thick-fat|sitrus-berry|||docile
 
 --2_c|Duff & Eda
 ==double:true
-bellsprout|26|absorb,sleep-powder,water-gun,bind|||||docile
-diglett|26|harden,fury-attack,hyper-beam|||||docile
-cloyster|30|water-pulse,icicle-spear,withdraw,clamp||mystic-water|||docile
-steelix|30|dragon-breath,rock-throw,sandstorm,harden|||||docile
+bellsprout|26|absorb,sleep-powder,water-gun,bind|chlorophyll||||docile
+diglett|26|harden,fury-attack,hyper-beam|sand-veil||||docile
+cloyster|30|water-pulse,icicle-spear,withdraw,clamp|shell-armor|mystic-water|||docile
+steelix|30|dragon-breath,rock-throw,sandstorm,harden|rock-head||||docile
 
 
 ## VERMILION CITY
 
 --3_a|Lt. Surge
 ==items:full-heal,super-potion,super-potion,super-potion
-voltorb|36|hidden-power-ice,self-destruct,double-team,shock-wave|||||docile
-electrode|36|thunderbolt,explosion,thunder-wave,double-team|||||docile
-pikachu|38|surf,hidden-power-ice,double-team,volt-tackle|||||docile
-raichu|40|surf,submission,double-team,thunderbolt|||||docile
+voltorb|36|hidden-power-ice,self-destruct,double-team,shock-wave|soundproof||||docile
+electrode|36|thunderbolt,explosion,thunder-wave,double-team|soundproof||||docile
+pikachu|38|surf,hidden-power-ice,double-team,volt-tackle|static||||docile
+raichu|40|surf,submission,double-team,thunderbolt|static||||docile
 
 --3_b|Wattson
 ==items:full-heal,full-heal,super-potion,super-potion
-lanturn|36|water-pulse,shock-wave,flash,hidden-power-grass|||||docile
-manectric|36|shock-wave,mega-drain,thunder-wave,hidden-power-ice|||||docile
-electabuzz|38|thunder-punch,ice-punch,fire-punch,thunder-wave||sitrus-berry|||docile
-ampharos|40|thunderbolt,dragon-breath,light-screen,cotton-spore||lum-berry|||docile
+lanturn|36|water-pulse,shock-wave,flash,hidden-power-grass|volt-absorb||||docile
+manectric|36|shock-wave,mega-drain,thunder-wave,hidden-power-ice|static||||docile
+electabuzz|38|thunder-punch,ice-punch,fire-punch,thunder-wave|static|sitrus-berry|||docile
+ampharos|40|thunderbolt,dragon-breath,light-screen,cotton-spore|static|lum-berry|||docile
 
 --3_c|Franklin
 ==items:super-potion,super-potion,super-potion,super-potion
-graveler|37|rollout,defense-curl,earthquake,hidden-power-electric||soft-sand|||docile
-lairon|38|iron-tail,iron-defense,headbutt,hidden-power-grass||metal-coat|||docile
-onix|39|sandstorm,rock-blast,dragon-breath,earthquake||lum-berry|||docile
-tyranitar|40|thrash,rock-slide,aerial-ace,screech||leftovers|||docile
+graveler|37|rollout,defense-curl,earthquake,hidden-power-electric|rock-head|soft-sand|||docile
+lairon|38|iron-tail,iron-defense,headbutt,hidden-power-grass|sturdy|metal-coat|||docile
+onix|39|sandstorm,rock-blast,dragon-breath,earthquake|rock-head|lum-berry|||docile
+tyranitar|40|thrash,rock-slide,aerial-ace,screech|sand-stream|leftovers|||docile
 
 ### CELADON CITY
 
 
 --4_a|Erika
 ==items:full-heal,full-heal,hyper-potion,hyper-potion
-victreebel|45|hidden-power-rock,sludge,poison-powder,giga-drain||sitrus-berry|||docile
-tangela|45|poison-powder,return,ingrain,giga-drain||leftovers|||docile
-venusaur|45|sleep-powder,leech-seed,earthquake,giga-drain||soft-sand|||docile
-vileplume|45|sleep-powder,double-edge,substitute,synthesis||silk-scarf|||docile
-vileplume|45|hidden-power-rock,sludge-bomb,swords-dance,synthesis||poison-barb|||docile
+victreebel|45|hidden-power-rock,sludge,poison-powder,giga-drain|chlorophyll|sitrus-berry|||docile
+tangela|45|poison-powder,return,ingrain,giga-drain|chlorophyll|leftovers|||docile
+venusaur|45|sleep-powder,leech-seed,earthquake,giga-drain|overgrow|soft-sand|||docile
+vileplume|45|sleep-powder,double-edge,substitute,synthesis|chlorophyll|silk-scarf|||docile
+vileplume|45|hidden-power-rock,sludge-bomb,swords-dance,synthesis|chlorophyll|poison-barb|||docile
 
 --4_b|Flannery
 ==items:hyper-potion,hyper-potion,hyper-potion,full-heal
-sunflora|45|overheat,petal-dance,ingrain,sunny-day||white-herb|||docile
-octillery|45|flamethrower,octazooka,ice-beam,hidden-power-rock||sitrus-berry|||docile
-camerupt|45|overheat,earthquake,amnesia,return||soft-sand|||docile
-torkoal|45|overheat,strength,sunny-day,hidden-power-grass||white-herb|||docile
-houndoom|45|flamethrower,crunch,double-team,hidden-power-grass||black-glasses|||docile
+sunflora|45|overheat,petal-dance,ingrain,sunny-day|chlorophyll|white-herb|||docile
+octillery|45|flamethrower,octazooka,ice-beam,hidden-power-rock|suction-cups|sitrus-berry|||docile
+camerupt|45|overheat,earthquake,amnesia,return|magma-armor|soft-sand|||docile
+torkoal|45|overheat,strength,sunny-day,hidden-power-grass|white-smoke|white-herb|||docile
+houndoom|45|flamethrower,crunch,double-team,hidden-power-grass|early-bird|black-glasses|||docile
 
 --4_c|Gym Leader Charles
 ==items:hyper-potion,hyper-potion,hyper-potion,hyper-potion
-weezing|45|sludge-bomb,pain-split,smokescreen,explosion||sitrus-berry|||docile
-mawile|45|metal-claw,iron-defense,baton-pass,crunch||sitrus-berry|||docile
-huntail|45|water-pulse,crunch,ice-beam,substitute||sitrus-berry|||docile
-umbreon|45|dark-pulse,toxic,protect,confuse-ray||leftovers|||docile
-typhlosion|45|flamethrower,hidden-power-ice,aerial-ace,swagger||charcoal|||docile
+weezing|45|sludge-bomb,pain-split,smokescreen,explosion|levitate|sitrus-berry|||docile
+mawile|45|metal-claw,iron-defense,baton-pass,crunch|hyper-cutter|sitrus-berry|||docile
+huntail|45|water-pulse,crunch,ice-beam,substitute|swift-swim|sitrus-berry|||docile
+umbreon|45|dark-pulse,toxic,protect,confuse-ray|synchronize|leftovers|||docile
+typhlosion|45|flamethrower,hidden-power-ice,aerial-ace,swagger|blaze|charcoal|||docile
 
 
 --v_1|Admin (protecting elevator key)
-houndoom|55|dark-pulse,flamethrower,swagger,taunt||black-glasses|||docile
-crobat|55|aerial-ace,sludge-bomb,roost,toxic||poison-barb|||docile
-raticate|55|hyper-beam||choice-band|||docile
-umbreon|55|feint-attack,sand-attack,take-down,hidden-power-ice||sitrus-berry|||docile
-weezing|55|sludge-bomb,explosion||sitrus-berry|||docile
-seviper|55|poison-tail,dragon-breath,toxic,hidden-power-electric||leftovers|||docile
+houndoom|55|dark-pulse,flamethrower,swagger,taunt|early-bird|black-glasses|||docile
+crobat|55|aerial-ace,sludge-bomb,roost,toxic|inner-focus|poison-barb|||docile
+raticate|55|hyper-beam|run-away|choice-band|||docile
+umbreon|55|feint-attack,sand-attack,take-down,hidden-power-ice|synchronize|sitrus-berry|||docile
+weezing|55|sludge-bomb,explosion|levitate|sitrus-berry|||docile
+seviper|55|poison-tail,dragon-breath,toxic,hidden-power-electric|shed-skin|leftovers|||docile
 
 --v_2|Admin 1
-arbok|55|poison-tail,iron-tail,defense-curl,glare||lum-berry|||docile
-zangoose|55|metal-claw,frustration,tail-whip,growl||silk-scarf|||docile
-gligar|55|earthquake,sludge,cut,hidden-power-rock||soft-sand|||docile
-tauros|55|thrash,earthquake,rest,rage||lum-berry|||docile
-lickitung|55|slam,rollout,defense-curl,thunderbolt||sitrus-berry|||docile
-huntail|55|dark-pulse,water-pulse,double-team,whirlpool||lum-berry|||docile
+arbok|55|poison-tail,iron-tail,defense-curl,glare|intimidate|lum-berry|||docile
+zangoose|55|metal-claw,frustration,tail-whip,growl|immunity|silk-scarf|||docile
+gligar|55|earthquake,sludge,cut,hidden-power-rock|hyper-cutter|soft-sand|||docile
+tauros|55|thrash,earthquake,rest,rage|intimidate|lum-berry|||docile
+lickitung|55|slam,rollout,defense-curl,thunderbolt|own-tempo|sitrus-berry|||docile
+huntail|55|dark-pulse,water-pulse,double-team,whirlpool|swift-swim|lum-berry|||docile
 
 --v_3|Admin 2
-sandslash|55|earthquake,slash,hidden-power-rock,protect||lum-berry|||docile
-misdreavus|55|shadow-rage,perish-song,psybeam,feint-attack||scope-lens|||docile
-crawdaunt|55|crabhammer,knock-off,protect,ice-beam||leftovers|||docile
-noctowl|55|dark-pulse,air-cutter,confusion,hypnosis||black-glasses|||docile
-muk|55|sludge,toxic,acid-armor,minimize||bright-powder|||docile
-ditto|55|transform||lum-berry|||docile
+sandslash|55|earthquake,slash,hidden-power-rock,protect|sand-veil|lum-berry|||docile
+misdreavus|55|shadow-rage,perish-song,psybeam,feint-attack|levitate|scope-lens|||docile
+crawdaunt|55|crabhammer,knock-off,protect,ice-beam|hyper-cutter|leftovers|||docile
+noctowl|55|dark-pulse,air-cutter,confusion,hypnosis|insomnia|black-glasses|||docile
+muk|55|sludge,toxic,acid-armor,minimize|stench|bright-powder|||docile
+ditto|55|transform|limber|lum-berry|||docile
 
 
 # --v_4|Giovanni
@@ -233,39 +233,39 @@ ditto|55|transform||lum-berry|||docile
 
 --5_a|Koga
 ==items:full-heal,hyper-potion,hyper-potion,hyper-potion
-koffing|55|sludge,will-o-wisp,toxic,self-destruct||focus-band|||docile
-grimer|55|disable,sludge-bomb,giga-drain,toxic||quick-claw|||docile
-beedrill|55|twineedle,toxic,sludge,hidden-power-ground||poison-barb|||docile
-weezing|55|hyper-beam,explosion,smokescreen,shadow-ball||leftovers|||docile
-muk|55|minimize,acid-armor,toxic,sludge-bomb||sitrus-berry|||careful
-weezing|55|sludge-bomb,explosion,smokescreen,will-o-wisp||bright-powder|||docile
+koffing|55|sludge,will-o-wisp,toxic,self-destruct|levitate|focus-band|||docile
+grimer|55|disable,sludge-bomb,giga-drain,toxic|stench|quick-claw|||docile
+beedrill|55|twineedle,toxic,sludge,hidden-power-ground|swarm|poison-barb|||docile
+weezing|55|hyper-beam,explosion,smokescreen,shadow-ball|levitate|leftovers|||docile
+muk|55|minimize,acid-armor,toxic,sludge-bomb|stench|sitrus-berry|||careful
+weezing|55|sludge-bomb,explosion,smokescreen,will-o-wisp|levitate|bright-powder|||docile
 
 --5_b|Norman
 ==items:hyper-potion,hyper-potion,hyper-potion,hyper-potion
-spinda|55|facade,psycho-boost,double-team,surf||twisted-spoon|||docile
-zangoose|55|slash,aerial-ace,metal-claw,swords-dance||leftovers|||docile
-linoone|55|extreme-speed,belly-drum,pursuit,hidden-power-rock||sitrus-berry|||docile
-ursaring|55|facade,rest,sleep-talk,hidden-power-rock||sitrus-berry|||adamant
-pidgeot|55|facade,drill-peck,double-team,hidden-power-grass||sharp-beak|||adamant
-slaking|55|facade,submission,slack-off,hidden-power-ground||silk-scarf|||docile
+spinda|55|facade,psycho-boost,double-team,surf|own-tempo|twisted-spoon|||docile
+zangoose|55|slash,aerial-ace,metal-claw,swords-dance|immunity|leftovers|||docile
+linoone|55|extreme-speed,belly-drum,pursuit,hidden-power-rock|pickup|sitrus-berry|||docile
+ursaring|55|facade,rest,sleep-talk,hidden-power-rock|guts|sitrus-berry|||adamant
+pidgeot|55|facade,drill-peck,double-team,hidden-power-grass|keen-eye|sharp-beak|||adamant
+slaking|55|facade,submission,slack-off,hidden-power-ground|truant|silk-scarf|||docile
 
 --5_c|Gym Leader AAAAAAAHHH
 ==double:true
-misdreavus|55|shadow-rage,dark-pulse,hidden-power-ice,perish-song||lum-berry|||docile
-gengar|55|shadow-rage,sludge-bomb,hidden-power-rock,self-destruct||silk-scarf|||docile
-meganium|55|shadow-rage,giga-drain,light-screen,synthesis||miracle-seed|||docile
-banette|55|shadow-ball,return,will-o-wisp,hidden-power-rock||spell-tag|||adamant
-delcatty|55|shadow-rage,return,moonlight,iron-tail||lum-berry|||adamant
-marowak|55|shadow-rage,double-edge,bonemerang,brick-break||leftovers|||docile
+misdreavus|55|shadow-rage,dark-pulse,hidden-power-ice,perish-song|levitate|lum-berry|||docile
+gengar|55|shadow-rage,sludge-bomb,hidden-power-rock,self-destruct|cursed-body|silk-scarf|||docile
+meganium|55|shadow-rage,giga-drain,light-screen,synthesis|overgrow|miracle-seed|||docile
+banette|55|shadow-ball,return,will-o-wisp,hidden-power-rock|insomnia|spell-tag|||adamant
+delcatty|55|shadow-rage,return,moonlight,iron-tail|cute-charm|lum-berry|||adamant
+marowak|55|shadow-rage,double-edge,bonemerang,brick-break|rock-head|leftovers|||docile
 
 --v_1silph|Admin
 ==double:true
-seviper|65|poison-fang,dragon-breath,iron-tail,defense-curl||poison-barb|||docile
-crobat|65|poison-fang,aerian-ace,substitute,roost||sharp-beak|||docile
-houndoom|65|dark-pulse,flamethrower,swagger,roar||charcoal|||docile
-mightyena|65|crunch,double-edge,swagger,glare||black-glasses|||docile
-kanghaskan|65|mega-punch,substitute,brick-break,hidden-power-rock||silk-scarf|||docile
-onix|65|dragon-breath,rock-slide,sandstorm,iron-defense||leftovers|||docile
+seviper|65|poison-fang,dragon-breath,iron-tail,defense-curl|shed-skin|poison-barb|||docile
+crobat|65|poison-fang,aerian-ace,substitute,roost|inner-focus|sharp-beak|||docile
+houndoom|65|dark-pulse,flamethrower,swagger,roar|early-bird|charcoal|||docile
+mightyena|65|crunch,double-edge,swagger,glare|intimidate|black-glasses|||docile
+kanghaskan|65|mega-punch,substitute,brick-break,hidden-power-rock|early-bird|silk-scarf|||docile
+onix|65|dragon-breath,rock-slide,sandstorm,iron-defense|rock-head|leftovers|||docile
 
 ### ??????????????
 # --v_2silph|Giovanni
@@ -279,303 +279,303 @@ onix|65|dragon-breath,rock-slide,sandstorm,iron-defense||leftovers|||docile
 
 --6_a|Sabrina
 ==double:true|items:full-heal,hyper-potion,hyper-potion,hyper-potion
-abra|60|reflect,destiny-bond,torment,perish-song||focus-band|||modest
-kadabra|63|perish-song,psybeam,will-o-wisp,shadow-ball||sitrus-berry|||modest
-exeggutor|60|psychic,ingrain,synthesis,substitute||lum-berry|||bold
-mr-mime|63|barrier,psybeam,brick-break,will-o-wisp||leftovers|||bold
-venomoth|65|psybeam,leech-seed,bug-slash,supersonic||silver-powder|||careful
-alakazam|65|psychic,recover,dynamic-punch,calm-mind||twisted-spoon|||docile
+abra|60|reflect,destiny-bond,torment,perish-song|synchronize|focus-band|||modest
+kadabra|63|perish-song,psybeam,will-o-wisp,shadow-ball|synchronize|sitrus-berry|||modest
+exeggutor|60|psychic,ingrain,synthesis,substitute|chlorophyll|lum-berry|||bold
+mr-mime|63|barrier,psybeam,brick-break,will-o-wisp|soundproof|leftovers|||bold
+venomoth|65|psybeam,leech-seed,bug-slash,supersonic|shield-dust|silver-powder|||careful
+alakazam|65|psychic,recover,dynamic-punch,calm-mind|synchronize|twisted-spoon|||docile
 
 
 --6_b|Winona
 ==double:true|items:full-heal,hyper-potion,hyper-potion,hyper-potion
-ninjask|60|aerial-ace,swords-dance,protect,baton-pass||sitrus-berry|||adamant
-swellow|63|aerial-ace,superpower,roost,hidden-power-ground||black-belt|||adamant
-fearow|60|aerial-ace,feather-dance,roost,hidden-power-grass||sharp-beak|||impish
-noctowl|63|aerial-ace,dark-pulse,roost,hidden-power-electric||black-glasses|||calm
-xatu|65|aerial-ace,psychic,roost,hidden-power-rock||leftovers|||modest
-skarmory|65|aeroblast,steel-wing,roost,hidden-power-ground||metal-coat|||docile
+ninjask|60|aerial-ace,swords-dance,protect,baton-pass|speed-boost|sitrus-berry|||adamant
+swellow|63|aerial-ace,superpower,roost,hidden-power-ground|guts|black-belt|||adamant
+fearow|60|aerial-ace,feather-dance,roost,hidden-power-grass|keen-eye|sharp-beak|||impish
+noctowl|63|aerial-ace,dark-pulse,roost,hidden-power-electric|insomnia|black-glasses|||calm
+xatu|65|aerial-ace,psychic,roost,hidden-power-rock|synchronize|leftovers|||modest
+skarmory|65|aeroblast,steel-wing,roost,hidden-power-ground|keen-eye|metal-coat|||docile
 
 --6_c|Gym Leader Bob
 ==double:true|items:full-heal,hyper-potion,hyper-potion,hyper-potion
-scyther|65|swords-dance,double-team,wing-attack,bug-slash||sitrus-berry|||adamant
-armaldo|65|ancient-power,protect,slash,toxic||bright-powder|||careful
-pinsir|65|megahorn,submission,rock-slide,strength||black-belt|||adamant
-shedinja|65|shadow-rage,spite,hidden-power-rock,cut||silver-powder|||adamant
-scizor|65|hidden-power-rock,metal-claw,substitute,slash||lum-berry|||impish
-flygon|65|ultra-punch,bug-slash,water-pulse,protect||leftovers|||docile
+scyther|65|swords-dance,double-team,wing-attack,bug-slash|swarm|sitrus-berry|||adamant
+armaldo|65|ancient-power,protect,slash,toxic|battle-armor|bright-powder|||careful
+pinsir|65|megahorn,submission,rock-slide,strength|hyper-cutter|black-belt|||adamant
+shedinja|65|shadow-rage,spite,hidden-power-rock,cut|wonder-guard|silver-powder|||adamant
+scizor|65|hidden-power-rock,metal-claw,substitute,slash|swarm|lum-berry|||impish
+flygon|65|ultra-punch,bug-slash,water-pulse,protect|levitate|leftovers|||docile
 
 ### CINNABAR ISLAND
 
 --7_a|Blaine
 ==double:true|items:full-restore,full-restore,hyper-potion,hyper-potion
-growlithe|65|roar,sunny-day,take-down,fire-blast||focus-band|||adamant
-magmar|65|confuse-ray,sunny-day,solar-beam,fire-blast||sitrus-berry|||modest
-charizard|65|outrage,fire-blast,flamethrower,hidden-power-rock||dragon-fang|||docile
-ninetales|70|sunny-day,will-o-wisp,grudge,fire-blast||lum-berry|||calm
-rapidash|70|bounce,solar-beam,fire-spin,fire-blast||sharp-beak|||docile
-arcanine|70|crunch,take-down,roar,blast-burn||charcoal|||docile
+growlithe|65|roar,sunny-day,take-down,fire-blast|intimidate|focus-band|||adamant
+magmar|65|confuse-ray,sunny-day,solar-beam,fire-blast|flame-body|sitrus-berry|||modest
+charizard|65|outrage,fire-blast,flamethrower,hidden-power-rock|blaze|dragon-fang|||docile
+ninetales|70|sunny-day,will-o-wisp,grudge,fire-blast|flash-fire|lum-berry|||calm
+rapidash|70|bounce,solar-beam,fire-spin,fire-blast|run-away|sharp-beak|||docile
+arcanine|70|crunch,take-down,roar,blast-burn|intimidate|charcoal|||docile
 
 --7_b|Tate & Liza
 ==double:true|items:full-restore,full-restore,hyper-potion,hyper-potion
-beautifly|65|sleep-powder,reflect,light-screen,psycho-boost||white-herb|||bold
-claydol|65|psychic,mud-slap,calm-mind,hidden-power-grass||bright-powder|||calm
-grumpig|65|toxic,psychic,calm-mind,slack-off||leftovers|||calm
-medicham|70|psychic,high-jump-kick,bulk-up,hidden-power-rock||black-belt|||adamant
-gardevoir|70|psychic,dark-pulse,hypnosis,dream-eater||twisted-spoon|||modest
-metagross|70|meteor-mash,amnesia,iron-defense,hidden-power-grass||leftovers|||docile
+beautifly|65|sleep-powder,reflect,light-screen,psycho-boost|swarm|white-herb|||bold
+claydol|65|psychic,mud-slap,calm-mind,hidden-power-grass|levitate|bright-powder|||calm
+grumpig|65|toxic,psychic,calm-mind,slack-off|thick-fat|leftovers|||calm
+medicham|70|psychic,high-jump-kick,bulk-up,hidden-power-rock|pure-power|black-belt|||adamant
+gardevoir|70|psychic,dark-pulse,hypnosis,dream-eater|synchronize|twisted-spoon|||modest
+metagross|70|meteor-mash,amnesia,iron-defense,hidden-power-grass|clear-body|leftovers|||docile
 
 --7_c|Gym Leader Deidara
 ==double:true|items:full-restore,full-restore,hyper-potion,hyper-potion
-gengar|70|explosion,shadow-rage,sludge-bomb||spell-tag|||adamant
-glalie|70|explosion,ancient-power,ice-beam||never-melt-ice|||calm
-magneton|70|explosion,thunderbolt,doom-desire||magnet|||modest
-magcargo|70|explosion,flame-wheel,ancient-power||charcoal|||modest
-swalot|70|explosion,dragon-breath,sludge-bomb||dragon-fang|||bold
-electrode|70|explosion,thunderbolt||silk-scarf|||docile
+gengar|70|explosion,shadow-rage,sludge-bomb|cursed-body|spell-tag|||adamant
+glalie|70|explosion,ancient-power,ice-beam|inner-focus|never-melt-ice|||calm
+magneton|70|explosion,thunderbolt,doom-desire|magnet-pull|magnet|||modest
+magcargo|70|explosion,flame-wheel,ancient-power|magma-armor|charcoal|||modest
+swalot|70|explosion,dragon-breath,sludge-bomb|liquid-ooze|dragon-fang|||bold
+electrode|70|explosion,thunderbolt|soundproof|silk-scarf|||docile
 
 
 ### VIRIDIAN CITY
 
 --8_a|Giovanni
 ==items:full-restore,full-restore,hyper-potion,hyper-potion
-rhyhorn|77|take-down,rock-blast,scary-face,earthquake||sitrus-berry|||impish
-diglett|80|earthquake||choice-band|||adamant
-nidoqueen|78|body-slam,double-kick,sludge-bomb,earthquake||lum-berry|||jolly
-nidoking|77|thrash,double-kick,sludge-bomb,earthquake||lum-berry|||jolly
-dugtrio|75|slash,mud-slap,sand-tomb,earthquake||lum-berry|||adamant
-rhydon|80|take-down,rock-blast,hidden-power-grass,earthquake||leftovers|||docile
+rhyhorn|77|take-down,rock-blast,scary-face,earthquake|lightning-rod|sitrus-berry|||impish
+diglett|80|earthquake|sand-veil|choice-band|||adamant
+nidoqueen|78|body-slam,double-kick,sludge-bomb,earthquake|poison-point|lum-berry|||jolly
+nidoking|77|thrash,double-kick,sludge-bomb,earthquake|poison-point|lum-berry|||jolly
+dugtrio|75|slash,mud-slap,sand-tomb,earthquake|sand-veil|lum-berry|||adamant
+rhydon|80|take-down,rock-blast,hidden-power-grass,earthquake|lightning-rod|leftovers|||docile
 
 --8_b|Wallace
 ==items:full-restore,full-restore,hyper-potion,hyper-potion
-pelipper|77|water-pulse,roost,toxic,whirlwind||leftovers|||calm
-ludicolo|80|water-pulse,giga-drain,protect,hidden-power-rock||miracle-seed|||modest
-azumarill|78|water-pulse,double-edge,agility,rain-dance||lum-berry|||adamant
-wailord|77|water-spout,blizzard,amnesia,rest||mystic-water|||modest
-kingdra|75|dragon-dance,outrage,body-slam,hidden-power-rock||dragon-fang|||docile
-milotic|80|thunderbolt,surf,cosmic-power,moonlight||leftovers|||docile
+pelipper|77|water-pulse,roost,toxic,whirlwind|keen-eye|leftovers|||calm
+ludicolo|80|water-pulse,giga-drain,protect,hidden-power-rock|swift-swim|miracle-seed|||modest
+azumarill|78|water-pulse,double-edge,agility,rain-dance|thick-fat|lum-berry|||adamant
+wailord|77|water-spout,blizzard,amnesia,rest|water-veil|mystic-water|||modest
+kingdra|75|dragon-dance,outrage,body-slam,hidden-power-rock|swift-swim|dragon-fang|||docile
+milotic|80|thunderbolt,surf,cosmic-power,moonlight|marvel-scale|leftovers|||docile
 
 --8_c|Gym Leader Eevolove
 ==items:full-restore,full-restore,hyper-potion,hyper-potion
-eevee|80|quick-attack,toxic,protect,double-team||silk-scarf|||bold
-vaporeon|80|ice-beam,surf,hidden-power-ground,protect||leftovers|||calm
-flareon|80|double-edge,flamethrower,iron-tail,protect||charcoal|||adamant
-jolteon|80|thunderbolt,hidden-power-grass,protect,attract||magnet|||modest
-umbreon|80|dark-pulse,toxic,protect,moonlight||leftovers|||calm
-espeon|80|psychic,cut,hidden-power-electric,morning-sun||twisted-spoon|||docile
+eevee|80|quick-attack,toxic,protect,double-team|run-away|silk-scarf|||bold
+vaporeon|80|ice-beam,surf,hidden-power-ground,protect|water-absorb|leftovers|||calm
+flareon|80|double-edge,flamethrower,iron-tail,protect|flash-fire|charcoal|||adamant
+jolteon|80|thunderbolt,hidden-power-grass,protect,attract|volt-absorb|magnet|||modest
+umbreon|80|dark-pulse,toxic,protect,moonlight|synchronize|leftovers|||calm
+espeon|80|psychic,cut,hidden-power-electric,morning-sun|synchronize|twisted-spoon|||docile
 
 
 ### Victory Road
 
 --mb_1|Brock
 ==items:full-restore,full-restore,full-restore,full-restore
-golem|95|hidden-power-grass,earthquake,sandstorm,explosion||shell-bell|||careful
-onix|95|earthquake,hidden-power-ice,sandstorm,rock-tomb||sitrus-berry|||careful
-rhydon|95|rock-tomb,earthquake,protect,ice-beam||leftovers|||adamant
-omastar|95|hydro-pump,ancient-power,sandstorm,ice-beam||sitrus-berry|||docile
-kabutops|95|ancient-power,brick-break,hidden-power-grass,surf||lum-berry|||docile
-aerodactyl|95|hyper-beam,ancient-power,take-down,aerial-ace||lum-berry|||docile
+golem|95|hidden-power-grass,earthquake,sandstorm,explosion|rock-head|shell-bell|||careful
+onix|95|earthquake,hidden-power-ice,sandstorm,rock-tomb|rock-head|sitrus-berry|||careful
+rhydon|95|rock-tomb,earthquake,protect,ice-beam|lightning-rod|leftovers|||adamant
+omastar|95|hydro-pump,ancient-power,sandstorm,ice-beam|swift-swim|sitrus-berry|||docile
+kabutops|95|ancient-power,brick-break,hidden-power-grass,surf|swift-swim|lum-berry|||docile
+aerodactyl|95|hyper-beam,ancient-power,take-down,aerial-ace|rock-head|lum-berry|||docile
 
 
 --mb_2|Misty
 ==items:full-restore,full-restore,full-restore,full-restore
-blastoise|95|protect,iron-defense,blizzard,hydro-cannon||leftovers|||calm
-poliwrath|95|bulk-up,waterfall,earthquake,superpower||shell-bell|||adamant
-kingler|95|hidden-power-ground,agility,meteor-mash,crabhammer||scope-lens|||jolly
-seadra|95|hydro-pump,dragon-dance,hidden-power-ground,facade||mystic-water|||docile
-seaking|95|rain-dance,megahorn,surf,horn-attack||lum-berry|||docile
-vaporeon|95|surf,ice-beam,shadow-ball,protect||leftovers|||docile
+blastoise|95|protect,iron-defense,blizzard,hydro-cannon|torrent|leftovers|||calm
+poliwrath|95|bulk-up,waterfall,earthquake,superpower|water-absorb|shell-bell|||adamant
+kingler|95|hidden-power-ground,agility,meteor-mash,crabhammer|hyper-cutter|scope-lens|||jolly
+seadra|95|hydro-pump,dragon-dance,hidden-power-ground,facade|poison-point|mystic-water|||docile
+seaking|95|rain-dance,megahorn,surf,horn-attack|swift-swim|lum-berry|||docile
+vaporeon|95|surf,ice-beam,shadow-ball,protect|water-absorb|leftovers|||docile
 
 
 --mb_3|Lt. Surge
 ==items:full-restore,full-restore,full-restore,full-restore
-raichu|95|double-team,flash,thunder,surf||bright-powder|||bold
-magneton|95|zap-cannon,flash,double-team,tri-attack||bright-powder|||timid
-electrode|95|thunder,hidden-power-ice,explosion,double-team||bright-powder|||jolly
-electabuzz|95|thunderbolt,iron-tail,ice-punch,double-team||shell-bell|||docile
-jolteon|95|hidden-power-ice,thunder,double-team,flash||bright-powder|||docile
-electrode|95|explosion||choice-band|||docile
+raichu|95|double-team,flash,thunder,surf|static|bright-powder|||bold
+magneton|95|zap-cannon,flash,double-team,tri-attack|magnet-pull|bright-powder|||timid
+electrode|95|thunder,hidden-power-ice,explosion,double-team|soundproof|bright-powder|||jolly
+electabuzz|95|thunderbolt,iron-tail,ice-punch,double-team|static|shell-bell|||docile
+jolteon|95|hidden-power-ice,thunder,double-team,flash|volt-absorb|bright-powder|||docile
+electrode|95|explosion|soundproof|choice-band|||docile
 
 
 --mb_4|Erika
 ==items:full-restore,full-restore,full-restore,full-restore
-victreebel|95|sludge-bomb,giga-drain,sunny-day,toxic||sitrus-berry|||jolly
-parasect|95|spore,slash,bug-slash,aerial-ace||quick-claw|||adamant
-vileplume|95|sludge-bomb,hidden-power-rock,solar-beam,sunny-day||poison-barb|||jolly
-exeggutor|95|hidden-power-ice,leech-seed,protect,giga-drain||lum-berry|||docile
-tangela|95|double-edge,frenzy-plant,giga-drain,poison-powder||miracle-seed|||docile
-venusaur|95|giga-drain,sleep-powder,leech-seed,earthquake||leftovers|||docile
+victreebel|95|sludge-bomb,giga-drain,sunny-day,toxic|chlorophyll|sitrus-berry|||jolly
+parasect|95|spore,slash,bug-slash,aerial-ace|effect-spore|quick-claw|||adamant
+vileplume|95|sludge-bomb,hidden-power-rock,solar-beam,sunny-day|chlorophyll|poison-barb|||jolly
+exeggutor|95|hidden-power-ice,leech-seed,protect,giga-drain|chlorophyll|lum-berry|||docile
+tangela|95|double-edge,frenzy-plant,giga-drain,poison-powder|chlorophyll|miracle-seed|||docile
+venusaur|95|giga-drain,sleep-powder,leech-seed,earthquake|overgrow|leftovers|||docile
 
 --mb_5|Koga
 ==items:full-restore,full-restore,full-restore,full-restore
-beedrill|95|sludge-bomb,submission,agility,bug-slash||poison-barb|||adamant
-arbok|95|sludge-bomb,giga-drain,crunch,toxic||sitrus-berry|||impish
-golbat|95|hidden-power-ground,poison-fang,bug-slash,air-cutter||lum-berry|||jolly
-venomoth|95|sludge-bomb,toxic,giga-drain,psychic||poison-barb|||docile
-muk|95|sludge-bomb,minimize,acid-armor,hyper-beam||bright-powder|||docile
-weezing|95|explosion,toxic,sludge-bomb,shadow-ball||leftovers|||docile
+beedrill|95|sludge-bomb,submission,agility,bug-slash|swarm|poison-barb|||adamant
+arbok|95|sludge-bomb,giga-drain,crunch,toxic|intimidate|sitrus-berry|||impish
+golbat|95|hidden-power-ground,poison-fang,bug-slash,air-cutter|inner-focus|lum-berry|||jolly
+venomoth|95|sludge-bomb,toxic,giga-drain,psychic|shield-dust|poison-barb|||docile
+muk|95|sludge-bomb,minimize,acid-armor,hyper-beam|stench|bright-powder|||docile
+weezing|95|explosion,toxic,sludge-bomb,shadow-ball|levitate|leftovers|||docile
 
 
 --mb_6|Sabrina
 ==items:full-restore,full-restore,full-restore,full-restore
-alakazam|95|trick,psycho-boost,hidden-power-ice,reflect||sitrus-berry|||modest
-slowbro|95|psychic,amnesia,shadow-ball,surf||leftovers|||bold
-hypno|95|psychic,light-screen,reflect,perish-song||lum-berry|||calm
-mr-mime|95|psychic,calm-mind,superpower,reflect||twisted-spoon|||docile
-jynx|95|psychic,blizzard,perish-song,lovely-kiss||sitrus-berry|||docile
-exeggutor|95|psychic,substitute,giga-drain,leech-seed||sitrus-berry|||docile
+alakazam|95|trick,psycho-boost,hidden-power-ice,reflect|synchronize|sitrus-berry|||modest
+slowbro|95|psychic,amnesia,shadow-ball,surf|oblivious|leftovers|||bold
+hypno|95|psychic,light-screen,reflect,perish-song|insomnia|lum-berry|||calm
+mr-mime|95|psychic,calm-mind,superpower,reflect|soundproof|twisted-spoon|||docile
+jynx|95|psychic,blizzard,perish-song,lovely-kiss|oblivious|sitrus-berry|||docile
+exeggutor|95|psychic,substitute,giga-drain,leech-seed|chlorophyll|sitrus-berry|||docile
 
 --mb_7|Blaine
 ==items:full-restore,full-restore,full-restore,full-restore
-ninetales|95|sunny-day,hidden-power-grass,fire-blast,confuse-ray||sitrus-berry|||modest
-arcanine|95|double-edge,extreme-speed,aerial-ace,hidden-power-ground||choice-band|||jolly
-rapidash|95|fire-blast,solar-beam,thrash,double-kick||charcoal|||adamant
-magmar|95|fire-blast,confuse-ray,sunny-day,hidden-power-grass||sitrus-berry|||docile
-flareon|95|overheat,hidden-power-ground,hyper-beam,substitute||leftovers|||docile
-charizard|95|fire-blast,steel-wing,solar-beam,earthquake||sitrus-berry|||docile
+ninetales|95|sunny-day,hidden-power-grass,fire-blast,confuse-ray|flash-fire|sitrus-berry|||modest
+arcanine|95|double-edge,extreme-speed,aerial-ace,hidden-power-ground|intimidate|choice-band|||jolly
+rapidash|95|fire-blast,solar-beam,thrash,double-kick|run-away|charcoal|||adamant
+magmar|95|fire-blast,confuse-ray,sunny-day,hidden-power-grass|flame-body|sitrus-berry|||docile
+flareon|95|overheat,hidden-power-ground,hyper-beam,substitute|flash-fire|leftovers|||docile
+charizard|95|fire-blast,steel-wing,solar-beam,earthquake|blaze|sitrus-berry|||docile
 
 --mb_8|Giovanni
 ==items:full-restore,full-restore,full-restore,full-restore
-sandslash|95|earthquake,hidden-power-grass,hyper-beam,aerial-ace||sitrus-berry|||impish
-dugtrio|95|earthquake,protect,aerial-ace,sandstorm||soft-sand|||jolly
-marowak|95|bonemerang,aerial-ace,flamethrower,hidden-power-grass||thick-club|||impish
-rhydon|95|body-slam,thunderbolt,earthquake,megahorn||leftovers|||docile
-nidoqueen|95|superpower,thunder,blizzard,earthquake||sitrus-berry|||docile
-nidoking|95|thunderbolt,ice-beam,sludge-bomb,earthquake||sitrus-berry|||docile
+sandslash|95|earthquake,hidden-power-grass,hyper-beam,aerial-ace|sand-veil|sitrus-berry|||impish
+dugtrio|95|earthquake,protect,aerial-ace,sandstorm|sand-veil|soft-sand|||jolly
+marowak|95|bonemerang,aerial-ace,flamethrower,hidden-power-grass|rock-head|thick-club|||impish
+rhydon|95|body-slam,thunderbolt,earthquake,megahorn|lightning-rod|leftovers|||docile
+nidoqueen|95|superpower,thunder,blizzard,earthquake|poison-point|sitrus-berry|||docile
+nidoking|95|thunderbolt,ice-beam,sludge-bomb,earthquake|poison-point|sitrus-berry|||docile
 
 ##### VICTORY ROAD (right side) all lvl 95
 
 --mb_9|Roxanne
 ==items:full-restore,full-restore,full-restore,full-restore
-shuckle|95|toxic,rest,encore,wrap||leftovers|||impish
-magcargo|95|body-slam,rock-slide,reflect,rest||sitrus-berry|||careful
-cradily|95|amnesia,magical-leaf,ingrain,ancient-power||lum-berry|||bold
-glalie|95|blizzard,rock-blast,torment,attract||hard-stone|||docile
-aggron|95|metal-claw,iron-defense,rock-tomb,power-up-punch||metal-coat|||docile
-tyranitar|95|thrash,rock-slide,aerial-ace,dragon-dance||leftovers|||docile
+shuckle|95|toxic,rest,encore,wrap|sturdy|leftovers|||impish
+magcargo|95|body-slam,rock-slide,reflect,rest|magma-armor|sitrus-berry|||careful
+cradily|95|amnesia,magical-leaf,ingrain,ancient-power|suction-cups|lum-berry|||bold
+glalie|95|blizzard,rock-blast,torment,attract|inner-focus|hard-stone|||docile
+aggron|95|metal-claw,iron-defense,rock-tomb,power-up-punch|sturdy|metal-coat|||docile
+tyranitar|95|thrash,rock-slide,aerial-ace,dragon-dance|sand-stream|leftovers|||docile
 
 --mb_10|Brawly
 ==items:full-restore,full-restore,full-restore,full-restore
-azumarill|95|submission,rain-dance,hidden-power-rock,hydro-pump||mystic-water|||bold
-absol|95|superpower,perish-song,slash,thunderbolt||magnet|||adamant
-hariyama|95|belly-drum,fake-out,rock-tomb,brick-break||sitrus-berry|||careful
-heracross|95|twineedle,secret-power,counter,knock-off||silk-scarf|||docile
-donphan|95|earthquake,submission,curse,hidden-power-rock||leftovers|||docile
-blaziken|95|sky-uppercut,blaze-kick,slash,power-up-punch||charcoal|||docile
+azumarill|95|submission,rain-dance,hidden-power-rock,hydro-pump|thick-fat|mystic-water|||bold
+absol|95|superpower,perish-song,slash,thunderbolt|pressure|magnet|||adamant
+hariyama|95|belly-drum,fake-out,rock-tomb,brick-break|thick-fat|sitrus-berry|||careful
+heracross|95|twineedle,secret-power,counter,knock-off|swarm|silk-scarf|||docile
+donphan|95|earthquake,submission,curse,hidden-power-rock|sturdy|leftovers|||docile
+blaziken|95|sky-uppercut,blaze-kick,slash,power-up-punch|blaze|charcoal|||docile
 
 --mb_11|Wattson
 ==items:full-restore,full-restore,full-restore,full-restore
-lanturn|95|rain-dance,toxic,thunderbolt,surf||leftovers|||calm
-illumise|95|thunder-punch,wish,encore,charm||sitrus-berry|||bold
-manectric|95|giga-drain,thunder,rest,overheat||lum-berry|||modest
-porygon2|95|tri-attack,thunderbolt,ice-beam,flamethrower||bright-powder|||docile
-ampharos|95|ultra-punch,thunder,light-screen,reflect||leftovers|||docile
-milotic|95|recover,refresh,surf,shock-wave||mystic-water|||docile
+lanturn|95|rain-dance,toxic,thunderbolt,surf|volt-absorb|leftovers|||calm
+illumise|95|thunder-punch,wish,encore,charm|oblivious|sitrus-berry|||bold
+manectric|95|giga-drain,thunder,rest,overheat|static|lum-berry|||modest
+porygon2|95|tri-attack,thunderbolt,ice-beam,flamethrower|trace|bright-powder|||docile
+ampharos|95|ultra-punch,thunder,light-screen,reflect|static|leftovers|||docile
+milotic|95|recover,refresh,surf,shock-wave|marvel-scale|mystic-water|||docile
 
 
 --mb_12|Flannery
 ==items:full-restore,full-restore,full-restore,full-restore
-camerupt|95|eruption,sunny-day,earthquake,hidden-power-grass||soft-sand|||255
-octillery|95|sacred-fire,ice-beam,octazooka,hyper-beam||silk-scarf|||calm
-houndoom|95|crunch,flamethrower,double-team,secret-power||sitrus-berry|||timid
-sunflora|95|sunny-day,solar-beam,overheat,perish-song||miracle-seed|||docile
-torkoal|95|meteor-mash,heat-wave,iron-defense,amnesia||leftovers|||docile
-typhlosion|95|dark-pulse,flamethrower,hidden-power-electric,protect||magnet|||docile
+camerupt|95|eruption,sunny-day,earthquake,hidden-power-grass|magma-armor|soft-sand|||255
+octillery|95|sacred-fire,ice-beam,octazooka,hyper-beam|suction-cups|silk-scarf|||calm
+houndoom|95|crunch,flamethrower,double-team,secret-power|early-bird|sitrus-berry|||timid
+sunflora|95|sunny-day,solar-beam,overheat,perish-song|chlorophyll|miracle-seed|||docile
+torkoal|95|meteor-mash,heat-wave,iron-defense,amnesia|white-smoke|leftovers|||docile
+typhlosion|95|dark-pulse,flamethrower,hidden-power-electric,protect|blaze|magnet|||docile
 
 --mb_13|Norman
 ==items:full-restore,full-restore,full-restore,full-restore
-kecleon|95|ultra-punch,water-spout,ancient-power,substitute||sitrus-berry|||modest
-stantler|95|petal-dance,secret-power,calm-mind,toxic||silk-scarf|||impish
-ursaring|95|slash,protect,strength,knock-off||leftovers|||adamant
-dunsparce|95|outrage,dragon-dance,headbutt,glare||lum-berry|||docile
-feraligatr|95|body-slam,hydro-pump,blizzard,hidden-power-rock||lum-berry|||docile
-slaking|95|curse,amnesia,body-slam,hidden-power-rock||leftovers|||docile
+kecleon|95|ultra-punch,water-spout,ancient-power,substitute|color-change|sitrus-berry|||modest
+stantler|95|petal-dance,secret-power,calm-mind,toxic|intimidate|silk-scarf|||impish
+ursaring|95|slash,protect,strength,knock-off|guts|leftovers|||adamant
+dunsparce|95|outrage,dragon-dance,headbutt,glare|serene-grace|lum-berry|||docile
+feraligatr|95|body-slam,hydro-pump,blizzard,hidden-power-rock|torrent|lum-berry|||docile
+slaking|95|curse,amnesia,body-slam,hidden-power-rock|truant|leftovers|||docile
 
 --mb_14|Winona
 ==double:true|items:full-restore,full-restore,full-restore,full-restore
-jumpluff|95|spore,leech-seed,mega-drain,aerial-ace||lum-berry|||timid
-swellow|95|fly,submission,steel-wing,protect||leftovers|||adamant
+jumpluff|95|spore,leech-seed,mega-drain,aerial-ace|chlorophyll|lum-berry|||timid
+swellow|95|fly,submission,steel-wing,protect|guts|leftovers|||adamant
 
-ninjask|95|swords-dance,baton-pass,bug-slash,aerial-ace||sitrus-berry|||adamant
-mantine|95|surf,rest,toxic,hail||leftovers|||docile
-skarmory|95|steel-wing,fly,curse,roost||lum-berry|||docile
-altaria|95|dragon-dance,dragon-breath,aerial-ace,return||sharp-beak|||docile
+ninjask|95|swords-dance,baton-pass,bug-slash,aerial-ace|speed-boost|sitrus-berry|||adamant
+mantine|95|surf,rest,toxic,hail|swift-swim|leftovers|||docile
+skarmory|95|steel-wing,fly,curse,roost|keen-eye|lum-berry|||docile
+altaria|95|dragon-dance,dragon-breath,aerial-ace,return|natural-cure|sharp-beak|||docile
 
 --mb_15|Tate & Liza
 ==double:true|items:full-restore,full-restore,full-restore,full-restore
-xatu|95|wish,toxic,psychic,protect||lum-berry|||calm
-claydol|95|earthquake,psychic,ancient-power,explosion||soft-sand|||impish
-grumpig|95|sludge-bomb,rest,snore,psychic||sitrus-berry|||bold
-gardevoir|95|hypnosis,dream-eater,calm-mind,shadow-ball||leftovers|||docile
-espeon|95|psych-up,morning-sun,psychic,swift||silk-scarf|||docile
-metagross|95|agility,earthquake,meteor-mash,brick-break||leftovers|||docile
+xatu|95|wish,toxic,psychic,protect|synchronize|lum-berry|||calm
+claydol|95|earthquake,psychic,ancient-power,explosion|levitate|soft-sand|||impish
+grumpig|95|sludge-bomb,rest,snore,psychic|thick-fat|sitrus-berry|||bold
+gardevoir|95|hypnosis,dream-eater,calm-mind,shadow-ball|synchronize|leftovers|||docile
+espeon|95|psych-up,morning-sun,psychic,swift|synchronize|silk-scarf|||docile
+metagross|95|agility,earthquake,meteor-mash,brick-break|clear-body|leftovers|||docile
 
 --mb_16|Wallace
 ==items:full-restore,full-restore,full-restore,full-restore
-pelipper|95|water-pulse,toxic,protect,roost||mystic-water|||timid
-ludicolo|95|rain-dance,fake-out,giga-drain,surf||miracle-seed|||modest
-wailord|95|ice-beam,water-spout,amnesia,hydro-pump||never-melt-ice|||calm
-crawdaunt|95|crabhammer,knock-off,ice-beam,return||sitrus-berry|||docile
-walrein|95|hydro-pump,blizzard,rest,snore||leftovers|||docile
-swampert|95|earthquake,waterfall,protect,toxic||leftovers|||docile
+pelipper|95|water-pulse,toxic,protect,roost|keen-eye|mystic-water|||timid
+ludicolo|95|rain-dance,fake-out,giga-drain,surf|swift-swim|miracle-seed|||modest
+wailord|95|ice-beam,water-spout,amnesia,hydro-pump|water-veil|never-melt-ice|||calm
+crawdaunt|95|crabhammer,knock-off,ice-beam,return|hyper-cutter|sitrus-berry|||docile
+walrein|95|hydro-pump,blizzard,rest,snore|thick-fat|leftovers|||docile
+swampert|95|earthquake,waterfall,protect,toxic|torrent|leftovers|||docile
 
 ###### ELITE 4 all lvl 100
 
 --e1|Lorelei
 ==items:full-restore,full-restore,full-restore,full-restore
-lapras|100|perish-song,ice-beam,hydro-pump,body-slam||scope-lens|||calm
-blaziken|100|protect,swords-dance,brick-break,return||silk-scarf|||docile
-meganium|100|light-screen,reflect,giga-drain,shadow-ball||leftovers|||bold
-steelix|100|double-edge,iron-tail,toxic,curse||metal-coat|||careful
-dragonite|100|dragon-dance,air-cutter,body-slam,brick-break||lum-berry|||docile
-latias|100|charm,recover,psychic,dragon-breath||dragon-fang|||docile
+lapras|100|perish-song,ice-beam,hydro-pump,body-slam|water-absorb|scope-lens|||calm
+blaziken|100|protect,swords-dance,brick-break,return|blaze|silk-scarf|||docile
+meganium|100|light-screen,reflect,giga-drain,shadow-ball|overgrow|leftovers|||bold
+steelix|100|double-edge,iron-tail,toxic,curse|rock-head|metal-coat|||careful
+dragonite|100|dragon-dance,air-cutter,body-slam,brick-break|inner-focus|lum-berry|||docile
+latias|100|charm,recover,psychic,dragon-breath|levitate|dragon-fang|||docile
 
 --e2|Bruno
 ==items:full-restore,full-restore,full-restore,full-restore
-charizard|100|flamethrower,ultra-punch,rock-slide,protect||charcoal|||docile
-onix|100|outrage,hidden-power-electric,toxic,protect||leftovers|||impish
-porygon2|100|thunderbolt,ice-beam,recover,agility||scope-lens|||modest
-venusaur|100|leech-seed,sleep-powder,giga-drain,sludge-bomb||miracle-seed|||careful
-salamence|100|dragon-dance,fly,double-edge,dragon-claw||sharp-beak|||docile
-groudon|100|earthquake,eruption,flamethrower,substitute||leftovers|||docile
+charizard|100|flamethrower,ultra-punch,rock-slide,protect|blaze|charcoal|||docile
+onix|100|outrage,hidden-power-electric,toxic,protect|rock-head|leftovers|||impish
+porygon2|100|thunderbolt,ice-beam,recover,agility|trace|scope-lens|||modest
+venusaur|100|leech-seed,sleep-powder,giga-drain,sludge-bomb|overgrow|miracle-seed|||careful
+salamence|100|dragon-dance,fly,double-edge,dragon-claw|intimidate|sharp-beak|||docile
+groudon|100|earthquake,eruption,flamethrower,substitute|drought|leftovers|||docile
 
 --e3|Agatha
 ==items:full-restore,full-restore,full-restore,full-restore
-altaria|100|perish-song,refresh,roost,sky-attack||lum-berry|||careful
-crobat|100|poison-fang,bug-slash,wing-attack,double-edge||scope-lens|||adamant
-blastoise|100|toxic,protect,iron-defense,surf||leftovers|||calm
-milotic|100|surf,thunderbolt,attract,rest||lum-berry|||docile
-kyogre|100|water-spout,water-pulse,ice-beam,amnesia||leftovers|||docile
-metagross|100|agility,meteor-mash,hyper-beam,earthquake||lum-berry|||docile
+altaria|100|perish-song,refresh,roost,sky-attack|natural-cure|lum-berry|||careful
+crobat|100|poison-fang,bug-slash,wing-attack,double-edge|inner-focus|scope-lens|||adamant
+blastoise|100|toxic,protect,iron-defense,surf|torrent|leftovers|||calm
+milotic|100|surf,thunderbolt,attract,rest|marvel-scale|lum-berry|||docile
+kyogre|100|water-spout,water-pulse,ice-beam,amnesia|drizzle|leftovers|||docile
+metagross|100|agility,meteor-mash,hyper-beam,earthquake|clear-body|lum-berry|||docile
 
 --e4|Lance
 ==items:full-restore,full-restore,full-restore,full-restore
-gyarados|100|dragon-rage,toxic,dive,protect||leftovers|||calm
-snorlax|100|curse,shadow-ball,body-slam,rest||lum-berry|||docile
-aggron|100|iron-tail,sandstorm,taunt,return||silk-scarf|||impish
-tyranitar|100|dragon-dance,ancient-power,return,curse||leftovers|||docile
-typhlosion|100|dark-pulse,flamethrower,hidden-power-grass,rest||lum-berry|||bold
-latios|100|luster-purge,dragon-breath,protect,recover||lum-berry|||docile
+gyarados|100|dragon-rage,toxic,dive,protect|intimidate|leftovers|||calm
+snorlax|100|curse,shadow-ball,body-slam,rest|immunity|lum-berry|||docile
+aggron|100|iron-tail,sandstorm,taunt,return|sturdy|silk-scarf|||impish
+tyranitar|100|dragon-dance,ancient-power,return,curse|sand-stream|leftovers|||docile
+typhlosion|100|dark-pulse,flamethrower,hidden-power-grass,rest|blaze|lum-berry|||bold
+latios|100|luster-purge,dragon-breath,protect,recover|levitate|lum-berry|||docile
 
 --ec|Champion
 ==items:full-restore,full-restore,full-restore,full-restore
-articuno|100|ice-beam,roost,substitute,toxic||leftovers|grass||docile
-zapdos|100|thunderbolt,roost,heat-wave,hidden-power-ice||scope-lens|grass||docile
-moltres|100|flamethrower,roost,hidden-power-electric,toxic||charcoal|grass||docile
-dragonite|100|ultra-punch,roost,dragon-dance,return||dragon-fang|grass||docile
-mew|100|psychic,wish,knock-off,will-o-wisp||lum-berry|grass||docile
-mewtwo|100|psychic,recover,calm-mind,ice-beam||lum-berry|grass||docile
+articuno|100|ice-beam,roost,substitute,toxic|pressure|leftovers|grass||docile
+zapdos|100|thunderbolt,roost,heat-wave,hidden-power-ice|pressure|scope-lens|grass||docile
+moltres|100|flamethrower,roost,hidden-power-electric,toxic|pressure|charcoal|grass||docile
+dragonite|100|ultra-punch,roost,dragon-dance,return|inner-focus|dragon-fang|grass||docile
+mew|100|psychic,wish,knock-off,will-o-wisp|synchronize|lum-berry|grass||docile
+mewtwo|100|psychic,recover,calm-mind,ice-beam|pressure|lum-berry|grass||docile
 
-entei|100|heat-wave,substitute,calm-mind,hidden-power-grass||leftovers|fire||docile
-raikou|100|thunderbolt,substitute,calm-mind,hidden-power-ice||leftovers|fire||docile
-suicune|100|muddy-water,substitute,calm-mind,protect||leftovers|fire||docile
-celebi|100|frenzy-plant,psychic,ancient-power,recover||scope-lens|fire||docile
-lugia|100|surf,psychic,recover,protect||twisted-spoon|fire||docile
-ho-oh|100|sacred-fire,aeroblast,earthquake,psychic||charcoal|fire||docile
+entei|100|heat-wave,substitute,calm-mind,hidden-power-grass|pressure|leftovers|fire||docile
+raikou|100|thunderbolt,substitute,calm-mind,hidden-power-ice|pressure|leftovers|fire||docile
+suicune|100|muddy-water,substitute,calm-mind,protect|pressure|leftovers|fire||docile
+celebi|100|frenzy-plant,psychic,ancient-power,recover|natural-cure|scope-lens|fire||docile
+lugia|100|surf,psychic,recover,protect|pressure|twisted-spoon|fire||docile
+ho-oh|100|sacred-fire,aeroblast,earthquake,psychic|pressure|charcoal|fire||docile
 
-regirock|100|rock-slide,explosion,brick-break,thunder-wave||hard-stone|water||docile
-registeel|100|metal-claw,explosion,seismic-toss,rest||metal-coat|water||docile
-regice|100|ice-beam,explosion,thunderbolt,protect||never-melt-ice|water||docile
-rayquaza|100|outrage,extreme-speed,fly,dragon-dance||dragon-fang|water||docile
-jirachi|100|ancient-power,thunder-wave,headbutt,wish||leftovers|water||docile
-deoxys-attack>deoxys-attack|100|psycho-boost,ice-beam,thunderbolt,extreme-speed||silk-scarf|water||docile
+regirock|100|rock-slide,explosion,brick-break,thunder-wave|clear-body|hard-stone|water||docile
+registeel|100|metal-claw,explosion,seismic-toss,rest|clear-body|metal-coat|water||docile
+regice|100|ice-beam,explosion,thunderbolt,protect|clear-body|never-melt-ice|water||docile
+rayquaza|100|outrage,extreme-speed,fly,dragon-dance|air-lock|dragon-fang|water||docile
+jirachi|100|ancient-power,thunder-wave,headbutt,wish|serene-grace|leftovers|water||docile
+deoxys-attack>deoxys-attack|100|psycho-boost,ice-beam,thunderbolt,extreme-speed|pressure|silk-scarf|water||docile

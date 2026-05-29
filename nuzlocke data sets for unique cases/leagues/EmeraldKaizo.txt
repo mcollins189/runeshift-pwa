@@ -246,9 +246,9 @@ meganium|59|grass-whistle,earthquake,ancient-power,giga-drain|overgrow|lum-berry
 blastoise|59|water-spout,hp-electric,ice-beam,mirror-coat|torrent|lum-berry|grass
 blaziken|60|overheat,superpower,thunder-punch,rock-slide|blaze|lum-berry|grass
 
-feraligatr|59|earthquake,hydro-pump,hp-flying,ancient-power||lum-berry|water
-charizard|59|heat-wave,dragon-dance,earthquake,air-slash||lum-berry|water
-sceptile|60|giga-drain,thunder-punch,earthquake,dragon-claw||lum-berry|water
+feraligatr|59|earthquake,hydro-pump,hp-flying,ancient-power|torrent|lum-berry|water
+charizard|59|heat-wave,dragon-dance,earthquake,air-slash|blaze|lum-berry|water
+sceptile|60|giga-drain,thunder-punch,earthquake,dragon-claw|overgrow|lum-berry|water
 
 --b3|Brendan||/leaders/rs-brendan# Lilicover
 tauros|59|double-edge,earthquake,hp-ghost,iron-tail|intimidate|lum-berry
@@ -263,9 +263,9 @@ meganium|59|grass-whistle,earthquake,ancient-power,giga-drain|overgrow|lum-berry
 blastoise|59|water-spout,hp-electric,ice-beam,mirror-coat|torrent|lum-berry|grass
 blaziken|60|overheat,superpower,thunder-punch,rock-slide|blaze|lum-berry|grass
 
-feraligatr|59|earthquake,hydro-pump,hp-flying,ancient-power||lum-berry|water
-charizard|59|heat-wave,dragon-dance,earthquake,air-slash||lum-berry|water
-sceptile|60|giga-drain,thunder-punch,earthquake,dragon-claw||lum-berry|water
+feraligatr|59|earthquake,hydro-pump,hp-flying,ancient-power|torrent|lum-berry|water
+charizard|59|heat-wave,dragon-dance,earthquake,air-slash|blaze|lum-berry|water
+sceptile|60|giga-drain,thunder-punch,earthquake,dragon-claw|overgrow|lum-berry|water
 
 ###################
 
