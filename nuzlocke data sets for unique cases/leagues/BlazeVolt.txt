@@ -86,7 +86,7 @@ oshawott|12|water-sport,water-gun,tail-whip,tackle|vital-spirit|oran-berry|fire|
 snivy|12|wrap,vine-whip,leer,tackle|contrary|oran-berry|water||careful
 
 --c3|Cheren||/leaders/blwh-cheren
-staravia|14|double-team,wing-attack,quick-attack|reckless||grass||calm
+staravia|14|double-team,wing-attack,quick-attack|reckless||||calm
 roggenrola|14|rock-blast,magnitude,headbutt,sand-attack|sturdy||||timid
 pansage|14|magical-leaf,acrobatics,hone-claws,vine-whip|overgrow||grass||jolly
 tepig|16|flame-charge,defense-curl,odor-sleuth,ember|adaptability|sitrus-berry|grass||timid
@@ -108,7 +108,7 @@ pignite|31|heat-crash,sucker-punch,rollout,arm-thrust|adaptability|sitrus-berry|
 
 --c4|Cheren||/leaders/blwh-cheren
 ==info:<p><b>Rotation Battle:</b><br />This battle is a Rotation battle.</p>
-staravia|31|aerial-ace,whirlwind,endeavor,double-team|reckless|sharp-beak|grass||serious
+staravia|31|aerial-ace,whirlwind,endeavor,double-team|reckless|sharp-beak|||serious
 boldore|31|rock-slide,power-gem,smack-down,iron-defense|sturdy|hard-stone|||timid
 kadabra|31|reflect,psybeam,ally-switch,miracle-eye|magic-guard|twisted-spoon|||docile
 simisage|31|seed-bomb,fury-swipes,lick,leer|overgrow|expert-belt|grass||brave
@@ -142,7 +142,7 @@ emboar|43|flamethrower,assurance,bulldoze,heat-crash|adaptability|sitrus-berry|w
 
 --c6|Cheren||/leaders/blwh-cheren
 ==info:<p><b>Rotation Battle:</b><br />This battle is a Rotation battle.</p>
-staraptor|53|brave-bird,close-combat,retaliate,u-turn|reckless|sharp-beak|grass||rash
+staraptor|53|brave-bird,close-combat,retaliate,u-turn|reckless|sharp-beak|||rash
 gigalith|53|stone-edge,stealth-rock,earthquake,explosion|sturdy|hard-stone|||docile
 alakazam|53|psychic,shadow-ball,energy-ball,charge-beam|magic-guard|twisted-spoon|||brave
 

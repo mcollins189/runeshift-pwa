@@ -1101,7 +1101,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1780365319335"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1780432551481"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -1389,20 +1389,35 @@ const MOVE_DATA = {
 
 function moveData(name) {
   const canon = resolveMove(name) || name;
-  // Tier 1: curated MOVE_DATA — primary, carries the nuanced effect tags.
-  if (MOVE_DATA[canon]) return MOVE_DATA[canon];
   const slug = (typeof moveSlug === 'function') ? moveSlug(canon) : null;
+  let base = null;
+  // Tier 1: curated MOVE_DATA — primary, carries the nuanced effect tags.
+  if (MOVE_DATA[canon]) base = MOVE_DATA[canon];
   // Tier 2: complete bundled move stats (power + category for the whole movedex,
   // from data.bundle.js) — works FULLY OFFLINE, no PokeAPI dependency. This is
   // what lets "pre-cache for offline" deliver correct move data instead of a flat
   // "unknown". Effect tags aren't included (curated-only), so it's a base score.
-  const bundled = (slug && typeof NUZ_DATA !== 'undefined' && NUZ_DATA.moveStats) ? NUZ_DATA.moveStats[slug] : null;
-  if (bundled) return [bundled[0] || 0, bundled[1], ''];
-  // Tier 3: live PokeAPI backfill — only for moves the bundle lacks (brand-new /
-  // fakemon / custom hack moves).
-  const bf = slug ? backfilledMoves[slug] : null;
-  if (bf && typeof bf === 'object' && bf.category) return [bf.power || 0, bf.category, ''];
-  return null;
+  else {
+    const bundled = (slug && typeof NUZ_DATA !== 'undefined' && NUZ_DATA.moveStats) ? NUZ_DATA.moveStats[slug] : null;
+    if (bundled) base = [bundled[0] || 0, bundled[1], ''];
+    else {
+      // Tier 3: live PokeAPI backfill — only for moves the bundle lacks (brand-new /
+      // fakemon / custom hack moves).
+      const bf = slug ? backfilledMoves[slug] : null;
+      if (bf && typeof bf === 'object' && bf.category) base = [bf.power || 0, bf.category, ''];
+    }
+  }
+  // ROM-hack power/category overrides (e.g. Blaze Black gives Gen-5 BPs — Vine Whip
+  // 45→35, Tackle 40→50 — that PokeAPI's current-gen values miss). Copy before
+  // mutating so we never corrupt the shared curated MOVE_DATA array.
+  const patches = (typeof getActivePatches === 'function') ? getActivePatches() : null;
+  const pm = patches ? patches.moves.get((name || '').toLowerCase().replace(/\s+/g, '-')) : null;
+  if (pm && (pm.power != null || pm.category)) {
+    base = base ? base.slice() : [0, null, ''];
+    if (pm.power != null) base[0] = pm.power;
+    if (pm.category) base[1] = pm.category;
+  }
+  return base;
 }
 function movePower(name) { const d = moveData(name); return d ? d[0] : null; }
 function moveCategory(name) { const d = moveData(name); return d ? d[1] : null; }
@@ -4738,6 +4753,13 @@ function calcStatAtLevel(baseStats, level, options) {
     }
     return Math.floor(Math.floor(core * lvl/100 + 5) * mods[i]);
   });
+  // Raw per-stat overrides: let the user pin an EXACT in-game stat the IV/EV model
+  // can't reproduce (ROM-hack base-stat changes, or any value below the 0-IV/0-EV
+  // floor). Applied to the base summary stat; held-item / ability multipliers below
+  // still stack on top, exactly as for a non-overridden stat. Sparse — only set
+  // indices override; the rest keep the IV/EV computation.
+  const ov = options.statOverrides;
+  if (ov) for (let i = 0; i < 6; i++) { const o = ov[i]; if (o != null && o !== '' && !isNaN(o)) out[i] = Math.max(1, o | 0); }
   // Shedinja's HP is hard-locked to 1 by the game regardless of level, base or IVs.
   if (options.species && String(options.species).toLowerCase() === 'shedinja') {
     out[0] = 1;
@@ -7496,7 +7518,7 @@ function normMovesList(moves) {
 function buildCombatant(species, lv, typeArr, ability, nature, item, moves, statOpts) {
   const info = pokeInfo(species);
   if (!info || !info.s || !Array.isArray(info.s)) return null;
-  const stats = calcStatAtLevel(info.s, lv || 1, { species, ability, nature, item, ivs: statOpts && statOpts.ivs, evs: statOpts && statOpts.evs }).stats;
+  const stats = calcStatAtLevel(info.s, lv || 1, { species, ability, nature, item, ivs: statOpts && statOpts.ivs, evs: statOpts && statOpts.evs, statOverrides: statOpts && statOpts.statOverrides }).stats;
   if (!stats || stats.some(x => x == null)) return null;
   const src = (typeArr && typeArr.length) ? typeArr : (info.t || []);
   const t = src.flatMap(x => String(x).split('/')).filter(Boolean);
@@ -7514,7 +7536,7 @@ function buildCombatant(species, lv, typeArr, ability, nature, item, moves, stat
 // Build a combatant for one of OUR roster mons, passing its IVs/EVs so the stat
 // model matches the cartridge. Single funnel for every player-side matchup call.
 function pCombatant(p) {
-  return buildCombatant(p.species, p.level, [p.type1, p.type2].filter(Boolean), p.ability, p.nature, p.held, p.moves, { ivs: p.ivs, evs: p.evs });
+  return buildCombatant(p.species, p.level, [p.type1, p.type2].filter(Boolean), p.ability, p.nature, p.held, p.moves, { ivs: p.ivs, evs: p.evs, statOverrides: p.statOverrides });
 }
 
 // Detect the weather the BOSS team would set during the fight (a teammate's
@@ -10436,7 +10458,7 @@ function buildSpeedTierSection(party, boss) {
   };
   const rows = [];
   for (const p of party) {
-    const spd = calcSpd(p.species, p.level, { nature: p.nature, ability: p.ability, item: p.held, ivs: p.ivs, evs: p.evs });
+    const spd = calcSpd(p.species, p.level, { nature: p.nature, ability: p.ability, item: p.held, ivs: p.ivs, evs: p.evs, statOverrides: p.statOverrides });
     if (spd == null) continue;
     rows.push({ species: p.species, name: p.nickname || p.species, lv: p.level || 1, spd, side: 'me' });
   }
@@ -13969,7 +13991,7 @@ function pokeView(p, idx) {
   let statsTitle = 'Base stats';
   if (info && info.s && info.s.length === 6 && info.s.some(v => v != null)) {
     const labels = ['HP','Atk','Def','SpA','SpD','Spe'];
-    const calc = p.level ? calcStatAtLevel(info.s, p.level, { nature: p.nature, ability: p.ability, species: p.species, item: p.held, ivs: p.ivs, evs: p.evs }) : null;
+    const calc = p.level ? calcStatAtLevel(info.s, p.level, { nature: p.nature, ability: p.ability, species: p.species, item: p.held, ivs: p.ivs, evs: p.evs, statOverrides: p.statOverrides }) : null;
     const displayStats = calc ? calc.stats : info.s;
     const statNotes = calc ? calc.notes : [];
     // Level-aware denominator: 100-base lands ~67% of bar regardless of level.
@@ -14321,6 +14343,14 @@ async function renderPokeViewLearnset(idx) {
   // Evo moves first — available NOW (the mon just became this species), a one-time
   // chance to grab coverage, so a lower delta (10) / score floor (35).
   for (const u of evoMoves) consider(u, true, 10, 35);
+  // Moves the mon ALREADY qualifies for (at/below its current level) but never
+  // added to its set — e.g. it just learned Confusion@14 while a dead-weight
+  // Teleport still occupies a slot. These are actionable RIGHT NOW, so weigh them
+  // before future level-ups. `consider` already skips owned + user-skipped moves,
+  // so only genuine available upgrades surface. Newest-first so the move you just
+  // learned leads. Without this, a just-learned move fell into the "already" bucket
+  // and was never run through the swap recommender (only upcoming/evo moves were).
+  for (const u of [...already].reverse()) consider(u, false, 15, 45);
   for (const u of upcoming.slice(0, 12)) consider(u, false, 15, 45);
   // Build HTML
   const stabBadge = (mname) => {
@@ -14461,8 +14491,10 @@ const EV_STAT_CAP = 252, EV_TOTAL_CAP = 510;
 function buildStatPanel(p) {
   const evArr = Array.isArray(p.evs) ? p.evs.slice() : [];
   const ivArr = Array.isArray(p.ivs) ? p.ivs.slice() : [];
+  const ovArr = Array.isArray(p.statOverrides) ? p.statOverrides.slice() : [];
   while (evArr.length < 6) evArr.push(0);
   while (ivArr.length < 6) ivArr.push(31);
+  while (ovArr.length < 6) ovArr.push(null);
   const info = pokeInfo(p.species);
   const base = (info && Array.isArray(info.s) && info.s.length === 6) ? info.s : null;
   const lvl = p.level || 1;
@@ -14471,16 +14503,20 @@ function buildStatPanel(p) {
   const customized = evArr.some(v => v) || ivArr.some(v => v !== 31);
   const denom = 180 * Math.max(1, lvl / 50);
   const rows = STAT_EDIT_LABELS.map((lbl, i) => {
-    const v = summary && summary[i] != null ? summary[i] : null;
+    // A raw override (set when the typed value isn't IV/EV-reproducible) is the
+    // displayed truth; otherwise the IV/EV-solved summary stat.
+    const ovV = (ovArr[i] != null && ovArr[i] !== '') ? ovArr[i] : null;
+    const v = ovV != null ? ovV : (summary && summary[i] != null ? summary[i] : null);
     const w = v != null ? Math.min(100, Math.round(v / denom * 100)) : 0;
     return `<div class="se2-row">
       <span class="se2-lbl">${lbl}</span>
       <span class="se2-bar"><span class="se2-fill" id="f-bar-${i}" style="width:${w}%;background:${v != null ? statColor(v) : 'var(--bg4)'}"></span></span>
       <button type="button" class="se2-pm" onclick="statNudge(${i},-1)" tabindex="-1" ${base ? '' : 'disabled'}>−</button>
-      <input class="se2-val" id="f-stat-${i}" type="number" min="1" max="999" value="${v != null ? v : ''}" ${base ? '' : 'disabled'} onchange="statEdited(${i})">
+      <input class="se2-val" id="f-stat-${i}" type="number" min="1" max="9999" value="${v != null ? v : ''}" ${base ? '' : 'disabled'} onchange="statEdited(${i})">
       <button type="button" class="se2-pm" onclick="statNudge(${i},1)" tabindex="-1" ${base ? '' : 'disabled'}>＋</button>
       <input type="hidden" id="f-iv-${i}" value="${ivArr[i] == null ? 31 : ivArr[i]}">
       <input type="hidden" id="f-ev-${i}" value="${evArr[i] || 0}">
+      <input type="hidden" id="f-statov-${i}" value="${ovV != null ? ovV : ''}">
     </div>`;
   }).join('');
   const vitOpts = [1, 2, 3, 4, 5, 0].map(i => `<option value="${i}">${VITAMIN_BY_STAT[i]} → ${STAT_EDIT_LABELS[i]}</option>`).join('');
@@ -14537,11 +14573,25 @@ function _seSolve(idx, target) {
 }
 function statEdited(idx) {
   const el = document.getElementById('f-stat-' + idx); const t = parseInt(el && el.value);
-  if (!isNaN(t)) _seSolve(idx, Math.max(1, t));
+  const ovEl = document.getElementById('f-statov-' + idx);
+  if (!isNaN(t)) {
+    const target = Math.max(1, t);
+    _seSolve(idx, target);
+    // If the IV/EV solver can't reproduce the typed value EXACTLY (below the
+    // 0-IV/0-EV floor for a hacked base stat, above the 31-IV/252-EV ceiling, or
+    // any non-reachable integer), keep it as a raw override so ANY value sticks.
+    // Otherwise clear the override so it reads as clean IVs/EVs.
+    const { base, lvl, mods } = _seCtx();
+    const ivs = _seReadIVs(), evs = _seReadEVs();
+    const achieved = base ? _statValue(base[idx], idx, lvl, ivs[idx], evs[idx], mods[idx]) : target;
+    if (ovEl) ovEl.value = (achieved !== target) ? target : '';
+  } else if (ovEl) { ovEl.value = ''; }
   _seRenderStats();
 }
 function statNudge(idx, dir) {
   const { base, lvl, mods } = _seCtx(); if (!base) return;
+  // Nudging steps through IV/EV points, so a raw override no longer applies here.
+  const ovEl = document.getElementById('f-statov-' + idx); if (ovEl) ovEl.value = '';
   const b = base[idx], m = mods[idx];
   const ivs = _seReadIVs(), evs = _seReadEVs();
   // The summary stat depends ONLY on "points" = IV + floor(EV/4) (see _statValue):
@@ -14579,7 +14629,11 @@ function _seRenderStats() {
   const denom = 180 * Math.max(1, lvl / 50);
   let evTot = 0;
   for (let i = 0; i < 6; i++) {
-    const v = _statValue(base[i], i, lvl, ivs[i], evs[i], mods[i]);
+    // A raw override (f-statov-*) wins over the IV/EV-computed value so a manually
+    // pinned in-game stat isn't overwritten back to the achievable floor/ceiling.
+    const ovEl = document.getElementById('f-statov-' + i);
+    const ov = (ovEl && ovEl.value !== '') ? parseInt(ovEl.value) : NaN;
+    const v = !isNaN(ov) ? ov : _statValue(base[i], i, lvl, ivs[i], evs[i], mods[i]);
     const el = document.getElementById('f-stat-' + i); if (el) el.value = v;
     const bar = document.getElementById('f-bar-' + i);
     if (bar) { bar.style.width = Math.min(100, Math.round(v / denom * 100)) + '%'; bar.style.background = statColor(v); }
@@ -14907,11 +14961,12 @@ function submitPoke() {
     const v = el ? el.value.trim() : '';
     if (v) moves.push(v);
   }
-  // EVs / IVs from the stats panel.
-  const evArr = [], ivArr = [];
+  // EVs / IVs / raw stat overrides from the stats panel.
+  const evArr = [], ivArr = [], ovArr = [];
   for (let i = 0; i < 6; i++) {
     const er = parseInt((document.getElementById('f-ev-' + i) || {}).value); evArr.push(isNaN(er) ? 0 : Math.max(0, Math.min(252, er)));
     const ir = parseInt((document.getElementById('f-iv-' + i) || {}).value); ivArr.push(isNaN(ir) ? 31 : Math.max(0, Math.min(31, ir)));
+    const or = parseInt((document.getElementById('f-statov-' + i) || {}).value); ovArr.push(isNaN(or) ? null : Math.max(1, or));
   }
   // Enforce the 510 total-EV cap on save too (the live editor warns but typing
   // into the number fields can bypass it). Scale proportionally to stay legal.
@@ -14943,6 +14998,9 @@ function submitPoke() {
   // falls back to EV 0 / IV 31 when these are absent (no save-version bump).
   if (evArr.some(v => v > 0)) obj.evs = evArr;
   if (ivArr.some(v => v !== 31)) obj.ivs = ivArr;
+  // Raw stat overrides (manual exact in-game values). Sparse + only stored when any
+  // are set, so untouched mons stay lean and old saves read as undefined (no bump).
+  if (ovArr.some(v => v != null)) obj.statOverrides = ovArr;
   if (editIdx!==null) team[editIdx]=obj;
   else team.push(obj);
 
