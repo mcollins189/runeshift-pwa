@@ -192,7 +192,7 @@ samurott|68|hydro-pump,swords-dance,megahorn,secret-sword|vital-spirit|sitrus-be
 
 houndoom|66|flamethrower,dark-pulse,nasty-plot,will-o-wisp|intimidate|lum-berry|water||naive
 simipour|66|work-up,acrobatics,focus-blast,water-spout|torrent|flying-gem|water||lax
-serperior|68|leaf-storm,leech-seed,glare,draco-meteor|contrary|sitrus-berry|water||naughty
+serperior|68|leaf-blade,leech-seed,glare,draco-meteor|contrary|sitrus-berry|water||naughty
 
 ###################
 ### Gym Leaders ###
@@ -344,8 +344,8 @@ cofagrigus|91|will-o-wisp,shadow-ball,psychic,disable|mummy|eject-button
 gengar|91|focus-blast,shadow-ball,thunder,sludge-bomb|levitate|focus-sash
 sableye|91|recover,shadow-claw,foul-play,will-o-wisp|prankster|sitrus-berry
 golurk|91|dynamic-punch,shadow-punch,earthquake,substitute|no-guard|expert-belt
-jellicent|91|hydro-pump,shadow-ball,recover,will-o-wisp|cursed-body||leftovers
-chandelure|93|fire-blast,shadow-ball,hidden-power,calm-mind|levitate|life-orb
+jellicent|91|hydro-pump,shadow-ball,recover,will-o-wisp|cursed-body|leftovers
+chandelure|93|shadow-ball,psychic,fire-blast,calm-mind|levitate|life-orb
 
 --e6|Grimsley|dark|/leaders/blwh-grimsley
 honchkrow|91|brave-bird,sucker-punch,superpower,heat-wave|moxie|flying-gem
@@ -373,10 +373,10 @@ metagross|93|meteor-mash,zen-headbutt,earthquake,ice-punch|analytic|expert-belt
 
 --ch2|Alder||/leaders/blwh-alder
 bouffalant|95|head-charge,earthquake,payback|reckless|choice-band
-braviary|95|brave-bird,rock-slide,superpower,return|defiant|flying-gem
-espeon|95|morning-sun,psyshock,grass-knot,shadow-ball|magic-bounce|focus-sash
+braviary|95|brave-bird,rock-slide,superpower,extreme-speed|defiant|flying-gem
+espeon|95|morning-sun,psyshock,grass-knot,aura-sphere|magic-bounce|focus-sash
 flygon|95|draco-meteor,earthquake,dragon-claw,fire-punch|levitate|yache-berry
-vanilluxe|95|frost-breath,weather-ball,ice-shard,flash-cannon|weak-armor|red-card
-volcarona|100|fiery-dance,bug-buzz,quiver-dance,psychic|drought|life-orb
+vanilluxe|95|frost-breath,weather-ball,ice-shard,energy-ball|weak-armor|red-card
+volcarona|100|fiery-dance,bug-buzz,quiver-dance,thunderbolt|drought|life-orb
 
 

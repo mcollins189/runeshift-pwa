@@ -1101,7 +1101,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1780033015772"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1780364722446"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -2272,7 +2272,10 @@ const GAMES = {
       // the Normal and Challenge variants (variant-agnostic, no version axis).
       encounterTables: 'BlazeBlack2VoltWhite2',
       leagues: 'BlazeVolt2',
-      patches: 'BlazeVolt2'
+      patches: 'BlazeVolt2',
+      // ROM-extracted level-up learnsets (BB2==VW2). Replaces PokeAPI vanilla
+      // learnsets for this hack so move suggestions match the actual game.
+      learnsets: 'BlazeVolt2'
     }
   },
   // Hack ROM — Blaze Black / Volt White (paired difficulty hack of BW). No PokeAPI data;
@@ -2289,7 +2292,10 @@ const GAMES = {
       // versions so the cross-version merge flags only the legendaries).
       encounterTables: { B: 'BlazeBlack', V: 'VoltWhite' },
       leagues: 'BlazeVolt',
-      patches: 'BlazeVolt'
+      patches: 'BlazeVolt',
+      // ROM-extracted level-up learnsets (BB==VW). Replaces PokeAPI vanilla
+      // learnsets for this hack so move suggestions match the actual game.
+      learnsets: 'BlazeVolt'
     }
     // No bosses: getBosses() derives them from the data sources at render time.
   },
@@ -5634,8 +5640,32 @@ function saveCachedLearnsetError(species, prevRec) {
   return { status:'error', failedAt, attempts };
 }
 
+// ROM-extracted learnset override for the current game (Drayano hacks rewrite
+// learnsets, so PokeAPI's vanilla data is wrong). Returns the override map
+// { slug: [[lv, moveSlug], ...] } or null when the active game has none.
+function curLearnsetOverride() {
+  const key = GAMES[curGame()]?.dataSources?.learnsets;
+  if (!key) return null;
+  return (typeof NUZ_DATA !== 'undefined' && NUZ_DATA.learnsets) ? (NUZ_DATA.learnsets[key] || null) : null;
+}
+// Build the app's learnset shape ({lv, name, isEvo}) from an override entry.
+// lv===0 marks an evolution-learned move (game stores those at level 0), which
+// the renderer pins to the top — same convention as the PokeAPI path's isEvo.
+function buildLearnsetFromOverride(list) {
+  return list.map(([lv, mslug]) => ({ lv, name: prettifyMoveName(mslug), isEvo: lv === 0 }));
+}
+
 async function fetchLearnset(species) {
   if (!species) return [];
+  // Game-specific ROM learnset wins over PokeAPI (and works offline — no fetch).
+  // Keyed by species slug; forms not in the override fall through to PokeAPI.
+  // Not written to learnsetCache/localStorage (those are game-agnostic), so a
+  // later vanilla game in the same session still gets correct vanilla data.
+  const _ov = curLearnsetOverride();
+  if (_ov) {
+    const _slug = speciesSlug(species);
+    if (_ov[_slug]) return buildLearnsetFromOverride(_ov[_slug]);
+  }
   if (learnsetCache[species] === 'loading') {
     // Wait for the in-flight request
     await new Promise(r => {

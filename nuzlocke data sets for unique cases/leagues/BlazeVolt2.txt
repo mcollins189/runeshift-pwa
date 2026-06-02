@@ -31,9 +31,9 @@ pansage|10|tickle,scratch,lick,vine-whip|overgrow||grass
 
 
 --r2|Hugh||/leaders/blwh-hugh#Route 6
-swellow|46|boomburst,quick-attack,hurricane,u-turn|scrappy|metronome
+swellow|46|horn-drill,quick-attack,hurricane,u-turn|scrappy|metronome
 eelektrik|46|wild-charge,aqua-tail,giga-drain,drain-punch|levitate|leftovers
-flygon|47|scorching-sands,dragon-claw,lunge,dragon-dance|levitate|life-orb
+flygon|47|metal-sound,barrage,dragon-claw,dragon-dance|levitate|life-orb
 lilligant|46|petal-dance,extrasensory,sleep-powder,quiver-dance|own-tempo|focus-sash|fire
 samurott|47|air-slash,waterfall,megahorn,close-combat|shell-armor|leftovers|fire
 camerupt|46|flamethrower,rock-climb,earthquake,rock-polish|simple|passho-berry|water
@@ -42,9 +42,9 @@ starmie|46|scald,psyshock,signal-beam,tri-attack|regenerator|red-card|grass
 emboar|47|body-slam,flame-charge,earthquake,cross-chop|mold-breaker|leftovers|grass
 
 --r3_n|Hugh||/leaders/blwh-hugh#Undella town
-swellow|54|boomburst,quick-attack,hurricane,heat-wave|scrappy|normal-gem
+swellow|54|horn-drill,quick-attack,hurricane,heat-wave|scrappy|normal-gem
 eelektross|54|wild-charge,aqua-tail,coil,drain-punch|levitate|leftovers
-flygon|54|earthquake,dragon-claw,lunge,dragon-dance|levitate|life-orb
+flygon|54|earthquake,dragon-claw,barrage,dragon-dance|levitate|life-orb
 lilligant|54|petal-dance,sleep-powder,quiver-dance,extrasensory|own-tempo|focus-sash|fire
 samurott|54|air-slash,waterfall,megahorn,close-combat|shell-armor|leftovers|fire
 camerupt|54|flamethrower,rock-climb,earthquake,rock-polish|simple|passho-berry|fire
@@ -56,9 +56,9 @@ emboar|54|wild-charge,flame-charge,earthquake,cross-chop|mold-breaker|leftovers|
 lilligant|54|petal-dance,sleep-powder,quiver-dance,extrasensory|own-tempo|focus-sash|grass
 
 --r3_c|Hugh||/leaders/blwh-hugh#Undella town
-swellow|58|boomburst,quick-attack,hurricane,heat-wave|scrappy|normal-gem
+swellow|58|horn-drill,quick-attack,hurricane,heat-wave|scrappy|normal-gem
 eelektross|58|wild-charge,aqua-tail,coil,drain-punch|levitate|leftovers
-flygon|58|earthquake,dragon-claw,lunge,dragon-dance|levitate|life-orb
+flygon|58|earthquake,dragon-claw,barrage,dragon-dance|levitate|life-orb
 lilligant|58|petal-dance,sleep-powder,quiver-dance,extrasensory|own-tempo|focus-sash|fire
 samurott|58|air-slash,waterfall,megahorn,close-combat|shell-armor|leftovers|fire
 camerupt|58|flamethrower,rock-climb,earthquake,rock-polish|simple|passho-berry|fire
@@ -70,7 +70,7 @@ emboar|58|wild-charge,flame-charge,earthquake,cross-chop|mold-breaker|leftovers|
 lilligant|58|petal-dance,sleep-powder,quiver-dance,extrasensory|own-tempo|focus-sash|grass
 
 --r4_n|Hugh||/leaders/blwh-hugh
-swellow|71|boomburst,u-turn,hurricane,heat-wave|scrappy|normal-gem
+swellow|71|horn-drill,u-turn,hurricane,heat-wave|scrappy|normal-gem
 eelektross|71|wild-charge,aqua-tail,drain-punch,coil|levitate|leftovers
 flygon|71|dragon-pulse,bug-buzz,quiver-dance,flamethrower|levitate|focus-sash
 lilligant|71|petal-dance,fiery-dance,sleep-powder,quiver-dance|own-tempo|focus-sash|fire
@@ -84,46 +84,46 @@ emboar|73|v-create,sucker-punch,wild-charge,earthquake|mold-breaker|leftovers|gr
 lilligant|71|petal-dance,fiery-dance,sleep-powder,quiver-dance|own-tempo|focus-sash|grass
 
 --r4_c|Hugh||/leaders/blwh-hugh
-swellow|75|boomburst,u-turn,hurricane,heat-wave|scrappy|normal-gem
+swellow|75|horn-drill,u-turn,hurricane,heat-wave|scrappy|normal-gem
 eelektross|75|wild-charge,aqua-tail,drain-punch,coil|levitate|leftovers
 flygon|75|dragon-pulse,bug-buzz,quiver-dance,flamethrower|levitate|focus-sash
 lilligant|75|petal-dance,fiery-dance,sleep-powder,quiver-dance|own-tempo|focus-sash|fire
-samurott|77|close-combat,hydro-pump,megahorn,shell-smash|shell-armor|leftovers|fire
+samurott|77|secret-sword,hydro-pump,megahorn,shell-smash|shell-armor|leftovers|fire
 camerupt|75|flamethrower,rock-climb,earthquake,rock-polish|simple|passho-berry|fire
 camerupt|75|flamethrower,rock-climb,earthquake,rock-polish|simple|passho-berry|water
-serperior|77|glare,leaf-storm,dragon-pulse,substitute|contrary|leftovers|water
+serperior|77|leaf-storm,glare,draco-meteor,substitute|contrary|leftovers|water
 starmie|75|scald,psyshock,signal-beam,tri-attack|regenerator|red-card|water
 starmie|75|scald,psyshock,signal-beam,tri-attack|regenerator|red-card|grass
 emboar|77|v-create,sucker-punch,wild-charge,earthquake|mold-breaker|leftovers|grass
 lilligant|75|petal-dance,fiery-dance,sleep-powder,quiver-dance|own-tempo|focus-sash|grass
 
 --bianca_n|Bianca||/leaders/blwh-bianca
-musharna|51|psychic,energy-ball,dazzling-gleam,shadow-ball|telepathy|
+musharna|51|psychic,energy-ball,charge-beam,shadow-ball|telepathy|
 persian|51|swift,water-pulse,thunderbolt,hypnosis|technician|
 mienshao|51|drain-punch,fake-out,rock-slide,acrobatics|reckless|
 
 --bianca_c|Bianca||/leaders/blwh-bianca
 ==double:true
 mienshao|56|close-combat,fake-out,rock-slide,u-turn|regenerator|focus-sash
-musharna|56|psyshock,dazzling-gleam,reflect,light-screen|synchronize|light-clay
+musharna|56|psyshock,luster-purge,reflect,light-screen|synchronize|light-clay
 haxorus|56|dragon-claw,cross-poison,dragon-dance,close-combat|mold-breaker|dragon-gem
 serperior|56|leaf-storm,glare,dragon-pulse,leech-seed|contrary|sitrus-berry
-samurott|56|swords-dance,aqua-jet,megahorn,wave-crash|shell-armor|life-orb
-emboar|56|flare-blitz,wild-charge,head-smash,high-horsepower|mold-breaker|fire-gem
+samurott|56|swords-dance,aqua-jet,megahorn,punishment|shell-armor|life-orb
+emboar|56|flare-blitz,wild-charge,head-smash,mega-kick|mold-breaker|fire-gem
 
 --emin|Emmet & Ingo||/leaders/blazevolt-ingo-emmet
 eelektross|34|thunderbolt,brick-break,protect,thunder-wave|levitate|magnet
 chandelure|34|heat-wave,hex,protect,will-o-wisp|flash-fire|charcoal
 umbreon|34|helping-hand,foul-play,fake-tears,assurance|synchronize|leftovers
-espeon|34|psychic,dazzling-gleam,power-gem,aura-sphere|magic-bounce|psychic-gem
+espeon|34|luster-purge,psychic,power-gem,aura-sphere|magic-bounce|psychic-gem
 
 --natros|Nate & Rosa||/leaders/blazevolt-nate-rosa
 servine|31|body-slam,leech-seed,giga-drain,mirror-coat|contrary|sitrus-berry|fire
 simipour|30|tickle,aqua-tail,acrobatics,crunch|gluttony|sitrus-berry|fire
-pignite|31|arm-thrust,high-horsepower,take-down,heat-crash|sheer-force|sitrus-berry|water
+pignite|31|arm-thrust,mega-kick,take-down,heat-crash|sheer-force|sitrus-berry|water
 simisage|30|tickle,seed-bomb,acrobatics,crunch|gluttony|sitrus-berry|water
 dewott|31|razor-shell,aqua-jet,dual-chop,storm-throw|shell-armor|sitrus-berry|grass
-simisear|30|tickle,fire-lash,acrobatics,crunch|gluttony|sitrus-berry|grass
+simisear|30|tickle,razor-wind,acrobatics,crunch|gluttony|sitrus-berry|grass
 
 # Optional mini bosses
 --o1_n|Roxanne|rock|/leaders/blazevolt-roxanne
@@ -142,7 +142,7 @@ meditite|17|bulk-up,focus-punch,reflect,light-screen|pure-power|light-clay
 makuhita|18|bulk-up,arm-thrust,vital-throw,reversal|thick-fat|sitrus-berry
 
 --o2_c|Brawly|fighting|/leaders/blazevolt-brawly
-monferno|19|stealth-rock,fire-lash,rock-tomb,double-kick|blaze|focus-sash
+monferno|19|stealth-rock,razor-wind,rock-tomb,double-kick|blaze|focus-sash
 meditite|19|thunder-punch,rock-smash,psycho-cut,bullet-punch|pure-power|coba-berry
 machop|19|bulk-up,dynamic-punch,rock-slide,bullet-punch|no-guard|cheri-berry
 sawk|19|reversal,rock-tomb,dual-chop,payback|sturdy|salac-berry
@@ -150,7 +150,7 @@ makuhita|20|bulk-up,revenge,fire-punch,ice-punch|sheer-force|berry-juice
 
 --o3_n|Wattson|electric|/leaders/blazevolt-wattson
 voltorb|25|rollout,spark,self-destruct,shock-wave|soundproof|
-electrike|25|quick-attack,thunder-wave,shock-wave,howl|static|
+electrike|25|shock-wave,leer,howl,quick-attack|static|
 magneton|25|supersonic,shock-wave,thunder-wave,sonic-boom|magnet-pull|
 manectric|26|quick-attack,thunder-wave,shock-wave,howl|intimidate|sitrus-berry
 
@@ -160,7 +160,7 @@ rotom-frost>rotom-frost|27|volt-switch,blizzard,hex,trick|levitate|lagging-tail
 magneton|27|volt-switch,flash-cannon,bug-buzz,tri-attack|sturdy|eviolite
 electabuzz|27|volt-switch,psychic,brick-break,dual-chop|static|life-orb
 manectric|28|volt-switch,ice-fang,flame-burst,quick-attack|intimidate|air-balloon
-volbeat|27|volt-switch,bug-buzz,mystical-fire,water-pulse|tinted-lens|charti-berry
+volbeat|27|volt-switch,bug-buzz,sacred-fire,water-pulse|tinted-lens|charti-berry
 
 --o4_n|Flannery|fire|/leaders/rs-flannery-oras@PKMNTrainerSpriterC@https://www.deviantart.com/PKMNTrainerSpriterC
 ponyta|34|overheat,attract,solar-beam,sunny-day|flame-body|
@@ -184,7 +184,7 @@ linoone|41|facade,belly-drum,slash,rock-smash|pickup|sitrus-berry
 slaking|42|facade,flamethrower,thunderbolt,shadow-ball|truant|sitrus-berry
 
 --o5_c|Norman|normal|/leaders/rs-norman-oras@PKMNTrainerSpriterC@https://www.deviantart.com/PKMNTrainerSpriterC
-exploud|43|boomburst,surf,extrasensory,flamethrower|scrappy|chople-berry
+exploud|43|horn-drill,surf,extrasensory,flamethrower|scrappy|chople-berry
 tauros|43|rock-climb,close-combat,strength,zen-headbutt|sheer-force|life-orb
 banette|43|crush-claw,gunk-shot,shadow-claw,shadow-sneak|cursed-body|colbur-berry
 zangoose|43|facade,close-combat,night-slash,protect|toxic-boost|toxic-orb
@@ -192,7 +192,7 @@ slaking|44|giga-impact,earthquake,hammer-arm,ice-punch|truant|normal-gem
 linoone|43|extreme-speed,belly-drum,shadow-claw,seed-bomb|gluttony|sitrus-berry
 
 --o6_n|Juan|water|/leaders/blazevolt-juan
-luvdisc|50|water-pulse,attract,lovely-kiss,moonblast|swift-swim|
+luvdisc|50|water-pulse,attract,lovely-kiss,mist-ball|swift-swim|
 whiscash|50|rain-dance,waterfall,amnesia,earthquake|hydration|damp-rock
 kingdra|50|hydro-pump,ice-beam,rain-dance,rest|swift-swim|chesto-berry
 walrein|50|encore,body-slam,aurora-beam,water-pulse|thick-fat|
@@ -200,20 +200,20 @@ crawdaunt|51|crabhammer,dragon-dance,crunch,aqua-jet|adaptability|
 
 --o6_c|Juan|water|/leaders/blazevolt-juan
 ==double:true|effect:rain
-swampert|53|hammer-arm,rock-slide,waterfall,high-horsepower|torrent|rindo-berry
+swampert|53|hammer-arm,rock-slide,waterfall,mega-kick|torrent|rindo-berry
 slowking|53|ice-beam,muddy-water,psychic,trick-room|regenerator|lum-berry
 pelipper|53|hurricane,hydro-pump,ice-beam,u-turn|drizzle|flying-gem
 starmie|53|hydro-pump,ice-beam,thunder,trick-room|analytic|wacan-berry
 crawdaunt|54|aqua-jet,crunch,crabhammer,close-combat|adaptability|life-orb
-azumarill|53|aqua-jet,ice-punch,belly-drum,play-rough|huge-power|sitrus-berry
+azumarill|53|aqua-jet,ice-punch,belly-drum,submission|huge-power|sitrus-berry
 
 --o7_n|Winona|flying|/leaders/blazevolt-winona
 ninjask|58|swords-dance,baton-pass,protect,x-scissor|speed-boost|focus-sash
-altaria|59|brave-bird,dragon-dance,outrage,play-rough|cloud-nine|leftovers
-swellow|58|protect,brave-bird,quick-attack,facade|guts|life-orb
-noctowl|58|hurricane,esper-wing,moonblast,nasty-plot|tinted-lens|colbur-berry
+altaria|59|brave-bird,dragon-dance,outrage,submission|cloud-nine|leftovers
+swellow|58|protect,hurricane,brave-bird,facade|guts|life-orb
+noctowl|58|hurricane,bubble,mist-ball,nasty-plot|tinted-lens|colbur-berry
 skarmory|58|brave-bird,rock-slide,steel-wing,swords-dance|weak-armor|wacan-berry
-tropius|58|earthquake,leaf-blade,dual-wingbeat,dragon-dance|harvest|sitrus-berry
+tropius|58|earthquake,leaf-blade,vice-grip,dragon-dance|harvest|sitrus-berry
 
 --o7_c|Winona|flying|/leaders/blazevolt-winona
 ==effect:rain|double:true
@@ -221,7 +221,7 @@ dragonite|62|hurricane,earthquake,thunder,icy-wind|multiscale|flying-gem
 mantine|62|hydro-pump,hurricane,confuse-ray,tailwind|swift-swim|wacan-berry
 rotom-fan>rotom-fan|62|thunder,electroweb,air-slash,rain-dance|motor-drive|electric-gem
 pelipper|62|hydro-pump,hurricane,soak,ice-beam|drizzle|sitrus-berry
-altaria|63|brave-bird,earthquake,play-rough,dragon-dance|natural-cure|life-orb
+altaria|63|brave-bird,earthquake,submission,dragon-dance|natural-cure|life-orb
 drifblim|62|protect,hurricane,thunder,shadow-ball|flare-boost|flame-orb
 
 --o8_n|Tate & Liza|psychic|/leaders/blazevolt-tate-liza
@@ -229,32 +229,32 @@ drifblim|62|protect,hurricane,thunder,shadow-ball|flare-boost|flame-orb
 reuniclus|62|trick-room,psychic,focus-blast,energy-ball|magic-guard|
 gothitelle|62|fake-out,ally-switch,night-daze,psyshock|frisk|
 lunatone|63|cosmic-power,stored-power,power-gem,night-daze|levitate|sitrus-berry
-solrock|63|psyshield-bash,helping-hand,rock-slide,hypnosis|levitate|sitrus-berry
+solrock|63|smelling-salts,helping-hand,rock-slide,hypnosis|levitate|sitrus-berry
 
 --o8_c|Tate & Liza|psychic|/leaders/blazevolt-tate-liza
 ==double:true
-mr-mime|66|trick-room,dazzling-gleam,baton-pass,aura-sphere|filter|lum-berry
-claydol|66|scorching-sands,extrasensory,shadow-ball,ice-beam|levitate|kasib-berry
+mr-mime|66|trick-room,luster-purge,baton-pass,aura-sphere|filter|lum-berry
+claydol|66|metal-sound,extrasensory,shadow-ball,ice-beam|levitate|kasib-berry
 lunatone|67|psychic,ice-beam,earth-power,power-gem|levitate|rock-gem
-solrock|67|rock-slide,acrobatics,psyshield-bash,flare-blitz|levitate|flying-gem
+solrock|67|rock-slide,acrobatics,smelling-salts,flare-blitz|levitate|flying-gem
 exeggutor|66|trick-room,sleep-powder,giga-drain,sludge-bomb|harvest|sitrus-berry
 medicham|66|high-jump-kick,zen-headbutt,ice-punch,bullet-punch|pure-power|life-orb
-jynx|66|aura-sphere,psyshock,ice-beam,draining-kiss|trace|focus-sash
-beheeyem|66|mystical-fire,trick-room,thunderbolt,psychic|analytic|colbur-berry
+jynx|66|lovely-kiss,sweet-kiss,ice-beam,psyshock|trace|focus-sash
+beheeyem|66|sacred-fire,trick-room,thunderbolt,psychic|analytic|colbur-berry
 
 --o9_hail|Hail Trainer Caroll||/leaders/blazevolt-caroll
 abomasnow|72|blizzard,ice-shard,focus-blast,wood-hammer|snow-warning|occa-berry
 reuniclus|72|psychic,energy-ball,shadow-ball,focus-blast|magic-guard|leftovers
 weavile|72|icicle-crash,aerial-ace,night-slash,ice-shard|pressure|focus-sash
-vanilluxe|72|blizzard,power-gem,extrasensory,dazzling-gleam|snow-warning|life-orb
+vanilluxe|72|blizzard,power-gem,extrasensory,luster-purge|snow-warning|life-orb
 cloyster|72|shell-smash,icicle-spear,rock-blast,hydro-pump|skill-link|white-herb
 jynx|72|blizzard,lovely-kiss,aura-sphere,psyshock|trace|ice-gem
 
 --o9_sun|Sun Trainer Elmer||/leaders/blazevolt-elmer
 torkoal|72|stealth-rock,yawn,solar-beam,lava-plume|drought|red-card
-darmanitan-standard|72|flare-blitz,lunge,earthquake,rock-slide|sheer-force|fire-gem
+darmanitan-standard|72|flare-blitz,barrage,earthquake,rock-slide|sheer-force|fire-gem
 venusaur|72|giga-drain,growth,weather-ball,earth-power|chlorophyll|life-orb
-ninetales|72|moonblast,solar-beam,flamethrower,power-gem|drought|eject-button
+ninetales|72|mist-ball,solar-beam,flamethrower,power-gem|drought|eject-button
 volcarona|72|quiver-dance,fiery-dance,bug-buzz,giga-drain|flame-body|focus-sash
 victreebel|72|growth,solar-beam,weather-ball,sludge-bomb|chlorophyll|occa-berry
 
@@ -272,16 +272,16 @@ hippowdon|72|earthquake,stealth-rock,ice-fang,stone-edge|sand-stream|passho-berr
 garchomp|72|dragon-claw,earthquake,flamethrower,brick-break|rough-skin|yache-berry
 excadrill|72|earthquake,iron-head,swords-dance,x-scissor|sand-rush|air-balloon
 tyranitar|72|rock-polish,stone-edge,crunch,aerial-ace|sand-stream|chople-berry
-clefable|72|mystical-fire,draining-kiss,grass-knot,power-gem|magic-guard|leftovers
+clefable|72|sacred-fire,sweet-kiss,power-gem,grass-knot|magic-guard|leftovers
 nidoking|72|thunderbolt,ice-beam,sludge-wave,earth-power|sheer-force|life-orb
 
 --o9_c|Lance|dragon|/leaders/gs-lance
 aerodactyl|76|stealth-rock,brave-bird,head-smash,rock-smash|rock-head|focus-sash
-charizard|76|fire-lash,dragon-dance,iron-tail,dragon-claw|defiant|life-orb
+charizard|76|razor-wind,dragon-dance,iron-tail,dragon-claw|defiant|life-orb
 gyarados|76|dragon-dance,waterfall,stone-edge,avalanche|moxie|charti-berry
-salamence|76|outrage,dual-wingbeat,flamethrower,hydro-pump|moxie|wide-lens
+salamence|76|outrage,vice-grip,flamethrower,hydro-pump|moxie|wide-lens
 haxorus|76|dragon-dance,dragon-rush,close-combat,iron-tail|mold-breaker|red-card
-dragonite|76|agility,dual-wingbeat,extreme-speed,outrage|multiscale|yache-berry
+dragonite|76|agility,vice-grip,extreme-speed,outrage|multiscale|yache-berry
 
 # Gym leaders
 --1_n|Cheren|normal|/leaders/blwh-cheren-boss
@@ -293,9 +293,9 @@ munchlax|11|work-up,flail|pickup|eviolite
 --1_c|Cheren|normal|/leaders/blwh-cheren-boss
 porygon|13|work-up,confusion,thunder-shock,swift|trace|enigma-berry
 lillipup|13|work-up,pursuit,retaliate,thunder-fang|vital-spirit|muscle-band
-doduo|13|work-up,aerial-ace,quick-attack,double-hit|early-bird|silk-scarf
+doduo|13|work-up,peck,quick-attack,rage|early-bird|silk-scarf
 aipom|13|work-up,double-hit,fake-out,water-pulse|skill-link|water-gem
-deerling|13|work-up,double-kick,headbutt,leech-seed|sap-sipper|occa-berry
+deerling|13|work-up,double-kick,tackle,leech-seed|sap-sipper|occa-berry
 munchlax|14|work-up,tackle,pursuit,rock-tomb|thick-fat|oran-berry
 
 --2_n|Roxie|poison|/leaders/blwh-roxie
@@ -306,49 +306,49 @@ whirlipede|20|venoshock,bug-bite,toxic,agility|swarm|sitrus-berry
 
 --2_c|Roxie|poison|/leaders/blwh-roxie
 trubbish|20|clear-smog,toxic-spikes,drain-punch,explosion|aftermath|focus-sash
-koffing|20|venoshock,toxic,thunderbolt,flamethrower|levitate|eviolite
-ivysaur|20|venoshock,protect,leech-seed,giga-drain|solar-power|black-sludge
-qwilfish|20|venoshock,aqua-jet,reversal,explosion|intimidate|muscle-band
-gastly|20|venoshock,hex,giga-drain,icy-wind|levitate|life-orb
+koffing|20|venoshock,poison-gas,psybeam,lava-plume|levitate|eviolite
+ivysaur|20|venoshock,leech-seed,protect,mega-drain|solar-power|black-sludge
+qwilfish|20|venoshock,aqua-jet,reversal,pin-missile|intimidate|muscle-band
+gastly|20|venoshock,hex,mega-drain,torment|levitate|life-orb
 whirlipede|21|venoshock,steamroller,endeavor,protect|speed-boost|eviolite
 
 --3_n|Brycen|ice|/leaders/blwh-brycen
 spheal|18|brine,icy-wind,bulldoze,yawn|snow-warning|eviolite
 swinub|18|bulldoze,avalanche,rock-tomb,hail|thick-fat|berry-juice
-vanillite|18|icy-wind,disarming-voice,mirror-shot,water-pulse|ice-body|life-orb
-cubchoo|20|ice-shard,bulldoze,avalanche,play-rough|rattled|focus-sash
+vanillite|18|icy-wind,round,mirror-shot,water-pulse|ice-body|life-orb
+cubchoo|20|ice-shard,bulldoze,avalanche,submission|rattled|focus-sash
 
 --3_c|Brycen|ice|/leaders/blwh-brycen
 snover|21|bullet-seed,ice-shard,water-pulse,icy-wind|snow-warning|occa-berry
 delibird|23|peck,fake-out,water-pulse,icy-wind|insomnia|charti-berry
-smoochum|21|frost-breath,psybeam,nasty-plot,grass-knot|dry-skin|focus-sash
+smoochum|21|powder-snow,confusion,nasty-plot,fake-out|dry-skin|focus-sash
 shellder|21|icicle-spear,rock-blast,water-pulse,shell-smash|skill-link|mystic-water
 
 --4_n|Burgh|bug|/leaders/blwh-burgh
 dwebble|25|x-scissor,stealth-rock,rock-slide,spikes|sturdy|eviolite
 larvesta|25|flame-charge,leech-life,will-o-wisp,u-turn|flame-body|muscle-band
-masquerain|25|signal-beam,bubble-beam,ominous-wind,giga-drain|intimidate|charti-berry
+masquerain|25|struggle-bug,psybeam,mud-shot,air-cutter|intimidate|charti-berry
 parasect|25|x-scissor,spore,seed-bomb,counter|dry-skin|focus-sash
 leavanny|27|x-scissor,leaf-blade,swords-dance,aerial-ace|swarm|life-orb
 
 --4_c|Burgh|bug|/leaders/blwh-burgh
 ==double:true
 yanmega|28|bug-buzz,giga-drain,air-cutter,detect|tinted-lens|bug-gem
-masquerain|28|signal-beam,bubble-beam,icy-wind,twister|intimidate|absorb-bulb
+masquerain|28|soak,bubble-beam,struggle-bug,mud-shot|intimidate|absorb-bulb
 scyther|28|bug-bite,wing-attack,rock-smash,quick-attack|technician|lum-berry
 vespiquen|28|attack-order,air-slash,power-gem,revenge|intimidate|wacan-berry
-durant|28|rock-slide,lunge,low-sweep,iron-head|heatproof|muscle-band
+durant|28|rock-slide,x-scissor,low-sweep,iron-head|heatproof|muscle-band
 leavanny|29|x-scissor,leaf-blade,swords-dance,aerial-ace|swarm|focus-sash
 
 --5_n|Lenora|normal|/leaders/blwh-lenora
-stoutland|30|strength,wild-charge,crunch,play-rough|intimidate|leftovers
+stoutland|30|strength,wild-charge,crunch,submission|intimidate|leftovers
 unfezant|30|air-slash,hyper-voice,wish,tailwind|super-luck|scope-lens
 sawsbuck|30|aerial-ace,horn-attack,jump-kick,horn-leech|sap-sipper|miracle-seed
 
 --5_c|Lenora & Hawes|normal|/leaders/blazevolt-lenora-hawes
 ==double:true
 gigalith|31|stealth-rock,sandstorm,heavy-slam,rock-slide|sand-stream|wide-lens
-stoutland|31|strength,wild-charge,crunch,play-rough|sand-rush|leftovers
+stoutland|31|strength,wild-charge,crunch,submission|sand-rush|leftovers
 machamp|31|dynamic-punch,bullet-punch,ice-punch,cross-poison|no-guard|sitrus-berry
 unfezant|31|hyper-voice,hurricane,heat-wave,tailwind|unaware|normal-gem
 
@@ -365,11 +365,11 @@ lanturn|37|muddy-water,icy-wind,discharge,tail-glow|volt-absorb|rindo-berry
 electivire|37|discharge,close-combat,rock-slide,ice-punch|motor-drive|shuca-berry
 raichu|37|grass-knot,extreme-speed,thunderbolt,icicle-crash|lightning-rod|air-balloon
 stunfisk|37|muddy-water,discharge,earth-power,sludge-bomb|lightning-rod|sitrus-berry
-zebstrika|38|wild-charge,flare-blitz,high-horsepower,lunge|motor-drive|life-orb
+zebstrika|38|wild-charge,flare-blitz,mega-kick,barrage|motor-drive|life-orb
 
 
 --7_n|Clay|ground|/leaders/blwh-clay
-nidoqueen|41|scorching-sands,sandstorm,toxic,stealth-rock|poison-point|smooth-rock
+nidoqueen|41|metal-sound,sandstorm,toxic,stealth-rock|poison-point|smooth-rock
 seismitoad|41|earthquake,sandstorm,hydro-pump,ice-punch|water-absorb|rindo-berry
 nidoking|41|earthquake,sludge-bomb,ice-beam,thunderbolt|sheer-force|life-orb
 claydol|41|earth-power,sandstorm,ice-beam,psychic|levitate|absorb-bulb
@@ -388,7 +388,7 @@ excadrill|45|earthquake,swords-dance,rock-slide,x-scissor|sand-rush|air-balloon
 --8_n|Skyla|flying|/leaders/blwh-skyla
 skarmory|51|brave-bird,spikes,steel-wing,stealth-rock|sturdy|leftovers
 gliscor|51|acrobatics,stone-edge,ice-fang,earthquake|hyper-cutter|flying-gem
-togekiss|51|hurricane,moonblast,fire-blast,wish|serene-grace|life-orb
+togekiss|51|hurricane,mist-ball,wish,fire-blast|serene-grace|life-orb
 drifblim|51|hurricane,shadow-ball,thunderbolt,destiny-bond|flare-boost|flame-orb
 swanna|52|air-slash,scald,ice-beam,attract|big-pecks|wacan-berry
 archeops|51|acrobatics,head-smash,heat-wave,earthquake|defeatist|sitrus-berry
@@ -398,37 +398,37 @@ jumpluff|54|hurricane,sleep-powder,tailwind,giga-drain|prankster|flying-gem
 gliscor|54|earthquake,rock-slide,ice-fang,thunder-fang|poison-heal|toxic-orb
 pidgeot|54|hyper-voice,heat-wave,hurricane,protect|no-guard|normal-gem
 aerodactyl|54|head-smash,brave-bird,earthquake,tailwind|rock-head|focus-sash
-togekiss|54|heat-wave,dazzling-gleam,hurricane,protect|serene-grace|wacan-berry
+togekiss|54|heat-wave,hurricane,luster-purge,protect|serene-grace|wacan-berry
 swanna|55|hurricane,hydro-pump,icy-wind,protect|friend-guard|life-orb
 
 --9_n|Drayden|dragon|/leaders/blwh-drayden
-druddigon|59|thunder-punch,superpower,sucker-punch,dragon-rush|sheer-force|life-orb
+druddigon|59|dragon-rush,thunder-punch,superpower,dragon-rush|sheer-force|life-orb
 charizard|59|belly-drum,flamethrower,earthquake,outrage|blaze|charti-berry
 flygon|59|earthquake,bug-buzz,fire-blast,draco-meteor|levitate|white-herb
-altaria|59|dragon-claw,fire-blast,play-rough,cotton-guard|cloud-nine|leftovers
+altaria|59|dragon-claw,fire-blast,submission,cotton-guard|cloud-nine|leftovers
 haxorus|61|outrage,earthquake,aqua-tail,iron-tail|mold-breaker|dragon-gem
 salamence|59|hydro-pump,fire-blast,outrage,iron-tail|intimidate|wide-lens
 
 --9_c|Drayden|dragon|/leaders/blwh-drayden
 ==double:true
-charizard|63|shadow-claw,fire-lash,dragon-claw,rock-slide|defiant|sitrus-berry
+charizard|63|shadow-claw,razor-wind,dragon-claw,rock-slide|defiant|sitrus-berry
 latias|63|aura-sphere,thunderbolt,tailwind,dragon-pulse|levitate|lum-berry
 haxorus|64|outrage,swords-dance,close-combat,cross-poison|mold-breaker|haban-berry
-flygon|63|quiver-dance,dragon-pulse,high-horsepower,giga-drain|levitate|life-orb
-salamence|63|dragon-claw,flamethrower,dragon-dance,dual-wingbeat|intimidate|yache-berry
+flygon|63|quiver-dance,dragon-pulse,mega-kick,giga-drain|levitate|life-orb
+salamence|63|dragon-claw,flamethrower,dragon-dance,vice-grip|intimidate|yache-berry
 sceptile|63|dragon-claw,leaf-blade,acrobatics,drain-punch|unburden|focus-sash
 
 --10_n|Marlon|water|/leaders/blwh-marlon
 politoed|63|scald,hypnosis,blizzard,perish-song|drizzle|focus-sash
 tentacruel|63|scald,sludge-wave,ice-beam,mirror-coat|rain-dish|black-sludge
 ludicolo|63|scald,leech-seed,ice-beam,giga-drain|rain-dish|leftovers
-carracosta|63|wave-crash,shell-smash,stone-edge,ice-beam|sturdy|custap-berry
+carracosta|63|punishment,shell-smash,stone-edge,ice-beam|sturdy|custap-berry
 jellicent|64|scald,shadow-ball,ice-beam,recover|cursed-body|sitrus-berry
-bibarel|63|wave-crash,strength,aqua-jet,swords-dance|simple|chople-berry
+bibarel|63|punishment,strength,aqua-jet,swords-dance|simple|chople-berry
 
 --10_c|Marlon|water|/leaders/blwh-marlon
 ==effect:rain|double:true
-poliwrath|67|lovely-kiss,poison-jab,high-horsepower,close-combat|swift-swim|cell-battery
+poliwrath|67|lovely-kiss,poison-jab,mega-kick,close-combat|swift-swim|cell-battery
 ludicolo|67|hydro-pump,giga-drain,ice-beam,focus-blast|swift-swim|life-orb
 kabutops|67|rock-slide,waterfall,leech-life,aqua-jet|swift-swim|focus-sash
 pelipper|67|hurricane,u-turn,muddy-water,icy-wind|drizzle|wacan-berry
@@ -454,20 +454,20 @@ f00|53|u-turn,extreme-speed,thunder-wave,needle-arm|volt-absorb|chople-berry
 mt2|53|shift-gear,meteor-mash,earthquake,wild-charge|flash-fire|air-balloon
 
 --col3_n|Colress||/leaders/blwh-colress
-beheeyem|65|bug-buzz,mystical-fire,psychic,destiny-bond|analytic|colbur-berry
+beheeyem|65|bug-buzz,sacred-fire,psychic,destiny-bond|analytic|colbur-berry
 rotom-wash>rotom-wash|65|volt-switch,will-o-wisp,hydro-pump,thunderbolt|levitate|focus-sash
 magnezone|65|volt-switch,bug-buzz,thunderbolt,flash-cannon|sturdy|air-balloon
 metagross|65|meteor-mash,shift-gear,ice-punch,zen-headbutt|iron-fist|occa-berry
 porygon-z|65|nasty-plot,thunderbolt,hyper-beam,ice-beam|adaptability|custap-berry
-klinklang|66|gear-grind,shift-gear,wild-charge,high-horsepower|levitate|life-orb
+klinklang|66|gear-grind,shift-gear,wild-charge,mega-kick|levitate|life-orb
 
 --col3_c|Colress||/leaders/blwh-colress
-beheeyem|69|bug-buzz,mystical-fire,psychic,destiny-bond|analytic|colbur-berry
+beheeyem|69|bug-buzz,sacred-fire,psychic,destiny-bond|analytic|colbur-berry
 rotom-wash>rotom-wash|69|volt-switch,will-o-wisp,hydro-pump,thunderbolt|levitate|focus-sash
 magnezone|69|volt-switch,bug-buzz,thunderbolt,flash-cannon|sturdy|air-balloon
 metagross|69|meteor-mash,shift-gear,ice-punch,zen-headbutt|iron-fist|occa-berry
 porygon-z|69|nasty-plot,thunderbolt,hyper-beam,ice-beam|adaptability|custap-berry
-klinklang|70|gear-grind,shift-gear,wild-charge,high-horsepower|levitate|life-orb
+klinklang|70|gear-grind,shift-gear,wild-charge,mega-kick|levitate|life-orb
 
 --ghetsis_n|Ghetsis||/leaders/blwh-ghetsis-2
 cofagrigus|67|will-o-wisp,protect,trick-room,hex|mummy|leftovers
@@ -490,11 +490,11 @@ bouffalant|41|head-charge,zen-headbutt,wild-charge,close-combat|reckless|chople-
 zoroark|41|extrasensory,grass-knot,sucker-punch,u-turn|illusion|focus-sash
 swoobat|41|nasty-plot,stored-power,air-slash,giga-drain|simple|sitrus-berry
 stoutland|41|strength,fire-fang,ice-fang,thunder-fang|intimidate|life-orb
-chandelure|41|energy-ball,shadow-ball,mystical-fire,dark-pulse|flash-fire|passho-berry
+chandelure|41|energy-ball,shadow-ball,sacred-fire,dark-pulse|flash-fire|passho-berry
 
 --zinz1|Zinzolin & Grunt||/leaders/blwh-zinzolin-grunt
 ==double:true
-cryogonal|54|blizzard,hail,dazzling-gleam,explosion|levitate|focus-sash
+cryogonal|54|blizzard,hail,luster-purge,explosion|levitate|focus-sash
 swalot|54|acid-spray,toxic,stockpile,destiny-bond|liquid-ooze|
 walrein|54|brine,protect,substitute,toxic|ice-body|leftovers
 delibird|54|icy-wind,frost-breath,acrobatics,tailwind|technician|
@@ -512,7 +512,7 @@ drifblim|59|acrobatics,shadow-ball,thunderbolt,destiny-bond|unburden|flying-gem
 walrein|63|blizzard,brine,encore,toxic|ice-body|leftovers
 qwilfish|62|hail,aqua-jet,poison-jab,spikes|intimidate|icy-rock
 drifblim|63|acrobatics,shadow-ball,thunderbolt,hypnosis|unburden|flying-gem
-golem|62|rock-slide,accelerock,thunder-punch,steamroller|sturdy|rock-gem
+golem|62|rock-slide,sand-tomb,thunder-punch,steamroller|sturdy|rock-gem
 weavile|64|knock-off,icicle-crash,ice-shard,low-kick|pressure|life-orb
 carnivine|62|power-whip,rage-powder,sleep-powder,knock-off|levitate|focus-sash
 
@@ -520,31 +520,31 @@ carnivine|62|power-whip,rage-powder,sleep-powder,knock-off|levitate|focus-sash
 walrein|67|blizzard,brine,encore,toxic|ice-body|leftovers
 qwilfish|66|hail,aqua-jet,poison-jab,spikes|intimidate|icy-rock
 drifblim|67|acrobatics,shadow-ball,thunderbolt,hypnosis|unburden|flying-gem
-golem|66|rock-slide,accelerock,thunder-punch,steamroller|sturdy|rock-gem
+golem|66|rock-slide,sand-tomb,thunder-punch,steamroller|sturdy|rock-gem
 weavile|68|knock-off,icicle-crash,ice-shard,low-kick|pressure|life-orb
 carnivine|66|power-whip,rage-powder,sleep-powder,knock-off|levitate|focus-sash
 
 --zinz4_n|Zinzolin||/leaders/blwh-zinzolin
 ==double:true
-vanilluxe|65|dazzling-gleam,blizzard,power-gem,flash-cannon|snow-warning|focus-sash
+vanilluxe|65|luster-purge,blizzard,power-gem,flash-cannon|snow-warning|focus-sash
 cryogonal|65|blizzard,reflect,light-screen,hail|levitate|light-clay
 froslass|65|blizzard,hex,will-o-wisp,destiny-bond|snow-cloak|ice-gem
-mamoswine|65|icicle-crash,stone-edge,high-horsepower,ice-shard|snow-cloak|zoom-lens
+mamoswine|65|icicle-crash,stone-edge,mega-kick,ice-shard|snow-cloak|zoom-lens
 walrein|65|blizzard,bubble-beam,toxic,substitute|ice-body|leftovers
-weavile|66|night-slash,triple-axel,fake-out,low-kick|pressure|life-orb
+weavile|66|night-slash,triple-kick,fake-out,low-kick|pressure|life-orb
 
 --zinz4_c|Zinzolin||/leaders/blwh-zinzolin
-vanilluxe|69|dazzling-gleam,blizzard,power-gem,flash-cannon|snow-warning|focus-sash
+vanilluxe|69|luster-purge,blizzard,power-gem,flash-cannon|snow-warning|focus-sash
 cryogonal|69|blizzard,reflect,light-screen,hail|levitate|light-clay
 froslass|69|blizzard,hex,will-o-wisp,destiny-bond|snow-cloak|ice-gem
-mamoswine|69|icicle-crash,stone-edge,high-horsepower,ice-shard|snow-cloak|zoom-lens
+mamoswine|69|icicle-crash,stone-edge,mega-kick,ice-shard|snow-cloak|zoom-lens
 walrein|69|blizzard,bubble-beam,toxic,substitute|ice-body|leftovers
-weavile|70|night-slash,triple-axel,fake-out,low-kick|pressure|life-orb
+weavile|70|night-slash,triple-kick,fake-out,low-kick|pressure|life-orb
 
 # Other
 
 --benga_n|Benga||/leaders/blazevolt-benga
-garchomp|55|stealth-rock,breaking-swipe,roar,stealth-rock|rough-skin|rocky-helmet
+garchomp|55|stealth-rock,spike-cannon,stealth-rock,roar|rough-skin|rocky-helmet
 metagross|55|bullet-punch,agility,meteor-mash,zen-headbutt|iron-fist|focus-sash
 emboar|55|flame-charge,earthquake,sucker-punch,wild-charge|mold-breaker|passho-berry
 conkeldurr|56|focus-punch,substitute,mach-punch,payback|guts|flame-orb
@@ -559,16 +559,16 @@ volcarona|62|quiver-dance,fiery-dance,bug-buzz,giga-drain|flame-body|lum-berry
 
 --charles|Charles||/leaders/blwh-charles
 accelgor|37|bug-buzz,final-gambit,giga-drain,sludge-bomb|infiltrator|charti-berry
-sigilyph|37|air-cutter,esper-wing,icy-wind,heat-wave|tinted-lens|twisted-spoon
-krokorok|37|foul-play,high-horsepower,rock-slide,thunder-fang|intimidate|rocky-helmet
+sigilyph|37|air-cutter,bubble,icy-wind,heat-wave|tinted-lens|twisted-spoon
+krokorok|37|foul-play,mega-kick,rock-slide,thunder-fang|intimidate|rocky-helmet
 druddigon|37|dragon-rush,thunder-punch,rock-climb,glare|sheer-force|life-orb
-bouffalant|37|head-charge,wild-charge,megahorn,high-horsepower|reckless|sitrus-berry
-crustle|37|rock-slide,accelerock,shell-smash,x-scissor|sturdy|custap-berry
+bouffalant|37|head-charge,wild-charge,megahorn,mega-kick|reckless|sitrus-berry
+crustle|37|rock-slide,sand-tomb,shell-smash,x-scissor|sturdy|custap-berry
 
 # Elite four
 
 --e1_n|Shauntal|ghost|/leaders/blwh-shauntal
-jellicent|72|scald,icy-wind,shadow-ball,recover|water-absorb|leftovers
+jellicent|72|ice-beam,shadow-ball,scald,will-o-wisp|water-absorb|leftovers
 drifblim|72|shadow-ball,protect,thunder,psychic|flare-boost|flame-orb
 cofagrigus|72|shadow-ball,attract,disable,toxic|mummy|leftovers
 golurk|72|shadow-punch,earthquake,thunder-punch,ice-punch|iron-fist|expert-belt
@@ -578,8 +578,8 @@ chandelure|74|overheat,shadow-ball,psychic,energy-ball|shadow-tag|white-herb
 --e1_c|Shauntal|ghost|/leaders/blwh-shauntal
 sableye|77|trick,quash,will-o-wisp,shadow-claw|prankster|lagging-tail
 gengar|77|shadow-ball,sludge-bomb,aura-sphere,energy-ball|levitate|life-orb
-mismagius|77|mystical-fire,shadow-ball,dazzling-gleam,nasty-plot|levitate|focus-sash
-golurk|77|shadow-punch,shadow-sneak,high-horsepower,ice-punch|iron-fist|rindo-berry
+mismagius|77|sacred-fire,shadow-ball,luster-purge,nasty-plot|levitate|focus-sash
+golurk|77|shadow-punch,shadow-sneak,mega-kick,ice-punch|iron-fist|rindo-berry
 jellicent|77|scald,icy-wind,shadow-ball,recover|water-absorb|leftovers
 chandelure|78|heat-wave,shadow-ball,substitute,energy-ball|shadow-tag|air-balloon
 
@@ -587,7 +587,7 @@ chandelure|78|heat-wave,shadow-ball,substitute,energy-ball|shadow-tag|air-balloo
 --e2_n|Grimsley|dark|/leaders/blwh-grimsley
 liepard|72|fake-out,thunder-wave,sucker-punch,u-turn|prankster|normal-gem
 honchkrow|72|sucker-punch,brave-bird,roost,heat-wave|moxie|life-orb
-krookodile|72|earthquake,crunch,superpower,stone-edge|intimidate|leftovers
+krookodile|72|earthquake,sucker-punch,superpower,stone-edge|intimidate|leftovers
 scrafty|72|dragon-dance,high-jump-kick,sucker-punch,ice-punch|moxie|focus-sash
 houndoom|72|overheat,thunder-fang,sucker-punch,dark-pulse|intimidate|focus-sash
 bisharp|74|iron-head,brick-break,x-scissor,sucker-punch|defiant|air-balloon
@@ -603,7 +603,7 @@ drapion|77|storm-throw,cross-poison,night-slash,swords-dance|sniper|scope-lens
 
 --e3_n|Caitlin|psychic|/leaders/blwh-caitlin
 beheeyem|72|trick-room,psycho-boost,thunderbolt,shadow-ball|analytic|focus-sash
-musharna|72|trick-room,psyshock,shadow-ball,moonblast|synchronize|leftovers
+musharna|72|trick-room,psyshock,shadow-ball,moonlight|synchronize|leftovers
 reuniclus|72|thunderbolt,psychic,energy-ball,focus-blast|magic-guard|life-orb
 gothitelle|72|trick-room,psychic,night-daze,thunderbolt|shadow-tag|tanga-berry
 slowbro|72|trick-room,surf,slack-off,fire-blast|regenerator|red-card
@@ -611,7 +611,7 @@ metagross|74|meteor-mash,earthquake,zen-headbutt,bullet-punch|iron-fist|air-ball
 
 --e3_c|Caitlin|psychic|/leaders/blwh-caitlin
 ==double:true
-musharna|77|trick-room,psyshock,dazzling-gleam,shadow-ball|synchronize|leftovers
+musharna|77|trick-room,psyshock,luster-purge,shadow-ball|synchronize|leftovers
 slowbro|77|psychic,ice-beam,fire-blast,scald|regenerator|eject-button
 gallade|77|psycho-cut,close-combat,ice-punch,shadow-sneak|justified|life-orb
 darmanitan-zen|78|heat-wave,psychic,grass-knot,focus-blast|sheer-force|life-orb
@@ -621,8 +621,8 @@ metagross|77|meteor-mash,rock-slide,trick-room,bullet-punch|iron-fist|air-balloo
 
 --e4_n|Marshal|fighting|/leaders/blwh-marshal
 throh|72|stone-edge,circle-throw,payback,bulldoze|mold-breaker|leftovers
-lucario|72|high-jump-kick,ice-punch,bullet-punch,dark-pulse|justified|life-orb
-sawk|72|close-combat,stone-edge,earthquake,poison-jab|sturdy|muscle-band
+lucario|72|high-jump-kick,extreme-speed,ice-punch,dark-pulse|justified|life-orb
+sawk|72|close-combat,stone-edge,earthquake,ice-punch|sturdy|muscle-band
 mienshao|72|high-jump-kick,acrobatics,stone-edge,fake-out|reckless|flying-gem
 medicham|72|high-jump-kick,zen-headbutt,thunder-punch,ice-punch|pure-power|focus-sash
 conkeldurr|74|drain-punch,stone-edge,payback,mach-punch|iron-fist|leftovers
@@ -638,17 +638,17 @@ conkeldurr|78|poison-jab,drain-punch,rock-slide,mach-punch|guts|flame-orb
 
 
 --champ_n|Iris||/leaders/blwh-iris-champion
-dragonite|73|dragon-dance,dual-wingbeat,dragon-claw,fire-punch|multiscale|leftovers
+dragonite|73|dragon-dance,hurricane,outrage,fire-punch|multiscale|leftovers
 feraligatr|73|dragon-dance,waterfall,crunch,ice-punch|sheer-force|life-orb
-hydreigon|73|draco-meteor,flash-cannon,focus-blast,dark-pulse|levitate|white-herb
+hydreigon|73|draco-meteor,fire-blast,focus-blast,dark-pulse|levitate|white-herb
 archeops|73|acrobatics,stone-edge,earthquake,u-turn|defeatist|flying-gem
 serperior|73|leaf-storm,dragon-pulse,reflect,light-screen|contrary|light-clay
 haxorus|75|outrage,aqua-tail,earthquake,dragon-dance|mold-breaker|focus-sash
 
 --champ_c|Iris||/leaders/blwh-iris-champion
 serperior|78|leaf-storm,draco-meteor,substitute,glare|contrary|yache-berry
-dragonite|78|dragon-dance,dual-wingbeat,dragon-claw,fire-punch|multiscale|leftovers
+dragonite|78|dragon-dance,vice-grip,dragon-claw,fire-punch|multiscale|leftovers
 empoleon|78|agility,ice-beam,flash-cannon,hydro-pump|torrent|shuca-berry
 alakazam|78|psyshock,nasty-plot,energy-ball,aura-sphere|magic-guard|focus-sash
-togekiss|78|moonblast,air-slash,thunder-wave,aura-sphere|serene-grace|sitrus-berry
-latios|79|dragon-pulse,aura-sphere,mystical-fire,esper-wing|levitate|life-orb
+togekiss|78|aura-sphere,air-slash,thunder-wave,mist-ball|serene-grace|sitrus-berry
+latios|79|dragon-pulse,aura-sphere,sacred-fire,bubble|levitate|life-orb
