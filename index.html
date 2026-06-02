@@ -9246,17 +9246,32 @@ function _buildWorkerSource() {
     'let MOVES,MOVE_DATA,MOVE_ACCURACY,TYPE_BOOST_ITEM,TYPE_CHART,MM_DEFAULT_POWER,PLAN_SWITCH_PEN,PLAN_CRIT_P,PLAN_RISK_PEN,PLAN_POTION_BUDGET,PLAN_HEAL_FRAC,PLAN_POT_NOCONSEC,MOVES_NORMALIZED,backfilledMoves={},__PRESPLIT=false;',
     'let STATUS_MOVES=new Set(),PHYSICAL_TYPES_PRE_SPLIT=new Set(),PLAN_PIVOT=new Set(),PLAN_SLEEP=new Set(),PLAN_RECOVER=new Set(),MULTI_TURN_MOVES=new Set();',
     'var NUZ_DATA={};',
+    // Worker-side getActivePatches shim: getMoveType/moveData call getActivePatches()
+    // for ROM-hack move type/power overrides (Cut→Grass, Vine Whip 35…). The real one
+    // reads curGame()/GAMES (unavailable here), so we inject the CURRENT game\'s move
+    // patches as a plain map at init. WITHOUT this the worker computes unpatched move
+    // data while the main thread computes patched → the self-test mismatches → the
+    // pool is rejected and every sim runs synchronously on the main thread (UI freeze).
+    'let _WK_PATCH_MAP=new Map();const getActivePatches=function(){return {moves:_WK_PATCH_MAP};};',
     'const gameIsPreSplit=()=>__PRESPLIT;',   // override: orig reads curGame()/GAMES
     fnSrc,
     'onmessage=function(e){var m=e.data;',
-    ' if(m.type==="init"){var d=m.data;MOVES=d.MOVES;MOVE_DATA=d.MOVE_DATA;MOVE_ACCURACY=d.MOVE_ACCURACY;TYPE_BOOST_ITEM=d.TYPE_BOOST_ITEM;TYPE_CHART=d.TYPE_CHART;MM_DEFAULT_POWER=d.MM_DEFAULT_POWER;PLAN_SWITCH_PEN=d.PLAN_SWITCH_PEN;PLAN_CRIT_P=d.PLAN_CRIT_P;PLAN_RISK_PEN=d.PLAN_RISK_PEN;PLAN_POTION_BUDGET=d.PLAN_POTION_BUDGET;PLAN_HEAL_FRAC=d.PLAN_HEAL_FRAC;PLAN_POT_NOCONSEC=d.PLAN_POT_NOCONSEC;MOVES_NORMALIZED=d.MOVES_NORMALIZED;backfilledMoves=d.backfilledMoves||{};STATUS_MOVES=new Set(d.STATUS_MOVES);PHYSICAL_TYPES_PRE_SPLIT=new Set(d.PHYSICAL_TYPES_PRE_SPLIT);PLAN_PIVOT=new Set(d.PLAN_PIVOT);PLAN_SLEEP=new Set(d.PLAN_SLEEP);PLAN_RECOVER=new Set(d.PLAN_RECOVER);MULTI_TURN_MOVES=new Set(d.MULTI_TURN_MOVES);NUZ_DATA={moveStats:d.moveStats};postMessage({type:"ready"});return;}',
+    ' if(m.type==="init"){var d=m.data;MOVES=d.MOVES;MOVE_DATA=d.MOVE_DATA;MOVE_ACCURACY=d.MOVE_ACCURACY;TYPE_BOOST_ITEM=d.TYPE_BOOST_ITEM;TYPE_CHART=d.TYPE_CHART;MM_DEFAULT_POWER=d.MM_DEFAULT_POWER;PLAN_SWITCH_PEN=d.PLAN_SWITCH_PEN;PLAN_CRIT_P=d.PLAN_CRIT_P;PLAN_RISK_PEN=d.PLAN_RISK_PEN;PLAN_POTION_BUDGET=d.PLAN_POTION_BUDGET;PLAN_HEAL_FRAC=d.PLAN_HEAL_FRAC;PLAN_POT_NOCONSEC=d.PLAN_POT_NOCONSEC;MOVES_NORMALIZED=d.MOVES_NORMALIZED;backfilledMoves=d.backfilledMoves||{};STATUS_MOVES=new Set(d.STATUS_MOVES);PHYSICAL_TYPES_PRE_SPLIT=new Set(d.PHYSICAL_TYPES_PRE_SPLIT);PLAN_PIVOT=new Set(d.PLAN_PIVOT);PLAN_SLEEP=new Set(d.PLAN_SLEEP);PLAN_RECOVER=new Set(d.PLAN_RECOVER);MULTI_TURN_MOVES=new Set(d.MULTI_TURN_MOVES);NUZ_DATA={moveStats:d.moveStats};_WK_PATCH_MAP=new Map(Object.entries(d.movePatches||{}));postMessage({type:"ready"});return;}',
     ' if(m.type==="sim"){__PRESPLIT=!!m.preSplit;var r=null,err=null;try{r=_scoreFromSims(m.party,m.bossC,m.mode,m.n,m.seed,m.bossItems);}catch(ex){err=String(ex&&ex.message||ex);}postMessage({type:"simDone",id:m.id,result:r,err:err});return;}',
     '};'
   ].join('\n');
 }
+// Current game's move overrides as a plain {slug:{type,power,category}} object so the
+// worker's getMoveType/moveData match the main thread (parity → self-test passes).
+function _activeMovePatchObj() {
+  const out = {};
+  try { const ap = getActivePatches(); if (ap && ap.moves) for (const [k, v] of ap.moves) out[k] = v; } catch (e) {}
+  return out;
+}
 function _workerInitPayload() {
   return {
     MOVES, MOVE_DATA, MOVE_ACCURACY, TYPE_BOOST_ITEM, TYPE_CHART, MM_DEFAULT_POWER, PLAN_SWITCH_PEN, PLAN_CRIT_P, PLAN_RISK_PEN, PLAN_POTION_BUDGET, PLAN_HEAL_FRAC, PLAN_POT_NOCONSEC, MOVES_NORMALIZED,
+    movePatches: _activeMovePatchObj(),
     moveStats: (typeof NUZ_DATA !== 'undefined' && NUZ_DATA.moveStats) || {},
     backfilledMoves: (typeof backfilledMoves !== 'undefined' && backfilledMoves) || {},
     STATUS_MOVES: [...STATUS_MOVES], PHYSICAL_TYPES_PRE_SPLIT: [...PHYSICAL_TYPES_PRE_SPLIT],
@@ -9296,6 +9311,22 @@ function _refreshSimWorker() {
   if (!(_pool.length && _workerOK !== false)) return;
   clearTimeout(_wkRefreshT);
   _wkRefreshT = setTimeout(() => { if (_pool.length && _workerOK !== false) { const payload = _workerInitPayload(); for (const w of _pool) w.postMessage({ type: 'init', data: payload }); } }, 1500);
+}
+// Keep each worker's move-patch snapshot in sync with the ACTIVE game. The pool is
+// created once and reused across save/game switches, so when the active patches key
+// changes we re-post the payload (FIFO, applied before the next sim) and re-run the
+// self-test (machinery is unchanged, but a pool disabled under one game's data can
+// recover under another's). Cheap: only fires on an actual game change.
+let _wkPatchKey = '__init__';
+function _syncWorkerPatches() {
+  if (!_pool.length) return;
+  let key = '';
+  try { const g = GAMES[curGame()]; key = resolveDataSource(g && g.dataSources && g.dataSources.patches, g, curVersion(), curVariant()) || ''; } catch (e) {}
+  if (key === _wkPatchKey) return;
+  _wkPatchKey = key;
+  const payload = _workerInitPayload();
+  for (const w of _pool) { try { w.postMessage({ type: 'init', data: payload }); } catch (e) {} }
+  _selfTestP = null; _workerOK = null;
 }
 // Round-robin a sim across the pool (each worker drains its own queue FIFO).
 function _runSimInPool(party, bossC, mode, n, seed, preSplit, bossItems) {
@@ -9337,6 +9368,7 @@ async function simReadinessAsync(boss, pool, setMode, opts) {
   const preSplit = (typeof gameIsPreSplit === 'function') ? gameIsPreSplit() : false;
   if (_ensurePool()) {
     try { await _poolReadyP; } catch (e) {}
+    _syncWorkerPatches();   // re-post current game's move patches if it changed (keeps worker == main thread)
     if (_workerOK === null) await _ensureSelfTest(inp, mode, seed, preSplit);
     if (_workerOK) { const r = await _runSimInPool(inp.party, inp.bossC, mode, N, seed, preSplit, inp.bossItems); if (r) { if (cacheable) _lruSet(_readinessLRU, seed, r, RD_LRU_CAP); return r; } }
   }
