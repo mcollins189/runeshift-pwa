@@ -320,7 +320,7 @@ cubchoo|20|ice-shard,bulldoze,avalanche,submission|rattled|focus-sash
 
 --3_c|Brycen|ice|/leaders/blwh-brycen
 snover|21|bullet-seed,ice-shard,water-pulse,icy-wind|snow-warning|occa-berry
-delibird|23|peck,fake-out,water-pulse,icy-wind|insomnia|charti-berry
+cryogonal|23|avalanche,confuse-ray,night-slash,scary-face|levitate|
 smoochum|21|powder-snow,confusion,nasty-plot,fake-out|dry-skin|focus-sash
 shellder|21|icicle-spear,rock-blast,water-pulse,shell-smash|skill-link|mystic-water
 
@@ -333,11 +333,11 @@ leavanny|27|x-scissor,leaf-blade,swords-dance,aerial-ace|swarm|life-orb
 
 --4_c|Burgh|bug|/leaders/blwh-burgh
 ==double:true
-yanmega|28|bug-buzz,giga-drain,air-cutter,detect|tinted-lens|bug-gem
+mothim|28|bug-buzz,electroweb,air-cutter,psybeam|swarm|metronome
 masquerain|28|soak,bubble-beam,struggle-bug,mud-shot|intimidate|absorb-bulb
-scyther|28|bug-bite,wing-attack,rock-smash,quick-attack|technician|lum-berry
+escavalier|28|twineedle,razor-shell,metal-burst,endure|swarm|occa-berry
 vespiquen|28|attack-order,air-slash,power-gem,revenge|intimidate|wacan-berry
-durant|28|rock-slide,x-scissor,low-sweep,iron-head|heatproof|muscle-band
+heracross|28|brick-break,fury-cutter,helping-hand,rock-tomb|swarm|cell-battery
 leavanny|29|x-scissor,leaf-blade,swords-dance,aerial-ace|swarm|focus-sash
 
 --5_n|Lenora|normal|/leaders/blwh-lenora
