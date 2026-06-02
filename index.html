@@ -1695,6 +1695,15 @@ function resolveMove(name) {
 // Get move's type, or null if unknown
 function getMoveType(name) {
   const canonical = resolveMove(name);
+  // ROM-hack move-type overrides (e.g. Blaze Black retypes Cut Normal→Grass,
+  // Strength→Rock). Mirror moveDetails so EVERY type-display + effectiveness site
+  // is consistent — without this, move chips (moveDetails-based) showed the patched
+  // type while learnset/scoring/matchup badges (getMoveType-based) showed vanilla.
+  const patches = (typeof getActivePatches === 'function') ? getActivePatches() : null;
+  if (patches) {
+    const pm = patches.moves.get((name || '').toLowerCase().replace(/\s+/g, '-'));
+    if (pm && pm.type) return pm.type;
+  }
   return canonical ? MOVES[canonical] : null;
 }
 
@@ -10282,7 +10291,7 @@ function renderMatchup() {
     <div class="matchup-header${defeated?' defeated':''}">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
         <div>
-          <div class="matchup-title">${defeated?'<span class="defeat-check" title="Defeated">✓</span> ':''}${starterBossDisplayName(boss)}${showRematch?' <span style="font-size:13px;color:var(--amber);font-weight:600">· Rematch</span>':''}</div>
+          <div class="matchup-title">${defeated?'<span class="defeat-check" title="Defeated">✓</span> ':''}${starterBossDisplayName(realBoss)}${showRematch?' <span style="font-size:13px;color:var(--amber);font-weight:600">· Rematch</span>':''}</div>
           <div class="matchup-sub">${subMeta}</div>
           ${(!showRematch && boss.note)?`<div style="font-size:11px;color:var(--amber);margin-top:8px;line-height:1.6">⚠ ${boss.note}</div>`:''}
           ${rivalNote?`<div style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.6">ℹ ${rivalNote}</div>`:''}
