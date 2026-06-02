@@ -5834,7 +5834,7 @@ async function evolvePoke(idx) {
   // never learned) for the user to optionally teach. Filter out anything the
   // Pokémon already knows. Done before save/render so the prompt shows on the
   // first render after the species switch.
-  await queueLearnableMoves(idx, finalTarget, { includeEvo: true });
+  await queueLearnableMoves(idx, finalTarget, { includeEvo: true, upToLevel: p.level || 0 });
 
   save(); render();
   showToast(`${p.nickname || oldSpecies} evolved into ${finalTarget}!`,'success');
@@ -5895,7 +5895,14 @@ async function queueLearnableMoves(idx, species, opts) {
   if (opts.atLevel != null) {
     candidates = ls.filter(m => m.lv === opts.atLevel && !m.isEvo);
   } else if (opts.includeEvo) {
-    candidates = ls.filter(m => m.isEvo);
+    // Evolution: offer evolution (lv0) moves PLUS any level-up move the NEW species
+    // already qualifies for at/below the current level that the mon doesn't know yet.
+    // The old isEvo-only filter missed these — e.g. Butterfree (which has NO lv0 evo
+    // moves) evolving at L10 should offer Confusion AND Air Cutter (both learned at
+    // L10), but used to offer nothing. `upToLevel` caps it to the mon's current level
+    // so we don't surface moves it hasn't reached yet (those still prompt on level-up).
+    const cap = (opts.upToLevel != null) ? opts.upToLevel : Infinity;
+    candidates = ls.filter(m => m.isEvo || (m.lv > 0 && m.lv <= cap));
   } else {
     candidates = [];
   }
@@ -14313,7 +14320,11 @@ async function renderPokeViewLearnset(idx) {
     const isDamaging = cat === 'P' || cat === 'S';
     return isDamaging && t && ownTypes.includes(t) ? '<span class="pv-ls-flag stab">STAB</span>' : '';
   };
-  const recentAlready = already.slice(-3);
+  // Show the FULL already-known list, not just the last 3. A truncated window hid
+  // moves the mon genuinely learns (e.g. a freshly-evolved Butterfree that learns
+  // Confusion AND Air Cutter at L10 would lose both once it hit L12, even though
+  // they were just offered on evolution) — "the set list" should be complete.
+  const recentAlready = already;
   const lsRows = [];
   // Evolution moves pinned to the top of the list. They're labeled "Evo"
   // rather than a numeric level because for older-gen Pokémon they'd
@@ -14350,7 +14361,7 @@ async function renderPokeViewLearnset(idx) {
       ${owned?'<span class="pv-ls-flag owned">✓ known</span>':''}
     </div>`);
   }
-  for (let i=0; i<Math.min(10, upcoming.length); i++) {
+  for (let i=0; i<upcoming.length; i++) {
     const m = upcoming[i];
     const t = getMoveType(m.name);
     // Only highlight the first upcoming row as "next" if there's no
