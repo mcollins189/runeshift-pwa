@@ -7269,6 +7269,31 @@ function starterVariantTeam(team) {
   }
   return out.length ? out : team;
 }
+// For a multi-leader starter-branched boss (the Striaton trio "Chili, Cress or
+// Cilan"), resolve the combined name down to the single leader the player will
+// actually face, based on their starter. The leader you fight is type-advantaged
+// vs your starter (Snivy→Chili, Tepig→Cress, Oshawott→Cilan); in the data the
+// per-starter variant BLOCKS appear in the SAME order as the names are listed, so
+// name[i] corresponds to the i-th distinct starter tag. Only remaps when the name
+// count matches the distinct-tag count and the starter is known; otherwise returns
+// the combined name unchanged (e.g. starter not logged yet, or a single-name boss).
+function starterBossDisplayName(boss) {
+  if (!boss || !boss.name) return boss && boss.name;
+  const team = boss.team || [];
+  if (!teamHasStarterVariants(team)) return boss.name;
+  const st = detectStarterType();
+  if (!st) return boss.name;                       // unknown starter → keep combined
+  const names = boss.name.split(/\s*(?:,|\/|\bor\b)\s*/i).map(s => s.trim()).filter(Boolean);
+  if (names.length < 2) return boss.name;          // single-name boss (Cheren/Bianca) → unchanged
+  const tagsInOrder = [];
+  for (const m of team) {
+    const t = (m.matchup || '').toLowerCase();
+    if (STARTER_TYPES.has(t) && !tagsInOrder.includes(t)) tagsInOrder.push(t);
+  }
+  if (names.length !== tagsInOrder.length) return boss.name;   // ambiguous → don't guess
+  const idx = tagsInOrder.indexOf(st);
+  return (idx >= 0 && names[idx]) ? names[idx] : boss.name;
+}
 
 function toggleMatchupDetail() {
   matchupDetailMode = !matchupDetailMode;
@@ -10250,7 +10275,7 @@ function renderMatchup() {
     <div class="matchup-header${defeated?' defeated':''}">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
         <div>
-          <div class="matchup-title">${defeated?'<span class="defeat-check" title="Defeated">✓</span> ':''}${boss.name}${showRematch?' <span style="font-size:13px;color:var(--amber);font-weight:600">· Rematch</span>':''}</div>
+          <div class="matchup-title">${defeated?'<span class="defeat-check" title="Defeated">✓</span> ':''}${starterBossDisplayName(boss)}${showRematch?' <span style="font-size:13px;color:var(--amber);font-weight:600">· Rematch</span>':''}</div>
           <div class="matchup-sub">${subMeta}</div>
           ${(!showRematch && boss.note)?`<div style="font-size:11px;color:var(--amber);margin-top:8px;line-height:1.6">⚠ ${boss.note}</div>`:''}
           ${rivalNote?`<div style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.6">ℹ ${rivalNote}</div>`:''}
