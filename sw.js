@@ -65,11 +65,13 @@
 // path from touching the huge POKEAPI_CACHE, which is slow on iOS once fully pre-cached
 // (was: launch black screen + sprites vanishing on re-render, ONLY with a full pre-cache).
 // The activate keep-set preserves POKEAPI_CACHE, so the user's downloaded pre-cache stays.
+// v41 — ship the double-battle 2-v-2 readiness engine. The engine landed in
+// index.html but under the already-live v40 cache, so installed PWAs kept serving
+// the pre-engine HTML (readiness on doubles looked unchanged). RULE AGAIN: any
+// index.html change that must reach installed clients needs a SHELL_CACHE bump.
 // v40 — force installed PWAs to drop the stale cached index.html and adopt the
-// sim-worker threading fix (off-thread boss-matchup sims). Without a bump, clients
-// kept serving the pre-fix HTML from nuz-shell-v39 → worker disabled → main-thread
-// sims → UI freeze, even though the fix was already deployed.
-const SHELL_CACHE = 'nuz-shell-v40';
+// sim-worker threading fix (off-thread boss-matchup sims).
+const SHELL_CACHE = 'nuz-shell-v41';
 // v2 — all self-hosted artwork sprites (sprites/art*, sprites/pixel* unchanged)
 // were regenerated (trimmed/normalized). Sprites are served cache-first as
 // "immutable", so without a bump existing clients would keep the old artwork
