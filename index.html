@@ -440,6 +440,7 @@
   .rd-label{margin-left:8px;font-size:12px;font-weight:600;color:var(--text2)}
   .rd-pctlabel{margin-left:8px;font-size:10.5px;font-weight:500;color:var(--text3);text-transform:lowercase}
   .rd-verdict{margin-left:6px;font-size:15px;font-weight:800;line-height:1.1}
+  .db-badge{display:inline-block;vertical-align:middle;margin-left:8px;font-size:12px;font-weight:700;color:#fbbf24;background:rgba(251,191,36,.13);border:1px solid rgba(251,191,36,.4);border-radius:6px;padding:2px 7px;cursor:help;white-space:nowrap}
   .rd-bar{position:relative;height:8px;border-radius:5px;background:var(--bg2);overflow:hidden;margin:8px 0 4px}
   .rd-fill{display:block;position:relative;z-index:1;height:100%;border-radius:5px;transition:width .2s ease}
   /* Projected-score ghost bar: sits BEHIND the fill (z-index:0) and is tucked 5px
@@ -3285,6 +3286,9 @@ function deriveBossesFromData(game, gameKey, typesFilter) {
     // UI shows "Lv —" and never flags over-cap mons. sortLv keeps the ace level
     // for interleaving them into the progression-ordered dropdown.
     const isCap = CAP_BATTLE_TYPES.has(battleType);
+    // Battle format from the league `==double:true` flag (Drayano doubles, etc.).
+    // The value can be `true` or `true|effect:rain` — match the leading `true`.
+    const isDouble = !!(trainer.modifiers && /^true\b/.test(String(trainer.modifiers.double || '')));
     raw.push({
       rawName: trainer.name || key,
       key,
@@ -3293,6 +3297,7 @@ function deriveBossesFromData(game, gameKey, typesFilter) {
       sortLv: aceLv,
       theme,
       battleType: battleType || trainer.section || null,
+      double: isDouble,
       team
     });
   }
@@ -9308,10 +9313,22 @@ function _disposePool() { for (const w of _pool) { try { w.terminate(); } catch 
 // backfill fires many times on a cold load; re-posting the payload each time is wasteful).
 let _wkRefreshT = null;
 function _refreshSimWorker() {
-  if (!(_pool.length && _workerOK !== false)) return;
+  if (!_pool.length) return;
   clearTimeout(_wkRefreshT);
-  _wkRefreshT = setTimeout(() => { if (_pool.length && _workerOK !== false) { const payload = _workerInitPayload(); for (const w of _pool) w.postMessage({ type: 'init', data: payload }); } }, 1500);
+  _wkRefreshT = setTimeout(() => {
+    if (!_pool.length) return;
+    const payload = _workerInitPayload();
+    for (const w of _pool) { try { w.postMessage({ type: 'init', data: payload }); } catch (e) {} }
+    // A pool disabled by an early self-test (it ran before move data settled) gets a
+    // fresh chance now that the snapshot is current — without this a single transient
+    // mismatch keeps the heavy sims on the main thread (UI freeze) for the session.
+    if (_workerOK === false) { _selfTestP = null; _workerOK = null; _selfTestTries = 0; }
+  }, 1500);
 }
+// Console diagnostic: __nuzSimDiag() → are the off-thread sims trusted? If workerOK
+// is false the heavy boss-matchup sims run on the main thread (slow). lastMismatch
+// shows the score/winRate/margin/deaths divergence that disabled the pool.
+if (typeof window !== 'undefined') window.__nuzSimDiag = () => ({ workerOK: _workerOK, pool: _pool.length, tries: _selfTestTries, tested: !!_selfTestP, patchKey: _wkPatchKey, lastMismatch: _simDiag });
 // Keep each worker's move-patch snapshot in sync with the ACTIVE game. The pool is
 // created once and reused across save/game switches, so when the active patches key
 // changes we re-post the payload (FIFO, applied before the next sim) and re-run the
@@ -9342,14 +9359,29 @@ function _runSimInPool(party, bossC, mode, n, seed, preSplit, bossItems) {
 // Data-driven self-test: a low-N sim of the ACTUAL pool+boss must match the sync
 // path EXACTLY before we trust the workers (catches hack-move/pre-split divergence
 // a fixed fixture would miss). Memoized so concurrent callers share one test.
+let _simDiag = null;   // last self-test mismatch (window.__nuzSimDiag exposes it)
 async function _selfTestWorker(inp, mode, seed, preSplit) {
   const n = 24;
   const sync = _scoreFromSims(inp.party, inp.bossC, mode, n, seed, inp.bossItems);
   const wk = await _runSimInPool(inp.party, inp.bossC, mode, n, seed, preSplit, inp.bossItems);
-  return !!(wk && sync && wk.score === sync.score && wk.winRate === sync.winRate && wk.margin === sync.margin && wk.deaths === sync.deaths);
+  const pick = r => r && { score: r.score, winRate: r.winRate, margin: r.margin, deaths: r.deaths };
+  const ok = !!(wk && sync && wk.score === sync.score && wk.winRate === sync.winRate && wk.margin === sync.margin && wk.deaths === sync.deaths);
+  if (!ok) _simDiag = { wk: pick(wk), sync: pick(sync), preSplit, mode };   // capture WHY for diagnosis
+  return ok;
 }
+// One self-test failure used to PERMANENTLY force every sim onto the main thread
+// (UI freeze) for the whole session. Now a failure is RECOVERABLE: re-test on a
+// later (different) boss or after a data refresh, up to _SELFTEST_MAX attempts —
+// a transient/edge-case mismatch on one boss no longer dooms the rest.
+let _selfTestTries = 0;
+const _SELFTEST_MAX = 5;
 function _ensureSelfTest(inp, mode, seed, preSplit) {
-  if (!_selfTestP) _selfTestP = _selfTestWorker(inp, mode, seed, preSplit).then(ok => { _workerOK = ok; return ok; });
+  if (!_selfTestP) _selfTestP = _selfTestWorker(inp, mode, seed, preSplit).then(ok => {
+    if (ok) { _workerOK = true; _selfTestTries = 0; }
+    else if (++_selfTestTries < _SELFTEST_MAX) { _workerOK = null; _selfTestP = null; }   // retry with the next boss/refresh
+    else { _workerOK = false; }                                                            // give up → main-thread fallback
+    return ok;
+  });
   return _selfTestP;
 }
 // Async readiness — pool if trusted, else synchronous fallback. Identical
@@ -10262,8 +10294,8 @@ function renderMatchup() {
     const subInner = (wr, d, mg) => `<span style="color:${wr >= 90 ? 'var(--green)' : wr >= 60 ? 'var(--amber)' : 'var(--red)'};font-weight:600">${wr}% win rate</span>${(d > 0) ? ` with <span style="color:var(--red)">≈${d} losses/run</span>` : ', no losses'}, ${mg}% average team HP left${_r.setMode ? ', Set mode' : ''}`;
     const hasProjSub = projWinRate != null && projDeaths != null && projMargin != null;
     const showProjSub = showAdvice && hasProjSub;
-    readinessHtml = `<div class="readiness ${band.cls}" title="From ${READINESS_N} simulated battles of your recommended team (random damage rolls, crits &amp; misses): this is the % that end as a CLEAN clear — whole boss team KO'd with zero of your Pokémon fainting. It wins ${readiness.winRate}% of the time overall, losing ≈${readiness.deaths} Pokémon per run on average. Edit a stat / EV / item to watch it move.">
-      <div class="rd-top"><span class="rd-num" style="color:${band.color}">${readiness.score}</span><span class="rd-of">%</span><span class="rd-pctlabel">chance to win without losses</span>${projBadge}<span id="rd-verdict" class="rd-verdict" style="color:${shownBand.color}"${projBandData ? ` data-cur="${band.label}" data-proj="${projBandData.label}" data-curcol="${band.color}" data-projcol="${projBandData.color}"` : ''}>${shownBand.label}</span></div>
+    readinessHtml = `<div class="readiness ${band.cls}" title="From ${READINESS_N} simulated battles of your recommended team (random damage rolls, crits &amp; misses): this is the % that end as a CLEAN clear — whole boss team KO'd with zero of your Pokémon fainting. It wins ${readiness.winRate}% of the time overall, losing ≈${readiness.deaths} Pokémon per run on average.${boss.double?' ⚔ This is a DOUBLE battle, but the sim models it as a single battle — a WORST-CASE floor. Your real odds are usually better (two attackers spread damage and KO faster).':''} Edit a stat / EV / item to watch it move.">
+      <div class="rd-top"><span class="rd-num" style="color:${band.color}">${readiness.score}</span><span class="rd-of">%</span><span class="rd-pctlabel">chance to win without losses${boss.double?' · ⚔ doubles (shown as singles)':''}</span>${projBadge}<span id="rd-verdict" class="rd-verdict" style="color:${shownBand.color}"${projBandData ? ` data-cur="${band.label}" data-proj="${projBandData.label}" data-curcol="${band.color}" data-projcol="${projBandData.color}"` : ''}>${shownBand.label}</span></div>
       <div class="rd-bar">${ghostHtml}<span class="rd-fill" style="width:${readiness.score}%;background:${band.color}"></span></div>
       <div class="rd-sub"><span id="rd-sub-cur"${showProjSub ? ' style="display:none"' : ''}>${subInner(readiness.winRate, readiness.deaths, readiness.margin)}</span>${hasProjSub ? `<span id="rd-sub-proj"${showProjSub ? '' : ' style="display:none"'}>${subInner(projWinRate, projDeaths, projMargin)}</span>` : ''}</div>
     </div>`;
@@ -10345,7 +10377,7 @@ function renderMatchup() {
     <div class="matchup-header${defeated?' defeated':''}">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
         <div>
-          <div class="matchup-title">${defeated?'<span class="defeat-check" title="Defeated">✓</span> ':''}${starterBossDisplayName(realBoss)}${showRematch?' <span style="font-size:13px;color:var(--amber);font-weight:600">· Rematch</span>':''}</div>
+          <div class="matchup-title">${defeated?'<span class="defeat-check" title="Defeated">✓</span> ':''}${starterBossDisplayName(realBoss)}${showRematch?' <span style="font-size:13px;color:var(--amber);font-weight:600">· Rematch</span>':''}${realBoss.double?' <span class="db-badge" title="This is a DOUBLE battle — the leader sends out two Pokémon at once. The readiness sim currently models it as a single battle (a worst-case floor), so your real odds are usually better than the number shown. Spread your damage, focus-fire to KO before Retaliate powers up, and bring a spare in case of sleep.">⚔ Double</span>':''}</div>
           <div class="matchup-sub">${subMeta}</div>
           ${(!showRematch && boss.note)?`<div style="font-size:11px;color:var(--amber);margin-top:8px;line-height:1.6">⚠ ${boss.note}</div>`:''}
           ${rivalNote?`<div style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.6">ℹ ${rivalNote}</div>`:''}
