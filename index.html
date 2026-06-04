@@ -9099,6 +9099,65 @@ function _readyBattle(party, bossC, mode, rng, bossItems) {
   let endHP = 0, deaths = 0; for (const h of pHP) { endHP += Math.max(0, h); if (h <= 0) deaths++; }
   return { won, endHP: endHP / party.length, deaths };
 }
+// DOUBLE-BATTLE variant — flag-gated (only runs when bossItems.double), so the
+// singles engine above is never touched for normal fights. TWO active mons per side
+// act each turn in Speed order; the player FOCUS-FIRES (prioritises a KO this turn) —
+// the core reason a double plays out better than the singles model implies — while
+// the boss greedily hits whoever it damages most. Faints refill from the bench. Reuses
+// _readyHit / planFrac / berry+endure EXACTLY like _readyBattle, so it ships to the
+// worker the same way and the existing self-test parity-checks it for free. The only
+// randomness is inside _readyHit (rolls/crit/miss) — targeting + ordering are
+// deterministic, so worker == sync. NOT modelled (same blind spots as the singles
+// engine, kept consistent): Retaliate's post-faint boost, Intimidate, sleep/Hypnosis,
+// redirection (Follow Me), spread moves, mid-fight player switches/potions.
+function _readyBattleDouble(party, bossC, mode, rng, bossItems) {
+  const pHP = party.map(() => 1), bHP = bossC.map(() => 1), sUsed = party.map(() => false);
+  let bPot = bossItems ? (bossItems.budget || 0) : 0;
+  const bThr = bossItems ? bossItems.threshold : 0, bHealF = bossItems ? bossItems.healFrac : 0;
+  const bBerry = (bossItems && bossItems.berry) ? bossItems.berry : null; const bBerryUsed = bBerry ? bBerry.map(() => false) : null;
+  const bEndure = (bossItems && bossItems.endure) ? bossItems.endure : null; const bEndUsed = bEndure ? bEndure.map(() => false) : null;
+  const pAlive = i => i >= 0 && pHP[i] > 0, bAlive = j => j >= 0 && bHP[j] > 0;
+  // Initial actives: the player's two best attackers vs the boss team; the boss's first two.
+  const offScore = pi => { let m = 0; for (let j = 0; j < bossC.length; j++) { const f = planFrac(party[pi], bossC[j]); if (f > m) m = f; } return m; };
+  const pOrder = party.map((_, i) => i).sort((a, b) => (offScore(b) - offScore(a)) || (a - b));
+  let pAct = pOrder.filter(pAlive).slice(0, 2);
+  let bAct = []; for (let j = 0; j < bossC.length && bAct.length < 2; j++) bAct.push(j);
+  // Our hit on a boss mon — passive berry resist/heal + Sturdy/Sash endure, identical to _readyBattle.pHit.
+  const pHitOn = (pi, bj) => { const r = _readyHit(party[pi], bossC[bj], rng); if (!r || r.miss) return; let dmg = r.dmg;
+    const berry = bBerry ? bBerry[bj] : null;
+    if (berry && berry.resist && !bBerryUsed[bj] && (r.eff >= 2 || berry.resist === 'normal') && String(r.type).toLowerCase() === berry.resist) { dmg *= 0.5; bBerryUsed[bj] = true; }
+    const before = bHP[bj]; let nv = before - dmg; const end = bEndure ? bEndure[bj] : 0;
+    if (nv <= 0 && before >= 0.999 && end && !(end === 2 && bEndUsed[bj])) { nv = 1 / (bossC[bj].stats[0] || 100); if (end === 2) bEndUsed[bj] = true; }
+    bHP[bj] = nv; if (r.drain && pHP[pi] > 0) pHP[pi] = Math.min(1, pHP[pi] + 0.5 * Math.min(dmg, Math.max(0, before)) * ((bossC[bj].stats[0] || 1) / (party[pi].stats[0] || 1)));
+    if (berry && berry.heal && !bBerryUsed[bj] && bHP[bj] > 0 && bHP[bj] < 0.5) { bHP[bj] = Math.min(1, bHP[bj] + berry.heal); bBerryUsed[bj] = true; } };
+  // Boss attacks a player mon (or spends a trainer potion on its own low ally — a free turn for us, same model as _readyBattle.bossAtk).
+  const bHitOn = (bj, pi) => { if (bPot > 0 && bHP[bj] > 0 && bHP[bj] < bThr) { bHP[bj] = Math.min(1, bHP[bj] + bHealF); bPot--; return; } const r = _readyHit(bossC[bj], party[pi], rng); if (r && !r.miss) pHP[pi] -= r.dmg; };
+  const endTurnP = pi => { if (pHP[pi] > 0 && party[pi].flags) { if (party[pi].flags.lefto) pHP[pi] = Math.min(1, pHP[pi] + 1 / 16); if (party[pi].flags.sitrus && !sUsed[pi] && pHP[pi] < 0.5) { sUsed[pi] = true; pHP[pi] = Math.min(1, pHP[pi] + 0.25); } } };
+  const pickB = pi => { let best = -1, bestF = -1, koBest = -1, koF = -1; for (const bj of bAct) { if (!bAlive(bj)) continue; const f = planFrac(party[pi], bossC[bj]); if (f > bestF) { bestF = f; best = bj; } if (f >= bHP[bj] && f > koF) { koF = f; koBest = bj; } } return koBest >= 0 ? koBest : best; };
+  const pickP = bj => { let best = -1, bestF = -1; for (const pi of pAct) { if (!pAlive(pi)) continue; const f = planFrac(bossC[bj], party[pi]); if (f > bestF) { bestF = f; best = pi; } } return best; };
+  const refill = (act, aliveFn, order) => { for (let s = 0; s < act.length; s++) if (!aliveFn(act[s])) { let pick = -1; for (const k of order) { if (aliveFn(k) && act.indexOf(k) < 0) { pick = k; break; } } act[s] = pick; } let out = act.filter(k => aliveFn(k)); for (const k of order) { if (out.length >= 2) break; if (aliveFn(k) && out.indexOf(k) < 0) out.push(k); } return out; };
+  const bIdxOrder = bossC.map((_, j) => j);
+  let guard = 0;
+  while (guard++ < 300) {
+    if (!bHP.some(h => h > 0) || !pHP.some(h => h > 0)) break;
+    pAct = refill(pAct, pAlive, pOrder); bAct = refill(bAct, bAlive, bIdxOrder);
+    if (!pAct.length || !bAct.length) break;
+    const actors = [];
+    for (const pi of pAct) actors.push({ s: 'p', i: pi, spd: party[pi].stats[5] || 0 });
+    for (const bj of bAct) actors.push({ s: 'b', i: bj, spd: bossC[bj].stats[5] || 0 });
+    // Speed desc; ties → player first (mirrors the singles `pSpd >= bSpd`), then lower index. No rng → deterministic.
+    actors.sort((x, y) => (y.spd - x.spd) || (x.s === y.s ? x.i - y.i : (x.s === 'p' ? -1 : 1)));
+    for (const act of actors) {
+      if (!bHP.some(h => h > 0) || !pHP.some(h => h > 0)) break;
+      if (act.s === 'p') { if (!pAlive(act.i)) continue; const tgt = pickB(act.i); if (tgt < 0) continue; pHitOn(act.i, tgt); }
+      else { if (!bAlive(act.i)) continue; const tgt = pickP(act.i); if (tgt < 0) continue; bHitOn(act.i, tgt); }
+    }
+    for (const pi of pAct) endTurnP(pi);
+  }
+  const won = !bHP.some(h => h > 0) && pHP.some(h => h > 0);
+  let endHP = 0, deaths = 0; for (const h of pHP) { endHP += Math.max(0, h); if (h <= 0) deaths++; }
+  return { won, endHP: endHP / party.length, deaths };
+}
 // Small LRU Maps (insertion-order = recency; re-set on read to bump). Replace the
 // old single-slot caches so boss switching + revisits are instant and the idle
 // precompute pass can warm many bosses ahead of time.
@@ -9158,8 +9217,9 @@ function _buildSimInputs(boss, pool, mode, forcePotions) {
     return _srcIdx.indexOf(si);
   });
   const hasCounter = counter.some(c => c >= 0);
-  const bossItems = (potCfg || hasBerry || hasEndure || hasCounter)
-    ? Object.assign({ budget: 0, threshold: BOSS_POT_THRESHOLD, healFrac: 0 }, potCfg || {}, hasBerry ? { berry } : {}, hasEndure ? { endure } : {}, hasCounter ? { counter } : {})
+  const isDouble = !!boss.double;   // flag-gated 2-v-2 engine selector (see _scoreFromSims / _readyBattleDouble)
+  const bossItems = (potCfg || hasBerry || hasEndure || hasCounter || isDouble)
+    ? Object.assign({ budget: 0, threshold: BOSS_POT_THRESHOLD, healFrac: 0 }, potCfg || {}, hasBerry ? { berry } : {}, hasEndure ? { endure } : {}, hasCounter ? { counter } : {}, isDouble ? { double: true } : {})
     : null;
   return { party, bossC, bossItems };
 }
@@ -9169,7 +9229,10 @@ function _buildSimInputs(boss, pool, mode, forcePotions) {
 function _scoreFromSims(party, bossC, mode, n, seed, bossItems) {
   const rng = _mulberry32(seed);
   let wins = 0, cleanWins = 0, marginSum = 0, deathSum = 0;
-  for (let i = 0; i < n; i++) { const r = _readyBattle(party, bossC, mode, rng, bossItems); deathSum += r.deaths; if (r.won) { wins++; marginSum += r.endHP; if (r.deaths === 0) cleanWins++; } }
+  // Flag-gated: double battles route to the 2-v-2 engine; everything else uses the
+  // untouched singles loop. bossItems.double is set in _buildSimInputs from boss.double.
+  const battle = (bossItems && bossItems.double) ? _readyBattleDouble : _readyBattle;
+  for (let i = 0; i < n; i++) { const r = battle(party, bossC, mode, rng, bossItems); deathSum += r.deaths; if (r.won) { wins++; marginSum += r.endHP; if (r.deaths === 0) cleanWins++; } }
   const w = wins / n, cw = cleanWins / n, marginWon = wins ? marginSum / wins : 0, avgDeaths = deathSum / n;
   // SCORE = CLEAN-CLEAR probability: a "win" is the whole boss team KO'd with ZERO
   // of our mons fainting (the no-two-Potions-in-a-row rule is already enforced in
@@ -9235,7 +9298,7 @@ const _POOL_SIZE = Math.max(1, Math.min(4, (typeof navigator !== 'undefined' && 
 // Engine functions shipped to the worker (the full sim closure). gameIsPreSplit
 // is EXCLUDED — it reads curGame()/GAMES, so the worker gets an override instead.
 function _simWorkerFnList() {
-  return [_scoreFromSims, _readyBattle, _readyHit, _mulberry32, bestHitFraction,
+  return [_scoreFromSims, _readyBattle, _readyBattleDouble, _readyHit, _mulberry32, bestHitFraction,
     planFlags, planFrac, planTKO, planWins, planBestRepl, _planCritKORisk, _pickPerTurnAction,
     _planDefBias, planRollout, planActions,
     planChooseAction, planChooseLead, resolveMove, getMoveType, moveData, movePower,
@@ -10294,8 +10357,8 @@ function renderMatchup() {
     const subInner = (wr, d, mg) => `<span style="color:${wr >= 90 ? 'var(--green)' : wr >= 60 ? 'var(--amber)' : 'var(--red)'};font-weight:600">${wr}% win rate</span>${(d > 0) ? ` with <span style="color:var(--red)">≈${d} losses/run</span>` : ', no losses'}, ${mg}% average team HP left${_r.setMode ? ', Set mode' : ''}`;
     const hasProjSub = projWinRate != null && projDeaths != null && projMargin != null;
     const showProjSub = showAdvice && hasProjSub;
-    readinessHtml = `<div class="readiness ${band.cls}" title="From ${READINESS_N} simulated battles of your recommended team (random damage rolls, crits &amp; misses): this is the % that end as a CLEAN clear — whole boss team KO'd with zero of your Pokémon fainting. It wins ${readiness.winRate}% of the time overall, losing ≈${readiness.deaths} Pokémon per run on average.${boss.double?' ⚔ This is a DOUBLE battle, but the sim models it as a single battle — a WORST-CASE floor. Your real odds are usually better (two attackers spread damage and KO faster).':''} Edit a stat / EV / item to watch it move.">
-      <div class="rd-top"><span class="rd-num" style="color:${band.color}">${readiness.score}</span><span class="rd-of">%</span><span class="rd-pctlabel">chance to win without losses${boss.double?' · ⚔ doubles (shown as singles)':''}</span>${projBadge}<span id="rd-verdict" class="rd-verdict" style="color:${shownBand.color}"${projBandData ? ` data-cur="${band.label}" data-proj="${projBandData.label}" data-curcol="${band.color}" data-projcol="${projBandData.color}"` : ''}>${shownBand.label}</span></div>
+    readinessHtml = `<div class="readiness ${band.cls}" title="From ${READINESS_N} simulated battles of your recommended team (random damage rolls, crits &amp; misses): this is the % that end as a CLEAN clear — whole boss team KO'd with zero of your Pokémon fainting. It wins ${readiness.winRate}% of the time overall, losing ≈${readiness.deaths} Pokémon per run on average.${boss.double?' ⚔ This is a DOUBLE battle, simulated 2-v-2 (both sides field two, your team focus-fires). Doubles are high-pressure — even a near-certain win usually trades a couple of Pokémon, so weigh the win-rate + expected losses, not just this clean-sweep %.':''} Edit a stat / EV / item to watch it move.">
+      <div class="rd-top"><span class="rd-num" style="color:${band.color}">${readiness.score}</span><span class="rd-of">%</span><span class="rd-pctlabel">chance to win without losses${boss.double?' · ⚔ double battle':''}</span>${projBadge}<span id="rd-verdict" class="rd-verdict" style="color:${shownBand.color}"${projBandData ? ` data-cur="${band.label}" data-proj="${projBandData.label}" data-curcol="${band.color}" data-projcol="${projBandData.color}"` : ''}>${shownBand.label}</span></div>
       <div class="rd-bar">${ghostHtml}<span class="rd-fill" style="width:${readiness.score}%;background:${band.color}"></span></div>
       <div class="rd-sub"><span id="rd-sub-cur"${showProjSub ? ' style="display:none"' : ''}>${subInner(readiness.winRate, readiness.deaths, readiness.margin)}</span>${hasProjSub ? `<span id="rd-sub-proj"${showProjSub ? '' : ' style="display:none"'}>${subInner(projWinRate, projDeaths, projMargin)}</span>` : ''}</div>
     </div>`;
@@ -10377,7 +10440,7 @@ function renderMatchup() {
     <div class="matchup-header${defeated?' defeated':''}">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
         <div>
-          <div class="matchup-title">${defeated?'<span class="defeat-check" title="Defeated">✓</span> ':''}${starterBossDisplayName(realBoss)}${showRematch?' <span style="font-size:13px;color:var(--amber);font-weight:600">· Rematch</span>':''}${realBoss.double?' <span class="db-badge" title="This is a DOUBLE battle — the leader sends out two Pokémon at once. The readiness sim currently models it as a single battle (a worst-case floor), so your real odds are usually better than the number shown. Spread your damage, focus-fire to KO before Retaliate powers up, and bring a spare in case of sleep.">⚔ Double</span>':''}</div>
+          <div class="matchup-title">${defeated?'<span class="defeat-check" title="Defeated">✓</span> ':''}${starterBossDisplayName(realBoss)}${showRematch?' <span style="font-size:13px;color:var(--amber);font-weight:600">· Rematch</span>':''}${realBoss.double?' <span class="db-badge" title="This is a DOUBLE battle — the leader sends out two Pokémon at once. The readiness sim plays it out 2-v-2: both sides field two Pokémon each turn and your team focus-fires (KOs before the foe can act). Doubles are high-pressure — even a near-certain WIN usually costs a Pokémon or two, so check the win-rate and expected-losses line, not just the clean-sweep %.">⚔ Double</span>':''}</div>
           <div class="matchup-sub">${subMeta}</div>
           ${(!showRematch && boss.note)?`<div style="font-size:11px;color:var(--amber);margin-top:8px;line-height:1.6">⚠ ${boss.note}</div>`:''}
           ${rivalNote?`<div style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.6">ℹ ${rivalNote}</div>`:''}
