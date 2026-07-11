@@ -525,9 +525,13 @@
   .toast.error{border-color:rgba(248,113,113,.3);color:var(--red)}
   .toast.warn{border-color:rgba(245,158,11,.4);color:#fbbf24}
 
-  .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:100;align-items:flex-start;justify-content:center;padding:60px 16px 16px;overflow-y:auto}
+  .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:100;align-items:flex-start;justify-content:center;padding:28px 16px 16px;overflow-y:auto}
   .overlay.open{display:flex}
-  .modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:20px;width:680px;max-width:100%;position:relative}
+  /* max-height + internal scroll UNIVERSALLY (any viewport): a tall modal must never
+     run off a short screen with its close/action buttons unreachable. dvh tracks the
+     mobile browser's address bar; vh is the fallback. The short-viewport @media block
+     tightens the padding + cap further for landscape handhelds. */
+  .modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:20px;width:680px;max-width:100%;position:relative;max-height:calc(100vh - 44px);max-height:calc(100dvh - 44px);overflow-y:auto}
   .modal h3{font-family:'Crimson Pro',serif;font-size:17px;font-weight:600;margin-bottom:16px;color:var(--text);padding-right:36px}
   /* Always-visible close button in the modal top-right corner. The h3 above
      reserves padding-right so its text doesn't run under the button. */
@@ -11921,6 +11925,12 @@ function renderRules() {
 
     <p class="slabel" style="margin-top:20px">Notes / custom rules</p>
     <textarea id="rule-notes" class="rule-notes" placeholder="e.g. Set mode only · No held items in battle · No same-type starter…" oninput="setRuleNotes(this.value)">${rules.notes || ''}</textarea>
+
+    <p class="slabel" style="margin-top:20px">Display</p>
+    <div class="rules-static">
+      <div class="offline-status">Screen: <strong>${window.innerWidth} × ${window.innerHeight}</strong> CSS px · ${window.devicePixelRatio || 1}× density${(window.innerHeight <= 640 || window.innerWidth <= 620) ? ' · compact layout ON' : ''}</div>
+      <div class="rule-desc">This is the size the layout actually sees (physical pixels ÷ pixel density). Useful on handhelds — tell it to me if the layout looks cramped and I can tune the breakpoints to it.</div>
+    </div>
 
     <p class="slabel" style="margin-top:20px">Offline mode</p>
     <div class="rules-static">
