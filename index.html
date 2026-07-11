@@ -1052,24 +1052,10 @@
     .ar-result { flex-basis: 100%; margin-left: 0; justify-content: space-between; }
     .ar-detail { font-size: 13px; }
   }
-  /* Rotate-to-portrait guard. Manifest orientation can't be conditional (and iOS
-     ignores it), so we block the landscape layout below iPad-mini size and prompt
-     a rotate. Cutoff = iPad mini's short side (768px): in landscape the height IS
-     the short side, so max-height:767px catches every phone + small tablet but
-     leaves iPad mini (height 768) and up free to use any orientation. The JS
-     `applyOrientationLock` below additionally true-locks the OS where supported
-     (installed Android PWA); the overlay is the fallback (iOS / browser tabs). */
-  #rotate-guard { display: none; }
-  @media (orientation: landscape) and (max-height: 767px) and (pointer: coarse) {
-    #rotate-guard {
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      position: fixed; inset: 0; z-index: 100000; background: var(--bg); color: var(--text);
-      text-align: center; padding: 24px; gap: 10px;
-    }
-    .rotate-guard-icon { font-size: 40px; }
-    .rotate-guard-title { font-size: 18px; font-weight: 600; }
-    .rotate-guard-sub { font-size: 13px; color: var(--text2); max-width: 340px; }
-  }
+  /* Landscape is fully supported on all sizes — the old rotate-to-portrait guard
+     was removed by request. The #rotate-guard element is kept in the DOM but never
+     shown (no landscape media query below), so no markup churn. */
+  #rotate-guard { display: none !important; }
   /* Compact-label rule shared across breakpoints — on wide screens the full
      label shows; on phones we collapse to "🚪 Switch" via the .hdr-btn-full-label
      toggle in the 420px block above. */
@@ -1102,7 +1088,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1780432551481"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1783738314598"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -2129,7 +2115,7 @@ const GAMES = {
         {species:'Hariyama', lv:16, types:['Fighting'], ability:'Thick Fat', note:'Z-move user'}
       ]},
       {name:'Lana (Trial)', location:'Brooklet Hill', cap:20, theme:'Water', team:[
-        {species:'Wishiwashi', lv:20, types:['Water'], note:'Schooling Form — huge stats'}
+        {species:'Araquanid', lv:20, types:['Water','Bug'], ability:'Water Bubble', note:'Totem — Water Bubble doubles Water damage; calls SOS allies'}
       ]},
       {name:'Kiawe (Trial)', location:'Wela Volcano', cap:22, theme:'Fire', team:[
         {species:'Alolan Marowak', lv:22, types:['Fire','Ghost']}
@@ -2143,7 +2129,7 @@ const GAMES = {
         {species:'Lycanroc', lv:28, types:['Rock'], note:'Z-move user'}
       ]},
       {name:'Sophocles (Trial)', location:'Hokulani Observatory', cap:33, theme:'Electric', team:[
-        {species:'Vikavolt', lv:33, types:['Bug','Electric'], ability:'Levitate'}
+        {species:'Togedemaru', lv:33, types:['Electric','Steel'], ability:'Lightning Rod', note:'Totem (+1 stat boost when calling ally)'}
       ]},
       {name:'Acerola (Trial)', location:'Thrifty Megamart', cap:35, theme:'Ghost', team:[
         {species:'Mimikyu', lv:35, types:['Ghost','Fairy'], note:'Disguise blocks first hit'}
@@ -2168,41 +2154,49 @@ const GAMES = {
       {name:'Ultra Necrozma', location:'Megalo Tower', cap:60, theme:'Psychic', team:[
         {species:'Ultra Necrozma', lv:60, types:['Psychic','Dragon'], note:'Photon Geyser destroys most teams'}
       ]},
-      {name:'Hala (E4)', location:'Pokémon League', cap:55, theme:'Fighting', team:[
-        {species:'Hariyama', lv:54, types:['Fighting'], ability:'Thick Fat'},
-        {species:'Bewear', lv:54, types:['Normal','Fighting']},
-        {species:'Primeape', lv:54, types:['Fighting']},
-        {species:'Poliwrath', lv:54, types:['Water','Fighting']},
-        {species:'Crabominable', lv:55, types:['Fighting','Ice']}
+      {name:'Molayne (E4)', location:'Pokémon League', cap:57, theme:'Steel', team:[
+        {species:'Klefki', lv:56, types:['Steel','Fairy'], ability:'Prankster'},
+        {species:'Bisharp', lv:56, types:['Dark','Steel'], ability:'Defiant'},
+        {species:'Magnezone', lv:56, types:['Electric','Steel'], ability:'Sturdy'},
+        {species:'Metagross', lv:56, types:['Steel','Psychic'], ability:'Clear Body'},
+        {species:'Alolan Dugtrio', lv:57, types:['Ground','Steel'], note:'Z-move user (Steelium Z)'}
       ]},
-      {name:'Olivia (E4)', location:'Pokémon League', cap:55, theme:'Rock', team:[
-        {species:'Armaldo', lv:54, types:['Rock','Bug']},
-        {species:'Cradily', lv:54, types:['Rock','Grass']},
-        {species:'Relicanth', lv:54, types:['Water','Rock'], ability:'Swift Swim'},
-        {species:'Lycanroc', lv:54, types:['Rock']},
-        {species:'Probopass', lv:55, types:['Rock','Steel'], ability:'Sturdy'}
+      {name:'Olivia (E4)', location:'Pokémon League', cap:57, theme:'Rock', team:[
+        {species:'Armaldo', lv:56, types:['Rock','Bug'], ability:'Battle Armor'},
+        {species:'Cradily', lv:56, types:['Rock','Grass'], ability:'Suction Cups'},
+        {species:'Gigalith', lv:56, types:['Rock'], ability:'Sand Stream'},
+        {species:'Probopass', lv:56, types:['Rock','Steel'], ability:'Sturdy'},
+        {species:'Lycanroc', lv:57, types:['Rock'], note:'Z-move user (Rockium Z)'}
       ]},
-      {name:'Acerola (E4)', location:'Pokémon League', cap:56, theme:'Ghost', team:[
-        {species:'Banette', lv:54, types:['Ghost']},
-        {species:'Drifblim', lv:54, types:['Ghost','Flying']},
-        {species:'Dhelmise', lv:54, types:['Ghost','Grass']},
-        {species:'Froslass', lv:54, types:['Ice','Ghost'], ability:'Snow Cloak'},
-        {species:'Palossand', lv:56, types:['Ghost','Ground']}
+      {name:'Acerola (E4)', location:'Pokémon League', cap:57, theme:'Ghost', team:[
+        {species:'Banette', lv:56, types:['Ghost'], ability:'Keen Eye'},
+        {species:'Drifblim', lv:56, types:['Ghost','Flying'], ability:'Aftermath'},
+        {species:'Dhelmise', lv:56, types:['Ghost','Grass'], ability:'Steelworker'},
+        {species:'Froslass', lv:56, types:['Ice','Ghost'], ability:'Snow Cloak'},
+        {species:'Palossand', lv:57, types:['Ghost','Ground'], ability:'Water Compaction', note:'Z-move user (Ghostium Z)'}
       ]},
       {name:'Kahili (E4)', location:'Pokémon League', cap:57, theme:'Flying', team:[
-        {species:'Skarmory', lv:54, types:['Steel','Flying']},
-        {species:'Crobat', lv:54, types:['Poison','Flying']},
-        {species:'Oricorio', lv:54, types:['Ghost','Flying']},
-        {species:'Mandibuzz', lv:54, types:['Dark','Flying']},
-        {species:'Toucannon', lv:57, types:['Normal','Flying']}
+        {species:'Braviary', lv:56, types:['Normal','Flying'], ability:'Sheer Force'},
+        {species:'Hawlucha', lv:56, types:['Fighting','Flying'], ability:'Mold Breaker'},
+        {species:'Oricorio', lv:56, types:['Fire','Flying'], ability:'Dancer', note:'Baile Style'},
+        {species:'Mandibuzz', lv:56, types:['Dark','Flying'], ability:'Big Pecks'},
+        {species:'Toucannon', lv:57, types:['Normal','Flying'], ability:'Skill Link', note:'Z-move user (Flyinium Z)'}
       ]},
-      {name:'Champion (Hau)', location:'Pokémon League', cap:60, theme:'Mixed', team:[
-        {species:'Alolan Raichu', lv:58, types:['Electric','Psychic']},
-        {species:'Noivern', lv:58, types:['Flying','Dragon']},
+      {name:'Hau (Champion)', location:'Pokémon League', cap:60, theme:'Mixed', team:[
+        {species:'Alolan Raichu', lv:59, types:['Electric','Psychic'], ability:'Surge Surfer'},
         {species:'Tauros', lv:58, types:['Normal'], ability:'Intimidate'},
-        {species:'Komala', lv:58, types:['Normal']},
-        {species:'Primarina/Decidueye/Incineroar', lv:60, types:['Water/Grass/Fire','Fairy/Ghost/Dark'], note:'Counter to your starter'},
-        {species:'Crabominable', lv:59, types:['Fighting','Ice']}
+        {species:'Noivern', lv:58, types:['Flying','Dragon'], ability:'Infiltrator'},
+        {species:'Crabominable', lv:59, types:['Fighting','Ice'], ability:'Iron Fist'},
+        // Hau's Eeveelution counters your starter: pick Rowlet(grass)→Flareon,
+        // Litten(fire)→Vaporeon, Popplio(water)→Leafeon. Tag = YOUR starter type.
+        {species:'Flareon', lv:58, types:['Fire'], ability:'Flash Fire', matchup:'grass'},
+        {species:'Vaporeon', lv:58, types:['Water'], ability:'Water Absorb', matchup:'fire'},
+        {species:'Leafeon', lv:58, types:['Grass'], ability:'Leaf Guard', matchup:'water'},
+        // Hau's ace = the starter that LOSES to yours. Rowlet(grass)→Primarina,
+        // Litten(fire)→Decidueye, Popplio(water)→Incineroar. Tag = YOUR starter type.
+        {species:'Primarina', lv:60, types:['Water','Fairy'], ability:'Torrent', note:'Ace vs Rowlet pick — Z-move user (Waterium Z)', matchup:'grass'},
+        {species:'Decidueye', lv:60, types:['Grass','Ghost'], ability:'Overgrow', note:'Ace vs Litten pick — Z-move user (Grassium Z)', matchup:'fire'},
+        {species:'Incineroar', lv:60, types:['Fire','Dark'], ability:'Blaze', note:'Ace vs Popplio pick — Z-move user (Firium Z)', matchup:'water'}
       ]}
     ]
   },
@@ -3124,7 +3118,16 @@ function enrichBossesWithLeagues(bosses, leagueKey) {
     const remaining = [...(best.team||[])];
     for (const member of (boss.team||[])) {
       const target = normalize(member.species);
-      const idx = remaining.findIndex(lm => normalize(prettySpecies(lm.species)) === target || normalize(lm.species) === target);
+      // Also compare on canonical slug form so regional-form display names line up
+      // with the leagues file's slug ("Alolan Dugtrio" ↔ "dugtrio-alola"). Without
+      // this, regional-form aces (Alolan Dugtrio/Persian/Raichu/Marowak/Golem) never
+      // matched a leagues member and shipped with no moves/ability/item.
+      const targetSlug = (typeof speciesSlug === 'function') ? speciesSlug(member.species) : null;
+      const idx = remaining.findIndex(lm => {
+        if (normalize(prettySpecies(lm.species)) === target || normalize(lm.species) === target) return true;
+        if (targetSlug) return speciesSlug(prettySpecies(lm.species)) === targetSlug || speciesSlug(lm.species) === targetSlug;
+        return false;
+      });
       if (idx < 0) continue;
       const lm = remaining.splice(idx, 1)[0];
       if (!member.moves || !member.moves.length) member.moves = lm.moves || [];
@@ -3163,6 +3166,41 @@ const BOSS_NOTES = {
     "e3":  { 'Palossand': 'E4 — Z-Crystal user' },
     "e4":  { 'Toucannon': 'E4 — Z-Crystal user (Flyinium Z)' },
     "c":   { 'Incineroar': 'Champion ace (vs Decidueye starter)', 'Decidueye': 'Champion ace (vs Primarina starter)', 'Primarina': 'Champion ace (vs Incineroar starter)' },
+  },
+  // Ultra Sun/Ultra Moon — same Totem (+1 stat boost per summoned SOS ally) +
+  // Z-Crystal mechanic as Sun/Moon, but several trial Totems changed: Brooklet
+  // Hill is Araquanid (not Wishiwashi), Wela Volcano is Alolan Marowak (not
+  // Salazzle), Hokulani is Togedemaru (not Vikavolt), and Poni adds Mina's
+  // Ribombee trial. Keys 1a/1b are the US/UM split of Ilima's Verdant Cavern
+  // Totem; '1' is the unrelated Trainers' School fight.
+  'ultra_sun_moon': {
+    "1a":  { 'Gumshoos': 'Totem (Ultra Sun) — +1 stat boost when calling ally' },
+    "1b":  { 'Alolan Raticate': 'Totem (Ultra Moon) — +1 stat boost when calling ally' },
+    "2":   { 'Crabrawler': 'Grand Trial — Z-Crystal user (Fightinium Z)' },
+    "3":   { 'Araquanid': 'Totem (+1 stat boost) — Water Bubble doubles its Water damage' },
+    "4":   { 'Alolan Marowak': 'Totem (+1 stat boost when calling ally)' },
+    "5":   { 'Lurantis': 'Totem (+1 stat boost) — Solar Blade in sun' },
+    "6":   { 'Lycanroc-midnight': 'Grand Trial — Z-Crystal user (Rockium Z)' },
+    "7":   { 'Togedemaru': 'Totem (+1 stat boost) — Lightning Rod baits Electric allies' },
+    "8":   { 'Mimikyu-disguised': 'Totem (+1 stat boost) — Disguise blocks the first hit' },
+    "9":   { 'Alolan Persian': 'Grand Trial — Z-Crystal user (Darkinium Z)' },
+    "11":  { 'Kommo-o': 'Totem — Clangorous Soulblaze all-stat boost (Soundproof)' },
+    "12":  { 'Ribombee': 'Totem (+1 stat boost) — Quiver Dance sweeper (Fairium Z)' },
+    "13":  { 'Mudsdale': 'Grand Trial — Z-Crystal user (Groundium Z)' },
+    "e1":  { 'Alolan Dugtrio': 'E4 — Z-Crystal user (Steelium Z)' },
+    "e2":  { 'Lycanroc-midnight': 'E4 — Z-Crystal user (Rockium Z)' },
+    "e3":  { 'Palossand': 'E4 — Z-Crystal user (Ghostium Z)' },
+    "e4":  { 'Toucannon': 'E4 — Z-Crystal user (Flyinium Z)' },
+    // Hau's ace = the starter that loses to YOUR pick; his Eeveelution counters
+    // your pick too. Both branch on your starter, not his.
+    "c":   {
+      'Primarina': 'Champion ace vs Rowlet (grass) pick — Z-Crystal user (Waterium Z)',
+      'Decidueye': 'Champion ace vs Litten (fire) pick — Z-Crystal user (Grassium Z)',
+      'Incineroar': 'Champion ace vs Popplio (water) pick — Z-Crystal user (Firium Z)',
+      'Flareon': 'Eeveelution vs Rowlet (grass) pick',
+      'Vaporeon': 'Eeveelution vs Litten (fire) pick',
+      'Leafeon': 'Eeveelution vs Popplio (water) pick',
+    },
   },
   // Sword/Shield — Gym leaders Dynamax their ace at the end of the gym battle.
   // Gigantamax forms have unique G-Max Moves with special effects. Piers can't
@@ -3929,6 +3967,35 @@ function spriteUrl(idOrName, variant) {
   return `sprites/pixel/${id}.png`;
 }
 
+// Regional-form evolution chains — the bundled NUZ_DATA.evoBySlug carries only BASE
+// species (no `-alola`/`-galar` keys), so a regional pre-evo (Alolan Vulpix, etc.)
+// couldn't walk to its final form offline → reco tiered it as filler instead of by
+// the real final-evo BST. Keyed by form slug; VALUE is the final `.e` shape directly
+// ([displayName, method]) using the app's "Alolan/Galarian X" display convention
+// (which round-trips through speciesSlug + statsBySlug). getFinalEvo's own
+// evoAvailable() gate still stops the walk if the evo isn't obtainable in this game.
+const REGIONAL_FORM_EVO = {
+  // Alolan (Gen-7 — the USUM catches that exposed this)
+  'rattata-alola':  ['Alolan Raticate', 'Lv 20 (night)'],
+  'vulpix-alola':   ['Alolan Ninetales', 'Ice Stone'],
+  'sandshrew-alola':['Alolan Sandslash', 'Ice Stone'],
+  'diglett-alola':  ['Alolan Dugtrio', 'Lv 26'],
+  'meowth-alola':   ['Alolan Persian', 'Friendship'],
+  'geodude-alola':  ['Alolan Graveler', 'Lv 25'],
+  'graveler-alola': ['Alolan Golem', 'Trade'],
+  'grimer-alola':   ['Alolan Muk', 'Lv 38'],
+  // Galarian (Gen-8 — for SwSh)
+  'meowth-galar':    ['Perrserker', 'Lv 28'],
+  'ponyta-galar':    ['Galarian Rapidash', 'Lv 40'],
+  'slowpoke-galar':  ['Galarian Slowbro', 'Galarica Cuff'],
+  'farfetchd-galar': ["Sirfetch'd", '3 crits in one battle'],
+  'mr-mime-galar':   ['Mr. Rime', 'Lv 42'],
+  'corsola-galar':   ['Cursola', 'Lv 38'],
+  'zigzagoon-galar': ['Galarian Linoone', 'Lv 20'],
+  'linoone-galar':   ['Obstagoon', 'Lv 35 (night)'],
+  'darumaka-galar':  ['Galarian Darmanitan', 'Ice Stone'],
+  'yamask-galar':    ['Runerigus', 'Take 49+ damage under a rock arch'],
+};
 // Case-insensitive lookup with light normalization (handles trailing whitespace, exact match preferred)
 function pokeInfo(name) {
   if (!name) return null;
@@ -3966,17 +4033,39 @@ function pokeInfo(name) {
       }
     }
   }
+  // Base-stats fallback: when nothing above produced a valid 6-element `s` array
+  // (Gen 5+ species not in POKEMON_DB and not yet backfilled — worst offline in
+  // USUM), fill stats ONLY from the bundled NUZ_DATA.statsBySlug so the stat
+  // editor / stat bars / BST work offline for ALL 1025 species. Types/abilities
+  // are deliberately left to the gen-correct backfill (the bundled stats map
+  // carries no typing), so this never shadows past-gen typing. If `base` is null
+  // entirely, synthesize a stats-only object (id/types/abilities resolve via the
+  // separate dexIdBySlug / typesBySlug maps and the runtime backfill).
+  // MUST run BEFORE the evolution fallback below: that block only fills `.e` when
+  // `base` already exists, so a Gen 5+ stub has to be materialized here first —
+  // otherwise getFinalEvo can't walk the chain and reco tiers score the pre-evo
+  // (Rowlet 320/filler instead of Decidueye 530/strong).
+  if (typeof NUZ_DATA !== 'undefined' && NUZ_DATA.statsBySlug) {
+    const s = base && base.s;
+    const hasStats = Array.isArray(s) && s.length === 6 && s.every(v => v != null);
+    if (!hasStats) {
+      const slug = (typeof speciesSlug === 'function') ? speciesSlug(n) : lower;
+      const bs = slug && NUZ_DATA.statsBySlug[slug];
+      if (bs && bs.length === 6) base = base ? { ...base, s: bs.slice() } : { s: bs.slice() };
+    }
+  }
   // Evolution fallback: the bundled NUZ_DATA.evoBySlug carries forward evolutions
   // for ALL species (every gen, offline, no backfill), so a species whose `.e`
   // isn't otherwise known (a Gen 5+ stub, or a backfilled mon whose evo chain
-  // wasn't fetched) still resolves evo-line walks → evo recs / evo-timing advice
-  // work offline everywhere. Only fills `.e` when it's absent (curated POKEMON_DB
-  // chains + final forms with legitimately no evo are left untouched — and final
-  // forms simply aren't in the map).
+  // wasn't fetched) still resolves evo-line walks → evo recs / evo-timing advice /
+  // final-evo BST tiering work offline everywhere. Only fills `.e` when it's absent
+  // (curated POKEMON_DB chains + final forms with legitimately no evo are left
+  // untouched — and final forms simply aren't in the map).
   if (base && !base.e && typeof NUZ_DATA !== 'undefined' && NUZ_DATA.evoBySlug) {
     const slug = (typeof speciesSlug === 'function') ? speciesSlug(n) : lower;
     const evo = slug && NUZ_DATA.evoBySlug[slug];
     if (evo && evo.length) base = { ...base, e: [evo.map(x => prettySpecies(x[0])).join('/'), evo[0][1]] };
+    else if (slug && REGIONAL_FORM_EVO[slug]) base = { ...base, e: REGIONAL_FORM_EVO[slug].slice() };   // regional-form line (evoBySlug has base forms only)
   }
   return base;
 }
@@ -8433,7 +8522,21 @@ function _bossTier(boss) {
 // "this trainer provably carries none"). Keyed VANILLA_POTION_DATA[gameKey][bossName] =
 // { budget, healFrac } | { budget: 0 }. Empty for now — a hook so known data can drop in
 // without inventing numbers. Overrides win over both the toggle and the tier heuristic.
-const VANILLA_POTION_DATA = {};
+const VANILLA_POTION_DATA = {
+  // USUM trial Totems are single-mon SOS battles run by the wild Totem itself, not
+  // a trainer with an item bag — so they carry NO potions (budget 0). Overriding
+  // here stops the tier heuristic from fabricating a Full Restore turn for them
+  // when the boss-potions rule is on. The multi-mon GRAND trials (Kahunas) and the
+  // E4/Champion are real trainers and keep their tier-based item pool.
+  'ultra_sun_moon': {
+    'Lana (Trial)':      { budget: 0 },
+    'Kiawe (Trial)':     { budget: 0 },
+    'Mallow (Trial)':    { budget: 0 },
+    'Sophocles (Trial)': { budget: 0 },
+    'Acerola (Trial)':   { budget: 0 },
+    'Ultra Necrozma':    { budget: 0 },
+  },
+};
 // Is the tier-guessed potion layer active? OPT-IN per run (DEFAULT_RULES.bossPotions=false)
 // so we never fabricate a heal turn for early-gen leaders / no-item hacks. Held berries are
 // NOT gated by this — they're read from real boss data and modelled unconditionally.
@@ -9229,9 +9332,12 @@ function _buildSimInputs(boss, pool, mode, forcePotions) {
 function _scoreFromSims(party, bossC, mode, n, seed, bossItems) {
   const rng = _mulberry32(seed);
   let wins = 0, cleanWins = 0, marginSum = 0, deathSum = 0;
-  // Flag-gated: double battles route to the 2-v-2 engine; everything else uses the
-  // untouched singles loop. bossItems.double is set in _buildSimInputs from boss.double.
-  const battle = (bossItems && bossItems.double) ? _readyBattleDouble : _readyBattle;
+  // DOUBLES ENGINE DISABLED — reverted to the singles loop for ALL fights. The 2-v-2
+  // model (_readyBattleDouble, still defined + shipped below) was too harsh: it modelled
+  // the BOSS's items (Sitrus/potions) but NOT the player's potions/switching, so doubles
+  // read one-sidedly against the player. Kept gated for a future calibrated re-enable;
+  // bossItems.double is still set but ignored here.
+  const battle = _readyBattle;
   for (let i = 0; i < n; i++) { const r = battle(party, bossC, mode, rng, bossItems); deathSum += r.deaths; if (r.won) { wins++; marginSum += r.endHP; if (r.deaths === 0) cleanWins++; } }
   const w = wins / n, cw = cleanWins / n, marginWon = wins ? marginSum / wins : 0, avgDeaths = deathSum / n;
   // SCORE = CLEAN-CLEAR probability: a "win" is the whole boss team KO'd with ZERO
@@ -10357,7 +10463,7 @@ function renderMatchup() {
     const subInner = (wr, d, mg) => `<span style="color:${wr >= 90 ? 'var(--green)' : wr >= 60 ? 'var(--amber)' : 'var(--red)'};font-weight:600">${wr}% win rate</span>${(d > 0) ? ` with <span style="color:var(--red)">≈${d} losses/run</span>` : ', no losses'}, ${mg}% average team HP left${_r.setMode ? ', Set mode' : ''}`;
     const hasProjSub = projWinRate != null && projDeaths != null && projMargin != null;
     const showProjSub = showAdvice && hasProjSub;
-    readinessHtml = `<div class="readiness ${band.cls}" title="From ${READINESS_N} simulated battles of your recommended team (random damage rolls, crits &amp; misses): this is the % that end as a CLEAN clear — whole boss team KO'd with zero of your Pokémon fainting. It wins ${readiness.winRate}% of the time overall, losing ≈${readiness.deaths} Pokémon per run on average.${boss.double?' ⚔ This is a DOUBLE battle, simulated 2-v-2 (both sides field two, your team focus-fires). Doubles are high-pressure — even a near-certain win usually trades a couple of Pokémon, so weigh the win-rate + expected losses, not just this clean-sweep %.':''} Edit a stat / EV / item to watch it move.">
+    readinessHtml = `<div class="readiness ${band.cls}" title="From ${READINESS_N} simulated battles of your recommended team (random damage rolls, crits &amp; misses): this is the % that end as a CLEAN clear — whole boss team KO'd with zero of your Pokémon fainting. It wins ${readiness.winRate}% of the time overall, losing ≈${readiness.deaths} Pokémon per run on average.${boss.double?' ⚔ This is a DOUBLE battle, but the number is computed as a single battle — treat it as a rough guide. Doubles are higher-pressure, so expect to trade a Pokémon or two even in a win.':''} Edit a stat / EV / item to watch it move.">
       <div class="rd-top"><span class="rd-num" style="color:${band.color}">${readiness.score}</span><span class="rd-of">%</span><span class="rd-pctlabel">chance to win without losses${boss.double?' · ⚔ double battle':''}</span>${projBadge}<span id="rd-verdict" class="rd-verdict" style="color:${shownBand.color}"${projBandData ? ` data-cur="${band.label}" data-proj="${projBandData.label}" data-curcol="${band.color}" data-projcol="${projBandData.color}"` : ''}>${shownBand.label}</span></div>
       <div class="rd-bar">${ghostHtml}<span class="rd-fill" style="width:${readiness.score}%;background:${band.color}"></span></div>
       <div class="rd-sub"><span id="rd-sub-cur"${showProjSub ? ' style="display:none"' : ''}>${subInner(readiness.winRate, readiness.deaths, readiness.margin)}</span>${hasProjSub ? `<span id="rd-sub-proj"${showProjSub ? '' : ' style="display:none"'}>${subInner(projWinRate, projDeaths, projMargin)}</span>` : ''}</div>
@@ -10440,7 +10546,7 @@ function renderMatchup() {
     <div class="matchup-header${defeated?' defeated':''}">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
         <div>
-          <div class="matchup-title">${defeated?'<span class="defeat-check" title="Defeated">✓</span> ':''}${starterBossDisplayName(realBoss)}${showRematch?' <span style="font-size:13px;color:var(--amber);font-weight:600">· Rematch</span>':''}${realBoss.double?' <span class="db-badge" title="This is a DOUBLE battle — the leader sends out two Pokémon at once. The readiness sim plays it out 2-v-2: both sides field two Pokémon each turn and your team focus-fires (KOs before the foe can act). Doubles are high-pressure — even a near-certain WIN usually costs a Pokémon or two, so check the win-rate and expected-losses line, not just the clean-sweep %.">⚔ Double</span>':''}</div>
+          <div class="matchup-title">${defeated?'<span class="defeat-check" title="Defeated">✓</span> ':''}${starterBossDisplayName(realBoss)}${showRematch?' <span style="font-size:13px;color:var(--amber);font-weight:600">· Rematch</span>':''}${realBoss.double?' <span class="db-badge" title="This is a DOUBLE battle — the leader sends out two Pokémon at once. The readiness number is computed as a single battle (an approximation), so treat it as a rough guide: real doubles are higher-pressure (you take two hits a turn), but you also remove threats faster by focus-firing and you can switch + use items freely. Expect to trade a Pokémon or two even in a win.">⚔ Double</span>':''}</div>
           <div class="matchup-sub">${subMeta}</div>
           ${(!showRematch && boss.note)?`<div style="font-size:11px;color:var(--amber);margin-top:8px;line-height:1.6">⚠ ${boss.note}</div>`:''}
           ${rivalNote?`<div style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.6">ℹ ${rivalNote}</div>`:''}
@@ -12722,9 +12828,9 @@ function buildEncounterMainFromTables(locName, ver, game) {
     return { p: sp.species, lv: null, r: sp.chance, v: speciesVerTag(sp), apiId: bf?.id || null };
   };
 
-  // Detect whether the data carries method tags (BDSP files include grass / surf /
-  // oldRod / goodRod / superRod tags per table). USUM doesn't — it falls through
-  // to the level-range grouping below.
+  // Detect whether the data carries method tags (BDSP, SM/USUM files include
+  // grass / surf / goodRod / superRod / sos tags per table). Sources without any
+  // method tags fall through to the level-range grouping below.
   const hasMethods = uniquePools.some(p => p.method);
 
   if (hasMethods) {
@@ -12751,12 +12857,15 @@ function buildEncounterMainFromTables(locName, ver, game) {
       redFlowers: 'Red flowers',
       purpleFlowers: 'Purple flowers',
       horde: 'Horde encounter',
+      // Gen 7 (SM/USUM): species obtainable only when a wild ally is summoned
+      // via an SOS chain. Rendered as its own section (no tool/HM required).
+      sos: 'SOS calls (ally summons)',
     };
     const METHOD_ORDER = [
       'grass', 'darkGrass', 'rustlingGrass', 'tallGrass', 'shallowWater',
       'yellowFlowers', 'redFlowers', 'purpleFlowers',
       'surf', 'ripplingWater', 'oldRod', 'goodRod', 'superRod', 'ripplingRod',
-      'honey', 'pokeradar', 'swarm', 'rockSmash', 'horde',
+      'sos', 'honey', 'pokeradar', 'swarm', 'rockSmash', 'horde',
     ];
     // Gen-7 (SM/USUM) tall-grass tables actually mix four distinct mechanics
     // under a single [grass] method tag — regular walking, rare flying overhead,
@@ -13006,8 +13115,9 @@ function buildEncounterMainFromTables(locName, ver, game) {
     return `${seasonTabsHtml}${weatherTabsHtml}${sections || '<div class="enc-empty" style="padding:12px">No species in this time of day.</div>'}`;
   }
 
-  // METHODLESS RENDERING (USUM and any other source without method tags) — group
-  // by level range with a global Day/Night tab.
+  // METHODLESS RENDERING (sources without any method tags) — group by level
+  // range with a global Day/Night tab. SM/USUM DO carry method tags (grass /
+  // surf / goodRod / superRod / sos) and take the method-based path above.
   const sortedGroups = [...groups.values()].sort((a,b) => a.lvMin - b.lvMin || a.lvMax - b.lvMax);
   const anyNight = sortedGroups.some(g => g.pools.some(p => p.night.length));
   const anyDay = sortedGroups.some(g => g.pools.some(p => p.day.length));
@@ -13807,12 +13917,19 @@ function renderEncListInternal(list, teamLineSet, deadSpecies, caughtAtThisLoc, 
     const metaTrail = [lvStr, rateStr].filter(Boolean).join(' · ');
     const safeLoc = (loc||'').replace(/'/g,"\\'");
     const safeSp = e.p.replace(/'/g,"\\'");
+    // Type badges: pokeTypes first, then the bundled typesBySlug map (all 1025
+    // species, offline) so Gen 5+ mons without a backfill still show type badges
+    // in the encounter list — mirrors the Add-Pokémon picker's fallback.
+    let encTypes = pokeTypes(e.p);
+    if ((!encTypes || !encTypes.length) && typeof NUZ_DATA !== 'undefined' && NUZ_DATA.typesBySlug && typeof speciesSlug === 'function') {
+      encTypes = NUZ_DATA.typesBySlug[speciesSlug(e.p)] || [];
+    }
     return `<div class="enc-poke clickable${stateClass}" title="Click to log encounter" onclick="encActionMenu('${safeLoc}', '${safeSp}', event, ${rate||0})">
       ${spriteImg(e.p, {sm:true, faded:isDead||isDupe||isMissed||isSkipped, apiId:e.apiId})}
       <div class="enc-poke-info">
         <div class="enc-poke-name">${e.p}${verTag}${flag}</div>
         <div class="enc-poke-meta">
-          ${(pokeTypes(e.p)||[]).map(t=>`<span class="type-badge t-${t}">${t}</span>`).join('')}
+          ${(encTypes||[]).map(t=>`<span class="type-badge t-${t}">${t}</span>`).join('')}
           ${metaTrail?`<span class="enc-poke-rate">${metaTrail}</span>`:''}
         </div>
       </div>
@@ -15331,32 +15448,18 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-// True-lock orientation by device size: BELOW iPad-mini (short side < 768px) →
-// lock portrait; iPad mini and up → unlocked (any orientation). screen.orientation
-// .lock only works in an installed/standalone PWA (Android); browser tabs + iOS
-// reject it, so the #rotate-guard overlay is the visual fallback there. Re-asserts
-// on rotation/resize so a failed first attempt (or a size change) is retried.
+// Orientation is UNRESTRICTED (portrait lock removed by request) — every device
+// is free to use any orientation. We proactively RELEASE any OS-level lock a
+// previously-installed build may have applied, so users updating from an older
+// version aren't left stuck in portrait on their installed PWA.
 function applyOrientationLock() {
   try {
     const o = window.screen && window.screen.orientation;
-    if (!o) return;
-    const minDim = Math.min(window.screen.width || 0, window.screen.height || 0);
-    if (!minDim) return;
-    if (minDim < 768) {                                    // phone / sub-iPad-mini → lock portrait
-      if (typeof o.lock === 'function') {
-        const res = o.lock('portrait-primary');
-        if (res && typeof res.catch === 'function') {
-          res.catch(() => { try { const r2 = o.lock('portrait'); if (r2 && r2.catch) r2.catch(() => {}); } catch (e) {} });
-        }
-      }
-    } else if (typeof o.unlock === 'function') {           // iPad mini and up → free to rotate
-      try { o.unlock(); } catch (e) {}
-    }
-  } catch (e) { /* unsupported — overlay handles it */ }
+    if (o && typeof o.unlock === 'function') o.unlock();
+  } catch (e) { /* unsupported — nothing to release */ }
 }
 applyOrientationLock();
 window.addEventListener('orientationchange', applyOrientationLock);
-window.addEventListener('resize', applyOrientationLock);
 
 function postToSW(msg) {
   // active is the controlling SW once installed; on first load it may still

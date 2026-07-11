@@ -53,6 +53,18 @@ function loadMoveStats() {
   } catch { return {}; }
 }
 
+// slug → [hp, atk, def, spa, spd, spe] base stats for ALL species (from
+// _converters/_build-stats.mjs). Array order matches POKEMON_DB's `s` array
+// exactly. Bundled so the stat editor / stat bars / BST resolve OFFLINE for
+// every species — POKEMON_DB only covers ~Gen ≤4, so Gen 5+ previously needed a
+// live PokeAPI backfill (worst in Ultra Sun/Ultra Moon). pokeInfo falls back to
+// this for STATS ONLY (gen-correct typing/abilities still come from backfill).
+function loadStatsBySlug() {
+  try {
+    return JSON.parse(readFileSync(join(SCRIPT_DIR, '_converters', '_stats.json'), 'utf8'));
+  } catch { return {}; }
+}
+
 // Global forward-evolution map: slug → [[targetSlug, method], ...] (all branches),
 // from _converters/build-evo-index.mjs. Bundled so the app knows every species'
 // full evolution line OFFLINE without a PokeAPI backfill — drives the pre-cache
@@ -392,7 +404,10 @@ function decodePatchRow(section, fields) {
 //      in parens is added as its own alias, and multi-map segments share the block.
 //   "Table N (Day|Night):"                                    → which time slot follows
 //   "Encounters (Levels A-B): Sp1 (X%), Sp2 (Y%), ..."        → the wild slots we keep
-//   Everything else (SOS Slot N, Additional SOS, "(None) (0%)") is ignored.
+//   "SOS Slot N (Levels A-B): Sp1 (X%), ..."                  → SOS-call summon slots
+//   "Additional SOS encounters: SpA, SpB" | "(None)"          → SOS-exclusive species
+//      SOS species not already in the table's normal slots are emitted as a
+//      separate method:'sos' pool (Gen 7 SM/USUM ally summons). "(None)" adds none.
 // "X (Forme 1)" is mapped to the Alolan variant ("Alolan X") for the known set of
 // Gen 1 species that received Alolan formes; non-Alolan formes have their suffix
 // stripped because the rest of the app doesn't distinguish them.
@@ -453,6 +468,33 @@ function parseEncounterTables(raw) {
       return base;
     }
     return s;
+  };
+
+  // SOS-call collection (Gen 7 SM/USUM). When an ally is summoned via an SOS
+  // call, a separate slot table applies — some species (Butterfree, Sudowoodo,
+  // Goomy, Castform, …) are ONLY obtainable this way. We collect them into a
+  // per-table pool with method 'sos', deduped against the parent table's normal
+  // slots so the SOS section carries only species not otherwise catchable there.
+  // Two source line shapes feed this:
+  //   "SOS Slot N (Levels X-Y): Sp (P%), ..."  → species with a summon rate
+  //   "Additional SOS encounters: SpA, SpB"     → SOS-exclusive species, no rate
+  //   "Additional SOS encounters: (None)"        → nothing to add
+  // sosByKey[mapId#tableN] = { day: Map<species,chance>, night: Map, morning: Map }
+  const sosByKey = {};
+  const sosPoolInfo = {};  // mapId#tableN → { lvMin, lvMax, method, subZoneByName }
+  const getSosBucket = (mapId, tableN, time) => {
+    const key = `${mapId}#${tableN}`;
+    if (!sosByKey[key]) sosByKey[key] = { morning: new Map(), day: new Map(), night: new Map() };
+    return sosByKey[key][time];
+  };
+  const addSos = (mapId, tableN, time, species, chance) => {
+    if (!species) return;
+    const bucket = getSosBucket(mapId, tableN, time);
+    // Keep the highest rate seen across the seven summon slots; rate-less
+    // "Additional" species come in with chance 0 and stay 0 unless a slot line
+    // also lists them with a real rate.
+    const prev = bucket.has(species) ? bucket.get(species) : -1;
+    if (chance > prev) bucket.set(species, chance);
   };
 
   let currentNames = [];
@@ -555,6 +597,96 @@ function parseEncounterTables(raw) {
         for (const s of slots) addEnc(pool, currentTime, s.species, s.chance);
       }
     }
+
+    // "SOS Slot N (Levels X-Y): Sp (P%), ..." — one of the seven summon slots.
+    // Same "<name> (NN%)" shape as an Encounters line; accumulate every species
+    // (across all 7 slots) into the per-table SOS bucket for the current time.
+    if (/^SOS Slot \d/.test(line)) {
+      if (!currentTime || currentMapId == null || currentTableN == null) continue;
+      const lv = line.match(/Levels?\s+(\d+)(?:\s*-\s*(\d+))?/);
+      const after = line.slice(line.indexOf(':') + 1);
+      const re = /([^,]+?)\s*\((\d+)%\)\s*(?:,|$)/g;
+      let m;
+      while ((m = re.exec(after)) !== null) {
+        const chance = +m[2];
+        const species = normSpecies(m[1].trim());
+        if (!species) continue;
+        addSos(currentMapId, currentTableN, currentTime, species, chance || 0);
+      }
+      const info = sosPoolInfo[`${currentMapId}#${currentTableN}`] || (sosPoolInfo[`${currentMapId}#${currentTableN}`] = {});
+      if (lv) {
+        const a = +lv[1], b = lv[2] != null ? +lv[2] : +lv[1];
+        info.lvMin = info.lvMin == null ? a : Math.min(info.lvMin, a);
+        info.lvMax = info.lvMax == null ? b : Math.max(info.lvMax, b);
+      }
+      continue;
+    }
+
+    // "Additional SOS encounters: SpA, SpB" (or "(None)") — SOS-exclusive
+    // species with NO summon rate. Registered at rate 0 (like SV species) so
+    // they surface in the SOS section without a bogus percentage.
+    if (line.startsWith('Additional SOS encounters:')) {
+      if (!currentTime || currentMapId == null || currentTableN == null) continue;
+      const after = line.slice(line.indexOf(':') + 1).trim();
+      if (after && after !== '(None)') {
+        for (const raw of after.split(',')) {
+          const species = normSpecies(raw.trim());
+          if (species) addSos(currentMapId, currentTableN, currentTime, species, 0);
+        }
+      }
+      continue;
+    }
+  }
+
+  // Emit an SOS pool per table that has SOS-exclusive species. A species is
+  // "SOS-exclusive" for a table+time only if it is NOT already in that table's
+  // normal-slot bucket at the same time (dedupe) — the SOS section should carry
+  // only species you can't otherwise get there. The pool inherits the parent
+  // table's level range, method-independent (its own method is 'sos'), and
+  // sub-zone from the parent pool stored under each location name.
+  for (const [name, loc] of Object.entries(byName)) {
+    // Index the parent (non-SOS) pools of this location by mapId#tableN so we
+    // can read their normal species (for dedupe) and inherit level/subZone.
+    const parentByKey = {};
+    for (const pool of loc.pools) {
+      if (pool.method === 'sos') continue;
+      parentByKey[`${pool.mapId}#${pool.tableN}`] = pool;
+    }
+    const sosPools = [];
+    for (const [key, times] of Object.entries(sosByKey)) {
+      const parent = parentByKey[key];
+      if (!parent) continue; // this location doesn't carry this table
+      const [mapId, tableNStr] = key.split('#');
+      const tableN = +tableNStr;
+      const info = sosPoolInfo[key] || {};
+      const lvMin = parent.lvMin != null ? parent.lvMin : (info.lvMin != null ? info.lvMin : 0);
+      const lvMax = parent.lvMax != null ? parent.lvMax : (info.lvMax != null ? info.lvMax : lvMin);
+      const sosPool = {
+        mapId, tableN, lvMin, lvMax,
+        morning: [], day: [], night: [],
+        method: 'sos', subZone: parent.subZone || null,
+      };
+      let any = false;
+      for (const tk of ['morning', 'day', 'night']) {
+        const normalSpecies = new Set((parent[tk] || []).map(e => e.species));
+        for (const [species, chance] of times[tk]) {
+          if (normalSpecies.has(species)) continue; // already catchable normally here
+          sosPool[tk].push({ species, chance });
+          any = true;
+        }
+      }
+      // The generic (non-grass) method renderer only reads the `day` bucket, so
+      // mirror any night-only SOS species into `day` when the parent table has
+      // no daytime SOS data — otherwise night-exclusive SOS species would never
+      // surface. (Parent tables that split Day/Night still share one SOS pool.)
+      if (sosPool.day.length === 0 && sosPool.night.length) {
+        sosPool.day = sosPool.night.map(e => ({ ...e }));
+      } else if (sosPool.night.length === 0 && sosPool.day.length) {
+        sosPool.night = sosPool.day.map(e => ({ ...e }));
+      }
+      if (any) sosPools.push(sosPool);
+    }
+    for (const sp of sosPools) loc.pools.push(sp);
   }
 
   return { byName };
@@ -613,7 +745,8 @@ function buildBundle() {
   const regionSpeciesIndex = loadRegionSpeciesIndex();
   const moveStats = loadMoveStats();
   const evoBySlug = applyFormAliases(loadEvoBySlug());
-  const payload = { meta, routes, leagues, patches, encounterTables, learnsets, dexIdBySlug, typesBySlug, slugAliases, validApi, regionSpeciesIndex, moveStats, evoBySlug };
+  const statsBySlug = applyFormAliases(loadStatsBySlug());
+  const payload = { meta, routes, leagues, patches, encounterTables, learnsets, dexIdBySlug, typesBySlug, slugAliases, validApi, regionSpeciesIndex, moveStats, evoBySlug, statsBySlug };
   const js = `// Auto-generated by build-data.mjs — DO NOT EDIT BY HAND.\n`
     + `// Generated: ${meta.generatedAt}\n`
     + `window.NUZ_DATA = ${JSON.stringify(payload)};\n`;
