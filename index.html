@@ -1052,6 +1052,32 @@
     .ar-result { flex-basis: 100%; margin-left: 0; justify-content: space-between; }
     .ar-detail { font-size: 13px; }
   }
+  /* ── SHORT VIEWPORTS (landscape handhelds like the AYN Thor, split/secondary
+     screens, short desktop windows) ─────────────────────────────────────────
+     The width breakpoints above never fire when the screen is WIDE but SHORT, so
+     the full-size header + tabs ate most of the height and tall modals overflowed
+     off-screen (the "modal doesn't come up" report — it rendered below the fold).
+     Trigger on HEIGHT: compact the chrome and make every modal fit the viewport
+     with its own internal scroll so the close + action buttons stay reachable.
+     `dvh` accounts for the mobile browser's address bar (vh fallback first). */
+  @media (max-height: 640px) {
+    .header { padding: 5px 14px; gap: 6px; }
+    .header-title { font-size: 14px; }
+    .header-sub { font-size: 10px; }
+    .save-indicator span { display: none; }
+    .cap-badge { padding: 3px 8px; }
+    .cap-badge label { display: none; }
+    .hdr-btn { padding: 4px 8px; font-size: 11px; }
+    .tabs { padding: 4px 12px 0; }
+    .tab { padding: 6px 10px; font-size: 13px; }
+    .tab-count { font-size: 9px; }
+    .main { padding: 10px 14px; }
+    /* Modal: fit the short screen and scroll INSIDE (was 60px top-pad + no cap) */
+    .overlay { padding: 8px; align-items: flex-start; }
+    .modal { max-height: calc(100vh - 16px); max-height: calc(100dvh - 16px); overflow-y: auto; }
+    /* keep the tallest inner scrollers modest so it isn't a tiny nested scroll */
+    .pv-learnset, .learnset-list { max-height: 140px; }
+  }
   /* Landscape is fully supported on all sizes — the old rotate-to-portrait guard
      was removed by request. The #rotate-guard element is kept in the DOM but never
      shown (no landscape media query below), so no markup churn. */
