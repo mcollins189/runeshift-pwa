@@ -1081,6 +1081,14 @@
     .modal { max-height: calc(100vh - 16px); max-height: calc(100dvh - 16px); overflow-y: auto; }
     /* keep the tallest inner scrollers modest so it isn't a tiny nested scroll */
     .pv-learnset, .learnset-list { max-height: 140px; }
+    /* Catch/action popup must also fit + scroll on a short screen */
+    .enc-action-menu { max-height: calc(100dvh - 16px); overflow-y: auto; }
+    /* ONE Pokémon per row (user request) — full-width rows are far easier to tap
+       accurately on a small landscape screen than a cramped 2-column grid. */
+    .poke-grid, .matchup-grid, .matchup-grid-detail { grid-template-columns: 1fr; }
+    .pv-header { flex-direction: column; gap: 10px; align-items: stretch; }
+    .pv-actions { width: 100%; }
+    .pv-actions button { flex: 1 1 auto; justify-content: center; }
   }
   /* Landscape is fully supported on all sizes — the old rotate-to-portrait guard
      was removed by request. The #rotate-guard element is kept in the DOM but never
@@ -14001,15 +14009,23 @@ function encActionMenu(loc, species, ev, rate) {
     <button class="eam-btn details" onclick="encActionDetails('${species.replace(/'/g,"\\\\'")}')">🔍 Details (types, stats, matchups)</button>
     <button class="eam-btn cancel" onclick="closeEncActionMenu()">Cancel</button>
   `;
-  // Position near the click
-  const x = ev.clientX, y = ev.clientY;
-  menu.style.left = Math.min(window.innerWidth - 260, x) + 'px';
-  // Six buttons + title + optional shiny hint come out to ~320px tall; clamp so
-  // it doesn't get cropped at the bottom of short viewports.
-  menu.style.top = Math.min(window.innerHeight - 320, y) + 'px';
+  // Position near the tap, then CLAMP using the menu's ACTUAL rendered size so it's
+  // never cropped off a short screen (the old fixed 320px guess pushed "Caught" off
+  // the bottom on small landscape handhelds → the button looked unclickable). Measured
+  // after append; falls back to the tap point when there's room.
+  const x = (ev && ev.clientX) || 20, y = (ev && ev.clientY) || 20;
+  menu.style.left = '0px'; menu.style.top = '0px';   // place, then measure, then clamp
   document.body.appendChild(menu);
-  // Close on outside-click
-  setTimeout(() => document.addEventListener('mousedown', _encMenuOutsideClick), 0);
+  const rect = menu.getBoundingClientRect();
+  const vw = window.innerWidth, vh = window.innerHeight;
+  menu.style.left = Math.max(8, Math.min(vw - rect.width - 8, x)) + 'px';
+  menu.style.top = Math.max(8, Math.min(vh - rect.height - 8, y)) + 'px';
+  // Close on outside-tap — listen for BOTH mousedown and touchstart (touch devices
+  // don't reliably fire mousedown, so the menu could get stuck / block the next tap).
+  setTimeout(() => {
+    document.addEventListener('mousedown', _encMenuOutsideClick);
+    document.addEventListener('touchstart', _encMenuOutsideClick);
+  }, 0);
 }
 function _encMenuOutsideClick(e) {
   const m = document.getElementById('enc-action-menu');
@@ -14019,6 +14035,7 @@ function closeEncActionMenu() {
   const m = document.getElementById('enc-action-menu');
   if (m) m.remove();
   document.removeEventListener('mousedown', _encMenuOutsideClick);
+  document.removeEventListener('touchstart', _encMenuOutsideClick);
 }
 // "Caught" branch: open the add-Pokemon editor pre-filled with species and route
 function encActionCaught(loc, species, shiny) {
