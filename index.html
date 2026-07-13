@@ -7005,7 +7005,15 @@ const SORTABLE_BASE = {
   chosenClass: 'sortable-chosen',
   delay: 250,
   delayOnTouchOnly: true,
-  touchStartThreshold: 6,
+  // Movement tolerance before a DRAG starts. Was effectively ~6/0 — far too twitchy
+  // on a high-DPI handheld (AYN Thor: 1240×1080 packed into 3.92"), where a normal
+  // TAP covers many CSS px of jitter → SortableJS started a micro-drag → onEnd →
+  // _markDragEnd() → the capture-phase click-suppressor killed the tap → the detail
+  // modal never opened ("only one Pokémon came up"). forceFallback:true means
+  // fallbackTolerance governs BOTH touch + pointer, so both must clear this before a
+  // drag begins; intentional reorders move far more than 14px, so drag still works.
+  touchStartThreshold: 14,
+  fallbackTolerance: 14,
   // No handle restriction — the whole card responds to drag.
   forceFallback: true,
   scroll: true,
