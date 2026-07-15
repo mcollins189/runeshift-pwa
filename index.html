@@ -1129,7 +1129,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1783738314598"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1784156936803"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -2128,6 +2128,21 @@ const GAMES = {
         {species:'Haxorus', lv:59, types:['Dragon'], note:'Mold Breaker + Outrage threat'}
       ]}
     ]
+  },
+  'prismatic_moon': {
+    // Photonic Sun / Prismatic Moon (Rebalanced 2d3) — Ultra Moon base. Wild data
+    // (species + rates + methods + day/night) ROM-extracted from the encounter GARC
+    // (a/0/8/3); location names + method tags aligned to the vanilla USUM tables.
+    // Learnsets are overridden from the ROM (a/0/1/3) via NUZ_DATA.learnsetPatches.
+    // Only the Ultra Moon-based ROM is on hand; Photonic Sun needs the Ultra Sun hack.
+    name: 'Photonic Sun / Prismatic Moon', short: 'Prismatic', gen: 7, category: 'Other ROM hacks',
+    versions: { M: 'Prismatic Moon' },
+    defaultVersion: 'M',
+    dataSources: {
+      encounterTables: 'PrismaticMoon',
+      learnsets: 'PrismaticMoon',
+      pokeapiRegion: 'alola'
+    }
   },
   'ultra_sun_moon': {
     name: 'Ultra Sun / Ultra Moon', short: 'USUM', gen: 7,
@@ -3644,6 +3659,7 @@ const POKEAPI_GAME_VERSIONS = {
   // both lets the per-Pokemon priority loop find the form encounter wherever
   // PokeAPI parked it.
   'ultra_sun_moon':      { S: ['ultra-sun', 'sun'], M: ['ultra-moon', 'moon'] },
+  'prismatic_moon':      { M: ['ultra-moon', 'moon'] },
   // Gen 8 — note: PokeAPI has no encounter data tagged for BDSP, so this
   // map is a placeholder; encounters won't load via this path for BDSP.
   'shining_pearl':       { BD: ['brilliant-diamond'], SP: ['shining-pearl'] }
@@ -6345,6 +6361,7 @@ const GAME_DISPLAY_ORDER = [
   'renegade_platinum',                  // Platinum-based
   'storm_silver_sacred_gold',           // HGSS-based
   'rising_ruby_sinking_sapphire',       // ORAS-based
+  'prismatic_moon',                     // USUM-based (Photonic Sun / Prismatic Moon, ROM-extracted)
   'blazevolt',                          // BW-based (Drayano)
   'blaze_black2_volt_white2',           // B2W2-based (Drayano) — Normal/Challenge as variant pill
   'new_generations',                    // Crystal-based
@@ -11859,7 +11876,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = 'v53';
+const APP_BUILD = 'v54';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
