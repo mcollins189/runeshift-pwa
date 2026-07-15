@@ -11854,6 +11854,9 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    (matchups), dupes/species clause + shiny clause (encounters), no-legendaries
    (encounters). Free-form notes are stored only. Future toggles can be wired
    through the same setRule() helper. */
+// Visible build tag (shown in Rules → Display) so it's unambiguous which version is
+// actually running on a device — bump alongside SHELL_CACHE on each deploy.
+const APP_BUILD = 'v46';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -11959,7 +11962,7 @@ function renderRules() {
 
     <p class="slabel" style="margin-top:20px">Display</p>
     <div class="rules-static">
-      <div class="offline-status">Screen: <strong>${window.innerWidth} × ${window.innerHeight}</strong> CSS px · ${window.devicePixelRatio || 1}× density${(window.innerHeight <= 640 || window.innerWidth <= 620) ? ' · compact layout ON' : ''}</div>
+      <div class="offline-status">Build <strong>${APP_BUILD}</strong> · Screen <strong>${window.innerWidth} × ${window.innerHeight}</strong> CSS px · ${window.devicePixelRatio || 1}× density${(window.innerHeight <= 640 || window.innerWidth <= 620) ? ' · compact ON' : ''}</div>
       <div class="rule-desc">This is the size the layout actually sees (physical pixels ÷ pixel density). Useful on handhelds — tell it to me if the layout looks cramped and I can tune the breakpoints to it.</div>
     </div>
 
@@ -15502,8 +15505,13 @@ if ('serviceWorker' in navigator) {
     location.reload();
   });
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').then(reg => {
+    // updateViaCache:'none' → the browser fetches sw.js from the NETWORK (never the
+    // HTTP cache) on every update check, so a new deploy is detected promptly instead
+    // of being masked by a cached sw.js. Critical on the handheld PWA where the app
+    // stays open for a long time and old code kept sticking around.
+    navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).then(reg => {
       _swRegistration = reg;
+      try { reg.update(); } catch (e) {}   // force an immediate update check on load
       // If there's ALREADY a waiting worker on launch (e.g. an update installed during
       // last session), activate it immediately — controllerchange will fire and reload.
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
