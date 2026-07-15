@@ -2142,7 +2142,91 @@ const GAMES = {
       encounterTables: 'PrismaticMoon',
       learnsets: 'PrismaticMoon',
       pokeapiRegion: 'alola'
-    }
+    },
+    // ROM-extracted from the hack's trainer archives (a/1/0/6 trdata + a/1/0/7 trpoke);
+    // names from gametext, teams matched to the vanilla story trainer IDs. Rebalanced
+    // teams/levels/movesets. Trial totems (Lana/Kiawe/Mallow/Sophocles/Mina) are totem
+    // battles (not trainer data) and are not included yet.
+    bosses: [
+      {name:"Ilima (Trial)", location:"Verdant Cavern", cap:12, theme:"Normal", team:[
+        {species:"Yungoos", lv:11, types:["Normal"], moves:["Tackle","Pursuit","Leer","Confide"]},
+        {species:"Porygon", lv:11, types:["Normal"], moves:["Psybeam","Conversion","Agility","Tackle"]},
+        {species:"Buneary", lv:11, types:["Normal"], moves:["Quick Attack","Baby Doll Eyes","Thunder Wave","Power Up Punch"]},
+        {species:"Smeargle", lv:12, types:["Normal"], moves:["Ember","Quick Attack","Work Up","Fake Out"]}
+      ]},
+      {name:"Hala (Grand Trial)", location:"Iki Town", cap:21, theme:"Fighting", team:[
+        {species:"Hawlucha", lv:17, types:["Fighting","Flying"], moves:["Karate Chop","Aerial Ace","Agility","Baton Pass"]},
+        {species:"Makuhita", lv:18, types:["Fighting"], moves:["Force Palm","Bullet Punch","Fake Out","Knock Off"]},
+        {species:"Meditite", lv:18, types:["Fighting","Psychic"], moves:["Psycho Cut","Force Palm","Shadow Ball","Fake Out"]},
+        {species:"Stufful", lv:18, types:["Normal","Fighting"], moves:["Force Palm","Brutal Swing","Baby Doll Eyes","Bind"]},
+        {species:"Scraggy", lv:18, types:["Dark","Fighting"], moves:["Low Sweep","Feint Attack","Amnesia","Rest"]},
+        {species:"Crabrawler", lv:21, types:["Fighting"], moves:["Power Up Punch","Brutal Swing","Scald","Frost Breath"]}
+      ]},
+      {name:"Olivia (Grand Trial)", location:"Ruins of Life", cap:47, theme:"Rock", team:[
+        {species:"Gigalith", lv:45, types:["Rock"], moves:["Power Gem","Earth Power","Discharge","Stealth Rock"]},
+        {species:"Cradily", lv:45, types:["Rock","Grass"], moves:["Giga Drain","Recover","Toxic","Rock Slide"]},
+        {species:"Armaldo", lv:45, types:["Rock","Bug"], moves:["X Scissor","Cross Poison","Rock Slide","Rock Polish"]},
+        {species:"Probopass", lv:45, types:["Rock","Steel"], moves:["Power Gem","Earth Power","Flash Cannon","Hidden Power"]},
+        {species:"Minior", lv:45, types:["Rock","Flying"], moves:["Acrobatics","Power Gem","Earthquake","Shell Smash"]},
+        {species:"Lycanroc Midday", lv:47, types:["Rock"], moves:["Stone Edge","Sucker Punch","Fire Punch","Counter"]}
+      ]},
+      {name:"Nanu (Grand Trial)", location:"Malie City", cap:79, theme:"Dark", team:[
+        {species:"Krookodile", lv:77, types:["Ground","Dark"], moves:["Crunch","Earthquake","Stealth Rock","Roar"]},
+        {species:"Honchkrow", lv:77, types:["Dark","Flying"], moves:["Brave Bird","Superpower","Sucker Punch","Roost"]},
+        {species:"Alolan Persian", lv:79, types:["Dark"], moves:["Power Gem","Fake Out","Dark Pulse","Parting Shot"]},
+        {species:"Sableye", lv:77, types:["Dark","Ghost"], moves:["Power Gem","Shadow Ball","Calm Mind","Recover"]},
+        {species:"Hydreigon", lv:77, types:["Dark","Dragon"], moves:["Dark Pulse","Dragon Pulse","Focus Blast","Fire Blast"]},
+        {species:"Drapion", lv:77, types:["Poison","Dark"], moves:["Crunch","Poison Jab","Aqua Tail","Swords Dance"]}
+      ]},
+      {name:"Hapu (Grand Trial)", location:"Exeggutor Island", cap:96, theme:"Ground", team:[
+        {species:"Hippowdon", lv:94, types:["Ground"], moves:["Thunder Fang","Earthquake","Yawn","Stealth Rock"]},
+        {species:"Excadrill", lv:94, types:["Ground","Steel"], moves:["Earthquake","Iron Head","Rock Slide","Swords Dance"]},
+        {species:"Gastrodon", lv:94, types:["Water","Ground"], moves:["Earth Power","Scald","Ice Beam","Recover"]},
+        {species:"Mudsdale", lv:96, types:["Ground"], moves:["Heavy Slam","Earthquake","Slack Off","Payback"]},
+        {species:"Golurk", lv:94, types:["Ground","Ghost"], moves:["Drain Punch","Earthquake","Shadow Punch","Meteor Mash"]},
+        {species:"Garchomp", lv:94, types:["Dragon","Ground"], moves:["Dragon Claw","Earthquake","Fire Blast","Stone Edge"]}
+      ]},
+      {name:"Molayne (Elite Four)", location:"Pokémon League", cap:100, theme:"Steel", team:[
+        {species:"Klefki", lv:100, types:["Steel","Fairy"], moves:["Spikes","Thunder Wave","Play Rough","Switcheroo"]},
+        {species:"Bisharp", lv:100, types:["Dark","Steel"], moves:["Knock Off","Iron Head","Sucker Punch","Stone Edge"]},
+        {species:"Magnezone", lv:100, types:["Electric","Steel"], moves:["Flash Cannon","Thunderbolt","Hidden Power","Mirror Coat"]},
+        {species:"Ferrothorn", lv:100, types:["Grass","Steel"], moves:["Leech Seed","Protect","Power Whip","Gyro Ball"]},
+        {species:"Alolan Dugtrio", lv:100, types:["Ground","Steel"], moves:["Earthquake","Iron Head","Sucker Punch","Stone Edge"]},
+        {species:"Metagross", lv:100, types:["Steel","Psychic"], moves:["Meteor Mash","Zen Headbutt","Bullet Punch","Ice Punch"]}
+      ]},
+      {name:"Olivia (Elite Four)", location:"Pokémon League", cap:100, theme:"Rock", team:[
+        {species:"Gigalith", lv:100, types:["Rock"], moves:["Power Gem","Earth Power","Thunderbolt","Stealth Rock"]},
+        {species:"Cradily", lv:100, types:["Rock","Grass"], moves:["Curse","Seed Bomb","Stone Edge","Recover"]},
+        {species:"Carracosta", lv:100, types:["Water","Rock"], moves:["Stone Edge","Liquidation","Aqua Jet","Shell Smash"]},
+        {species:"Archeops", lv:100, types:["Rock","Flying"], moves:["Wing Attack","Head Smash","Iron Tail","Endeavor"]},
+        {species:"Lycanroc Midday", lv:100, types:["Rock"], moves:["Crunch","Stone Edge","Counter","Close Combat"]},
+        {species:"Tyranitar", lv:100, types:["Rock","Dark"], moves:["Stone Edge","Crunch","Earthquake","Dragon Dance"]}
+      ]},
+      {name:"Acerola (Elite Four)", location:"Pokémon League", cap:100, theme:"Ghost", team:[
+        {species:"Banette", lv:100, types:["Ghost"], moves:["Shadow Claw","Return","Will O Wisp","Play Rough"]},
+        {species:"Chandelure", lv:100, types:["Ghost","Fire"], moves:["Fire Blast","Shadow Ball","Psychic","Energy Ball"]},
+        {species:"Dhelmise", lv:100, types:["Ghost","Grass"], moves:["Power Whip","Anchor Shot","Earthquake","Rock Slide"]},
+        {species:"Froslass", lv:100, types:["Ice","Ghost"], moves:["Freeze Dry","Shadow Ball","Signal Beam","Destiny Bond"]},
+        {species:"Palossand", lv:100, types:["Ghost","Ground"], moves:["Shadow Ball","Earth Power","Energy Ball","Shore Up"]},
+        {species:"Mimikyu", lv:100, types:["Ghost","Fairy"], moves:["Play Rough","Shadow Claw","Swords Dance","Shadow Sneak"]}
+      ]},
+      {name:"Kahili (Elite Four)", location:"Pokémon League", cap:100, theme:"Flying", team:[
+        {species:"Skarmory", lv:100, types:["Steel","Flying"], moves:["Spikes","Stealth Rock","Whirlwind","Brave Bird"]},
+        {species:"Hawlucha", lv:100, types:["Fighting","Flying"], moves:["Acrobatics","High Jump Kick","Stone Edge","Swords Dance"]},
+        {species:"Oricorio", lv:100, types:["Fire","Flying"], moves:["Revelation Dance","Hurricane","Quiver Dance","Heat Wave"]},
+        {species:"Toucannon", lv:100, types:["Normal","Flying"], moves:["Brave Bird","Boomburst","Heat Wave","Bullet Seed"]},
+        {species:"Gliscor", lv:100, types:["Ground","Flying"], moves:["Earthquake","Wing Attack","Toxic","Protect"]},
+        {species:"Pidgeot", lv:100, types:["Normal","Flying"], moves:["Hurricane","Hyper Voice","Heat Wave","Focus Blast"]}
+      ]},
+      {name:"Kukui (Champion)", location:"Pokémon League", cap:100, theme:"Mixed", team:[
+        {species:"Alolan Ninetales", lv:100, types:["Ice","Fairy"], moves:["Aurora Veil","Blizzard","Moonblast","Hypnosis"]},
+        {species:"Lycanroc Midday", lv:100, types:["Rock"], moves:["Stone Edge","Accelerock","Close Combat","Stealth Rock"]},
+        {species:"Braviary", lv:100, types:["Normal","Flying"], moves:["Return","Brave Bird","Whirlwind","Tailwind"]},
+        {species:"Magnezone", lv:100, types:["Electric","Steel"], moves:["Thunderbolt","Flash Cannon","Thunder Wave","Hidden Power"]},
+        {species:"Snorlax", lv:100, types:["Normal"], moves:["Body Slam","Crunch","Earthquake","Gunk Shot"]},
+        {species:"Incineroar", lv:100, types:["Fire","Dark"], moves:["Flare Blitz","Darkest Lariat","Thunder Punch","Close Combat"]}
+      ]}
+    ]
   },
   'ultra_sun_moon': {
     name: 'Ultra Sun / Ultra Moon', short: 'USUM', gen: 7,
@@ -11876,7 +11960,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = 'v54';
+const APP_BUILD = 'v55';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
