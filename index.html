@@ -525,7 +525,7 @@
   .toast.error{border-color:rgba(248,113,113,.3);color:var(--red)}
   .toast.warn{border-color:rgba(245,158,11,.4);color:#fbbf24}
 
-  .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:100;align-items:flex-start;justify-content:center;padding:28px 16px 16px;overflow-y:auto}
+  .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:100;align-items:flex-start;justify-content:center;padding:28px 16px 16px;overflow-y:auto;transform:translateZ(0)}
   .overlay.open{display:flex}
   /* max-height + internal scroll UNIVERSALLY (any viewport): a tall modal must never
      run off a short screen with its close/action buttons unreachable. dvh tracks the
@@ -814,6 +814,9 @@
   .enc-poke.clickable{cursor:pointer}
   .enc-poke.clickable:hover{border-color:var(--accent);background:var(--bg2);transform:translateY(-1px);box-shadow:0 2px 8px rgba(0,0,0,.2)}
   .enc-action-menu{position:fixed;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:10px;z-index:200;box-shadow:0 8px 30px rgba(0,0,0,.5);min-width:240px;font-family:'Outfit',sans-serif;display:flex;flex-direction:column;gap:4px}
+  /* Centered-overlay mode (touch / small screens): backdrop covers the real viewport so the menu can never land off-screen. */
+  .enc-action-backdrop{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:14px;overflow-y:auto;-webkit-overflow-scrolling:touch;transform:translateZ(0)}
+  .enc-action-menu.eam-centered{position:static;left:auto;top:auto;width:100%;max-width:min(380px,94vw);margin:auto;max-height:calc(100vh - 28px);max-height:calc(100dvh - 28px);min-height:96px;overflow-y:auto}
   .enc-action-menu .eam-title{font-size:12px;color:var(--text);font-weight:600;padding:2px 4px 8px;border-bottom:1px solid var(--border);margin-bottom:4px}
   .enc-action-menu .eam-loc{font-weight:400;color:var(--text3);font-size:11px}
   .enc-action-menu .eam-btn{background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:var(--radius-sm);cursor:pointer;font-family:'Outfit',sans-serif;font-size:12px;text-align:left;transition:all .15s}
@@ -1082,7 +1085,7 @@
     /* keep the tallest inner scrollers modest so it isn't a tiny nested scroll */
     .pv-learnset, .learnset-list { max-height: 140px; }
     /* Catch/action popup must also fit + scroll on a short screen */
-    .enc-action-menu { max-height: calc(100dvh - 16px); overflow-y: auto; }
+    .enc-action-menu { max-height: calc(100vh - 16px); max-height: calc(100dvh - 16px); min-height: 96px; overflow-y: auto; }
     /* ONE Pokémon per row (user request) — full-width rows are far easier to tap
        accurately on a small landscape screen than a cramped 2-column grid. */
     .poke-grid, .matchup-grid, .matchup-grid-detail { grid-template-columns: 1fr; }
@@ -11856,7 +11859,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = 'v50';
+const APP_BUILD = 'v52';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -14040,17 +14043,32 @@ function encActionMenu(loc, species, ev, rate) {
     <button class="eam-btn details" onclick="encActionDetails('${species.replace(/'/g,"\\\\'")}')">🔍 Details (types, stats, matchups)</button>
     <button class="eam-btn cancel" onclick="closeEncActionMenu()">Cancel</button>
   `;
-  // Position near the tap, then CLAMP using the menu's ACTUAL rendered size so it's
-  // never cropped off a short screen (the old fixed 320px guess pushed "Caught" off
-  // the bottom on small landscape handhelds → the button looked unclickable). Measured
-  // after append; falls back to the tap point when there's room.
-  const x = (ev && ev.clientX) || 20, y = (ev && ev.clientY) || 20;
-  menu.style.left = '0px'; menu.style.top = '0px';   // place, then measure, then clamp
-  document.body.appendChild(menu);
-  const rect = menu.getBoundingClientRect();
-  const vw = window.innerWidth, vh = window.innerHeight;
-  menu.style.left = Math.max(8, Math.min(vw - rect.width - 8, x)) + 'px';
-  menu.style.top = Math.max(8, Math.min(vh - rect.height - 8, y)) + 'px';
+  // On touch / small screens, tap-coordinate positioning is fragile: the clamp below
+  // uses window.innerWidth/innerHeight (the LAYOUT viewport), which on a high-DPR
+  // handheld can differ from the VISIBLE area — so the menu got placed off-screen and
+  // "the tap did nothing". So on coarse-pointer OR small viewports we DON'T position by
+  // coordinate at all: we drop the menu inside a full-viewport backdrop and center it.
+  // inset:0 always covers the real visible viewport, so the menu can never land
+  // off-screen. Desktop (fine pointer + big screen) keeps the tap-anchored placement.
+  const centered = (window.matchMedia && window.matchMedia('(pointer: coarse)').matches)
+    || window.innerWidth < 820 || window.innerHeight < 720;
+  if (centered) {
+    menu.classList.add('eam-centered');
+    const bd = document.createElement('div');
+    bd.id = 'enc-action-backdrop';
+    bd.className = 'enc-action-backdrop';
+    bd.appendChild(menu);
+    document.body.appendChild(bd);
+    _forceOverlayPaint(bd);
+  } else {
+    const x = (ev && ev.clientX) || 20, y = (ev && ev.clientY) || 20;
+    menu.style.left = '0px'; menu.style.top = '0px';   // place, then measure, then clamp
+    document.body.appendChild(menu);
+    const rect = menu.getBoundingClientRect();
+    const vw = window.innerWidth, vh = window.innerHeight;
+    menu.style.left = Math.max(8, Math.min(vw - rect.width - 8, x)) + 'px';
+    menu.style.top = Math.max(8, Math.min(vh - rect.height - 8, y)) + 'px';
+  }
   // Close on outside-tap — listen for BOTH mousedown and touchstart (touch devices
   // don't reliably fire mousedown, so the menu could get stuck / block the next tap).
   _encMenuOpenedAt = Date.now();
@@ -14071,8 +14089,10 @@ function _encMenuOutsideClick(e) {
 }
 function closeEncActionMenu() {
   const m = document.getElementById('enc-action-menu');
-  if (m && typeof _tapLog === 'function') _tapLog('❌ menu CLOSED');
-  if (m) m.remove();
+  const bd = document.getElementById('enc-action-backdrop');
+  if ((m || bd) && typeof _tapLog === 'function') _tapLog('❌ menu CLOSED');
+  if (bd) bd.remove();
+  else if (m) m.remove();
   document.removeEventListener('mousedown', _encMenuOutsideClick);
   document.removeEventListener('touchstart', _encMenuOutsideClick);
 }
@@ -14264,7 +14284,31 @@ function closeModal() { if (typeof _tapLog === 'function') _tapLog('❌ modal CL
 // phantom click hit the overlay backdrop and slammed the just-opened modal shut, so
 // it looked like "tapping does nothing". Ignore backdrop-closes for 800ms after open.
 let _modalOpenedAt = 0;
-function openModal() { _modalOpenedAt = Date.now(); document.getElementById('overlay').classList.add('open'); if (typeof _tapLog === 'function') _tapLog('🟢 modal OPENED'); }
+// Some displays (AYN Thor secondary/HiDPI screen) leave a just-shown fixed overlay in
+// the DOM with correct geometry but never schedule a paint → it's invisible. Force a
+// sync reflow, then a 2-frame opacity nudge (0.999 → default, visually identical) to
+// make the compositor flush a paint. When tap-debug is on, also log the overlay's live
+// geometry/computed-style so the NEXT on-device test reports WHICH failure class remains
+// (zero geometry vs full-geometry-but-unpainted) instead of an un-actionable "nothing".
+function _forceOverlayPaint(el) {
+  if (!el) return;
+  try {
+    void el.offsetHeight;
+    requestAnimationFrame(() => {
+      el.style.opacity = '0.999';
+      requestAnimationFrame(() => {
+        el.style.opacity = '';
+        if (_tapDebugOn) {
+          try {
+            const r = el.getBoundingClientRect(); const cs = getComputedStyle(el);
+            _tapLog('📐 ' + (el.id || el.className) + ' disp=' + cs.display + ' vis=' + cs.visibility + ' op=' + cs.opacity + ' w=' + Math.round(r.width) + ' h=' + Math.round(r.height) + ' top=' + Math.round(r.top));
+          } catch (_) {}
+        }
+      });
+    });
+  } catch (_) {}
+}
+function openModal() { _modalOpenedAt = Date.now(); const _ov = document.getElementById('overlay'); _ov.classList.add('open'); _forceOverlayPaint(_ov); if (typeof _tapLog === 'function') _tapLog('🟢 modal OPENED'); }
 function overlayBg(e) {
   const dt = Date.now() - _modalOpenedAt;
   if (dt < 800) { if (typeof _tapLog === 'function') _tapLog('🛡️ backdrop-close SWALLOWED (' + dt + 'ms, ghost)'); return; }
@@ -14349,7 +14393,7 @@ function toggleTapDebug() {
     if (!el) {
       el = document.createElement('div');
       el.id = 'tap-debug-banner';
-      el.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:200000;background:rgba(0,0,0,.9);color:#5f5;font:11px/1.35 monospace;padding:6px 8px;max-height:45%;overflow:auto;white-space:pre-wrap;pointer-events:none;border-top:1px solid #5f5';
+      el.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:200000;background:rgba(0,0,0,.82);color:#5f5;font:11px/1.35 monospace;padding:6px 8px;max-height:30%;overflow:auto;white-space:pre-wrap;pointer-events:none;border-bottom:1px solid #5f5';
       document.body.appendChild(el);
     }
     el.textContent = 'TAP DEBUG ON — tap a Pokémon; events log here. Toggle off in Rules.';
