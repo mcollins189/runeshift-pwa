@@ -11856,7 +11856,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = 'v46';
+const APP_BUILD = 'v47';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -11960,10 +11960,14 @@ function renderRules() {
     <p class="slabel" style="margin-top:20px">Notes / custom rules</p>
     <textarea id="rule-notes" class="rule-notes" placeholder="e.g. Set mode only · No held items in battle · No same-type starter…" oninput="setRuleNotes(this.value)">${rules.notes || ''}</textarea>
 
-    <p class="slabel" style="margin-top:20px">Display</p>
+    <p class="slabel" style="margin-top:20px">App version</p>
     <div class="rules-static">
-      <div class="offline-status">Build <strong>${APP_BUILD}</strong> · Screen <strong>${window.innerWidth} × ${window.innerHeight}</strong> CSS px · ${window.devicePixelRatio || 1}× density${(window.innerHeight <= 640 || window.innerWidth <= 620) ? ' · compact ON' : ''}</div>
-      <div class="rule-desc">This is the size the layout actually sees (physical pixels ÷ pixel density). Useful on handhelds — tell it to me if the layout looks cramped and I can tune the breakpoints to it.</div>
+      <div class="offline-status" style="font-size:14px">Build <strong style="color:var(--accent)">${APP_BUILD}</strong> · Screen <strong>${window.innerWidth} × ${window.innerHeight}</strong> CSS px · ${window.devicePixelRatio || 1}×</div>
+      <div class="rule-desc">If the app is misbehaving after an update, this "Build" number tells you which version you're actually running. Tap below to wipe the cached app and reload the newest version — the reliable way to update when a stale copy is stuck.</div>
+      <div class="offline-actions" style="margin-top:10px">
+        <button class="offline-btn" style="background:var(--accent);color:#fff;font-weight:600" onclick="forceUpdateApp()">🔄 Force update to latest version</button>
+        <button class="offline-btn" onclick="toggleTapDebug()">🐞 Tap debug (diagnose taps not working)</button>
+      </div>
     </div>
 
     <p class="slabel" style="margin-top:20px">Offline mode</p>
@@ -14010,6 +14014,7 @@ function renderEncListInternal(list, teamLineSet, deadSpecies, caughtAtThisLoc, 
 // Open a small popover with three actions when clicking an encounter card.
 // Uses a global container that overlays the screen near the click.
 function encActionMenu(loc, species, ev, rate) {
+  if (_tapDebugOn) { const el=document.getElementById('tap-debug-banner'); if(el) el.textContent = '✅ encActionMenu('+species+') FIRED\n'+el.textContent; }
   ev.stopPropagation();
   closeEncActionMenu();
   const menu = document.createElement('div');
@@ -14279,10 +14284,55 @@ function _fillModal(fn) {
     b.innerHTML = `<div style="padding:18px;color:#f87171;line-height:1.6">Couldn't render this view — <b>${(e && e.message) || e}</b>.<br><span style="color:var(--text3);font-size:12px">Your data is safe; this is a display bug. Please report which Pokémon/screen triggered it.</span></div>`;
   }
 }
+// Self-service cache buster: delete every cache + unregister the service worker +
+// hard-reload with a cache-busting query. Gives users (esp. on a handheld with no
+// devtools) a one-tap way to escape a stuck OLD build — the recurring "my fixes
+// never reach the device" problem. Confirm they're current afterward via the Build tag.
+async function forceUpdateApp() {
+  try { if (typeof showToast === 'function') showToast('Updating to the latest version…', 'info'); } catch (e) {}
+  try { if ('caches' in window) { const ks = await caches.keys(); await Promise.all(ks.map(k => caches.delete(k))); } } catch (e) {}
+  try { if (navigator.serviceWorker) { const regs = await navigator.serviceWorker.getRegistrations(); await Promise.all(regs.map(r => r.unregister())); } } catch (e) {}
+  try { const u = new URL(location.href); u.searchParams.set('_u', String(Date.now())); location.replace(u.toString()); }
+  catch (e) { location.reload(); }
+}
+// ── Tap debugger ────────────────────────────────────────────────────────────
+// A device-diagnostic: shows a live on-screen log of pointer/touch/click events so
+// we can see, on a handheld with no devtools, WHY a tap on a card isn't opening the
+// modal (does click even fire? on what element? is it being suppressed?). Toggle in
+// Rules → App version.
+let _tapDebugOn = false;
+function toggleTapDebug() {
+  _tapDebugOn = !_tapDebugOn;
+  let el = document.getElementById('tap-debug-banner');
+  if (_tapDebugOn) {
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'tap-debug-banner';
+      el.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:200000;background:rgba(0,0,0,.9);color:#5f5;font:11px/1.35 monospace;padding:6px 8px;max-height:45%;overflow:auto;white-space:pre-wrap;pointer-events:none;border-top:1px solid #5f5';
+      document.body.appendChild(el);
+    }
+    el.textContent = 'TAP DEBUG ON — tap a Pokémon; events log here. Toggle off in Rules.';
+  } else if (el) { el.remove(); }
+  try { showToast('Tap debug ' + (_tapDebugOn ? 'ON' : 'OFF'), 'info'); } catch (e) {}
+}
+['pointerdown', 'touchstart', 'mousedown', 'click'].forEach((type) => {
+  document.addEventListener(type, (e) => {
+    if (!_tapDebugOn) return;
+    const el = document.getElementById('tap-debug-banner'); if (!el) return;
+    const t = e.target;
+    const oc = t && t.closest ? t.closest('[onclick]') : null;
+    const desc = t ? (t.tagName.toLowerCase() + (t.className ? '.' + String(t.className).split(' ')[0] : '')) : '?';
+    const ocDesc = oc ? (' → onclick@' + oc.tagName.toLowerCase() + (oc.className ? '.' + String(oc.className).split(' ')[0] : '')) : ' → NO onclick ancestor';
+    const supp = (typeof _suppressClickUntil !== 'undefined' && Date.now() < _suppressClickUntil) ? ' [CLICKS-SUPPRESSED]' : '';
+    const line = type.padEnd(11) + ' ' + desc + ocDesc + supp;
+    el.textContent = (line + '\n' + el.textContent).split('\n').slice(0, 14).join('\n');
+  }, true);
+});
 function openEdit(idx) {
   editIdx = idx;
   const p = curTeam()[idx];
   document.getElementById('modal-title').textContent = p.nickname;
+  if (_tapDebugOn) { const el=document.getElementById('tap-debug-banner'); if(el) el.textContent = '✅ openEdit('+idx+') FIRED\n'+el.textContent; }
   _fillModal(() => pokeView(p, idx));
   openModal();
   // Auto-load learnset section

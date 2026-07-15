@@ -72,7 +72,11 @@
 // reaching the handheld because the old SW kept serving cached code.
 // v45 — pokeView crash fix (pokeInfo stub now complete t/a/id) + modal safety net.
 // v44 — SortableJS drag tolerance (secondary).
-const SHELL_CACHE = 'nuz-shell-v46';
+// v47 — on-screen TAP DEBUGGER (Rules → App version → 🐞) because the user is
+// confirmed on v46 yet taps on Pokémon still don't fire the handler → it's a
+// device input issue, not code/cache. The debugger logs pointer/touch/click targets
+// + whether openEdit/encActionMenu fired, so we can see what the handheld does.
+const SHELL_CACHE = 'nuz-shell-v47';
 // v2 — all self-hosted artwork sprites (sprites/art*, sprites/pixel* unchanged)
 // were regenerated (trimmed/normalized). Sprites are served cache-first as
 // "immutable", so without a bump existing clients would keep the old artwork
