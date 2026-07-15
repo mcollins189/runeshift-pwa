@@ -4089,7 +4089,22 @@ function pokeInfo(name) {
     if (!hasStats) {
       const slug = (typeof speciesSlug === 'function') ? speciesSlug(n) : lower;
       const bs = slug && NUZ_DATA.statsBySlug[slug];
-      if (bs && bs.length === 6) base = base ? { ...base, s: bs.slice() } : { s: bs.slice() };
+      if (bs && bs.length === 6) {
+        if (base) base = { ...base, s: bs.slice() };
+        else {
+          // COMPLETE the synthesized stub (was `{ s }` only) so callers that read
+          // info.t / info.a / info.id don't crash on a Gen 5+ / form species that
+          // isn't backfilled yet — e.g. pokeView's `info.t.join('/')` threw
+          // "undefined (reading 'join')", so the detail modal never opened for
+          // almost every USUM catch. Types come from the bundled current-gen map
+          // (display only; gen-correct typing still arrives via backfill's
+          // past_types); abilities empty; id from the sprite-dex map (null for
+          // form slugs, which resolve their sprite/id via backfill).
+          const tb = NUZ_DATA.typesBySlug && NUZ_DATA.typesBySlug[slug];
+          const did = NUZ_DATA.dexIdBySlug && NUZ_DATA.dexIdBySlug[slug];
+          base = { s: bs.slice(), t: Array.isArray(tb) ? tb.slice() : [], a: [], id: did || null };
+        }
+      }
     }
   }
   // Evolution fallback: the bundled NUZ_DATA.evoBySlug carries forward evolutions
@@ -14062,7 +14077,7 @@ function encActionCaught(loc, species, shiny) {
     ability: info && info.a && info.a.length === 1 ? info.a[0] : '',
     isShiny: !!shiny
   };
-  document.getElementById('modal-body').innerHTML = pokeForm(starter, false);
+  _fillModal(() => pokeForm(starter, false));
   openModal();
   // Move focus to the nickname field for fast entry
   setTimeout(() => { const nf = document.getElementById('f-nick'); if (nf) nf.focus(); }, 50);
@@ -14093,7 +14108,7 @@ function encActionDetails(species) {
   // Reset any team-edit cursors so closing the modal returns to a clean slate
   editIdx = null;
   document.getElementById('modal-title').textContent = species;
-  document.getElementById('modal-body').innerHTML = speciesView(species);
+  _fillModal(() => speciesView(species));
   openModal();
 }
 
@@ -14245,15 +14260,27 @@ function openAdd(mode) {
     document.getElementById('modal-body').innerHTML=routeForm({});
   } else {
     document.getElementById('modal-title').textContent='Add Pokémon';
-    document.getElementById('modal-body').innerHTML=pokeForm({});
+    _fillModal(() => pokeForm({}));
   }
   openModal();
+}
+// SAFETY NET: a content-builder (pokeView/pokeForm/speciesView) that throws must
+// NEVER silently swallow the modal-open — the user just sees "nothing happens" with
+// no clue. Build inside a try/catch so the modal always opens; on error show the
+// message so it's visible + reportable instead of invisible.
+function _fillModal(fn) {
+  const b = document.getElementById('modal-body');
+  try { b.innerHTML = fn(); }
+  catch (e) {
+    console.error('[modal] content build failed:', e);
+    b.innerHTML = `<div style="padding:18px;color:#f87171;line-height:1.6">Couldn't render this view — <b>${(e && e.message) || e}</b>.<br><span style="color:var(--text3);font-size:12px">Your data is safe; this is a display bug. Please report which Pokémon/screen triggered it.</span></div>`;
+  }
 }
 function openEdit(idx) {
   editIdx = idx;
   const p = curTeam()[idx];
   document.getElementById('modal-title').textContent = p.nickname;
-  document.getElementById('modal-body').innerHTML=pokeView(p, idx);
+  _fillModal(() => pokeView(p, idx));
   openModal();
   // Auto-load learnset section
   setTimeout(()=>renderPokeViewLearnset(idx), 50);
@@ -14262,7 +14289,7 @@ function openEditForm(idx) {
   editIdx = idx;
   const p = curTeam()[idx];
   document.getElementById('modal-title').textContent = `Edit — ${p.nickname}`;
-  document.getElementById('modal-body').innerHTML=pokeForm(p, true);
+  _fillModal(() => pokeForm(p, true));
 }
 function openEditRoute(idx) {
   editRouteIdx = idx;
@@ -14445,7 +14472,7 @@ function pokeView(p, idx) {
       <div class="pv-sprite">${sprite}</div>
       <div class="pv-headline">
         <div class="pv-nick">${p.nickname}${p.isShiny?'<span class="shiny-spark" title="Shiny">✨</span>':''}${isAlive?'':' <span style="font-size:13px;color:var(--red)">💀</span>'}</div>
-        <div class="pv-species">${p.species || 'Unknown'}${info?` · ${info.t.join('/')}`:''}</div>
+        <div class="pv-species">${p.species || 'Unknown'}${(info && info.t && info.t.length)?` · ${info.t.join('/')}`:''}</div>
         <div class="pv-types">${typeBadge(p.type1)}${typeBadge(p.type2)}</div>
         <span class="pv-lv-badge">Lv ${p.level || '?'}</span>
         ${p.inParty?'<span class="pv-lv-badge" style="border-color:rgba(108,143,255,.4);background:var(--accent-bg);color:var(--accent);margin-left:6px">In party</span>':''}

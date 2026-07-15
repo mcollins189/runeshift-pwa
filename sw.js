@@ -65,14 +65,14 @@
 // path from touching the huge POKEAPI_CACHE, which is slow on iOS once fully pre-cached
 // (was: launch black screen + sprites vanishing on re-render, ONLY with a full pre-cache).
 // The activate keep-set preserves POKEAPI_CACHE, so the user's downloaded pre-cache stays.
-// v44 — THE fix for "tapping a Pokémon doesn't open the modal" on the handheld:
-// SortableJS drag tolerance 6/0 → 14px, so a jittery tap on a high-DPI screen no
-// longer starts a micro-drag that suppressed the tap's click (detail modal never
-// opened). Real reorders still drag (they move far more than 14px).
+// v45 — THE ACTUAL fix for "tapping a Pokémon does nothing": pokeView threw
+// `info.t.join undefined` for Gen-5+/form species (almost every USUM catch), so
+// openEdit died before openModal → modal never opened (Zubat/curated worked). Now
+// pokeInfo's synthesized stub is a COMPLETE object (t/a/id), + a guard at the call
+// site. v44's SortableJS tolerance was a real but secondary fix.
 // v43 — landscape/handheld: on-screen catch popup, single-column, touch close.
 // v42 — REVERT the double-battle 2-v-2 engine to the singles readiness numbers.
-// v41 — shipped the double-battle 2-v-2 readiness engine (now disabled above).
-const SHELL_CACHE = 'nuz-shell-v44';
+const SHELL_CACHE = 'nuz-shell-v45';
 // v2 — all self-hosted artwork sprites (sprites/art*, sprites/pixel* unchanged)
 // were regenerated (trimmed/normalized). Sprites are served cache-first as
 // "immutable", so without a bump existing clients would keep the old artwork
