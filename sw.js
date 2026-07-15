@@ -72,11 +72,13 @@
 // reaching the handheld because the old SW kept serving cached code.
 // v45 — pokeView crash fix (pokeInfo stub now complete t/a/id) + modal safety net.
 // v44 — SortableJS drag tolerance (secondary).
-// v47 — on-screen TAP DEBUGGER (Rules → App version → 🐞) because the user is
-// confirmed on v46 yet taps on Pokémon still don't fire the handler → it's a
-// device input issue, not code/cache. The debugger logs pointer/touch/click targets
-// + whether openEdit/encActionMenu fired, so we can see what the handheld does.
-const SHELL_CACHE = 'nuz-shell-v47';
+// v48 — THE fix. The tap debugger (v47) revealed it: the handheld fires a GHOST
+// duplicate click ~ms after the opening tap; that phantom click hit the modal
+// backdrop / catch-menu outside area and slammed the just-opened modal shut → looked
+// like "tapping does nothing". openModal + encActionMenu now stamp an open-time and
+// the backdrop/outside close handlers ignore closes for 500ms → the ghost is swallowed.
+// v47 — on-screen tap debugger (diagnostic).
+const SHELL_CACHE = 'nuz-shell-v48';
 // v2 — all self-hosted artwork sprites (sprites/art*, sprites/pixel* unchanged)
 // were regenerated (trimmed/normalized). Sprites are served cache-first as
 // "immutable", so without a bump existing clients would keep the old artwork

@@ -11856,7 +11856,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = 'v47';
+const APP_BUILD = 'v48';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -14053,12 +14053,18 @@ function encActionMenu(loc, species, ev, rate) {
   menu.style.top = Math.max(8, Math.min(vh - rect.height - 8, y)) + 'px';
   // Close on outside-tap — listen for BOTH mousedown and touchstart (touch devices
   // don't reliably fire mousedown, so the menu could get stuck / block the next tap).
+  _encMenuOpenedAt = Date.now();
   setTimeout(() => {
     document.addEventListener('mousedown', _encMenuOutsideClick);
     document.addEventListener('touchstart', _encMenuOutsideClick);
   }, 0);
 }
+let _encMenuOpenedAt = 0;
 function _encMenuOutsideClick(e) {
+  // Swallow the GHOST/duplicate event some touch devices fire right after the opening
+  // tap — it lands outside the menu and would instantly close it (the "catch menu
+  // flashes and vanishes" bug). Ignore outside-closes for 500ms after open.
+  if (Date.now() - _encMenuOpenedAt < 500) return;
   const m = document.getElementById('enc-action-menu');
   if (m && !m.contains(e.target)) closeEncActionMenu();
 }
@@ -14251,8 +14257,13 @@ function prefillEncounterLog(loc) {
 
 function setCap(v) { curRun().cap = v||null; save(); renderCap(); renderMatchup(); }
 function closeModal() { document.getElementById('overlay').classList.remove('open'); }
-function openModal() { document.getElementById('overlay').classList.add('open'); }
-function overlayBg(e) { if(e.target===document.getElementById('overlay')) closeModal(); }
+// _modalOpenedAt guards the backdrop close against a GHOST/duplicate click that some
+// touch devices (e.g. the AYN Thor) fire ~milliseconds after the opening tap — that
+// phantom click hit the overlay backdrop and slammed the just-opened modal shut, so
+// it looked like "tapping does nothing". Ignore backdrop-closes for 500ms after open.
+let _modalOpenedAt = 0;
+function openModal() { _modalOpenedAt = Date.now(); document.getElementById('overlay').classList.add('open'); }
+function overlayBg(e) { if (Date.now() - _modalOpenedAt < 500) return; if (e.target === document.getElementById('overlay')) closeModal(); }
 
 function typeOpts(sel) {
   return `<option value="">—</option>`+TYPES.map(t=>`<option${t===sel?' selected':''}>${t}</option>`).join('');
