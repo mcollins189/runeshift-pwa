@@ -11859,7 +11859,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = 'v52';
+const APP_BUILD = 'v53';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -14023,8 +14023,6 @@ function encActionMenu(loc, species, ev, rate) {
   const menu = document.createElement('div');
   menu.className = 'enc-action-menu';
   menu.id = 'enc-action-menu';
-  const _eLoc = loc.replace(/'/g,"\\\\'");
-  const _eSp = species.replace(/'/g,"\\\\'");
   // Shiny-clause hint: when the clause is on and this species would be a dupe,
   // remind the player a shiny is a sanctioned exception to the dupes rule.
   const _r = curRules();
@@ -14033,16 +14031,27 @@ function encActionMenu(loc, species, ev, rate) {
   const shinyHint = (_r.shinyClause && _isDupe)
     ? `<div class="eam-shiny-hint"><span class="shiny-spark">✨</span> Shiny clause: a shiny is catchable even though this is a dupe.</div>`
     : '';
+  // Buttons carry NO inline onclick — handlers are wired via closures below. The old
+  // code interpolated loc/species into onclick strings with over-escaped `'` → `\\'`,
+  // which terminated the JS string early, so at EVERY apostrophe location (Hau'oli City,
+  // Trainer's School, …) the Caught/Skipped/Missed buttons silently did nothing. Details
+  // survived only because it took no location arg. Closures can't be broken by any char.
   menu.innerHTML = `
     <div class="eam-title">${species} <span class="eam-loc">at ${loc}</span></div>
     ${shinyHint}
-    <button class="eam-btn caught" onclick="encActionCaught('${_eLoc}', '${_eSp}')">✓ Caught — fill out details</button>
-    <button class="eam-btn caught shiny" onclick="encActionCaught('${_eLoc}', '${_eSp}', true)"><span class="shiny-spark">✨</span> Caught shiny — fill out details</button>
-    <button class="eam-btn skipped" onclick="encActionLog('${loc.replace(/'/g,"\\\\'")}', '${species.replace(/'/g,"\\\\'")}', 'skipped')">⊘ Skipped (dupe)</button>
-    <button class="eam-btn failed" onclick="encActionLog('${loc.replace(/'/g,"\\\\'")}', '${species.replace(/'/g,"\\\\'")}', 'failed')">✗ Missed / fled / KO'd</button>
-    <button class="eam-btn details" onclick="encActionDetails('${species.replace(/'/g,"\\\\'")}')">🔍 Details (types, stats, matchups)</button>
-    <button class="eam-btn cancel" onclick="closeEncActionMenu()">Cancel</button>
+    <button class="eam-btn caught">✓ Caught — fill out details</button>
+    <button class="eam-btn caught shiny"><span class="shiny-spark">✨</span> Caught shiny — fill out details</button>
+    <button class="eam-btn skipped">⊘ Skipped (dupe)</button>
+    <button class="eam-btn failed">✗ Missed / fled / KO'd</button>
+    <button class="eam-btn details">🔍 Details (types, stats, matchups)</button>
+    <button class="eam-btn cancel">Cancel</button>
   `;
+  menu.querySelector('.eam-btn.caught:not(.shiny)').onclick = () => encActionCaught(loc, species);
+  menu.querySelector('.eam-btn.caught.shiny').onclick = () => encActionCaught(loc, species, true);
+  menu.querySelector('.eam-btn.skipped').onclick = () => encActionLog(loc, species, 'skipped');
+  menu.querySelector('.eam-btn.failed').onclick = () => encActionLog(loc, species, 'failed');
+  menu.querySelector('.eam-btn.details').onclick = () => encActionDetails(species);
+  menu.querySelector('.eam-btn.cancel').onclick = () => closeEncActionMenu();
   // On touch / small screens, tap-coordinate positioning is fragile: the clamp below
   // uses window.innerWidth/innerHeight (the LAYOUT viewport), which on a high-DPR
   // handheld can differ from the VISIBLE area — so the menu got placed off-screen and
