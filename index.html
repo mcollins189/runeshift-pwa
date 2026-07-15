@@ -11856,7 +11856,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = 'v49';
+const APP_BUILD = 'v50';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -14319,6 +14319,29 @@ async function forceUpdateApp() {
 // Rules → App version.
 let _tapDebugOn = false;
 function _tapLog(msg) { if (!_tapDebugOn) return; const el = document.getElementById('tap-debug-banner'); if (el) el.textContent = (msg + '\n' + el.textContent).split('\n').slice(0, 16).join('\n'); }
+// ★ GHOST-TAP SUPPRESSOR (root fix for the handheld): some devices (AYN Thor) fire ONE
+// physical tap as TWO full pointer/mouse/click sequences. The 2nd (ghost) sequence lands
+// at ~the same point ms later and wrongly re-fires handlers / closes a just-opened modal
+// ("tap does nothing"). Registered FIRST at capture phase so it runs before every other
+// listener: once a real click happens, any further pointer/mouse/touch/click at ~the same
+// spot within 550ms is the ghost → kill it (stopImmediatePropagation) so NO handler sees
+// it. A legitimate tap elsewhere (different coords) or later (>550ms) is unaffected.
+let _ghostAnchor = { t: 0, x: -1e5, y: -1e5 };
+['pointerdown', 'mousedown', 'touchstart', 'click'].forEach((type) => {
+  document.addEventListener(type, (e) => {
+    let x, y;
+    if (e.touches && e.touches[0]) { x = e.touches[0].clientX; y = e.touches[0].clientY; }
+    else if (e.clientX != null) { x = e.clientX; y = e.clientY; } else return;
+    const now = Date.now();
+    if (_ghostAnchor.t && now - _ghostAnchor.t < 550 && Math.abs(x - _ghostAnchor.x) < 32 && Math.abs(y - _ghostAnchor.y) < 32) {
+      e.stopImmediatePropagation();
+      if (type !== 'touchstart') { try { e.preventDefault(); } catch (_) {} }
+      if (_tapDebugOn) _tapLog('🚫 ghost ' + type + ' killed (' + (now - _ghostAnchor.t) + 'ms)');
+      return;
+    }
+    if (type === 'click') _ghostAnchor = { t: now, x, y };
+  }, true);
+});
 function toggleTapDebug() {
   _tapDebugOn = !_tapDebugOn;
   let el = document.getElementById('tap-debug-banner');
