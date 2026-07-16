@@ -2139,6 +2139,10 @@ const GAMES = {
     versions: { M: 'Prismatic Moon' },
     defaultVersion: 'M',
     dataSources: {
+      // The encounter rail (location list) is driven by the routes file; the hack shares
+      // USUM's Alola map, so we reuse the Ultra Moon routes file for the rail and overlay
+      // our ROM-extracted PrismaticMoon tables for the actual per-location encounters.
+      routes: 'UltraMoon',
       encounterTables: 'PrismaticMoon',
       learnsets: 'PrismaticMoon',
       pokeapiRegion: 'alola'
@@ -2162,6 +2166,15 @@ const GAMES = {
         {species:"Scraggy", lv:18, types:["Dark","Fighting"], moves:["Low Sweep","Feint Attack","Amnesia","Rest"]},
         {species:"Crabrawler", lv:21, types:["Fighting"], moves:["Power Up Punch","Brutal Swing","Scald","Frost Breath"]}
       ]},
+      {name:"Lana (Trial)", location:"Brooklet Hill", cap:28, theme:"Water", team:[
+        {species:"Araquanid", lv:28, types:["Water","Bug"], ability:"Water Bubble", note:"Trial totem (SOS) — cap estimated; totem data isn't in the ROM's trainer archives, so grand trials & E4 are ROM-exact but trial caps are approximate."}
+      ]},
+      {name:"Kiawe (Trial)", location:"Wela Volcano Park", cap:33, theme:"Fire", team:[
+        {species:"Alolan Marowak", lv:33, types:["Fire","Ghost"], note:"Trial totem (SOS) — cap estimated (see Lana)."}
+      ]},
+      {name:"Mallow (Trial)", location:"Lush Jungle", cap:40, theme:"Grass", team:[
+        {species:"Lurantis", lv:40, types:["Grass"], note:"Trial totem (SOS), Solar Blade + Sunny Day — cap estimated (see Lana)."}
+      ]},
       {name:"Olivia (Grand Trial)", location:"Ruins of Life", cap:47, theme:"Rock", team:[
         {species:"Gigalith", lv:45, types:["Rock"], moves:["Power Gem","Earth Power","Discharge","Stealth Rock"]},
         {species:"Cradily", lv:45, types:["Rock","Grass"], moves:["Giga Drain","Recover","Toxic","Rock Slide"]},
@@ -2169,6 +2182,12 @@ const GAMES = {
         {species:"Probopass", lv:45, types:["Rock","Steel"], moves:["Power Gem","Earth Power","Flash Cannon","Hidden Power"]},
         {species:"Minior", lv:45, types:["Rock","Flying"], moves:["Acrobatics","Power Gem","Earthquake","Shell Smash"]},
         {species:"Lycanroc Midday", lv:47, types:["Rock"], moves:["Stone Edge","Sucker Punch","Fire Punch","Counter"]}
+      ]},
+      {name:"Sophocles (Trial)", location:"Hokulani Observatory", cap:58, theme:"Electric", team:[
+        {species:"Togedemaru", lv:58, types:["Electric","Steel"], ability:"Lightning Rod", note:"Trial totem (SOS) — cap estimated (see Lana)."}
+      ]},
+      {name:"Acerola (Trial)", location:"Thrifty Megamart", cap:68, theme:"Ghost", team:[
+        {species:"Mimikyu", lv:68, types:["Ghost","Fairy"], note:"Trial totem — Disguise blocks the first hit. Cap estimated (see Lana)."}
       ]},
       {name:"Nanu (Grand Trial)", location:"Malie City", cap:79, theme:"Dark", team:[
         {species:"Krookodile", lv:77, types:["Ground","Dark"], moves:["Crunch","Earthquake","Stealth Rock","Roar"]},
@@ -2178,6 +2197,9 @@ const GAMES = {
         {species:"Hydreigon", lv:77, types:["Dark","Dragon"], moves:["Dark Pulse","Dragon Pulse","Focus Blast","Fire Blast"]},
         {species:"Drapion", lv:77, types:["Poison","Dark"], moves:["Crunch","Poison Jab","Aqua Tail","Swords Dance"]}
       ]},
+      {name:"Mina (Trial)", location:"Poni Island", cap:88, theme:"Fairy", team:[
+        {species:"Ribombee", lv:88, types:["Bug","Fairy"], note:"Trial totem (SOS) — cap estimated (see Lana)."}
+      ]},
       {name:"Hapu (Grand Trial)", location:"Exeggutor Island", cap:96, theme:"Ground", team:[
         {species:"Hippowdon", lv:94, types:["Ground"], moves:["Thunder Fang","Earthquake","Yawn","Stealth Rock"]},
         {species:"Excadrill", lv:94, types:["Ground","Steel"], moves:["Earthquake","Iron Head","Rock Slide","Swords Dance"]},
@@ -2185,6 +2207,9 @@ const GAMES = {
         {species:"Mudsdale", lv:96, types:["Ground"], moves:["Heavy Slam","Earthquake","Slack Off","Payback"]},
         {species:"Golurk", lv:94, types:["Ground","Ghost"], moves:["Drain Punch","Earthquake","Shadow Punch","Meteor Mash"]},
         {species:"Garchomp", lv:94, types:["Dragon","Ground"], moves:["Dragon Claw","Earthquake","Fire Blast","Stone Edge"]}
+      ]},
+      {name:"Ultra Necrozma", location:"Megalo Tower", cap:98, theme:"Psychic", team:[
+        {species:"Necrozma", lv:98, types:["Psychic","Dragon"], note:"Ultra Burst form — Photon Geyser sweeps unprepared teams. Static story battle; cap estimated."}
       ]},
       {name:"Molayne (Elite Four)", location:"Pokémon League", cap:100, theme:"Steel", team:[
         {species:"Klefki", lv:100, types:["Steel","Fairy"], moves:["Spikes","Thunder Wave","Play Rough","Switcheroo"]},
@@ -2225,6 +2250,14 @@ const GAMES = {
         {species:"Magnezone", lv:100, types:["Electric","Steel"], moves:["Thunderbolt","Flash Cannon","Thunder Wave","Hidden Power"]},
         {species:"Snorlax", lv:100, types:["Normal"], moves:["Body Slam","Crunch","Earthquake","Gunk Shot"]},
         {species:"Incineroar", lv:100, types:["Fire","Dark"], moves:["Flare Blitz","Darkest Lariat","Thunder Punch","Close Combat"]}
+      ]},
+      {name:"Hau (Rival)", location:"Route 1 / Pokémon League", cap:100, theme:"Mixed", note:"Team varies by your starter (this is the Popplio branch).", team:[
+        {species:"Raichu", lv:100, types:["Electric"], moves:["Thunderbolt","Surf","Psychic","Focus Blast"]},
+        {species:"Darmanitan", lv:100, types:["Fire"], moves:["Flare Blitz","Rock Climb","Superpower","Zen Headbutt"]},
+        {species:"Tauros", lv:100, types:["Normal"], moves:["Zen Headbutt","Iron Head","Close Combat","Body Slam"]},
+        {species:"Salamence", lv:100, types:["Dragon","Flying"], moves:["Double Edge","Dragon Claw","Earthquake","Aqua Tail"]},
+        {species:"Mamoswine", lv:100, types:["Ice","Ground"], moves:["Earthquake","Icicle Crash","Stone Edge","Ice Shard"]},
+        {species:"Primarina", lv:100, types:["Water","Fairy"], moves:["Sparkling Aria","Moonblast","Calm Mind","Ice Beam"]}
       ]}
     ]
   },
@@ -11960,7 +11993,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = 'v55';
+const APP_BUILD = 'v56';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
