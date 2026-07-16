@@ -611,11 +611,11 @@ Additional SOS encounters: (None)
 ==========
 Map: 030 - Seaward Cave
 Tables: 4
-Table 1 [surf] (Day):
+Table 1 [grass] (Day):
 Encounters (Levels 12-15): Smoochum (20%), Bergmite (15%), Delibird (15%), Swinub (15%), Cubchoo (15%), Squirtle (10%), Sneasel (5%), Snorunt (5%)
 Additional SOS encounters: (None)
 
-Table 1 [surf] (Night):
+Table 1 [grass] (Night):
 Encounters (Levels 12-15): Smoochum (20%), Delibird (15%), Swinub (15%), Cubchoo (15%), Snorunt (10%), Squirtle (10%), Sneasel (10%), Bergmite (5%)
 Additional SOS encounters: (None)
 
