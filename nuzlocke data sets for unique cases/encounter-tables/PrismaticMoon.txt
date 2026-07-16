@@ -6,7 +6,7 @@ Encounters (Levels 2-3): Yungoos (20%), Pikipek (20%), Ledyba (20%), Shinx (15%)
 Additional SOS encounters: (None)
 
 Table 1 [grass] (Night):
-Encounters (Levels 2-3): Rattata (Forme 1) (20%), Pikipek (20%), Spinarak (20%), Shinx (15%), Grubbin (15%), Pichu (10%)
+Encounters (Levels 2-3): Alolan Rattata (20%), Pikipek (20%), Spinarak (20%), Shinx (15%), Grubbin (15%), Pichu (10%)
 Additional SOS encounters: (None)
 
 Table 2 [grass] (Day):
@@ -102,7 +102,7 @@ Encounters (Levels 2-3): Yungoos (20%), Pikipek (20%), Ledyba (20%), Shinx (15%)
 Additional SOS encounters: (None)
 
 Table 13 [grass] (Night):
-Encounters (Levels 2-3): Rattata (Forme 1) (20%), Pikipek (20%), Spinarak (20%), Shinx (15%), Grubbin (15%), Pichu (10%)
+Encounters (Levels 2-3): Alolan Rattata (20%), Pikipek (20%), Spinarak (20%), Shinx (15%), Grubbin (15%), Pichu (10%)
 Additional SOS encounters: (None)
 
 Table 14 [grass] (Day):
@@ -110,7 +110,7 @@ Encounters (Levels 2-3): Yungoos (20%), Pikipek (20%), Ledyba (20%), Shinx (15%)
 Additional SOS encounters: (None)
 
 Table 14 [grass] (Night):
-Encounters (Levels 2-3): Rattata (Forme 1) (20%), Pikipek (20%), Spinarak (20%), Shinx (15%), Grubbin (15%), Pichu (10%)
+Encounters (Levels 2-3): Alolan Rattata (20%), Pikipek (20%), Spinarak (20%), Shinx (15%), Grubbin (15%), Pichu (10%)
 Additional SOS encounters: (None)
 
 Table 15 [grass] (Day):
@@ -118,7 +118,7 @@ Encounters (Levels 2-3): Bunnelby (20%), Buneary (20%), Patrat (15%), Poochyena 
 Additional SOS encounters: (None)
 
 Table 15 [grass] (Night):
-Encounters (Levels 2-3): Bunnelby (20%), Buneary (20%), Scatterbug (Forme 1) (15%), Poochyena (15%), Hoothoot (15%), Ralts (15%)
+Encounters (Levels 2-3): Bunnelby (20%), Buneary (20%), Scatterbug (15%), Poochyena (15%), Hoothoot (15%), Ralts (15%)
 Additional SOS encounters: (None)
 
 Table 16 [grass] (Day):
@@ -236,19 +236,19 @@ Encounters (Levels 6-9): Furfrou (15%), Abra (15%), Mime Jr. (15%), Scraggy (15%
 Additional SOS encounters: (None)
 
 Table 4 [grass] (Day):
-Encounters (Levels 6-9): Joltik (15%), Tyrogue (15%), Abra (15%), Mime Jr. (15%), Furfrou (15%), Grimer (Forme 1) (15%), Magnemite (10%)
+Encounters (Levels 6-9): Joltik (15%), Tyrogue (15%), Abra (15%), Mime Jr. (15%), Furfrou (15%), Alolan Grimer (15%), Magnemite (10%)
 Additional SOS encounters: (None)
 
 Table 4 [grass] (Night):
-Encounters (Levels 6-9): Joltik (15%), Tyrogue (15%), Abra (15%), Mime Jr. (15%), Furfrou (15%), Grimer (Forme 1) (15%), Magnemite (10%)
+Encounters (Levels 6-9): Joltik (15%), Tyrogue (15%), Abra (15%), Mime Jr. (15%), Furfrou (15%), Alolan Grimer (15%), Magnemite (10%)
 Additional SOS encounters: (None)
 
 Table 5 [grass] (Day):
-Encounters (Levels 6-9): Joltik (15%), Tyrogue (15%), Abra (15%), Mime Jr. (15%), Furfrou (15%), Grimer (Forme 1) (15%), Magnemite (10%)
+Encounters (Levels 6-9): Joltik (15%), Tyrogue (15%), Abra (15%), Mime Jr. (15%), Furfrou (15%), Alolan Grimer (15%), Magnemite (10%)
 Additional SOS encounters: (None)
 
 Table 5 [grass] (Night):
-Encounters (Levels 6-9): Joltik (15%), Tyrogue (15%), Abra (15%), Mime Jr. (15%), Furfrou (15%), Grimer (Forme 1) (15%), Magnemite (10%)
+Encounters (Levels 6-9): Joltik (15%), Tyrogue (15%), Abra (15%), Mime Jr. (15%), Furfrou (15%), Alolan Grimer (15%), Magnemite (10%)
 Additional SOS encounters: (None)
 
 Table 6 [grass] (Day):
@@ -541,35 +541,35 @@ Additional SOS encounters: (None)
 Map: 027 - Ten Carat Hill (Farthest Hollow)
 Tables: 4
 Table 1 [grass] (Day):
-Encounters (Levels 14-17): Machop (15%), Spinda (15%), Jangmo-o (15%), Bronzor (15%), Rockruff (10%), Rockruff (Forme 1) (10%), Meditite (10%), Carbink (10%)
+Encounters (Levels 14-17): Rockruff (20%), Machop (15%), Spinda (15%), Jangmo-o (15%), Bronzor (15%), Meditite (10%), Carbink (10%)
 Additional SOS encounters: (None)
 
 Table 1 [grass] (Night):
-Encounters (Levels 14-17): Machop (15%), Spinda (15%), Jangmo-o (15%), Bronzor (15%), Rockruff (10%), Rockruff (Forme 1) (10%), Meditite (10%), Carbink (10%)
+Encounters (Levels 14-17): Rockruff (20%), Machop (15%), Spinda (15%), Jangmo-o (15%), Bronzor (15%), Meditite (10%), Carbink (10%)
 Additional SOS encounters: (None)
 
 Table 2 [grass] (Day):
-Encounters (Levels 14-17): Machop (15%), Spinda (15%), Jangmo-o (15%), Bronzor (15%), Rockruff (10%), Rockruff (Forme 1) (10%), Roggenrola (10%), Carbink (10%)
+Encounters (Levels 14-17): Rockruff (20%), Machop (15%), Spinda (15%), Jangmo-o (15%), Bronzor (15%), Roggenrola (10%), Carbink (10%)
 Additional SOS encounters: (None)
 
 Table 2 [grass] (Night):
-Encounters (Levels 14-17): Machop (15%), Spinda (15%), Jangmo-o (15%), Bronzor (15%), Rockruff (10%), Rockruff (Forme 1) (10%), Roggenrola (10%), Carbink (10%)
+Encounters (Levels 14-17): Rockruff (20%), Machop (15%), Spinda (15%), Jangmo-o (15%), Bronzor (15%), Roggenrola (10%), Carbink (10%)
 Additional SOS encounters: (None)
 
 Table 3 [grass] (Day):
-Encounters (Levels 14-17): Machop (15%), Spinda (15%), Jangmo-o (15%), Bronzor (15%), Rockruff (10%), Rockruff (Forme 1) (10%), Roggenrola (10%), Carbink (10%)
+Encounters (Levels 14-17): Rockruff (20%), Machop (15%), Spinda (15%), Jangmo-o (15%), Bronzor (15%), Roggenrola (10%), Carbink (10%)
 Additional SOS encounters: (None)
 
 Table 3 [grass] (Night):
-Encounters (Levels 14-17): Machop (15%), Spinda (15%), Jangmo-o (15%), Bronzor (15%), Rockruff (10%), Rockruff (Forme 1) (10%), Roggenrola (10%), Carbink (10%)
+Encounters (Levels 14-17): Rockruff (20%), Machop (15%), Spinda (15%), Jangmo-o (15%), Bronzor (15%), Roggenrola (10%), Carbink (10%)
 Additional SOS encounters: (None)
 
 Table 4 [grass] (Day):
-Encounters (Levels 14-17): Machop (15%), Spinda (15%), Jangmo-o (15%), Bronzor (15%), Rockruff (10%), Rockruff (Forme 1) (10%), Roggenrola (10%), Carbink (10%)
+Encounters (Levels 14-17): Rockruff (20%), Machop (15%), Spinda (15%), Jangmo-o (15%), Bronzor (15%), Roggenrola (10%), Carbink (10%)
 Additional SOS encounters: (None)
 
 Table 4 [grass] (Night):
-Encounters (Levels 14-17): Machop (15%), Spinda (15%), Jangmo-o (15%), Bronzor (15%), Rockruff (10%), Rockruff (Forme 1) (10%), Roggenrola (10%), Carbink (10%)
+Encounters (Levels 14-17): Rockruff (20%), Machop (15%), Spinda (15%), Jangmo-o (15%), Bronzor (15%), Roggenrola (10%), Carbink (10%)
 Additional SOS encounters: (None)
 
 ==========
@@ -599,11 +599,11 @@ Additional SOS encounters: (None)
 Map: 029 - Melemele Meadow
 Tables: 1
 Table 1 [grass] (Day):
-Encounters (Levels 12-15): Flabébé (Forme 1) (20%), Combee (15%), Petilil (15%), Oricorio (Forme 1) (15%), Cottonee (15%), Bulbasaur (10%), Metapod (9%), Butterfree (1%)
+Encounters (Levels 12-15): Flabébé (20%), Combee (15%), Petilil (15%), Oricorio (15%), Cottonee (15%), Bulbasaur (10%), Metapod (9%), Butterfree (1%)
 Additional SOS encounters: (None)
 
 Table 1 [grass] (Night):
-Encounters (Levels 12-15): Flabébé (Forme 1) (20%), Combee (15%), Petilil (15%), Oricorio (Forme 1) (15%), Cottonee (15%), Bulbasaur (10%), Metapod (9%), Butterfree (1%)
+Encounters (Levels 12-15): Flabébé (20%), Combee (15%), Petilil (15%), Oricorio (15%), Cottonee (15%), Bulbasaur (10%), Metapod (9%), Butterfree (1%)
 Additional SOS encounters: (None)
 
 ==========
@@ -675,11 +675,11 @@ Additional SOS encounters: (None)
 Map: 033 - Verdant Cavern (Trial Site)
 Tables: 3
 Table 1 [grass] (Day):
-Encounters (Levels 10-13): Zubat (20%), Diglett (Forme 1) (20%), Noibat (20%), Drilbur (10%), Teddiursa (10%), Axew (10%), Onix (10%)
+Encounters (Levels 10-13): Zubat (20%), Alolan Diglett (20%), Noibat (20%), Drilbur (10%), Teddiursa (10%), Axew (10%), Onix (10%)
 Additional SOS encounters: (None)
 
 Table 1 [grass] (Night):
-Encounters (Levels 10-13): Zubat (20%), Diglett (Forme 1) (20%), Noibat (20%), Drilbur (10%), Teddiursa (10%), Axew (10%), Onix (10%)
+Encounters (Levels 10-13): Zubat (20%), Alolan Diglett (20%), Noibat (20%), Drilbur (10%), Teddiursa (10%), Axew (10%), Onix (10%)
 Additional SOS encounters: (None)
 
 Table 2 [grass] (Day):
@@ -687,7 +687,7 @@ Encounters (Levels 12-12): Yungoos (100%)
 Additional SOS encounters: (None)
 
 Table 2 [grass] (Night):
-Encounters (Levels 12-12): Rattata (Forme 1) (100%)
+Encounters (Levels 12-12): Alolan Rattata (100%)
 Additional SOS encounters: (None)
 
 Table 3 [grass] (Day):
@@ -704,35 +704,35 @@ Additional SOS encounters: (None)
 Map: 062 - Route 1 (Trainers’ School)
 Tables: 4
 Table 1 [grass] (Day):
-Encounters (Levels 5-8): Meowth (Forme 1) (15%), Zorua (15%), Glameow (15%), Riolu (15%), Grimer (Forme 1) (15%), Magnemite (15%), Nincada (10%)
+Encounters (Levels 5-8): Alolan Meowth (15%), Zorua (15%), Glameow (15%), Riolu (15%), Alolan Grimer (15%), Magnemite (15%), Nincada (10%)
 Additional SOS encounters: (None)
 
 Table 1 [grass] (Night):
-Encounters (Levels 5-8): Meowth (Forme 1) (15%), Zorua (15%), Glameow (15%), Riolu (15%), Grimer (Forme 1) (15%), Magnemite (15%), Nincada (10%)
+Encounters (Levels 5-8): Alolan Meowth (15%), Zorua (15%), Glameow (15%), Riolu (15%), Alolan Grimer (15%), Magnemite (15%), Nincada (10%)
 Additional SOS encounters: (None)
 
 Table 2 [grass] (Day):
-Encounters (Levels 5-8): Meowth (Forme 1) (15%), Zorua (15%), Glameow (15%), Riolu (15%), Grimer (Forme 1) (15%), Magnemite (15%), Nincada (10%)
+Encounters (Levels 5-8): Alolan Meowth (15%), Zorua (15%), Glameow (15%), Riolu (15%), Alolan Grimer (15%), Magnemite (15%), Nincada (10%)
 Additional SOS encounters: (None)
 
 Table 2 [grass] (Night):
-Encounters (Levels 5-8): Meowth (Forme 1) (15%), Zorua (15%), Glameow (15%), Riolu (15%), Grimer (Forme 1) (15%), Magnemite (15%), Nincada (10%)
+Encounters (Levels 5-8): Alolan Meowth (15%), Zorua (15%), Glameow (15%), Riolu (15%), Alolan Grimer (15%), Magnemite (15%), Nincada (10%)
 Additional SOS encounters: (None)
 
 Table 3 [grass] (Day):
-Encounters (Levels 5-8): Meowth (Forme 1) (15%), Zorua (15%), Glameow (15%), Riolu (15%), Grimer (Forme 1) (15%), Magnemite (15%), Nincada (10%)
+Encounters (Levels 5-8): Alolan Meowth (15%), Zorua (15%), Glameow (15%), Riolu (15%), Alolan Grimer (15%), Magnemite (15%), Nincada (10%)
 Additional SOS encounters: (None)
 
 Table 3 [grass] (Night):
-Encounters (Levels 5-8): Meowth (Forme 1) (15%), Zorua (15%), Glameow (15%), Riolu (15%), Grimer (Forme 1) (15%), Magnemite (15%), Nincada (10%)
+Encounters (Levels 5-8): Alolan Meowth (15%), Zorua (15%), Glameow (15%), Riolu (15%), Alolan Grimer (15%), Magnemite (15%), Nincada (10%)
 Additional SOS encounters: (None)
 
 Table 4 [grass] (Day):
-Encounters (Levels 5-8): Meowth (Forme 1) (15%), Zorua (15%), Glameow (15%), Riolu (15%), Grimer (Forme 1) (15%), Magnemite (15%), Nincada (10%)
+Encounters (Levels 5-8): Alolan Meowth (15%), Zorua (15%), Glameow (15%), Riolu (15%), Alolan Grimer (15%), Magnemite (15%), Nincada (10%)
 Additional SOS encounters: (None)
 
 Table 4 [grass] (Night):
-Encounters (Levels 5-8): Meowth (Forme 1) (15%), Zorua (15%), Glameow (15%), Riolu (15%), Grimer (Forme 1) (15%), Magnemite (15%), Nincada (10%)
+Encounters (Levels 5-8): Alolan Meowth (15%), Zorua (15%), Glameow (15%), Riolu (15%), Alolan Grimer (15%), Magnemite (15%), Nincada (10%)
 Additional SOS encounters: (None)
 
 ==========
@@ -831,27 +831,27 @@ Additional SOS encounters: (None)
 Map: 081 - Route 5
 Tables: 10
 Table 1 [grass] (Day):
-Encounters (Levels 30-33): Diglett (Forme 1) (60%), Durant (40%)
+Encounters (Levels 30-33): Alolan Diglett (60%), Durant (40%)
 Additional SOS encounters: (None)
 
 Table 1 [grass] (Night):
-Encounters (Levels 30-33): Diglett (Forme 1) (60%), Durant (40%)
+Encounters (Levels 30-33): Alolan Diglett (60%), Durant (40%)
 Additional SOS encounters: (None)
 
 Table 2 [grass] (Day):
-Encounters (Levels 30-33): Diglett (Forme 1) (60%), Durant (40%)
+Encounters (Levels 30-33): Alolan Diglett (60%), Durant (40%)
 Additional SOS encounters: (None)
 
 Table 2 [grass] (Night):
-Encounters (Levels 30-33): Diglett (Forme 1) (60%), Durant (40%)
+Encounters (Levels 30-33): Alolan Diglett (60%), Durant (40%)
 Additional SOS encounters: (None)
 
 Table 3 [grass] (Day):
-Encounters (Levels 30-33): Diglett (Forme 1) (60%), Durant (40%)
+Encounters (Levels 30-33): Alolan Diglett (60%), Durant (40%)
 Additional SOS encounters: (None)
 
 Table 3 [grass] (Night):
-Encounters (Levels 30-33): Diglett (Forme 1) (60%), Durant (40%)
+Encounters (Levels 30-33): Alolan Diglett (60%), Durant (40%)
 Additional SOS encounters: (None)
 
 Table 4 [grass] (Day):
@@ -916,27 +916,27 @@ Additional SOS encounters: (None)
 Map: 082 - Route 6
 Tables: 3
 Table 1 [grass] (Day):
-Encounters (Levels 22-25): Pawniard (15%), Solosis (15%), Gothita (15%), Electrike (15%), Herdier (10%), Fennekin (10%), Deerling (10%), Deerling (Forme 1) (5%), Eevee (5%)
+Encounters (Levels 22-25): Pawniard (15%), Solosis (15%), Gothita (15%), Deerling (15%), Electrike (15%), Herdier (10%), Fennekin (10%), Eevee (5%)
 Additional SOS encounters: (None)
 
 Table 1 [grass] (Night):
-Encounters (Levels 22-25): Pawniard (15%), Solosis (15%), Gothita (15%), Electrike (15%), Herdier (10%), Fennekin (10%), Deerling (10%), Deerling (Forme 1) (5%), Eevee (5%)
+Encounters (Levels 22-25): Pawniard (15%), Solosis (15%), Gothita (15%), Deerling (15%), Electrike (15%), Herdier (10%), Fennekin (10%), Eevee (5%)
 Additional SOS encounters: (None)
 
 Table 2 [grass] (Day):
-Encounters (Levels 22-25): Minccino (15%), Oricorio (Forme 2) (15%), Solosis (15%), Gothita (15%), Electrike (10%), Chespin (10%), Deerling (Forme 1) (10%), Deerling (5%), Eevee (5%)
+Encounters (Levels 22-25): Minccino (15%), Oricorio (15%), Solosis (15%), Gothita (15%), Deerling (15%), Electrike (10%), Chespin (10%), Eevee (5%)
 Additional SOS encounters: (None)
 
 Table 2 [grass] (Night):
-Encounters (Levels 22-25): Minccino (15%), Oricorio (Forme 2) (15%), Solosis (15%), Gothita (15%), Electrike (10%), Chespin (10%), Deerling (Forme 1) (10%), Deerling (5%), Eevee (5%)
+Encounters (Levels 22-25): Minccino (15%), Oricorio (15%), Solosis (15%), Gothita (15%), Deerling (15%), Electrike (10%), Chespin (10%), Eevee (5%)
 Additional SOS encounters: (None)
 
 Table 3 [grass] (Day):
-Encounters (Levels 22-25): Minccino (15%), Oricorio (Forme 2) (15%), Solosis (15%), Gothita (15%), Electrike (10%), Chespin (10%), Deerling (Forme 1) (10%), Deerling (5%), Eevee (5%)
+Encounters (Levels 22-25): Minccino (15%), Oricorio (15%), Solosis (15%), Gothita (15%), Deerling (15%), Electrike (10%), Chespin (10%), Eevee (5%)
 Additional SOS encounters: (None)
 
 Table 3 [grass] (Night):
-Encounters (Levels 22-25): Minccino (15%), Oricorio (Forme 2) (15%), Solosis (15%), Gothita (15%), Electrike (10%), Chespin (10%), Deerling (Forme 1) (10%), Deerling (5%), Eevee (5%)
+Encounters (Levels 22-25): Minccino (15%), Oricorio (15%), Solosis (15%), Gothita (15%), Deerling (15%), Electrike (10%), Chespin (10%), Eevee (5%)
 Additional SOS encounters: (None)
 
 ==========
@@ -1001,19 +1001,19 @@ Encounters (Levels 26-29): Staryu (50%), Relicanth (30%), Magikarp (10%), Wishiw
 Additional SOS encounters: (None)
 
 Table 8 [grass] (Day):
-Encounters (Levels 26-29): Diglett (Forme 1) (50%), Drilbur (50%)
+Encounters (Levels 26-29): Alolan Diglett (50%), Drilbur (50%)
 Additional SOS encounters: (None)
 
 Table 8 [grass] (Night):
-Encounters (Levels 26-29): Diglett (Forme 1) (50%), Drilbur (50%)
+Encounters (Levels 26-29): Alolan Diglett (50%), Drilbur (50%)
 Additional SOS encounters: (None)
 
 Table 9 [grass] (Day):
-Encounters (Levels 26-29): Diglett (Forme 1) (50%), Drilbur (50%)
+Encounters (Levels 26-29): Alolan Diglett (50%), Drilbur (50%)
 Additional SOS encounters: (None)
 
 Table 9 [grass] (Night):
-Encounters (Levels 26-29): Diglett (Forme 1) (50%), Drilbur (50%)
+Encounters (Levels 26-29): Alolan Diglett (50%), Drilbur (50%)
 Additional SOS encounters: (None)
 
 ==========
@@ -1210,19 +1210,19 @@ Additional SOS encounters: (None)
 Map: 097 - Memorial Hill / 098 - Akala Outskirts
 Tables: 9
 Table 1 [grass] (Day):
-Encounters (Levels 36-39): Haunter (20%), Phantump (20%), Girafarig (15%), Sigilyph (15%), Pumpkaboo (10%), Pumpkaboo (Forme 1) (10%), Pumpkaboo (Forme 2) (5%), Pumpkaboo (Forme 3) (5%)
+Encounters (Levels 36-39): Pumpkaboo (30%), Haunter (20%), Phantump (20%), Girafarig (15%), Sigilyph (15%)
 Additional SOS encounters: (None)
 
 Table 1 [grass] (Night):
-Encounters (Levels 36-39): Haunter (20%), Phantump (20%), Girafarig (15%), Sigilyph (15%), Pumpkaboo (10%), Pumpkaboo (Forme 1) (10%), Pumpkaboo (Forme 2) (5%), Pumpkaboo (Forme 3) (5%)
+Encounters (Levels 36-39): Pumpkaboo (30%), Haunter (20%), Phantump (20%), Girafarig (15%), Sigilyph (15%)
 Additional SOS encounters: (None)
 
 Table 2 [grass] (Day):
-Encounters (Levels 36-39): Haunter (20%), Phantump (20%), Girafarig (15%), Sigilyph (15%), Pumpkaboo (10%), Pumpkaboo (Forme 1) (10%), Pumpkaboo (Forme 2) (5%), Pumpkaboo (Forme 3) (5%)
+Encounters (Levels 36-39): Pumpkaboo (30%), Haunter (20%), Phantump (20%), Girafarig (15%), Sigilyph (15%)
 Additional SOS encounters: (None)
 
 Table 2 [grass] (Night):
-Encounters (Levels 36-39): Haunter (20%), Phantump (20%), Girafarig (15%), Sigilyph (15%), Pumpkaboo (10%), Pumpkaboo (Forme 1) (10%), Pumpkaboo (Forme 2) (5%), Pumpkaboo (Forme 3) (5%)
+Encounters (Levels 36-39): Pumpkaboo (30%), Haunter (20%), Phantump (20%), Girafarig (15%), Sigilyph (15%)
 Additional SOS encounters: (None)
 
 Table 3 [surf] (Day):
@@ -1287,19 +1287,19 @@ Additional SOS encounters: (None)
 Map: 099 - Diglett’s Tunnel
 Tables: 2
 Table 1 [grass] (Day):
-Encounters (Levels 32-35): Diglett (Forme 1) (30%), Sandshrew (30%), Durant (20%), Gible (20%)
+Encounters (Levels 32-35): Alolan Diglett (30%), Sandshrew (30%), Durant (20%), Gible (20%)
 Additional SOS encounters: (None)
 
 Table 1 [grass] (Night):
-Encounters (Levels 32-35): Diglett (Forme 1) (30%), Sandshrew (30%), Durant (20%), Gible (20%)
+Encounters (Levels 32-35): Alolan Diglett (30%), Sandshrew (30%), Durant (20%), Gible (20%)
 Additional SOS encounters: (None)
 
 Table 2 [grass] (Day):
-Encounters (Levels 24-27): Diglett (Forme 1) (20%), Zubat (15%), Ferroseed (15%), Hippopotas (15%), Rhyhorn (15%), Druddigon (10%), Larvitar (10%)
+Encounters (Levels 24-27): Alolan Diglett (20%), Zubat (15%), Ferroseed (15%), Hippopotas (15%), Rhyhorn (15%), Druddigon (10%), Larvitar (10%)
 Additional SOS encounters: (None)
 
 Table 2 [grass] (Night):
-Encounters (Levels 24-27): Diglett (Forme 1) (20%), Zubat (15%), Ferroseed (15%), Hippopotas (15%), Rhyhorn (15%), Druddigon (10%), Larvitar (10%)
+Encounters (Levels 24-27): Alolan Diglett (20%), Zubat (15%), Ferroseed (15%), Hippopotas (15%), Rhyhorn (15%), Druddigon (10%), Larvitar (10%)
 Additional SOS encounters: (None)
 
 ==========
@@ -1369,75 +1369,75 @@ Encounters (Levels 20-23): Poliwag (20%), Surskit (20%), Wooper (20%), Psyduck (
 Additional SOS encounters: (None)
 
 Table 3 [goodRod] (Day):
-Encounters (Levels 20-26): Magikarp (34%), Goldeen (25%), Basculin (Forme 1) (20%), Corphish (20%), Feebas (1%)
+Encounters (Levels 20-26): Magikarp (34%), Goldeen (25%), Basculin (20%), Corphish (20%), Feebas (1%)
 Additional SOS encounters: (None)
 
 Table 3 [goodRod] (Night):
-Encounters (Levels 20-26): Magikarp (34%), Goldeen (25%), Basculin (Forme 1) (20%), Corphish (20%), Feebas (1%)
+Encounters (Levels 20-26): Magikarp (34%), Goldeen (25%), Basculin (20%), Corphish (20%), Feebas (1%)
 Additional SOS encounters: (None)
 
 Table 4 [goodRod] (Day):
-Encounters (Levels 20-26): Magikarp (34%), Goldeen (25%), Basculin (Forme 1) (20%), Corphish (20%), Feebas (1%)
+Encounters (Levels 20-26): Magikarp (34%), Goldeen (25%), Basculin (20%), Corphish (20%), Feebas (1%)
 Additional SOS encounters: (None)
 
 Table 4 [goodRod] (Night):
-Encounters (Levels 20-26): Magikarp (34%), Goldeen (25%), Basculin (Forme 1) (20%), Corphish (20%), Feebas (1%)
+Encounters (Levels 20-26): Magikarp (34%), Goldeen (25%), Basculin (20%), Corphish (20%), Feebas (1%)
 Additional SOS encounters: (None)
 
 Table 5 [goodRod] (Day):
-Encounters (Levels 20-26): Magikarp (34%), Goldeen (25%), Basculin (Forme 1) (20%), Corphish (20%), Feebas (1%)
+Encounters (Levels 20-26): Magikarp (34%), Goldeen (25%), Basculin (20%), Corphish (20%), Feebas (1%)
 Additional SOS encounters: (None)
 
 Table 5 [goodRod] (Night):
-Encounters (Levels 20-26): Magikarp (34%), Goldeen (25%), Basculin (Forme 1) (20%), Corphish (20%), Feebas (1%)
+Encounters (Levels 20-26): Magikarp (34%), Goldeen (25%), Basculin (20%), Corphish (20%), Feebas (1%)
 Additional SOS encounters: (None)
 
 Table 6 [goodRod] (Day):
-Encounters (Levels 20-26): Magikarp (34%), Goldeen (25%), Basculin (Forme 1) (20%), Corphish (20%), Feebas (1%)
+Encounters (Levels 20-26): Magikarp (34%), Goldeen (25%), Basculin (20%), Corphish (20%), Feebas (1%)
 Additional SOS encounters: (None)
 
 Table 6 [goodRod] (Night):
-Encounters (Levels 20-26): Magikarp (34%), Goldeen (25%), Basculin (Forme 1) (20%), Corphish (20%), Feebas (1%)
+Encounters (Levels 20-26): Magikarp (34%), Goldeen (25%), Basculin (20%), Corphish (20%), Feebas (1%)
 Additional SOS encounters: (None)
 
 Table 7 [goodRod] (Day):
-Encounters (Levels 20-26): Magikarp (34%), Goldeen (25%), Basculin (Forme 1) (20%), Corphish (20%), Feebas (1%)
+Encounters (Levels 20-26): Magikarp (34%), Goldeen (25%), Basculin (20%), Corphish (20%), Feebas (1%)
 Additional SOS encounters: (None)
 
 Table 7 [goodRod] (Night):
-Encounters (Levels 20-26): Magikarp (34%), Goldeen (25%), Basculin (Forme 1) (20%), Corphish (20%), Feebas (1%)
+Encounters (Levels 20-26): Magikarp (34%), Goldeen (25%), Basculin (20%), Corphish (20%), Feebas (1%)
 Additional SOS encounters: (None)
 
 Table 8 [goodRod] (Day):
-Encounters (Levels 20-26): Magikarp (34%), Goldeen (25%), Basculin (Forme 1) (20%), Corphish (20%), Feebas (1%)
+Encounters (Levels 20-26): Magikarp (34%), Goldeen (25%), Basculin (20%), Corphish (20%), Feebas (1%)
 Additional SOS encounters: (None)
 
 Table 8 [goodRod] (Night):
-Encounters (Levels 20-26): Magikarp (34%), Goldeen (25%), Basculin (Forme 1) (20%), Corphish (20%), Feebas (1%)
+Encounters (Levels 20-26): Magikarp (34%), Goldeen (25%), Basculin (20%), Corphish (20%), Feebas (1%)
 Additional SOS encounters: (None)
 
 Table 9 [goodRod] (Day):
-Encounters (Levels 20-26): Magikarp (34%), Goldeen (25%), Basculin (Forme 1) (20%), Corphish (20%), Feebas (1%)
+Encounters (Levels 20-26): Magikarp (34%), Goldeen (25%), Basculin (20%), Corphish (20%), Feebas (1%)
 Additional SOS encounters: (None)
 
 Table 9 [goodRod] (Night):
-Encounters (Levels 20-26): Magikarp (34%), Goldeen (25%), Basculin (Forme 1) (20%), Corphish (20%), Feebas (1%)
+Encounters (Levels 20-26): Magikarp (34%), Goldeen (25%), Basculin (20%), Corphish (20%), Feebas (1%)
 Additional SOS encounters: (None)
 
 Table 10 [goodRod] (Day):
-Encounters (Levels 20-26): Magikarp (34%), Goldeen (25%), Basculin (Forme 1) (20%), Corphish (20%), Feebas (1%)
+Encounters (Levels 20-26): Magikarp (34%), Goldeen (25%), Basculin (20%), Corphish (20%), Feebas (1%)
 Additional SOS encounters: (None)
 
 Table 10 [goodRod] (Night):
-Encounters (Levels 20-26): Magikarp (34%), Goldeen (25%), Basculin (Forme 1) (20%), Corphish (20%), Feebas (1%)
+Encounters (Levels 20-26): Magikarp (34%), Goldeen (25%), Basculin (20%), Corphish (20%), Feebas (1%)
 Additional SOS encounters: (None)
 
 Table 11 [goodRod] (Day):
-Encounters (Levels 20-26): Magikarp (34%), Goldeen (25%), Basculin (Forme 1) (20%), Corphish (20%), Feebas (1%)
+Encounters (Levels 20-26): Magikarp (34%), Goldeen (25%), Basculin (20%), Corphish (20%), Feebas (1%)
 Additional SOS encounters: (None)
 
 Table 11 [goodRod] (Night):
-Encounters (Levels 20-26): Magikarp (34%), Goldeen (25%), Basculin (Forme 1) (20%), Corphish (20%), Feebas (1%)
+Encounters (Levels 20-26): Magikarp (34%), Goldeen (25%), Basculin (20%), Corphish (20%), Feebas (1%)
 Additional SOS encounters: (None)
 
 Table 12 [goodRod] (Day):
@@ -1634,11 +1634,11 @@ Additional SOS encounters: (None)
 Map: 109 - Lush Jungle
 Tables: 1
 Table 1 [grass] (Day):
-Encounters (Levels 79-82): Golbat (30%), Dugtrio (Forme 1) (20%), Excadrill (20%), Salandit (20%), Larvesta (10%)
+Encounters (Levels 79-82): Golbat (30%), Alolan Dugtrio (20%), Excadrill (20%), Salandit (20%), Larvesta (10%)
 Additional SOS encounters: (None)
 
 Table 1 [grass] (Night):
-Encounters (Levels 79-82): Golbat (30%), Dugtrio (Forme 1) (20%), Excadrill (20%), Salandit (20%), Larvesta (10%)
+Encounters (Levels 79-82): Golbat (30%), Alolan Dugtrio (20%), Excadrill (20%), Salandit (20%), Larvesta (10%)
 Additional SOS encounters: (None)
 
 ==========
@@ -1697,27 +1697,27 @@ Additional SOS encounters: (None)
 Map: 174 - Malie City / 175 - Malie City (Outer Cape)
 Tables: 3
 Table 1 [grass] (Day):
-Encounters (Levels 41-44): Trubbish (20%), Grimer (Forme 1) (15%), Minccino (15%), Swalot (15%), Voltorb (15%), Porygon (10%), Magneton (10%)
+Encounters (Levels 41-44): Trubbish (20%), Alolan Grimer (15%), Minccino (15%), Swalot (15%), Voltorb (15%), Porygon (10%), Magneton (10%)
 Additional SOS encounters: (None)
 
 Table 1 [grass] (Night):
-Encounters (Levels 41-44): Trubbish (20%), Grimer (Forme 1) (15%), Minccino (15%), Swalot (15%), Voltorb (15%), Porygon (10%), Magneton (10%)
+Encounters (Levels 41-44): Trubbish (20%), Alolan Grimer (15%), Minccino (15%), Swalot (15%), Voltorb (15%), Porygon (10%), Magneton (10%)
 Additional SOS encounters: (None)
 
 Table 2 [grass] (Day):
-Encounters (Levels 41-44): Trubbish (20%), Grimer (Forme 1) (15%), Minccino (15%), Swalot (15%), Voltorb (15%), Porygon (10%), Magneton (10%)
+Encounters (Levels 41-44): Trubbish (20%), Alolan Grimer (15%), Minccino (15%), Swalot (15%), Voltorb (15%), Porygon (10%), Magneton (10%)
 Additional SOS encounters: (None)
 
 Table 2 [grass] (Night):
-Encounters (Levels 41-44): Trubbish (20%), Grimer (Forme 1) (15%), Minccino (15%), Swalot (15%), Voltorb (15%), Porygon (10%), Magneton (10%)
+Encounters (Levels 41-44): Trubbish (20%), Alolan Grimer (15%), Minccino (15%), Swalot (15%), Voltorb (15%), Porygon (10%), Magneton (10%)
 Additional SOS encounters: (None)
 
 Table 3 [grass] (Day):
-Encounters (Levels 41-44): Trubbish (20%), Grimer (Forme 1) (15%), Minccino (15%), Swalot (15%), Voltorb (15%), Porygon (10%), Magneton (10%)
+Encounters (Levels 41-44): Trubbish (20%), Alolan Grimer (15%), Minccino (15%), Swalot (15%), Voltorb (15%), Porygon (10%), Magneton (10%)
 Additional SOS encounters: (None)
 
 Table 3 [grass] (Night):
-Encounters (Levels 41-44): Trubbish (20%), Grimer (Forme 1) (15%), Minccino (15%), Swalot (15%), Voltorb (15%), Porygon (10%), Magneton (10%)
+Encounters (Levels 41-44): Trubbish (20%), Alolan Grimer (15%), Minccino (15%), Swalot (15%), Voltorb (15%), Porygon (10%), Magneton (10%)
 Additional SOS encounters: (None)
 
 ==========
@@ -1827,91 +1827,91 @@ Additional SOS encounters: (None)
 Map: 173 - Route 12
 Tables: 11
 Table 1 [grass] (Day):
-Encounters (Levels 52-55): Graveler (Forme 1) (20%), Helioptile (20%), Manectric (15%), Magcargo (15%), Torkoal (15%), Houndoom (15%)
+Encounters (Levels 52-55): Alolan Graveler (20%), Helioptile (20%), Manectric (15%), Magcargo (15%), Torkoal (15%), Houndoom (15%)
 Additional SOS encounters: (None)
 
 Table 1 [grass] (Night):
-Encounters (Levels 52-55): Graveler (Forme 1) (20%), Helioptile (20%), Manectric (15%), Magcargo (15%), Torkoal (15%), Houndoom (15%)
+Encounters (Levels 52-55): Alolan Graveler (20%), Helioptile (20%), Manectric (15%), Magcargo (15%), Torkoal (15%), Houndoom (15%)
 Additional SOS encounters: (None)
 
 Table 2 [grass] (Day):
-Encounters (Levels 52-55): Graveler (Forme 1) (20%), Helioptile (20%), Manectric (15%), Magcargo (15%), Torkoal (15%), Houndoom (15%)
+Encounters (Levels 52-55): Alolan Graveler (20%), Helioptile (20%), Manectric (15%), Magcargo (15%), Torkoal (15%), Houndoom (15%)
 Additional SOS encounters: (None)
 
 Table 2 [grass] (Night):
-Encounters (Levels 52-55): Graveler (Forme 1) (20%), Helioptile (20%), Manectric (15%), Magcargo (15%), Torkoal (15%), Houndoom (15%)
+Encounters (Levels 52-55): Alolan Graveler (20%), Helioptile (20%), Manectric (15%), Magcargo (15%), Torkoal (15%), Houndoom (15%)
 Additional SOS encounters: (None)
 
 Table 3 [grass] (Day):
-Encounters (Levels 52-55): Graveler (Forme 1) (20%), Helioptile (20%), Manectric (15%), Magcargo (15%), Torkoal (15%), Houndoom (15%)
+Encounters (Levels 52-55): Alolan Graveler (20%), Helioptile (20%), Manectric (15%), Magcargo (15%), Torkoal (15%), Houndoom (15%)
 Additional SOS encounters: (None)
 
 Table 3 [grass] (Night):
-Encounters (Levels 52-55): Graveler (Forme 1) (20%), Helioptile (20%), Manectric (15%), Magcargo (15%), Torkoal (15%), Houndoom (15%)
+Encounters (Levels 52-55): Alolan Graveler (20%), Helioptile (20%), Manectric (15%), Magcargo (15%), Torkoal (15%), Houndoom (15%)
 Additional SOS encounters: (None)
 
 Table 4 [grass] (Day):
-Encounters (Levels 52-55): Graveler (Forme 1) (20%), Helioptile (20%), Manectric (15%), Magcargo (15%), Torkoal (15%), Houndoom (15%)
+Encounters (Levels 52-55): Alolan Graveler (20%), Helioptile (20%), Manectric (15%), Magcargo (15%), Torkoal (15%), Houndoom (15%)
 Additional SOS encounters: (None)
 
 Table 4 [grass] (Night):
-Encounters (Levels 52-55): Graveler (Forme 1) (20%), Helioptile (20%), Manectric (15%), Magcargo (15%), Torkoal (15%), Houndoom (15%)
+Encounters (Levels 52-55): Alolan Graveler (20%), Helioptile (20%), Manectric (15%), Magcargo (15%), Torkoal (15%), Houndoom (15%)
 Additional SOS encounters: (None)
 
 Table 5 [grass] (Day):
-Encounters (Levels 52-55): Graveler (Forme 1) (20%), Helioptile (20%), Manectric (15%), Magcargo (15%), Torkoal (15%), Houndoom (15%)
+Encounters (Levels 52-55): Alolan Graveler (20%), Helioptile (20%), Manectric (15%), Magcargo (15%), Torkoal (15%), Houndoom (15%)
 Additional SOS encounters: (None)
 
 Table 5 [grass] (Night):
-Encounters (Levels 52-55): Graveler (Forme 1) (20%), Helioptile (20%), Manectric (15%), Magcargo (15%), Torkoal (15%), Houndoom (15%)
+Encounters (Levels 52-55): Alolan Graveler (20%), Helioptile (20%), Manectric (15%), Magcargo (15%), Torkoal (15%), Houndoom (15%)
 Additional SOS encounters: (None)
 
 Table 6 [grass] (Day):
-Encounters (Levels 52-55): Graveler (Forme 1) (20%), Helioptile (20%), Manectric (15%), Magcargo (15%), Torkoal (15%), Houndoom (15%)
+Encounters (Levels 52-55): Alolan Graveler (20%), Helioptile (20%), Manectric (15%), Magcargo (15%), Torkoal (15%), Houndoom (15%)
 Additional SOS encounters: (None)
 
 Table 6 [grass] (Night):
-Encounters (Levels 52-55): Graveler (Forme 1) (20%), Helioptile (20%), Manectric (15%), Magcargo (15%), Torkoal (15%), Houndoom (15%)
+Encounters (Levels 52-55): Alolan Graveler (20%), Helioptile (20%), Manectric (15%), Magcargo (15%), Torkoal (15%), Houndoom (15%)
 Additional SOS encounters: (None)
 
 Table 7 [grass] (Day):
-Encounters (Levels 52-55): Graveler (Forme 1) (20%), Helioptile (20%), Manectric (15%), Magcargo (15%), Torkoal (15%), Houndoom (15%)
+Encounters (Levels 52-55): Alolan Graveler (20%), Helioptile (20%), Manectric (15%), Magcargo (15%), Torkoal (15%), Houndoom (15%)
 Additional SOS encounters: (None)
 
 Table 7 [grass] (Night):
-Encounters (Levels 52-55): Graveler (Forme 1) (20%), Helioptile (20%), Manectric (15%), Magcargo (15%), Torkoal (15%), Houndoom (15%)
+Encounters (Levels 52-55): Alolan Graveler (20%), Helioptile (20%), Manectric (15%), Magcargo (15%), Torkoal (15%), Houndoom (15%)
 Additional SOS encounters: (None)
 
 Table 8 [grass] (Day):
-Encounters (Levels 52-55): Graveler (Forme 1) (20%), Helioptile (20%), Manectric (15%), Magcargo (15%), Torkoal (15%), Houndoom (15%)
+Encounters (Levels 52-55): Alolan Graveler (20%), Helioptile (20%), Manectric (15%), Magcargo (15%), Torkoal (15%), Houndoom (15%)
 Additional SOS encounters: (None)
 
 Table 8 [grass] (Night):
-Encounters (Levels 52-55): Graveler (Forme 1) (20%), Helioptile (20%), Manectric (15%), Magcargo (15%), Torkoal (15%), Houndoom (15%)
+Encounters (Levels 52-55): Alolan Graveler (20%), Helioptile (20%), Manectric (15%), Magcargo (15%), Torkoal (15%), Houndoom (15%)
 Additional SOS encounters: (None)
 
 Table 9 [grass] (Day):
-Encounters (Levels 52-55): Graveler (Forme 1) (20%), Helioptile (20%), Manectric (15%), Magcargo (15%), Torkoal (15%), Houndoom (15%)
+Encounters (Levels 52-55): Alolan Graveler (20%), Helioptile (20%), Manectric (15%), Magcargo (15%), Torkoal (15%), Houndoom (15%)
 Additional SOS encounters: (None)
 
 Table 9 [grass] (Night):
-Encounters (Levels 52-55): Graveler (Forme 1) (20%), Helioptile (20%), Manectric (15%), Magcargo (15%), Torkoal (15%), Houndoom (15%)
+Encounters (Levels 52-55): Alolan Graveler (20%), Helioptile (20%), Manectric (15%), Magcargo (15%), Torkoal (15%), Houndoom (15%)
 Additional SOS encounters: (None)
 
 Table 10 [grass] (Day):
-Encounters (Levels 52-55): Graveler (Forme 1) (20%), Helioptile (20%), Manectric (15%), Magcargo (15%), Torkoal (15%), Houndoom (15%)
+Encounters (Levels 52-55): Alolan Graveler (20%), Helioptile (20%), Manectric (15%), Magcargo (15%), Torkoal (15%), Houndoom (15%)
 Additional SOS encounters: (None)
 
 Table 10 [grass] (Night):
-Encounters (Levels 52-55): Graveler (Forme 1) (20%), Helioptile (20%), Manectric (15%), Magcargo (15%), Torkoal (15%), Houndoom (15%)
+Encounters (Levels 52-55): Alolan Graveler (20%), Helioptile (20%), Manectric (15%), Magcargo (15%), Torkoal (15%), Houndoom (15%)
 Additional SOS encounters: (None)
 
 Table 11 [grass] (Day):
-Encounters (Levels 52-55): Graveler (Forme 1) (20%), Helioptile (20%), Manectric (15%), Magcargo (15%), Torkoal (15%), Houndoom (15%)
+Encounters (Levels 52-55): Alolan Graveler (20%), Helioptile (20%), Manectric (15%), Magcargo (15%), Torkoal (15%), Houndoom (15%)
 Additional SOS encounters: (None)
 
 Table 11 [grass] (Night):
-Encounters (Levels 52-55): Graveler (Forme 1) (20%), Helioptile (20%), Manectric (15%), Magcargo (15%), Torkoal (15%), Houndoom (15%)
+Encounters (Levels 52-55): Alolan Graveler (20%), Helioptile (20%), Manectric (15%), Magcargo (15%), Torkoal (15%), Houndoom (15%)
 Additional SOS encounters: (None)
 
 ==========
@@ -1949,11 +1949,11 @@ Additional SOS encounters: (None)
 Map: 168 - Tapu Village / 169 - Route 14
 Tables: 8
 Table 1 [surf] (Day):
-Encounters (Levels 54-57): Vanillish (15%), Snover (15%), Vulpix (Forme 1) (15%), Piloswine (15%), Sandshrew (Forme 1) (15%), Glalie (15%), Absol (10%)
+Encounters (Levels 54-57): Vanillish (15%), Snover (15%), Alolan Vulpix (15%), Piloswine (15%), Alolan Sandshrew (15%), Glalie (15%), Absol (10%)
 Additional SOS encounters: (None)
 
 Table 1 [surf] (Night):
-Encounters (Levels 54-57): Vanillish (15%), Snover (15%), Vulpix (Forme 1) (15%), Piloswine (15%), Sandshrew (Forme 1) (15%), Glalie (15%), Absol (10%)
+Encounters (Levels 54-57): Vanillish (15%), Snover (15%), Alolan Vulpix (15%), Piloswine (15%), Alolan Sandshrew (15%), Glalie (15%), Absol (10%)
 Additional SOS encounters: (None)
 
 Table 2 [goodRod] (Day):
@@ -2022,7 +2022,7 @@ Encounters (Levels 54-57): Linoone (20%), Carnivine (20%), Gumshoos (20%), Pelip
 Additional SOS encounters: (None)
 
 Table 1 [surf] (Night):
-Encounters (Levels 54-57): Linoone (20%), Carnivine (20%), Raticate (Forme 1) (20%), Pelipper (20%), Slowbro (20%)
+Encounters (Levels 54-57): Linoone (20%), Carnivine (20%), Alolan Raticate (20%), Pelipper (20%), Slowbro (20%)
 Additional SOS encounters: (None)
 
 Table 2 [goodRod] (Day):
@@ -2062,7 +2062,7 @@ Encounters (Levels 57-60): Carnivine (20%), Wynaut (20%), Pelipper (20%), Gumsho
 Additional SOS encounters: (None)
 
 Table 6 [surf] (Night):
-Encounters (Levels 57-60): Carnivine (20%), Wynaut (20%), Pelipper (20%), Raticate (Forme 1) (10%), Togepi (10%), Shuckle (10%), Slowbro (10%)
+Encounters (Levels 57-60): Carnivine (20%), Wynaut (20%), Pelipper (20%), Alolan Raticate (10%), Togepi (10%), Shuckle (10%), Slowbro (10%)
 Additional SOS encounters: (None)
 
 Table 7 [surf] (Day):
@@ -2070,7 +2070,7 @@ Encounters (Levels 57-60): Gumshoos (20%), Scrafty (20%), Granbull (20%), Pelipp
 Additional SOS encounters: (None)
 
 Table 7 [surf] (Night):
-Encounters (Levels 57-60): Raticate (Forme 1) (20%), Scrafty (20%), Granbull (20%), Pelipper (20%), Slowbro (20%)
+Encounters (Levels 57-60): Alolan Raticate (20%), Scrafty (20%), Granbull (20%), Pelipper (20%), Slowbro (20%)
 Additional SOS encounters: (None)
 
 Table 8 [surf] (Day):
@@ -2078,7 +2078,7 @@ Encounters (Levels 57-60): Gumshoos (20%), Scrafty (20%), Granbull (20%), Pelipp
 Additional SOS encounters: (None)
 
 Table 8 [surf] (Night):
-Encounters (Levels 57-60): Raticate (Forme 1) (20%), Scrafty (20%), Granbull (20%), Pelipper (20%), Slowbro (20%)
+Encounters (Levels 57-60): Alolan Raticate (20%), Scrafty (20%), Granbull (20%), Pelipper (20%), Slowbro (20%)
 Additional SOS encounters: (None)
 
 Table 9 [surf] (Day):
@@ -2107,7 +2107,7 @@ Encounters (Levels 62-65): Gumshoos (20%), Fearow (20%), Scrafty (20%), Mienshao
 Additional SOS encounters: (None)
 
 Table 1 [grass] (Night):
-Encounters (Levels 62-65): Raticate (Forme 1) (20%), Fearow (20%), Scrafty (20%), Mienshao (20%), Ariados (20%)
+Encounters (Levels 62-65): Alolan Raticate (20%), Fearow (20%), Scrafty (20%), Mienshao (20%), Ariados (20%)
 Additional SOS encounters: (None)
 
 Table 2 [grass] (Day):
@@ -2119,51 +2119,51 @@ Encounters (Levels 62-65): Crabrawler (100%)
 Additional SOS encounters: (None)
 
 Table 3 [grass] (Day):
-Encounters (Levels 62-65): Donphan (20%), Fearow (20%), Scrafty (20%), Graveler (Forme 1) (20%), Skarmory (10%), Bisharp (10%)
+Encounters (Levels 62-65): Donphan (20%), Fearow (20%), Scrafty (20%), Alolan Graveler (20%), Skarmory (10%), Bisharp (10%)
 Additional SOS encounters: (None)
 
 Table 3 [grass] (Night):
-Encounters (Levels 62-65): Donphan (20%), Fearow (20%), Scrafty (20%), Graveler (Forme 1) (20%), Skarmory (10%), Bisharp (10%)
+Encounters (Levels 62-65): Donphan (20%), Fearow (20%), Scrafty (20%), Alolan Graveler (20%), Skarmory (10%), Bisharp (10%)
 Additional SOS encounters: (None)
 
 Table 4 [grass] (Day):
-Encounters (Levels 62-65): Donphan (20%), Fearow (20%), Scrafty (20%), Graveler (Forme 1) (20%), Skarmory (10%), Bisharp (10%)
+Encounters (Levels 62-65): Donphan (20%), Fearow (20%), Scrafty (20%), Alolan Graveler (20%), Skarmory (10%), Bisharp (10%)
 Additional SOS encounters: (None)
 
 Table 4 [grass] (Night):
-Encounters (Levels 62-65): Donphan (20%), Fearow (20%), Scrafty (20%), Graveler (Forme 1) (20%), Skarmory (10%), Bisharp (10%)
+Encounters (Levels 62-65): Donphan (20%), Fearow (20%), Scrafty (20%), Alolan Graveler (20%), Skarmory (10%), Bisharp (10%)
 Additional SOS encounters: (None)
 
 Table 5 [grass] (Day):
-Encounters (Levels 62-65): Donphan (20%), Fearow (20%), Scrafty (20%), Graveler (Forme 1) (20%), Skarmory (10%), Bisharp (10%)
+Encounters (Levels 62-65): Donphan (20%), Fearow (20%), Scrafty (20%), Alolan Graveler (20%), Skarmory (10%), Bisharp (10%)
 Additional SOS encounters: (None)
 
 Table 5 [grass] (Night):
-Encounters (Levels 62-65): Donphan (20%), Fearow (20%), Scrafty (20%), Graveler (Forme 1) (20%), Skarmory (10%), Bisharp (10%)
+Encounters (Levels 62-65): Donphan (20%), Fearow (20%), Scrafty (20%), Alolan Graveler (20%), Skarmory (10%), Bisharp (10%)
 Additional SOS encounters: (None)
 
 Table 6 [grass] (Day):
-Encounters (Levels 62-65): Donphan (20%), Fearow (20%), Scrafty (20%), Graveler (Forme 1) (20%), Skarmory (10%), Bisharp (10%)
+Encounters (Levels 62-65): Donphan (20%), Fearow (20%), Scrafty (20%), Alolan Graveler (20%), Skarmory (10%), Bisharp (10%)
 Additional SOS encounters: (None)
 
 Table 6 [grass] (Night):
-Encounters (Levels 62-65): Donphan (20%), Fearow (20%), Scrafty (20%), Graveler (Forme 1) (20%), Skarmory (10%), Bisharp (10%)
+Encounters (Levels 62-65): Donphan (20%), Fearow (20%), Scrafty (20%), Alolan Graveler (20%), Skarmory (10%), Bisharp (10%)
 Additional SOS encounters: (None)
 
 Table 7 [grass] (Day):
-Encounters (Levels 62-65): Donphan (20%), Fearow (20%), Scrafty (20%), Graveler (Forme 1) (20%), Skarmory (10%), Bisharp (10%)
+Encounters (Levels 62-65): Donphan (20%), Fearow (20%), Scrafty (20%), Alolan Graveler (20%), Skarmory (10%), Bisharp (10%)
 Additional SOS encounters: (None)
 
 Table 7 [grass] (Night):
-Encounters (Levels 62-65): Donphan (20%), Fearow (20%), Scrafty (20%), Graveler (Forme 1) (20%), Skarmory (10%), Bisharp (10%)
+Encounters (Levels 62-65): Donphan (20%), Fearow (20%), Scrafty (20%), Alolan Graveler (20%), Skarmory (10%), Bisharp (10%)
 Additional SOS encounters: (None)
 
 Table 8 [grass] (Day):
-Encounters (Levels 62-65): Donphan (20%), Fearow (20%), Scrafty (20%), Graveler (Forme 1) (20%), Skarmory (10%), Bisharp (10%)
+Encounters (Levels 62-65): Donphan (20%), Fearow (20%), Scrafty (20%), Alolan Graveler (20%), Skarmory (10%), Bisharp (10%)
 Additional SOS encounters: (None)
 
 Table 8 [grass] (Night):
-Encounters (Levels 62-65): Donphan (20%), Fearow (20%), Scrafty (20%), Graveler (Forme 1) (20%), Skarmory (10%), Bisharp (10%)
+Encounters (Levels 62-65): Donphan (20%), Fearow (20%), Scrafty (20%), Alolan Graveler (20%), Skarmory (10%), Bisharp (10%)
 Additional SOS encounters: (None)
 
 Table 9 [grass] (Day):
@@ -2171,7 +2171,7 @@ Encounters (Levels 62-65): Gumshoos (20%), Fearow (20%), Scrafty (20%), Mienshao
 Additional SOS encounters: (None)
 
 Table 9 [grass] (Night):
-Encounters (Levels 62-65): Raticate (Forme 1) (20%), Fearow (20%), Scrafty (20%), Mienshao (20%), Ariados (20%)
+Encounters (Levels 62-65): Alolan Raticate (20%), Fearow (20%), Scrafty (20%), Mienshao (20%), Ariados (20%)
 Additional SOS encounters: (None)
 
 ==========
@@ -2246,83 +2246,83 @@ Additional SOS encounters: (None)
 Map: 177 - Haina Desert / 178 - Haina Desert / 179 - Haina Desert / 180 - Haina Desert
 Tables: 10
 Table 1 [grass] (Day):
-Encounters (Levels 57-60): Krokorok (20%), Dugtrio (Forme 1) (20%), Maractus (20%), Hippowdon (20%), Drapion (10%), Cacnea (10%)
+Encounters (Levels 57-60): Krokorok (20%), Alolan Dugtrio (20%), Maractus (20%), Hippowdon (20%), Drapion (10%), Cacnea (10%)
 Additional SOS encounters: (None)
 
 Table 1 [grass] (Night):
-Encounters (Levels 57-60): Krokorok (20%), Dugtrio (Forme 1) (20%), Maractus (20%), Cacturne (20%), Drapion (10%), Hippowdon (10%)
+Encounters (Levels 57-60): Krokorok (20%), Alolan Dugtrio (20%), Maractus (20%), Cacturne (20%), Drapion (10%), Hippowdon (10%)
 Additional SOS encounters: (None)
 
 Table 2 [grass] (Day):
-Encounters (Levels 57-60): Krokorok (20%), Dugtrio (Forme 1) (20%), Maractus (20%), Hippowdon (20%), Drapion (10%), Cacnea (10%)
+Encounters (Levels 57-60): Krokorok (20%), Alolan Dugtrio (20%), Maractus (20%), Hippowdon (20%), Drapion (10%), Cacnea (10%)
 Additional SOS encounters: (None)
 
 Table 2 [grass] (Night):
-Encounters (Levels 57-60): Krokorok (20%), Dugtrio (Forme 1) (20%), Maractus (20%), Cacturne (20%), Drapion (10%), Hippowdon (10%)
+Encounters (Levels 57-60): Krokorok (20%), Alolan Dugtrio (20%), Maractus (20%), Cacturne (20%), Drapion (10%), Hippowdon (10%)
 Additional SOS encounters: (None)
 
 Table 3 [grass] (Day):
-Encounters (Levels 57-60): Krokorok (20%), Dugtrio (Forme 1) (20%), Maractus (20%), Hippowdon (20%), Drapion (10%), Cacnea (10%)
+Encounters (Levels 57-60): Krokorok (20%), Alolan Dugtrio (20%), Maractus (20%), Hippowdon (20%), Drapion (10%), Cacnea (10%)
 Additional SOS encounters: (None)
 
 Table 3 [grass] (Night):
-Encounters (Levels 57-60): Krokorok (20%), Dugtrio (Forme 1) (20%), Maractus (20%), Cacturne (20%), Drapion (10%), Hippowdon (10%)
+Encounters (Levels 57-60): Krokorok (20%), Alolan Dugtrio (20%), Maractus (20%), Cacturne (20%), Drapion (10%), Hippowdon (10%)
 Additional SOS encounters: (None)
 
 Table 4 [grass] (Day):
-Encounters (Levels 57-60): Krokorok (20%), Dugtrio (Forme 1) (20%), Maractus (20%), Hippowdon (20%), Drapion (10%), Cacnea (10%)
+Encounters (Levels 57-60): Krokorok (20%), Alolan Dugtrio (20%), Maractus (20%), Hippowdon (20%), Drapion (10%), Cacnea (10%)
 Additional SOS encounters: (None)
 
 Table 4 [grass] (Night):
-Encounters (Levels 57-60): Krokorok (20%), Dugtrio (Forme 1) (20%), Maractus (20%), Cacturne (20%), Drapion (10%), Hippowdon (10%)
+Encounters (Levels 57-60): Krokorok (20%), Alolan Dugtrio (20%), Maractus (20%), Cacturne (20%), Drapion (10%), Hippowdon (10%)
 Additional SOS encounters: (None)
 
 Table 5 [grass] (Day):
-Encounters (Levels 57-60): Krookodile (30%), Vibrava (30%), Dugtrio (Forme 1) (20%), Gabite (20%)
+Encounters (Levels 57-60): Krookodile (30%), Vibrava (30%), Alolan Dugtrio (20%), Gabite (20%)
 Additional SOS encounters: (None)
 
 Table 5 [grass] (Night):
-Encounters (Levels 57-60): Krookodile (30%), Vibrava (30%), Dugtrio (Forme 1) (20%), Gabite (20%)
+Encounters (Levels 57-60): Krookodile (30%), Vibrava (30%), Alolan Dugtrio (20%), Gabite (20%)
 Additional SOS encounters: (None)
 
 Table 6 [grass] (Day):
-Encounters (Levels 57-60): Krookodile (30%), Vibrava (30%), Dugtrio (Forme 1) (20%), Gabite (20%)
+Encounters (Levels 57-60): Krookodile (30%), Vibrava (30%), Alolan Dugtrio (20%), Gabite (20%)
 Additional SOS encounters: (None)
 
 Table 6 [grass] (Night):
-Encounters (Levels 57-60): Krookodile (30%), Vibrava (30%), Dugtrio (Forme 1) (20%), Gabite (20%)
+Encounters (Levels 57-60): Krookodile (30%), Vibrava (30%), Alolan Dugtrio (20%), Gabite (20%)
 Additional SOS encounters: (None)
 
 Table 7 [grass] (Day):
-Encounters (Levels 57-60): Krookodile (30%), Vibrava (30%), Dugtrio (Forme 1) (20%), Gabite (20%)
+Encounters (Levels 57-60): Krookodile (30%), Vibrava (30%), Alolan Dugtrio (20%), Gabite (20%)
 Additional SOS encounters: (None)
 
 Table 7 [grass] (Night):
-Encounters (Levels 57-60): Krookodile (30%), Vibrava (30%), Dugtrio (Forme 1) (20%), Gabite (20%)
+Encounters (Levels 57-60): Krookodile (30%), Vibrava (30%), Alolan Dugtrio (20%), Gabite (20%)
 Additional SOS encounters: (None)
 
 Table 8 [grass] (Day):
-Encounters (Levels 57-60): Krookodile (30%), Vibrava (30%), Dugtrio (Forme 1) (20%), Gabite (20%)
+Encounters (Levels 57-60): Krookodile (30%), Vibrava (30%), Alolan Dugtrio (20%), Gabite (20%)
 Additional SOS encounters: (None)
 
 Table 8 [grass] (Night):
-Encounters (Levels 57-60): Krookodile (30%), Vibrava (30%), Dugtrio (Forme 1) (20%), Gabite (20%)
+Encounters (Levels 57-60): Krookodile (30%), Vibrava (30%), Alolan Dugtrio (20%), Gabite (20%)
 Additional SOS encounters: (None)
 
 Table 9 [grass] (Day):
-Encounters (Levels 57-60): Krookodile (30%), Vibrava (30%), Dugtrio (Forme 1) (20%), Gabite (20%)
+Encounters (Levels 57-60): Krookodile (30%), Vibrava (30%), Alolan Dugtrio (20%), Gabite (20%)
 Additional SOS encounters: (None)
 
 Table 9 [grass] (Night):
-Encounters (Levels 57-60): Krookodile (30%), Vibrava (30%), Dugtrio (Forme 1) (20%), Gabite (20%)
+Encounters (Levels 57-60): Krookodile (30%), Vibrava (30%), Alolan Dugtrio (20%), Gabite (20%)
 Additional SOS encounters: (None)
 
 Table 10 [grass] (Day):
-Encounters (Levels 57-60): Krookodile (30%), Vibrava (30%), Dugtrio (Forme 1) (20%), Gabite (20%)
+Encounters (Levels 57-60): Krookodile (30%), Vibrava (30%), Alolan Dugtrio (20%), Gabite (20%)
 Additional SOS encounters: (None)
 
 Table 10 [grass] (Night):
-Encounters (Levels 57-60): Krookodile (30%), Vibrava (30%), Dugtrio (Forme 1) (20%), Gabite (20%)
+Encounters (Levels 57-60): Krookodile (30%), Vibrava (30%), Alolan Dugtrio (20%), Gabite (20%)
 Additional SOS encounters: (None)
 
 ==========
@@ -2331,67 +2331,67 @@ Additional SOS encounters: (None)
 Map: 181 - Haina Desert / 182 - Haina Desert / 183 - Haina Desert / 184 - Haina Desert
 Tables: 8
 Table 1 [grass] (Day):
-Encounters (Levels 57-60): Krokorok (20%), Dugtrio (Forme 1) (20%), Maractus (20%), Hippowdon (20%), Drapion (10%), Cacnea (10%)
+Encounters (Levels 57-60): Krokorok (20%), Alolan Dugtrio (20%), Maractus (20%), Hippowdon (20%), Drapion (10%), Cacnea (10%)
 Additional SOS encounters: (None)
 
 Table 1 [grass] (Night):
-Encounters (Levels 57-60): Krokorok (20%), Dugtrio (Forme 1) (20%), Maractus (20%), Cacturne (20%), Drapion (10%), Hippowdon (10%)
+Encounters (Levels 57-60): Krokorok (20%), Alolan Dugtrio (20%), Maractus (20%), Cacturne (20%), Drapion (10%), Hippowdon (10%)
 Additional SOS encounters: (None)
 
 Table 2 [grass] (Day):
-Encounters (Levels 57-60): Krokorok (20%), Dugtrio (Forme 1) (20%), Maractus (20%), Hippowdon (20%), Drapion (10%), Cacnea (10%)
+Encounters (Levels 57-60): Krokorok (20%), Alolan Dugtrio (20%), Maractus (20%), Hippowdon (20%), Drapion (10%), Cacnea (10%)
 Additional SOS encounters: (None)
 
 Table 2 [grass] (Night):
-Encounters (Levels 57-60): Krokorok (20%), Dugtrio (Forme 1) (20%), Maractus (20%), Cacturne (20%), Drapion (10%), Hippowdon (10%)
+Encounters (Levels 57-60): Krokorok (20%), Alolan Dugtrio (20%), Maractus (20%), Cacturne (20%), Drapion (10%), Hippowdon (10%)
 Additional SOS encounters: (None)
 
 Table 3 [grass] (Day):
-Encounters (Levels 57-60): Krokorok (20%), Dugtrio (Forme 1) (20%), Maractus (20%), Hippowdon (20%), Drapion (10%), Cacnea (10%)
+Encounters (Levels 57-60): Krokorok (20%), Alolan Dugtrio (20%), Maractus (20%), Hippowdon (20%), Drapion (10%), Cacnea (10%)
 Additional SOS encounters: (None)
 
 Table 3 [grass] (Night):
-Encounters (Levels 57-60): Krokorok (20%), Dugtrio (Forme 1) (20%), Maractus (20%), Cacturne (20%), Drapion (10%), Hippowdon (10%)
+Encounters (Levels 57-60): Krokorok (20%), Alolan Dugtrio (20%), Maractus (20%), Cacturne (20%), Drapion (10%), Hippowdon (10%)
 Additional SOS encounters: (None)
 
 Table 4 [grass] (Day):
-Encounters (Levels 57-60): Krokorok (20%), Dugtrio (Forme 1) (20%), Maractus (20%), Hippowdon (20%), Drapion (10%), Cacnea (10%)
+Encounters (Levels 57-60): Krokorok (20%), Alolan Dugtrio (20%), Maractus (20%), Hippowdon (20%), Drapion (10%), Cacnea (10%)
 Additional SOS encounters: (None)
 
 Table 4 [grass] (Night):
-Encounters (Levels 57-60): Krokorok (20%), Dugtrio (Forme 1) (20%), Maractus (20%), Cacturne (20%), Drapion (10%), Hippowdon (10%)
+Encounters (Levels 57-60): Krokorok (20%), Alolan Dugtrio (20%), Maractus (20%), Cacturne (20%), Drapion (10%), Hippowdon (10%)
 Additional SOS encounters: (None)
 
 Table 5 [grass] (Day):
-Encounters (Levels 57-60): Krookodile (30%), Vibrava (30%), Dugtrio (Forme 1) (20%), Gabite (20%)
+Encounters (Levels 57-60): Krookodile (30%), Vibrava (30%), Alolan Dugtrio (20%), Gabite (20%)
 Additional SOS encounters: (None)
 
 Table 5 [grass] (Night):
-Encounters (Levels 57-60): Krookodile (30%), Vibrava (30%), Dugtrio (Forme 1) (20%), Gabite (20%)
+Encounters (Levels 57-60): Krookodile (30%), Vibrava (30%), Alolan Dugtrio (20%), Gabite (20%)
 Additional SOS encounters: (None)
 
 Table 6 [grass] (Day):
-Encounters (Levels 57-60): Krookodile (30%), Vibrava (30%), Dugtrio (Forme 1) (20%), Gabite (20%)
+Encounters (Levels 57-60): Krookodile (30%), Vibrava (30%), Alolan Dugtrio (20%), Gabite (20%)
 Additional SOS encounters: (None)
 
 Table 6 [grass] (Night):
-Encounters (Levels 57-60): Krookodile (30%), Vibrava (30%), Dugtrio (Forme 1) (20%), Gabite (20%)
+Encounters (Levels 57-60): Krookodile (30%), Vibrava (30%), Alolan Dugtrio (20%), Gabite (20%)
 Additional SOS encounters: (None)
 
 Table 7 [grass] (Day):
-Encounters (Levels 57-60): Krookodile (30%), Vibrava (30%), Dugtrio (Forme 1) (20%), Gabite (20%)
+Encounters (Levels 57-60): Krookodile (30%), Vibrava (30%), Alolan Dugtrio (20%), Gabite (20%)
 Additional SOS encounters: (None)
 
 Table 7 [grass] (Night):
-Encounters (Levels 57-60): Krookodile (30%), Vibrava (30%), Dugtrio (Forme 1) (20%), Gabite (20%)
+Encounters (Levels 57-60): Krookodile (30%), Vibrava (30%), Alolan Dugtrio (20%), Gabite (20%)
 Additional SOS encounters: (None)
 
 Table 8 [grass] (Day):
-Encounters (Levels 57-60): Krookodile (30%), Vibrava (30%), Dugtrio (Forme 1) (20%), Gabite (20%)
+Encounters (Levels 57-60): Krookodile (30%), Vibrava (30%), Alolan Dugtrio (20%), Gabite (20%)
 Additional SOS encounters: (None)
 
 Table 8 [grass] (Night):
-Encounters (Levels 57-60): Krookodile (30%), Vibrava (30%), Dugtrio (Forme 1) (20%), Gabite (20%)
+Encounters (Levels 57-60): Krookodile (30%), Vibrava (30%), Alolan Dugtrio (20%), Gabite (20%)
 Additional SOS encounters: (None)
 
 ==========
@@ -2437,35 +2437,35 @@ Additional SOS encounters: (None)
 Map: 186 - Malie Garden
 Tables: 16
 Table 1 [surf] (Day):
-Encounters (Levels 41-44): Exeggcute (20%), Poliwhirl (15%), Persian (Forme 1) (15%), Petilil (10%), Cottonee (10%), Araquanid (10%), Ledian (10%), Farfetch'd (10%)
+Encounters (Levels 41-44): Exeggcute (20%), Poliwhirl (15%), Alolan Persian (15%), Petilil (10%), Cottonee (10%), Araquanid (10%), Ledian (10%), Farfetch'd (10%)
 Additional SOS encounters: (None)
 
 Table 1 [surf] (Night):
-Encounters (Levels 41-44): Exeggcute (20%), Poliwhirl (15%), Persian (Forme 1) (15%), Petilil (10%), Cottonee (10%), Masquerain (10%), Ariados (10%), Farfetch'd (10%)
+Encounters (Levels 41-44): Exeggcute (20%), Poliwhirl (15%), Alolan Persian (15%), Petilil (10%), Cottonee (10%), Masquerain (10%), Ariados (10%), Farfetch'd (10%)
 Additional SOS encounters: (None)
 
 Table 2 [goodRod] (Day):
-Encounters (Levels 41-44): Corphish (25%), Seaking (20%), Basculin (Forme 1) (20%), Dratini (20%), Gyarados (15%)
+Encounters (Levels 41-44): Corphish (25%), Seaking (20%), Basculin (20%), Dratini (20%), Gyarados (15%)
 Additional SOS encounters: (None)
 
 Table 2 [goodRod] (Night):
-Encounters (Levels 41-44): Corphish (25%), Goldeen (20%), Basculin (Forme 1) (20%), Dratini (20%), Gyarados (15%)
+Encounters (Levels 41-44): Corphish (25%), Goldeen (20%), Basculin (20%), Dratini (20%), Gyarados (15%)
 Additional SOS encounters: (None)
 
 Table 3 [goodRod] (Day):
-Encounters (Levels 41-44): Corphish (25%), Goldeen (20%), Basculin (Forme 1) (20%), Dratini (20%), Gyarados (15%)
+Encounters (Levels 41-44): Corphish (25%), Goldeen (20%), Basculin (20%), Dratini (20%), Gyarados (15%)
 Additional SOS encounters: (None)
 
 Table 3 [goodRod] (Night):
-Encounters (Levels 41-44): Corphish (25%), Goldeen (20%), Basculin (Forme 1) (20%), Dratini (20%), Gyarados (15%)
+Encounters (Levels 41-44): Corphish (25%), Goldeen (20%), Basculin (20%), Dratini (20%), Gyarados (15%)
 Additional SOS encounters: (None)
 
 Table 4 [goodRod] (Day):
-Encounters (Levels 41-44): Corphish (25%), Goldeen (20%), Basculin (Forme 1) (20%), Dratini (20%), Gyarados (15%)
+Encounters (Levels 41-44): Corphish (25%), Goldeen (20%), Basculin (20%), Dratini (20%), Gyarados (15%)
 Additional SOS encounters: (None)
 
 Table 4 [goodRod] (Night):
-Encounters (Levels 41-44): Corphish (25%), Goldeen (20%), Basculin (Forme 1) (20%), Dratini (20%), Gyarados (15%)
+Encounters (Levels 41-44): Corphish (25%), Goldeen (20%), Basculin (20%), Dratini (20%), Gyarados (15%)
 Additional SOS encounters: (None)
 
 Table 5 [grass] (Day):
@@ -2485,11 +2485,11 @@ Encounters (Levels 5-10): Pikipek (100%)
 Additional SOS encounters: (None)
 
 Table 7 [goodRod] (Day):
-Encounters (Levels 41-44): Corphish (25%), Goldeen (20%), Basculin (Forme 1) (20%), Dratini (20%), Gyarados (15%)
+Encounters (Levels 41-44): Corphish (25%), Goldeen (20%), Basculin (20%), Dratini (20%), Gyarados (15%)
 Additional SOS encounters: (None)
 
 Table 7 [goodRod] (Night):
-Encounters (Levels 41-44): Corphish (25%), Goldeen (20%), Basculin (Forme 1) (20%), Dratini (20%), Gyarados (15%)
+Encounters (Levels 41-44): Corphish (25%), Goldeen (20%), Basculin (20%), Dratini (20%), Gyarados (15%)
 Additional SOS encounters: (None)
 
 Table 8 [goodRod] (Day):
@@ -2501,59 +2501,59 @@ Encounters (Levels 41-44): Corphish (30%), Dratini (30%), Basculin (30%), Gyarad
 Additional SOS encounters: (None)
 
 Table 9 [surf] (Day):
-Encounters (Levels 41-44): Exeggcute (20%), Poliwhirl (15%), Persian (Forme 1) (15%), Petilil (10%), Cottonee (10%), Araquanid (10%), Ledian (10%), Farfetch'd (10%)
+Encounters (Levels 41-44): Exeggcute (20%), Poliwhirl (15%), Alolan Persian (15%), Petilil (10%), Cottonee (10%), Araquanid (10%), Ledian (10%), Farfetch'd (10%)
 Additional SOS encounters: (None)
 
 Table 9 [surf] (Night):
-Encounters (Levels 41-44): Exeggcute (20%), Poliwhirl (15%), Persian (Forme 1) (15%), Petilil (10%), Cottonee (10%), Masquerain (10%), Ariados (10%), Farfetch'd (10%)
+Encounters (Levels 41-44): Exeggcute (20%), Poliwhirl (15%), Alolan Persian (15%), Petilil (10%), Cottonee (10%), Masquerain (10%), Ariados (10%), Farfetch'd (10%)
 Additional SOS encounters: (None)
 
 Table 10 [surf] (Day):
-Encounters (Levels 41-44): Exeggcute (20%), Poliwhirl (15%), Persian (Forme 1) (15%), Petilil (10%), Cottonee (10%), Araquanid (10%), Ledian (10%), Farfetch'd (10%)
+Encounters (Levels 41-44): Exeggcute (20%), Poliwhirl (15%), Alolan Persian (15%), Petilil (10%), Cottonee (10%), Araquanid (10%), Ledian (10%), Farfetch'd (10%)
 Additional SOS encounters: (None)
 
 Table 10 [surf] (Night):
-Encounters (Levels 41-44): Exeggcute (20%), Poliwhirl (15%), Persian (Forme 1) (15%), Petilil (10%), Cottonee (10%), Masquerain (10%), Ariados (10%), Farfetch'd (10%)
+Encounters (Levels 41-44): Exeggcute (20%), Poliwhirl (15%), Alolan Persian (15%), Petilil (10%), Cottonee (10%), Masquerain (10%), Ariados (10%), Farfetch'd (10%)
 Additional SOS encounters: (None)
 
 Table 11 [surf] (Day):
-Encounters (Levels 41-44): Exeggcute (20%), Poliwhirl (15%), Persian (Forme 1) (15%), Petilil (10%), Cottonee (10%), Araquanid (10%), Ledian (10%), Farfetch'd (10%)
+Encounters (Levels 41-44): Exeggcute (20%), Poliwhirl (15%), Alolan Persian (15%), Petilil (10%), Cottonee (10%), Araquanid (10%), Ledian (10%), Farfetch'd (10%)
 Additional SOS encounters: (None)
 
 Table 11 [surf] (Night):
-Encounters (Levels 41-44): Exeggcute (20%), Poliwhirl (15%), Persian (Forme 1) (15%), Petilil (10%), Cottonee (10%), Masquerain (10%), Ariados (10%), Farfetch'd (10%)
+Encounters (Levels 41-44): Exeggcute (20%), Poliwhirl (15%), Alolan Persian (15%), Petilil (10%), Cottonee (10%), Masquerain (10%), Ariados (10%), Farfetch'd (10%)
 Additional SOS encounters: (None)
 
 Table 12 [surf] (Day):
-Encounters (Levels 41-44): Exeggcute (20%), Poliwhirl (15%), Persian (Forme 1) (15%), Petilil (10%), Cottonee (10%), Araquanid (10%), Ledian (10%), Farfetch'd (10%)
+Encounters (Levels 41-44): Exeggcute (20%), Poliwhirl (15%), Alolan Persian (15%), Petilil (10%), Cottonee (10%), Araquanid (10%), Ledian (10%), Farfetch'd (10%)
 Additional SOS encounters: (None)
 
 Table 12 [surf] (Night):
-Encounters (Levels 41-44): Exeggcute (20%), Poliwhirl (15%), Persian (Forme 1) (15%), Petilil (10%), Cottonee (10%), Masquerain (10%), Ariados (10%), Farfetch'd (10%)
+Encounters (Levels 41-44): Exeggcute (20%), Poliwhirl (15%), Alolan Persian (15%), Petilil (10%), Cottonee (10%), Masquerain (10%), Ariados (10%), Farfetch'd (10%)
 Additional SOS encounters: (None)
 
 Table 13 [surf] (Day):
-Encounters (Levels 41-44): Exeggcute (20%), Poliwhirl (15%), Persian (Forme 1) (15%), Petilil (10%), Cottonee (10%), Araquanid (10%), Ledian (10%), Farfetch'd (10%)
+Encounters (Levels 41-44): Exeggcute (20%), Poliwhirl (15%), Alolan Persian (15%), Petilil (10%), Cottonee (10%), Araquanid (10%), Ledian (10%), Farfetch'd (10%)
 Additional SOS encounters: (None)
 
 Table 13 [surf] (Night):
-Encounters (Levels 41-44): Exeggcute (20%), Poliwhirl (15%), Persian (Forme 1) (15%), Petilil (10%), Cottonee (10%), Masquerain (10%), Ariados (10%), Farfetch'd (10%)
+Encounters (Levels 41-44): Exeggcute (20%), Poliwhirl (15%), Alolan Persian (15%), Petilil (10%), Cottonee (10%), Masquerain (10%), Ariados (10%), Farfetch'd (10%)
 Additional SOS encounters: (None)
 
 Table 14 [surf] (Day):
-Encounters (Levels 41-44): Exeggcute (20%), Poliwhirl (15%), Persian (Forme 1) (15%), Petilil (10%), Cottonee (10%), Araquanid (10%), Ledian (10%), Farfetch'd (10%)
+Encounters (Levels 41-44): Exeggcute (20%), Poliwhirl (15%), Alolan Persian (15%), Petilil (10%), Cottonee (10%), Araquanid (10%), Ledian (10%), Farfetch'd (10%)
 Additional SOS encounters: (None)
 
 Table 14 [surf] (Night):
-Encounters (Levels 41-44): Exeggcute (20%), Poliwhirl (15%), Persian (Forme 1) (15%), Petilil (10%), Cottonee (10%), Masquerain (10%), Ariados (10%), Farfetch'd (10%)
+Encounters (Levels 41-44): Exeggcute (20%), Poliwhirl (15%), Alolan Persian (15%), Petilil (10%), Cottonee (10%), Masquerain (10%), Ariados (10%), Farfetch'd (10%)
 Additional SOS encounters: (None)
 
 Table 15 [surf] (Day):
-Encounters (Levels 41-44): Exeggcute (20%), Poliwhirl (15%), Persian (Forme 1) (15%), Petilil (10%), Cottonee (10%), Araquanid (10%), Ledian (10%), Farfetch'd (10%)
+Encounters (Levels 41-44): Exeggcute (20%), Poliwhirl (15%), Alolan Persian (15%), Petilil (10%), Cottonee (10%), Araquanid (10%), Ledian (10%), Farfetch'd (10%)
 Additional SOS encounters: (None)
 
 Table 15 [surf] (Night):
-Encounters (Levels 41-44): Exeggcute (20%), Poliwhirl (15%), Persian (Forme 1) (15%), Petilil (10%), Cottonee (10%), Masquerain (10%), Ariados (10%), Farfetch'd (10%)
+Encounters (Levels 41-44): Exeggcute (20%), Poliwhirl (15%), Alolan Persian (15%), Petilil (10%), Cottonee (10%), Masquerain (10%), Ariados (10%), Farfetch'd (10%)
 Additional SOS encounters: (None)
 
 Table 16 [grass] (Day):
@@ -2607,11 +2607,11 @@ Additional SOS encounters: (None)
 Map: 188 - Blush Mountain
 Tables: 6
 Table 1 [grass] (Day):
-Encounters (Levels 52-55): Graveler (Forme 1) (20%), Rhyhorn (20%), Dedenne (10%), Charjabug (10%), Turtonator (10%), Torkoal (10%), Togedemaru (10%), Electabuzz (10%)
+Encounters (Levels 52-55): Alolan Graveler (20%), Rhyhorn (20%), Dedenne (10%), Charjabug (10%), Turtonator (10%), Torkoal (10%), Togedemaru (10%), Electabuzz (10%)
 Additional SOS encounters: (None)
 
 Table 1 [grass] (Night):
-Encounters (Levels 52-55): Graveler (Forme 1) (20%), Rhyhorn (20%), Dedenne (10%), Charjabug (10%), Torkoal (10%), Turtonator (10%), Togedemaru (10%), Electabuzz (10%)
+Encounters (Levels 52-55): Alolan Graveler (20%), Rhyhorn (20%), Dedenne (10%), Charjabug (10%), Torkoal (10%), Turtonator (10%), Togedemaru (10%), Electabuzz (10%)
 Additional SOS encounters: (None)
 
 Table 2 [grass] (Day):
@@ -2647,11 +2647,11 @@ Encounters (Levels 2-3): Pikipek (100%)
 Additional SOS encounters: (None)
 
 Table 6 [grass] (Day):
-Encounters (Levels 52-55): Graveler (Forme 1) (20%), Rhyhorn (20%), Dedenne (10%), Charjabug (10%), Torkoal (10%), Turtonator (10%), Togedemaru (10%), Electabuzz (10%)
+Encounters (Levels 52-55): Alolan Graveler (20%), Rhyhorn (20%), Dedenne (10%), Charjabug (10%), Torkoal (10%), Turtonator (10%), Togedemaru (10%), Electabuzz (10%)
 Additional SOS encounters: (None)
 
 Table 6 [grass] (Night):
-Encounters (Levels 52-55): Graveler (Forme 1) (20%), Rhyhorn (20%), Dedenne (10%), Charjabug (10%), Torkoal (10%), Turtonator (10%), Togedemaru (10%), Electabuzz (10%)
+Encounters (Levels 52-55): Alolan Graveler (20%), Rhyhorn (20%), Dedenne (10%), Charjabug (10%), Torkoal (10%), Turtonator (10%), Togedemaru (10%), Electabuzz (10%)
 Additional SOS encounters: (None)
 
 ==========
@@ -2673,11 +2673,11 @@ Additional SOS encounters: (None)
 Map: 200 - Mount Lanakila
 Tables: 1
 Table 1 [grass] (Day):
-Encounters (Levels 54-57): Sandshrew (Forme 1) (15%), Snorunt (15%), Sneasel (15%), Vulpix (Forme 1) (15%), Bergmite (10%), Drampa (10%), Cryogonal (10%), Absol (10%)
+Encounters (Levels 54-57): Alolan Sandshrew (15%), Snorunt (15%), Sneasel (15%), Alolan Vulpix (15%), Bergmite (10%), Drampa (10%), Cryogonal (10%), Absol (10%)
 Additional SOS encounters: (None)
 
 Table 1 [grass] (Night):
-Encounters (Levels 54-57): Sandshrew (Forme 1) (15%), Snorunt (15%), Sneasel (15%), Vulpix (Forme 1) (15%), Bergmite (10%), Drampa (10%), Cryogonal (10%), Absol (10%)
+Encounters (Levels 54-57): Alolan Sandshrew (15%), Snorunt (15%), Sneasel (15%), Alolan Vulpix (15%), Bergmite (10%), Drampa (10%), Cryogonal (10%), Absol (10%)
 Additional SOS encounters: (None)
 
 ==========
@@ -2686,19 +2686,19 @@ Additional SOS encounters: (None)
 Map: 201 - Mount Lanakila
 Tables: 2
 Table 1 [grass] (Day):
-Encounters (Levels 87-90): Sandshrew (Forme 1) (20%), Vulpix (Forme 1) (20%), Glalie (15%), Absol (15%), Sneasel (15%), Abomasnow (10%), Weavile (5%)
+Encounters (Levels 87-90): Alolan Sandshrew (20%), Alolan Vulpix (20%), Glalie (15%), Absol (15%), Sneasel (15%), Abomasnow (10%), Weavile (5%)
 Additional SOS encounters: (None)
 
 Table 1 [grass] (Night):
-Encounters (Levels 87-90): Sandshrew (Forme 1) (20%), Vulpix (Forme 1) (20%), Glalie (15%), Absol (15%), Sneasel (15%), Abomasnow (10%), Weavile (5%)
+Encounters (Levels 87-90): Alolan Sandshrew (20%), Alolan Vulpix (20%), Glalie (15%), Absol (15%), Sneasel (15%), Abomasnow (10%), Weavile (5%)
 Additional SOS encounters: (None)
 
 Table 2 [grass] (Day):
-Encounters (Levels 87-90): Sandshrew (Forme 1) (20%), Vulpix (Forme 1) (20%), Glalie (15%), Absol (15%), Sneasel (15%), Abomasnow (10%), Weavile (5%)
+Encounters (Levels 87-90): Alolan Sandshrew (20%), Alolan Vulpix (20%), Glalie (15%), Absol (15%), Sneasel (15%), Abomasnow (10%), Weavile (5%)
 Additional SOS encounters: (None)
 
 Table 2 [grass] (Night):
-Encounters (Levels 87-90): Sandshrew (Forme 1) (20%), Vulpix (Forme 1) (20%), Glalie (15%), Absol (15%), Sneasel (15%), Abomasnow (10%), Weavile (5%)
+Encounters (Levels 87-90): Alolan Sandshrew (20%), Alolan Vulpix (20%), Glalie (15%), Absol (15%), Sneasel (15%), Abomasnow (10%), Weavile (5%)
 Additional SOS encounters: (None)
 
 ==========
@@ -2707,11 +2707,11 @@ Additional SOS encounters: (None)
 Map: 202 - Mount Lanakila
 Tables: 1
 Table 1 [grass] (Day):
-Encounters (Levels 87-90): Sandshrew (Forme 1) (20%), Vulpix (Forme 1) (20%), Glalie (15%), Absol (15%), Sneasel (15%), Abomasnow (10%), Weavile (5%)
+Encounters (Levels 87-90): Alolan Sandshrew (20%), Alolan Vulpix (20%), Glalie (15%), Absol (15%), Sneasel (15%), Abomasnow (10%), Weavile (5%)
 Additional SOS encounters: (None)
 
 Table 1 [grass] (Night):
-Encounters (Levels 87-90): Sandshrew (Forme 1) (20%), Vulpix (Forme 1) (20%), Glalie (15%), Absol (15%), Sneasel (15%), Abomasnow (10%), Weavile (5%)
+Encounters (Levels 87-90): Alolan Sandshrew (20%), Alolan Vulpix (20%), Glalie (15%), Absol (15%), Sneasel (15%), Abomasnow (10%), Weavile (5%)
 Additional SOS encounters: (None)
 
 ==========
@@ -2720,11 +2720,11 @@ Additional SOS encounters: (None)
 Map: 204 - Mount Lanakila
 Tables: 1
 Table 1 [grass] (Day):
-Encounters (Levels 87-90): Sandshrew (Forme 1) (20%), Vulpix (Forme 1) (20%), Glalie (15%), Absol (15%), Sneasel (15%), Abomasnow (10%), Weavile (5%)
+Encounters (Levels 87-90): Alolan Sandshrew (20%), Alolan Vulpix (20%), Glalie (15%), Absol (15%), Sneasel (15%), Abomasnow (10%), Weavile (5%)
 Additional SOS encounters: (None)
 
 Table 1 [grass] (Night):
-Encounters (Levels 87-90): Sandshrew (Forme 1) (20%), Vulpix (Forme 1) (20%), Glalie (15%), Absol (15%), Sneasel (15%), Abomasnow (10%), Weavile (5%)
+Encounters (Levels 87-90): Alolan Sandshrew (20%), Alolan Vulpix (20%), Glalie (15%), Absol (15%), Sneasel (15%), Abomasnow (10%), Weavile (5%)
 Additional SOS encounters: (None)
 
 ==========
@@ -2793,11 +2793,11 @@ Additional SOS encounters: (None)
 Map: 264 - Poni Wilds
 Tables: 11
 Table 1 [surf] (Day):
-Encounters (Levels 76-79): Furfrou (20%), Gastrodon (Forme 1) (20%), Granbull (20%), Malamar (15%), Brionne (15%), Pelipper (10%)
+Encounters (Levels 76-79): Furfrou (20%), Gastrodon (20%), Granbull (20%), Malamar (15%), Brionne (15%), Pelipper (10%)
 Additional SOS encounters: (None)
 
 Table 1 [surf] (Night):
-Encounters (Levels 76-79): Furfrou (20%), Gastrodon (Forme 1) (20%), Granbull (20%), Malamar (15%), Brionne (15%), Pelipper (10%)
+Encounters (Levels 76-79): Furfrou (20%), Gastrodon (20%), Granbull (20%), Malamar (15%), Brionne (15%), Pelipper (10%)
 Additional SOS encounters: (None)
 
 Table 2 [grass] (Day):
@@ -2825,59 +2825,59 @@ Encounters (Levels 76-79): Crabrawler (50%), Shuckle (50%)
 Additional SOS encounters: (None)
 
 Table 5 [surf] (Day):
-Encounters (Levels 76-79): Furfrou (20%), Gastrodon (Forme 1) (20%), Granbull (20%), Malamar (15%), Brionne (15%), Pelipper (10%)
+Encounters (Levels 76-79): Furfrou (20%), Gastrodon (20%), Granbull (20%), Malamar (15%), Brionne (15%), Pelipper (10%)
 Additional SOS encounters: (None)
 
 Table 5 [surf] (Night):
-Encounters (Levels 76-79): Furfrou (20%), Gastrodon (Forme 1) (20%), Granbull (20%), Malamar (15%), Brionne (15%), Pelipper (10%)
+Encounters (Levels 76-79): Furfrou (20%), Gastrodon (20%), Granbull (20%), Malamar (15%), Brionne (15%), Pelipper (10%)
 Additional SOS encounters: (None)
 
 Table 6 [surf] (Day):
-Encounters (Levels 76-79): Furfrou (20%), Gastrodon (Forme 1) (20%), Granbull (20%), Malamar (15%), Brionne (15%), Pelipper (10%)
+Encounters (Levels 76-79): Furfrou (20%), Gastrodon (20%), Granbull (20%), Malamar (15%), Brionne (15%), Pelipper (10%)
 Additional SOS encounters: (None)
 
 Table 6 [surf] (Night):
-Encounters (Levels 76-79): Furfrou (20%), Gastrodon (Forme 1) (20%), Granbull (20%), Malamar (15%), Brionne (15%), Pelipper (10%)
+Encounters (Levels 76-79): Furfrou (20%), Gastrodon (20%), Granbull (20%), Malamar (15%), Brionne (15%), Pelipper (10%)
 Additional SOS encounters: (None)
 
 Table 7 [surf] (Day):
-Encounters (Levels 76-79): Furfrou (20%), Gastrodon (Forme 1) (20%), Granbull (20%), Malamar (15%), Brionne (15%), Pelipper (10%)
+Encounters (Levels 76-79): Furfrou (20%), Gastrodon (20%), Granbull (20%), Malamar (15%), Brionne (15%), Pelipper (10%)
 Additional SOS encounters: (None)
 
 Table 7 [surf] (Night):
-Encounters (Levels 76-79): Furfrou (20%), Gastrodon (Forme 1) (20%), Granbull (20%), Malamar (15%), Brionne (15%), Pelipper (10%)
+Encounters (Levels 76-79): Furfrou (20%), Gastrodon (20%), Granbull (20%), Malamar (15%), Brionne (15%), Pelipper (10%)
 Additional SOS encounters: (None)
 
 Table 8 [surf] (Day):
-Encounters (Levels 76-79): Furfrou (20%), Gastrodon (Forme 1) (20%), Granbull (20%), Malamar (15%), Brionne (15%), Pelipper (10%)
+Encounters (Levels 76-79): Furfrou (20%), Gastrodon (20%), Granbull (20%), Malamar (15%), Brionne (15%), Pelipper (10%)
 Additional SOS encounters: (None)
 
 Table 8 [surf] (Night):
-Encounters (Levels 76-79): Furfrou (20%), Gastrodon (Forme 1) (20%), Granbull (20%), Malamar (15%), Brionne (15%), Pelipper (10%)
+Encounters (Levels 76-79): Furfrou (20%), Gastrodon (20%), Granbull (20%), Malamar (15%), Brionne (15%), Pelipper (10%)
 Additional SOS encounters: (None)
 
 Table 9 [surf] (Day):
-Encounters (Levels 76-79): Furfrou (20%), Gastrodon (Forme 1) (20%), Granbull (20%), Malamar (15%), Brionne (15%), Pelipper (10%)
+Encounters (Levels 76-79): Furfrou (20%), Gastrodon (20%), Granbull (20%), Malamar (15%), Brionne (15%), Pelipper (10%)
 Additional SOS encounters: (None)
 
 Table 9 [surf] (Night):
-Encounters (Levels 76-79): Furfrou (20%), Gastrodon (Forme 1) (20%), Granbull (20%), Malamar (15%), Brionne (15%), Pelipper (10%)
+Encounters (Levels 76-79): Furfrou (20%), Gastrodon (20%), Granbull (20%), Malamar (15%), Brionne (15%), Pelipper (10%)
 Additional SOS encounters: (None)
 
 Table 10 [surf] (Day):
-Encounters (Levels 76-79): Furfrou (20%), Gastrodon (Forme 1) (20%), Granbull (20%), Malamar (15%), Brionne (15%), Pelipper (10%)
+Encounters (Levels 76-79): Furfrou (20%), Gastrodon (20%), Granbull (20%), Malamar (15%), Brionne (15%), Pelipper (10%)
 Additional SOS encounters: (None)
 
 Table 10 [surf] (Night):
-Encounters (Levels 76-79): Furfrou (20%), Gastrodon (Forme 1) (20%), Granbull (20%), Malamar (15%), Brionne (15%), Pelipper (10%)
+Encounters (Levels 76-79): Furfrou (20%), Gastrodon (20%), Granbull (20%), Malamar (15%), Brionne (15%), Pelipper (10%)
 Additional SOS encounters: (None)
 
 Table 11 [surf] (Day):
-Encounters (Levels 76-79): Furfrou (20%), Gastrodon (Forme 1) (20%), Granbull (20%), Malamar (15%), Brionne (15%), Pelipper (10%)
+Encounters (Levels 76-79): Furfrou (20%), Gastrodon (20%), Granbull (20%), Malamar (15%), Brionne (15%), Pelipper (10%)
 Additional SOS encounters: (None)
 
 Table 11 [surf] (Night):
-Encounters (Levels 76-79): Furfrou (20%), Gastrodon (Forme 1) (20%), Granbull (20%), Malamar (15%), Brionne (15%), Pelipper (10%)
+Encounters (Levels 76-79): Furfrou (20%), Gastrodon (20%), Granbull (20%), Malamar (15%), Brionne (15%), Pelipper (10%)
 Additional SOS encounters: (None)
 
 ==========
@@ -2886,11 +2886,11 @@ Additional SOS encounters: (None)
 Map: 265 - Ancient Poni Path / 266 - Poni Breaker Coast
 Tables: 11
 Table 1 [surf] (Day):
-Encounters (Levels 76-79): Tentacruel (30%), Gastrodon (Forme 1) (20%), Pelipper (20%), Lumineon (20%), Lapras (10%)
+Encounters (Levels 76-79): Tentacruel (30%), Gastrodon (20%), Pelipper (20%), Lumineon (20%), Lapras (10%)
 Additional SOS encounters: (None)
 
 Table 1 [surf] (Night):
-Encounters (Levels 76-79): Tentacruel (30%), Gastrodon (Forme 1) (20%), Pelipper (20%), Lumineon (20%), Lapras (10%)
+Encounters (Levels 76-79): Tentacruel (30%), Gastrodon (20%), Pelipper (20%), Lumineon (20%), Lapras (10%)
 Additional SOS encounters: (None)
 
 Table 2 [surf] (Day):
@@ -2950,27 +2950,27 @@ Encounters (Levels 70-81): Sharpedo (30%), Relicanth (30%), Gyarados (20%), Wail
 Additional SOS encounters: (None)
 
 Table 9 [surf] (Day):
-Encounters (Levels 76-79): Gastrodon (Forme 1) (30%), Furfrou (20%), Malamar (20%), Pelipper (10%), Granbull (10%), Emboar (10%)
+Encounters (Levels 76-79): Gastrodon (30%), Furfrou (20%), Malamar (20%), Pelipper (10%), Granbull (10%), Emboar (10%)
 Additional SOS encounters: (None)
 
 Table 9 [surf] (Night):
-Encounters (Levels 76-79): Gastrodon (Forme 1) (30%), Furfrou (20%), Malamar (20%), Pelipper (10%), Granbull (10%), Emboar (10%)
+Encounters (Levels 76-79): Gastrodon (30%), Furfrou (20%), Malamar (20%), Pelipper (10%), Granbull (10%), Emboar (10%)
 Additional SOS encounters: (None)
 
 Table 10 [surf] (Day):
-Encounters (Levels 76-79): Gastrodon (Forme 1) (30%), Furfrou (20%), Malamar (20%), Pelipper (10%), Granbull (10%), Emboar (10%)
+Encounters (Levels 76-79): Gastrodon (30%), Furfrou (20%), Malamar (20%), Pelipper (10%), Granbull (10%), Emboar (10%)
 Additional SOS encounters: (None)
 
 Table 10 [surf] (Night):
-Encounters (Levels 76-79): Gastrodon (Forme 1) (30%), Furfrou (20%), Malamar (20%), Pelipper (10%), Granbull (10%), Emboar (10%)
+Encounters (Levels 76-79): Gastrodon (30%), Furfrou (20%), Malamar (20%), Pelipper (10%), Granbull (10%), Emboar (10%)
 Additional SOS encounters: (None)
 
 Table 11 [surf] (Day):
-Encounters (Levels 76-79): Gastrodon (Forme 1) (30%), Furfrou (20%), Malamar (20%), Pelipper (10%), Granbull (10%), Emboar (10%)
+Encounters (Levels 76-79): Gastrodon (30%), Furfrou (20%), Malamar (20%), Pelipper (10%), Granbull (10%), Emboar (10%)
 Additional SOS encounters: (None)
 
 Table 11 [surf] (Night):
-Encounters (Levels 76-79): Gastrodon (Forme 1) (30%), Furfrou (20%), Malamar (20%), Pelipper (10%), Granbull (10%), Emboar (10%)
+Encounters (Levels 76-79): Gastrodon (30%), Furfrou (20%), Malamar (20%), Pelipper (10%), Granbull (10%), Emboar (10%)
 Additional SOS encounters: (None)
 
 ==========
@@ -3044,7 +3044,7 @@ Encounters (Levels 95-98): Gumshoos (20%), Pelipper (20%), Weepinbell (20%), Sta
 Additional SOS encounters: (None)
 
 Table 1 [surf] (Night):
-Encounters (Levels 95-98): Raticate (Forme 1) (20%), Pelipper (20%), Gloom (20%), Staraptor (10%), Toucannon (10%), Tauros (10%), Miltank (10%)
+Encounters (Levels 95-98): Alolan Raticate (20%), Pelipper (20%), Gloom (20%), Staraptor (10%), Toucannon (10%), Tauros (10%), Miltank (10%)
 Additional SOS encounters: (None)
 
 Table 2 [grass] (Day):
@@ -3108,7 +3108,7 @@ Encounters (Levels 95-98): Gumshoos (20%), Staraptor (20%), Weepinbell (20%), Ag
 Additional SOS encounters: (None)
 
 Table 9 [grass] (Night):
-Encounters (Levels 95-98): Raticate (Forme 1) (20%), Staraptor (20%), Gloom (20%), Aggron (10%), Toucannon (10%), Tauros (10%), Miltank (10%)
+Encounters (Levels 95-98): Alolan Raticate (20%), Staraptor (20%), Gloom (20%), Aggron (10%), Toucannon (10%), Tauros (10%), Miltank (10%)
 Additional SOS encounters: (None)
 
 Table 10 [grass] (Day):
@@ -3116,7 +3116,7 @@ Encounters (Levels 95-98): Gumshoos (20%), Staraptor (20%), Weepinbell (20%), Ag
 Additional SOS encounters: (None)
 
 Table 10 [grass] (Night):
-Encounters (Levels 95-98): Raticate (Forme 1) (20%), Staraptor (20%), Gloom (20%), Aggron (10%), Toucannon (10%), Tauros (10%), Miltank (10%)
+Encounters (Levels 95-98): Alolan Raticate (20%), Staraptor (20%), Gloom (20%), Aggron (10%), Toucannon (10%), Tauros (10%), Miltank (10%)
 Additional SOS encounters: (None)
 
 Table 11 [grass] (Day):
@@ -3124,7 +3124,7 @@ Encounters (Levels 95-98): Gumshoos (20%), Staraptor (20%), Weepinbell (20%), Ag
 Additional SOS encounters: (None)
 
 Table 11 [grass] (Night):
-Encounters (Levels 95-98): Raticate (Forme 1) (20%), Staraptor (20%), Gloom (20%), Aggron (10%), Toucannon (10%), Tauros (10%), Miltank (10%)
+Encounters (Levels 95-98): Alolan Raticate (20%), Staraptor (20%), Gloom (20%), Aggron (10%), Toucannon (10%), Tauros (10%), Miltank (10%)
 Additional SOS encounters: (None)
 
 Table 12 [grass] (Day):
@@ -3132,7 +3132,7 @@ Encounters (Levels 95-98): Gumshoos (20%), Staraptor (20%), Weepinbell (20%), Ag
 Additional SOS encounters: (None)
 
 Table 12 [grass] (Night):
-Encounters (Levels 95-98): Raticate (Forme 1) (20%), Staraptor (20%), Gloom (20%), Aggron (10%), Toucannon (10%), Tauros (10%), Miltank (10%)
+Encounters (Levels 95-98): Alolan Raticate (20%), Staraptor (20%), Gloom (20%), Aggron (10%), Toucannon (10%), Tauros (10%), Miltank (10%)
 Additional SOS encounters: (None)
 
 Table 13 [grass] (Day):
@@ -3140,7 +3140,7 @@ Encounters (Levels 95-98): Gumshoos (20%), Hariyama (20%), Conkeldurr (20%), Tan
 Additional SOS encounters: (None)
 
 Table 13 [grass] (Night):
-Encounters (Levels 95-98): Raticate (Forme 1) (20%), Hypno (20%), Conkeldurr (20%), Tangrowth (10%), Tauros (10%), Miltank (10%), Hariyama (10%)
+Encounters (Levels 95-98): Alolan Raticate (20%), Hypno (20%), Conkeldurr (20%), Tangrowth (10%), Tauros (10%), Miltank (10%), Hariyama (10%)
 Additional SOS encounters: (None)
 
 Table 14 [grass] (Day):
@@ -3148,7 +3148,7 @@ Encounters (Levels 95-98): Gumshoos (20%), Staraptor (20%), Weepinbell (20%), Ag
 Additional SOS encounters: (None)
 
 Table 14 [grass] (Night):
-Encounters (Levels 95-98): Raticate (Forme 1) (20%), Staraptor (20%), Gloom (20%), Aggron (10%), Toucannon (10%), Tauros (10%), Miltank (10%)
+Encounters (Levels 95-98): Alolan Raticate (20%), Staraptor (20%), Gloom (20%), Aggron (10%), Toucannon (10%), Tauros (10%), Miltank (10%)
 Additional SOS encounters: (None)
 
 Table 15 [grass] (Day):
@@ -3156,7 +3156,7 @@ Encounters (Levels 95-98): Gumshoos (20%), Staraptor (20%), Weepinbell (20%), Ag
 Additional SOS encounters: (None)
 
 Table 15 [grass] (Night):
-Encounters (Levels 95-98): Raticate (Forme 1) (20%), Staraptor (20%), Gloom (20%), Aggron (10%), Toucannon (10%), Tauros (10%), Miltank (10%)
+Encounters (Levels 95-98): Alolan Raticate (20%), Staraptor (20%), Gloom (20%), Aggron (10%), Toucannon (10%), Tauros (10%), Miltank (10%)
 Additional SOS encounters: (None)
 
 Table 16 [surf] (Day):
@@ -3164,7 +3164,7 @@ Encounters (Levels 95-98): Gumshoos (20%), Pelipper (20%), Weepinbell (20%), Sta
 Additional SOS encounters: (None)
 
 Table 16 [surf] (Night):
-Encounters (Levels 95-98): Raticate (Forme 1) (20%), Pelipper (20%), Gloom (20%), Staraptor (10%), Toucannon (10%), Tauros (10%), Miltank (10%)
+Encounters (Levels 95-98): Alolan Raticate (20%), Pelipper (20%), Gloom (20%), Staraptor (10%), Toucannon (10%), Tauros (10%), Miltank (10%)
 Additional SOS encounters: (None)
 
 Table 17 [grass] (Day):
@@ -3172,7 +3172,7 @@ Encounters (Levels 95-98): Gumshoos (20%), Hariyama (20%), Conkeldurr (20%), Tan
 Additional SOS encounters: (None)
 
 Table 17 [grass] (Night):
-Encounters (Levels 95-98): Raticate (Forme 1) (20%), Hypno (20%), Conkeldurr (20%), Tangrowth (10%), Tauros (10%), Miltank (10%), Hariyama (10%)
+Encounters (Levels 95-98): Alolan Raticate (20%), Hypno (20%), Conkeldurr (20%), Tangrowth (10%), Tauros (10%), Miltank (10%), Hariyama (10%)
 Additional SOS encounters: (None)
 
 Table 18 [surf] (Day):
@@ -3180,7 +3180,7 @@ Encounters (Levels 95-98): Gumshoos (20%), Pelipper (20%), Weepinbell (20%), Sta
 Additional SOS encounters: (None)
 
 Table 18 [surf] (Night):
-Encounters (Levels 95-98): Raticate (Forme 1) (20%), Pelipper (20%), Gloom (20%), Staraptor (10%), Toucannon (10%), Tauros (10%), Miltank (10%)
+Encounters (Levels 95-98): Alolan Raticate (20%), Pelipper (20%), Gloom (20%), Staraptor (10%), Toucannon (10%), Tauros (10%), Miltank (10%)
 Additional SOS encounters: (None)
 
 Table 19 [grass] (Day):
@@ -3188,7 +3188,7 @@ Encounters (Levels 95-98): Gumshoos (20%), Staraptor (20%), Weepinbell (20%), Ag
 Additional SOS encounters: (None)
 
 Table 19 [grass] (Night):
-Encounters (Levels 95-98): Raticate (Forme 1) (20%), Staraptor (20%), Gloom (20%), Aggron (10%), Toucannon (10%), Tauros (10%), Miltank (10%)
+Encounters (Levels 95-98): Alolan Raticate (20%), Staraptor (20%), Gloom (20%), Aggron (10%), Toucannon (10%), Tauros (10%), Miltank (10%)
 Additional SOS encounters: (None)
 
 Table 20 [grass] (Day):
@@ -3229,11 +3229,11 @@ Additional SOS encounters: (None)
 Map: 269 - Poni Coast
 Tables: 1
 Table 1 [grass] (Day):
-Encounters (Levels 95-98): Dugtrio (Forme 1) (50%), Excadrill (50%)
+Encounters (Levels 95-98): Alolan Dugtrio (50%), Excadrill (50%)
 Additional SOS encounters: (None)
 
 Table 1 [grass] (Night):
-Encounters (Levels 95-98): Dugtrio (Forme 1) (50%), Excadrill (50%)
+Encounters (Levels 95-98): Alolan Dugtrio (50%), Excadrill (50%)
 Additional SOS encounters: (None)
 
 ==========
@@ -3303,11 +3303,11 @@ Additional SOS encounters: (None)
 Map: 273 - Poni Meadow
 Tables: 6
 Table 1 [grass] (Day):
-Encounters (Levels 95-98): Ribombee (20%), Leavanny (20%), Floette (Forme 3) (20%), Oricorio (Forme 3) (20%), Mismagius (10%), Bellossom (10%)
+Encounters (Levels 95-98): Ribombee (20%), Leavanny (20%), Floette (20%), Oricorio (20%), Mismagius (10%), Bellossom (10%)
 Additional SOS encounters: (None)
 
 Table 1 [grass] (Night):
-Encounters (Levels 95-98): Ribombee (20%), Leavanny (20%), Floette (Forme 3) (20%), Oricorio (Forme 3) (20%), Mismagius (10%), Bellossom (10%)
+Encounters (Levels 95-98): Ribombee (20%), Leavanny (20%), Floette (20%), Oricorio (20%), Mismagius (10%), Bellossom (10%)
 Additional SOS encounters: (None)
 
 Table 2 [grass] (Day):
@@ -3327,27 +3327,27 @@ Encounters (Levels 97-100): Dragonair (40%), Gyarados (30%), Whiscash (30%)
 Additional SOS encounters: (None)
 
 Table 4 [grass] (Day):
-Encounters (Levels 95-98): Ribombee (20%), Leavanny (20%), Floette (Forme 3) (20%), Oricorio (Forme 3) (20%), Mismagius (10%), Bellossom (10%)
+Encounters (Levels 95-98): Ribombee (20%), Leavanny (20%), Floette (20%), Oricorio (20%), Mismagius (10%), Bellossom (10%)
 Additional SOS encounters: (None)
 
 Table 4 [grass] (Night):
-Encounters (Levels 95-98): Ribombee (20%), Leavanny (20%), Floette (Forme 3) (20%), Oricorio (Forme 3) (20%), Mismagius (10%), Bellossom (10%)
+Encounters (Levels 95-98): Ribombee (20%), Leavanny (20%), Floette (20%), Oricorio (20%), Mismagius (10%), Bellossom (10%)
 Additional SOS encounters: (None)
 
 Table 5 [grass] (Day):
-Encounters (Levels 95-98): Ribombee (20%), Leavanny (20%), Floette (Forme 3) (20%), Oricorio (Forme 3) (20%), Mismagius (10%), Bellossom (10%)
+Encounters (Levels 95-98): Ribombee (20%), Leavanny (20%), Floette (20%), Oricorio (20%), Mismagius (10%), Bellossom (10%)
 Additional SOS encounters: (None)
 
 Table 5 [grass] (Night):
-Encounters (Levels 95-98): Ribombee (20%), Leavanny (20%), Floette (Forme 3) (20%), Oricorio (Forme 3) (20%), Mismagius (10%), Bellossom (10%)
+Encounters (Levels 95-98): Ribombee (20%), Leavanny (20%), Floette (20%), Oricorio (20%), Mismagius (10%), Bellossom (10%)
 Additional SOS encounters: (None)
 
 Table 6 [grass] (Day):
-Encounters (Levels 95-98): Ribombee (20%), Leavanny (20%), Floette (Forme 3) (20%), Oricorio (Forme 3) (20%), Mismagius (10%), Bellossom (10%)
+Encounters (Levels 95-98): Ribombee (20%), Leavanny (20%), Floette (20%), Oricorio (20%), Mismagius (10%), Bellossom (10%)
 Additional SOS encounters: (None)
 
 Table 6 [grass] (Night):
-Encounters (Levels 95-98): Ribombee (20%), Leavanny (20%), Floette (Forme 3) (20%), Oricorio (Forme 3) (20%), Mismagius (10%), Bellossom (10%)
+Encounters (Levels 95-98): Ribombee (20%), Leavanny (20%), Floette (20%), Oricorio (20%), Mismagius (10%), Bellossom (10%)
 Additional SOS encounters: (None)
 
 ==========
@@ -3360,7 +3360,7 @@ Encounters (Levels 80-83): Machoke (20%), Lycanroc Midday (20%), Mienshao (10%),
 Additional SOS encounters: (None)
 
 Table 1 [grass] (Night):
-Encounters (Levels 80-83): Machoke (20%), Lycanroc Midday (Forme 1) (20%), Mienshao (10%), Skarmory (10%), Boldore (10%), Dartrix (10%), Carbink (10%), Hakamo-o (10%)
+Encounters (Levels 80-83): Machoke (20%), Lycanroc Midday (20%), Mienshao (10%), Skarmory (10%), Boldore (10%), Dartrix (10%), Carbink (10%), Hakamo-o (10%)
 Additional SOS encounters: (None)
 
 Table 2 [grass] (Day):
@@ -3368,7 +3368,7 @@ Encounters (Levels 80-83): Machoke (20%), Lycanroc Midday (20%), Mienshao (10%),
 Additional SOS encounters: (None)
 
 Table 2 [grass] (Night):
-Encounters (Levels 80-83): Machoke (20%), Lycanroc Midday (Forme 1) (20%), Mienshao (10%), Skarmory (10%), Boldore (10%), Dartrix (10%), Carbink (10%), Hakamo-o (10%)
+Encounters (Levels 80-83): Machoke (20%), Lycanroc Midday (20%), Mienshao (10%), Skarmory (10%), Boldore (10%), Dartrix (10%), Carbink (10%), Hakamo-o (10%)
 Additional SOS encounters: (None)
 
 Table 3 [grass] (Day):
@@ -3376,7 +3376,7 @@ Encounters (Levels 80-83): Machoke (20%), Lycanroc Midday (20%), Mienshao (10%),
 Additional SOS encounters: (None)
 
 Table 3 [grass] (Night):
-Encounters (Levels 80-83): Machoke (20%), Lycanroc Midday (Forme 1) (20%), Mienshao (10%), Skarmory (10%), Boldore (10%), Dartrix (10%), Carbink (10%), Hakamo-o (10%)
+Encounters (Levels 80-83): Machoke (20%), Lycanroc Midday (20%), Mienshao (10%), Skarmory (10%), Boldore (10%), Dartrix (10%), Carbink (10%), Hakamo-o (10%)
 Additional SOS encounters: (None)
 
 Table 4 [grass] (Day):
@@ -3384,7 +3384,7 @@ Encounters (Levels 80-83): Machoke (20%), Lycanroc Midday (20%), Mienshao (10%),
 Additional SOS encounters: (None)
 
 Table 4 [grass] (Night):
-Encounters (Levels 80-83): Machoke (20%), Lycanroc Midday (Forme 1) (20%), Mienshao (10%), Skarmory (10%), Boldore (10%), Dartrix (10%), Carbink (10%), Hakamo-o (10%)
+Encounters (Levels 80-83): Machoke (20%), Lycanroc Midday (20%), Mienshao (10%), Skarmory (10%), Boldore (10%), Dartrix (10%), Carbink (10%), Hakamo-o (10%)
 Additional SOS encounters: (None)
 
 ==========
@@ -3397,7 +3397,7 @@ Encounters (Levels 80-83): Machoke (20%), Lycanroc Midday (20%), Mienshao (10%),
 Additional SOS encounters: (None)
 
 Table 1 [grass] (Night):
-Encounters (Levels 80-83): Machoke (20%), Lycanroc Midday (Forme 1) (20%), Mienshao (10%), Skarmory (10%), Boldore (10%), Torracat (10%), Carbink (10%), Hakamo-o (10%)
+Encounters (Levels 80-83): Machoke (20%), Lycanroc Midday (20%), Mienshao (10%), Skarmory (10%), Boldore (10%), Torracat (10%), Carbink (10%), Hakamo-o (10%)
 Additional SOS encounters: (None)
 
 Table 2 [grass] (Day):
@@ -3405,7 +3405,7 @@ Encounters (Levels 80-83): Machoke (20%), Lycanroc Midday (20%), Mienshao (10%),
 Additional SOS encounters: (None)
 
 Table 2 [grass] (Night):
-Encounters (Levels 80-83): Machoke (20%), Lycanroc Midday (Forme 1) (20%), Mienshao (10%), Skarmory (10%), Boldore (10%), Torracat (10%), Carbink (10%), Hakamo-o (10%)
+Encounters (Levels 80-83): Machoke (20%), Lycanroc Midday (20%), Mienshao (10%), Skarmory (10%), Boldore (10%), Torracat (10%), Carbink (10%), Hakamo-o (10%)
 Additional SOS encounters: (None)
 
 ==========
@@ -3414,11 +3414,11 @@ Additional SOS encounters: (None)
 Map: 276 - Vast Poni Canyon
 Tables: 1
 Table 1 [grass] (Day):
-Encounters (Levels 80-83): Golbat (20%), Dugtrio (Forme 1) (20%), Mawile (20%), Boldore (20%), Carbink (20%)
+Encounters (Levels 80-83): Golbat (20%), Alolan Dugtrio (20%), Mawile (20%), Boldore (20%), Carbink (20%)
 Additional SOS encounters: (None)
 
 Table 1 [grass] (Night):
-Encounters (Levels 80-83): Golbat (20%), Dugtrio (Forme 1) (20%), Mawile (20%), Boldore (20%), Carbink (20%)
+Encounters (Levels 80-83): Golbat (20%), Alolan Dugtrio (20%), Mawile (20%), Boldore (20%), Carbink (20%)
 Additional SOS encounters: (None)
 
 ==========
@@ -3427,11 +3427,11 @@ Additional SOS encounters: (None)
 Map: 277 - Vast Poni Canyon
 Tables: 1
 Table 1 [grass] (Day):
-Encounters (Levels 80-83): Golbat (20%), Dugtrio (Forme 1) (20%), Mawile (20%), Boldore (20%), Carbink (20%)
+Encounters (Levels 80-83): Golbat (20%), Alolan Dugtrio (20%), Mawile (20%), Boldore (20%), Carbink (20%)
 Additional SOS encounters: (None)
 
 Table 1 [grass] (Night):
-Encounters (Levels 80-83): Golbat (20%), Dugtrio (Forme 1) (20%), Mawile (20%), Boldore (20%), Carbink (20%)
+Encounters (Levels 80-83): Golbat (20%), Alolan Dugtrio (20%), Mawile (20%), Boldore (20%), Carbink (20%)
 Additional SOS encounters: (None)
 
 ==========
@@ -3440,59 +3440,59 @@ Additional SOS encounters: (None)
 Map: 278 - Vast Poni Canyon
 Tables: 7
 Table 1 [surf] (Day):
-Encounters (Levels 80-83): Floatzel (20%), Golduck (20%), Azumarill (20%), Golbat (20%), Basculin (10%), Basculin (Forme 1) (10%)
+Encounters (Levels 80-83): Floatzel (20%), Golduck (20%), Basculin (20%), Azumarill (20%), Golbat (20%)
 Additional SOS encounters: (None)
 
 Table 1 [surf] (Night):
-Encounters (Levels 80-83): Floatzel (20%), Golduck (20%), Azumarill (20%), Golbat (20%), Basculin (10%), Basculin (Forme 1) (10%)
+Encounters (Levels 80-83): Floatzel (20%), Golduck (20%), Basculin (20%), Azumarill (20%), Golbat (20%)
 Additional SOS encounters: (None)
 
 Table 2 [grass] (Day):
-Encounters (Levels 80-83): Dugtrio (Forme 1) (40%), Excadrill (30%), Durant (30%)
+Encounters (Levels 80-83): Alolan Dugtrio (40%), Excadrill (30%), Durant (30%)
 Additional SOS encounters: (None)
 
 Table 2 [grass] (Night):
-Encounters (Levels 80-83): Dugtrio (Forme 1) (40%), Excadrill (30%), Durant (30%)
+Encounters (Levels 80-83): Alolan Dugtrio (40%), Excadrill (30%), Durant (30%)
 Additional SOS encounters: (None)
 
 Table 3 [grass] (Day):
-Encounters (Levels 80-83): Dugtrio (Forme 1) (40%), Excadrill (30%), Durant (30%)
+Encounters (Levels 80-83): Alolan Dugtrio (40%), Excadrill (30%), Durant (30%)
 Additional SOS encounters: (None)
 
 Table 3 [grass] (Night):
-Encounters (Levels 80-83): Dugtrio (Forme 1) (40%), Excadrill (30%), Durant (30%)
+Encounters (Levels 80-83): Alolan Dugtrio (40%), Excadrill (30%), Durant (30%)
 Additional SOS encounters: (None)
 
 Table 4 [superRod] (Day):
-Encounters (Levels 80-85): Crawdaunt (30%), Whiscash (30%), Dragonair (20%), Basculin (Forme 1) (20%)
+Encounters (Levels 80-85): Crawdaunt (30%), Whiscash (30%), Dragonair (20%), Basculin (20%)
 Additional SOS encounters: (None)
 
 Table 4 [superRod] (Night):
-Encounters (Levels 80-85): Crawdaunt (30%), Whiscash (30%), Dragonair (20%), Basculin (Forme 1) (20%)
+Encounters (Levels 80-85): Crawdaunt (30%), Whiscash (30%), Dragonair (20%), Basculin (20%)
 Additional SOS encounters: (None)
 
 Table 5 [superRod] (Day):
-Encounters (Levels 80-85): Crawdaunt (30%), Whiscash (30%), Dragonair (20%), Basculin (Forme 1) (20%)
+Encounters (Levels 80-85): Crawdaunt (30%), Whiscash (30%), Dragonair (20%), Basculin (20%)
 Additional SOS encounters: (None)
 
 Table 5 [superRod] (Night):
-Encounters (Levels 80-85): Crawdaunt (30%), Whiscash (30%), Dragonair (20%), Basculin (Forme 1) (20%)
+Encounters (Levels 80-85): Crawdaunt (30%), Whiscash (30%), Dragonair (20%), Basculin (20%)
 Additional SOS encounters: (None)
 
 Table 6 [superRod] (Day):
-Encounters (Levels 83-86): Dragonair (40%), Crawdaunt (20%), Whiscash (20%), Basculin (Forme 1) (20%)
+Encounters (Levels 83-86): Dragonair (40%), Crawdaunt (20%), Whiscash (20%), Basculin (20%)
 Additional SOS encounters: (None)
 
 Table 6 [superRod] (Night):
-Encounters (Levels 83-86): Dragonair (40%), Crawdaunt (20%), Whiscash (20%), Basculin (Forme 1) (20%)
+Encounters (Levels 83-86): Dragonair (40%), Crawdaunt (20%), Whiscash (20%), Basculin (20%)
 Additional SOS encounters: (None)
 
 Table 7 [grass] (Day):
-Encounters (Levels 80-83): Zweilous (20%), Carbink (20%), Golbat (15%), Dugtrio (Forme 1) (15%), Mawile (15%), Boldore (15%)
+Encounters (Levels 80-83): Zweilous (20%), Carbink (20%), Golbat (15%), Alolan Dugtrio (15%), Mawile (15%), Boldore (15%)
 Additional SOS encounters: (None)
 
 Table 7 [grass] (Night):
-Encounters (Levels 80-83): Zweilous (20%), Carbink (20%), Golbat (15%), Dugtrio (Forme 1) (15%), Mawile (15%), Boldore (15%)
+Encounters (Levels 80-83): Zweilous (20%), Carbink (20%), Golbat (15%), Alolan Dugtrio (15%), Mawile (15%), Boldore (15%)
 Additional SOS encounters: (None)
 
 ==========
@@ -3501,11 +3501,11 @@ Additional SOS encounters: (None)
 Map: 287 - Resolution Cave
 Tables: 1
 Table 1 [grass] (Day):
-Encounters (Levels 95-98): Crobat (40%), Dugtrio (Forme 1) (30%), Noivern (15%), Druddigon (15%)
+Encounters (Levels 95-98): Crobat (40%), Alolan Dugtrio (30%), Noivern (15%), Druddigon (15%)
 Additional SOS encounters: (None)
 
 Table 1 [grass] (Night):
-Encounters (Levels 95-98): Crobat (40%), Dugtrio (Forme 1) (30%), Noivern (15%), Druddigon (15%)
+Encounters (Levels 95-98): Crobat (40%), Alolan Dugtrio (30%), Noivern (15%), Druddigon (15%)
 Additional SOS encounters: (None)
 
 ==========
@@ -3514,11 +3514,11 @@ Additional SOS encounters: (None)
 Map: 288 - Resolution Cave
 Tables: 1
 Table 1 [grass] (Day):
-Encounters (Levels 95-98): Unown (10%), Unown (Forme 1) (10%), Unown (Forme 2) (10%), Unown (Forme 3) (10%), Unown (Forme 4) (10%), Unown (Forme 5) (10%), Unown (Forme 6) (10%), Unown (Forme 7) (10%), Unown (Forme 27) (10%), Unown (Forme 26) (10%)
+Encounters (Levels 95-98): Unown (100%)
 Additional SOS encounters: (None)
 
 Table 1 [grass] (Night):
-Encounters (Levels 95-98): Unown (10%), Unown (Forme 1) (10%), Unown (Forme 2) (10%), Unown (Forme 3) (10%), Unown (Forme 4) (10%), Unown (Forme 5) (10%), Unown (Forme 6) (10%), Unown (Forme 7) (10%), Unown (Forme 27) (10%), Unown (Forme 26) (10%)
+Encounters (Levels 95-98): Unown (100%)
 Additional SOS encounters: (None)
 
 ==========
@@ -3527,19 +3527,19 @@ Additional SOS encounters: (None)
 Map: 290 - Exeggutor Island
 Tables: 2
 Table 1 [surf] (Day):
-Encounters (Levels 78-81): Exeggutor (Forme 1) (20%), Tropius (20%), Pelipper (15%), Exeggcute (15%), Pinsir (10%), Gastrodon (Forme 1) (10%), Heracross (10%)
+Encounters (Levels 78-81): Alolan Exeggutor (20%), Tropius (20%), Pelipper (15%), Exeggcute (15%), Pinsir (10%), Gastrodon (10%), Heracross (10%)
 Additional SOS encounters: (None)
 
 Table 1 [surf] (Night):
-Encounters (Levels 78-81): Exeggutor (Forme 1) (20%), Tropius (20%), Pelipper (15%), Exeggcute (15%), Pinsir (10%), Gastrodon (Forme 1) (10%), Heracross (10%)
+Encounters (Levels 78-81): Alolan Exeggutor (20%), Tropius (20%), Pelipper (15%), Exeggcute (15%), Pinsir (10%), Gastrodon (10%), Heracross (10%)
 Additional SOS encounters: (None)
 
 Table 2 [surf] (Day):
-Encounters (Levels 78-81): Exeggutor (Forme 1) (20%), Tropius (20%), Pelipper (15%), Exeggcute (15%), Pinsir (10%), Gastrodon (Forme 1) (10%), Heracross (10%)
+Encounters (Levels 78-81): Alolan Exeggutor (20%), Tropius (20%), Pelipper (15%), Exeggcute (15%), Pinsir (10%), Gastrodon (10%), Heracross (10%)
 Additional SOS encounters: (None)
 
 Table 2 [surf] (Night):
-Encounters (Levels 78-81): Exeggutor (Forme 1) (20%), Tropius (20%), Pelipper (15%), Exeggcute (15%), Pinsir (10%), Gastrodon (Forme 1) (10%), Heracross (10%)
+Encounters (Levels 78-81): Alolan Exeggutor (20%), Tropius (20%), Pelipper (15%), Exeggcute (15%), Pinsir (10%), Gastrodon (10%), Heracross (10%)
 Additional SOS encounters: (None)
 
 ==========
