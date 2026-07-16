@@ -1129,7 +1129,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1784169994386"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1784179565893"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -4187,8 +4187,12 @@ function spriteUrl(idOrName, variant) {
     // (Gen 5+ like Frillish/Jellicent). Sprite only needs the dex id; stats
     // still come from backfill. Exact-slug only — form slugs (basculin-*,
     // regional forms) fall through to the backfilled apiId path.
-    if (!id && typeof NUZ_DATA !== 'undefined' && NUZ_DATA.dexIdBySlug && typeof speciesSlug === 'function') {
-      id = NUZ_DATA.dexIdBySlug[speciesSlug(idOrName)] || null;
+    if (!id && typeof NUZ_DATA !== 'undefined' && typeof speciesSlug === 'function') {
+      const s = speciesSlug(idOrName);
+      // dexIdBySlug covers base species; formIdBySlug covers the self-hosted regional
+      // forms (diglett-alola → 10105) so "Alolan Diglett" resolves without backfill.
+      id = (NUZ_DATA.dexIdBySlug && NUZ_DATA.dexIdBySlug[s])
+        || (NUZ_DATA.formIdBySlug && NUZ_DATA.formIdBySlug[s]) || null;
     }
   }
   if (!id) return '';
@@ -12051,7 +12055,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = 'v59';
+const APP_BUILD = 'v60';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
