@@ -16664,7 +16664,7 @@ setTimeout(hideBootSplash, 12000);
    ═════════════════════════════════════════════════════════════════════════ */
 const NUZ_LIVE = (function () {
   const subs = new Map();
-  let state = { source:'manual', game:null, mapId:null, route:null, party:[], encounter:null, allies:[], ts:0 };
+  let state = { source:'manual', game:null, mapId:null, route:null, party:[], encounter:null, allies:[], alliesRaw:[], ts:0 };
 
   function on(evt, fn) {
     if (!subs.has(evt)) subs.set(evt, new Set());
@@ -16710,6 +16710,7 @@ const NUZ_LIVE = (function () {
       party:     next.party     !== undefined ? next.party     : prev.party,
       encounter: next.encounter !== undefined ? next.encounter : prev.encounter,
       allies:    next.allies    !== undefined ? next.allies    : prev.allies,
+      alliesRaw: next.alliesRaw !== undefined ? next.alliesRaw : prev.alliesRaw,
       ts:        next.ts || Date.now(),
       route:     prev.route
     };
@@ -17025,6 +17026,16 @@ function pmRender() {
         const hit = bparty.find(x => st.allies.some(a => _normLocName(a) === _normLocName(x.p.species)));
         if (hit) myIdx = hit.i;
       }
+      // Nickname match against the raw bottom-half OCR text (nuzlocke mons
+      // show their NICKNAME in-game, not their species). Both sides fold the
+      // pixel-font confusables the same way the app's canon() does.
+      if (myIdx === null && (st.alliesRaw || []).length) {
+        const hit = bparty.find(x => {
+          const nick = pmCanon(x.p.nickname || '');
+          return nick.length >= 3 && st.alliesRaw.some(raw => pmCanon(raw).includes(nick));
+        });
+        if (hit) myIdx = hit.i;
+      }
       if (myIdx === null && bparty.length) myIdx = bparty[0].i;
       const mine = bparty.find(x => x.i === myIdx);
       let myMovesHtml = '';
@@ -17188,6 +17199,12 @@ NUZ_LIVE.on('route-changed', ({ route }) => { if (route) { try { setEncLocation(
 let _pmViewBeforeBattle = null;
 let pmBattleFocus = 'main';   // doubles: which enemy the battle panel details
 let pmMyMon = null;           // team index of YOUR mon in the moves readout (null = auto)
+// Same confusables fold as NuzBridge's OcrParser.canon() — keep the two maps
+// in sync so nickname matching survives the GBA pixel font (EMBER↔EM8ER etc.).
+function pmCanon(s) {
+  const MAP = { V:'U', '0':'O', '1':'I', '2':'Z', '3':'E', '4':'A', '5':'S', '6':'G', '8':'B', '9':'G' };
+  return String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, '').replace(/[V012345689]/g, c => MAP[c]);
+}
 NUZ_LIVE.on('encounter-started', () => {
   pmBattleFocus = 'main';
   pmMyMon = null;
