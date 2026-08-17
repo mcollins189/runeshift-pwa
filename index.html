@@ -16781,7 +16781,7 @@ const NUZ_BRIDGE = (function () {
     try { ws = new WebSocket(url()); }
     catch (e) { console.warn('[bridge] bad url', e); setStatus('error'); return; }
     setStatus('connecting');
-    ws.onopen = () => { backoff = 1000; setStatus('connected'); };
+    ws.onopen = () => { backoff = 1000; setStatus('connected'); sendConfig(true); };
     ws.onmessage = ev => {
       let msg; try { msg = JSON.parse(ev.data); } catch (e) { return; }
       if (!msg || (msg.type && msg.type !== 'state' && msg.type !== 'hello')) return;
@@ -16809,7 +16809,26 @@ const NUZ_BRIDGE = (function () {
   }
   function setUrl(u) { localStorage.setItem(LS_URL, u); if (enabled()) { stop(); start(); } }
 
-  return { start, stop, setUrl, connect, url, enabled, status: () => status };
+  // ── Game auto-config ──────────────────────────────────────────────────────
+  // The tracker knows the selected game AND its location list, so it pushes
+  // both to the companion on connect and on every game switch — the bridge
+  // reconfigures itself for any of the tracker's games with no app-side setup.
+  let _lastCfgGame = null;
+  function sendConfig(force) {
+    if (!ws || ws.readyState !== 1) return;
+    const g = (typeof curGame === 'function') ? curGame() : null;
+    if (!g || (!force && g === _lastCfgGame)) return;
+    try {
+      const locations = playLocationList();
+      const pretty = s => s.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ');
+      const species = Object.keys(window.NUZ_DATA?.dexIdBySlug || {}).map(pretty);
+      if (!locations.length || !species.length) return;
+      ws.send(JSON.stringify({ type: 'config', game: g, locations, species }));
+      _lastCfgGame = g;
+    } catch (e) { console.warn('[bridge] sendConfig', e); }
+  }
+
+  return { start, stop, setUrl, connect, url, enabled, status: () => status, syncGame: () => sendConfig(false) };
 })();
 window.NUZ_BRIDGE = NUZ_BRIDGE;
 
@@ -17190,6 +17209,9 @@ NUZ_LIVE.on('state', () => { if (pmIsOpen()) pmRender(); });
   render = function () {
     orig.apply(this, arguments);
     if (pmIsOpen()) { try { pmRender(); } catch (e) { console.error('[play] render hook', e); } }
+    // Game switches all funnel through render() too — keep the companion's
+    // profile in sync (no-op unless connected and the game actually changed).
+    try { NUZ_BRIDGE.syncGame(); } catch (e) {}
   };
 })();
 NUZ_LIVE.on('route-changed', ({ route }) => { if (route) { try { setEncLocation(route); } catch (e) {} } });
