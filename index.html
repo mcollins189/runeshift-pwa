@@ -16983,9 +16983,10 @@ function pmRender() {
     let banner = '';
     if (st.encounter && st.encounter.species) {
       const e = st.encounter;
+      const names = e.partner ? `${e.species} & ${e.partner.species}` : `${e.species}${e.level ? ` Lv ${e.level}` : ''}`;
       banner = `<div class="pm-enc-banner" onclick="pmSetView('battle')">
         <span class="pm-enc-label">WILD</span>
-        <span class="pm-enc-name">${e.species}${e.level ? ` Lv ${e.level}` : ''}</span>
+        <span class="pm-enc-name">${names}</span>
         <span class="pm-enc-cta">battle info ›</span>
       </div>`;
     }
@@ -16999,22 +17000,32 @@ function pmRender() {
     if (!e || !e.species) {
       body = `<div class="pm-empty">No active encounter.<br><span style="font-size:11px">This panel opens automatically when a wild battle starts.</span></div>`;
     } else {
-      const safeSp = String(e.species).replace(/'/g, "\\'");
+      // Doubles: the bridge may report a second enemy in encounter.partner.
+      // Chips switch which one's details (and log actions) are in focus.
+      const focus = (pmBattleFocus === 'partner' && e.partner && e.partner.species) ? e.partner : e;
+      const safeSp = String(focus.species).replace(/'/g, "\\'");
       const safeLoc = (st.route || '').replace(/'/g, "\\'");
-      if (typeof ensurePokemonBackfilled === 'function' && !pokeInfo(e.species)) ensurePokemonBackfilled(e.species);
+      if (typeof ensurePokemonBackfilled === 'function' && !pokeInfo(focus.species)) ensurePokemonBackfilled(focus.species);
+      const chips = (e.partner && e.partner.species)
+        ? `<div class="pm-battle-chips">
+             <button class="pm-chip${focus === e ? ' active' : ''}" onclick="pmBattleFocus='main';pmRender()">${e.species}${e.level ? ` Lv${e.level}` : ''}</button>
+             <button class="pm-chip${focus === e.partner ? ' active' : ''}" onclick="pmBattleFocus='partner';pmRender()">${e.partner.species}${e.partner.level ? ` Lv${e.partner.level}` : ''}</button>
+           </div>`
+        : '';
       body = `<div class="pm-battle">
         <div class="pm-battle-hd">
-          <span class="pm-enc-label">WILD</span>
-          <span class="pm-enc-name">${e.species}${e.level ? ` Lv ${e.level}` : ''}</span>
+          <span class="pm-enc-label">WILD${e.partner ? ' ×2' : ''}</span>
+          <span class="pm-enc-name">${focus.species}${focus.level ? ` Lv ${focus.level}` : ''}</span>
           <span class="pm-battle-loc">${st.route || ''}</span>
         </div>
+        ${chips}
         <div class="pm-battle-actions">
           <button class="pm-act ok" onclick="encActionCaught('${safeLoc}', '${safeSp}')">✓ Caught</button>
           <button class="pm-act" onclick="encActionCaught('${safeLoc}', '${safeSp}', true)">✨</button>
           <button class="pm-act" onclick="encActionLog('${safeLoc}', '${safeSp}', 'skipped')">⊘ Skip</button>
           <button class="pm-act bad" onclick="encActionLog('${safeLoc}', '${safeSp}', 'failed')">✗ Missed</button>
         </div>
-        <div class="pm-battle-body">${speciesView(e.species)}</div>
+        <div class="pm-battle-body">${speciesView(focus.species)}</div>
       </div>`;
     }
   } else if (pmView === 'team') {
@@ -17128,7 +17139,9 @@ NUZ_LIVE.on('route-changed', ({ route }) => { if (route) { try { setEncLocation(
 // battle ends it steps back to wherever the user was. Only auto-navigates in
 // Play mode, and never away from a view the user switched to mid-battle.
 let _pmViewBeforeBattle = null;
+let pmBattleFocus = 'main';   // doubles: which enemy the battle panel details
 NUZ_LIVE.on('encounter-started', () => {
+  pmBattleFocus = 'main';
   if (!pmIsOpen()) return;
   if (pmView !== 'battle') { _pmViewBeforeBattle = pmView; pmView = 'battle'; }
   pmPickerOpen = false;
@@ -17236,6 +17249,11 @@ if (typeof onBackfill === 'function') onBackfill(() => { if (pmIsOpen()) pmRende
   .pm-battle-hd { display:flex; align-items:center; gap:7px; padding:8px 10px; margin-bottom:6px;
     background:var(--accent-bg); border:1px solid var(--accent); border-radius:var(--radius-sm); }
   .pm-battle-loc { margin-left:auto; font-size:10px; color:var(--text2); white-space:nowrap; }
+  .pm-battle-chips { display:flex; gap:5px; margin-bottom:6px; }
+  .pm-chip { flex:1 1 0; padding:8px 6px; background:var(--bg3); border:1px solid var(--border);
+    color:var(--text2); border-radius:var(--radius-sm); font-size:12px; font-weight:700;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .pm-chip.active { color:var(--accent); border-color:var(--accent); background:var(--accent-bg); }
   .pm-battle-actions { display:flex; gap:5px; margin-bottom:8px; }
   .pm-act { flex:1 1 0; padding:10px 4px; background:var(--bg3); border:1px solid var(--border2);
     color:var(--text); border-radius:var(--radius-sm); font-size:12px; font-weight:700; white-space:nowrap; }
