@@ -16612,6 +16612,585 @@ window.addEventListener('load', () => { if (!_nuzBooted && typeof NUZ_DATA !== '
 // Safety net: never let the splash trap the UI if something hangs during boot.
 setTimeout(hideBootSplash, 12000);
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   NUZ_LIVE — live game-state ingest + Play mode (dual-screen second display)
+   ═══════════════════════════════════════════════════════════════════════════
+
+   WHY THIS EXISTS
+   The AYN Thor runs the game on the top screen and this PWA on the bottom one
+   (1240×1080 landscape ≈ 420×360 CSS px — see the max-height:640px block at
+   index.html:1062 and the tap-tolerance note at index.html:7223). The full app
+   chrome (header + 8 tabs) eats most of that height, so Play mode is a purpose-
+   built second-screen surface: one route's encounters, your party, the next
+   boss, the log — nothing else.
+
+   THE IMPORTANT PART IS THE SEAM, NOT THE UI.
+   Everything Play mode draws is a render of ONE state object, fed through ONE
+   function: NUZ_LIVE.apply(). Today the only producer is your taps (source
+   'manual'). Later a companion Android app becomes a second producer — reading
+   RetroArch's memory over UDP, or OCR'ing the top screen — and pushes the SAME
+   shape over ws://127.0.0.1. No Play-mode code changes when that lands; the
+   companion is written against the protocol below, independently.
+
+   Verified 2026-08-17: ws://127.0.0.1 and ws://localhost ARE reachable from the
+   https://poke.runeshift.xyz origin (localhost is a potentially-trustworthy
+   origin, so mixed-content blocking doesn't apply — ws://example.com throws
+   SecurityError, ws://127.0.0.1 reaches CONNECTING). That's why the companion
+   app does NOT need to host the tracker: it's a data source, nothing more.
+
+   ── THE PROTOCOL (stable contract — the companion app targets this) ─────────
+   Producers send partial states; unspecified keys keep their previous value.
+
+     {
+       type:    'state',                  // or 'hello' on connect
+       source:  'manual'|'memory'|'ocr',  // who produced this
+       game:    'unbound',                // GAMES key (advisory; run wins)
+       mapId:   42,                       // emulator map id, if known
+       route:   'Route 5',                // location NAME; fuzzy-matched below
+       party:   [ { species:'Cyndaquil', level:14, hp:31, maxHp:38,
+                    status:'', nickname:'Ember' }, ... ],
+       encounter: { species:'Zigzagoon', level:6, kind:'wild' } | null,
+       ts:      1755400000000
+     }
+
+   Emitted events (subscribe with NUZ_LIVE.on):
+     'state'             every apply
+     'route-changed'     {route, prev}
+     'encounter-started' {species, level, kind}
+     'encounter-ended'   {species}          (previous encounter cleared)
+     'party-fainted'     {slot, species, level}   hp>0 → hp===0
+     'party-levelup'     {slot, species, from, to}
+     'source-changed'    {source, prev}
+   ═════════════════════════════════════════════════════════════════════════ */
+const NUZ_LIVE = (function () {
+  const subs = new Map();
+  let state = { source:'manual', game:null, mapId:null, route:null, party:[], encounter:null, ts:0 };
+
+  function on(evt, fn) {
+    if (!subs.has(evt)) subs.set(evt, new Set());
+    subs.get(evt).add(fn);
+    return () => subs.get(evt).delete(fn);
+  }
+  function emit(evt, payload) {
+    const set = subs.get(evt);
+    if (!set) return;
+    for (const fn of Array.from(set)) {
+      try { fn(payload, state); } catch (e) { console.error('[NUZ_LIVE]', evt, e); }
+    }
+  }
+
+  // Map a producer-supplied location string (or mapId) onto a location name the
+  // tracker actually knows for the current game. Producers can't know our exact
+  // spelling, so match progressively: exact → normalized (reuses _normLocName,
+  // which already strips apostrophe/case/whitespace differences across our own
+  // data files) → prefix. Returns null when nothing plausible matches, which is
+  // treated as "don't change the route" rather than "clear it".
+  function resolveLocation(raw) {
+    if (!raw) return null;
+    const known = playLocationList();
+    if (!known.length) return raw;
+    if (known.includes(raw)) return raw;
+    const target = _normLocName(raw);
+    let hit = known.find(n => _normLocName(n) === target);
+    if (hit) return hit;
+    hit = known.find(n => _normLocName(n).startsWith(target) || target.startsWith(_normLocName(n)));
+    return hit || null;
+  }
+
+  // The single ingest point. Accepts a PARTIAL state; diffs it against the
+  // previous one and emits semantic events. Every producer (taps, memory
+  // bridge, OCR) goes through here, so behaviour can never drift between them.
+  function apply(next) {
+    if (!next || typeof next !== 'object') return state;
+    const prev = state;
+    const merged = {
+      source:    next.source    !== undefined ? next.source    : prev.source,
+      game:      next.game      !== undefined ? next.game      : prev.game,
+      mapId:     next.mapId     !== undefined ? next.mapId     : prev.mapId,
+      party:     next.party     !== undefined ? next.party     : prev.party,
+      encounter: next.encounter !== undefined ? next.encounter : prev.encounter,
+      ts:        next.ts || Date.now(),
+      route:     prev.route
+    };
+    // Route: resolve against the current game's known locations. An unresolvable
+    // name leaves the route untouched (a bad OCR read shouldn't blank the panel).
+    if (next.route !== undefined) {
+      const resolved = next.route === null ? null : resolveLocation(next.route);
+      if (resolved !== null || next.route === null) merged.route = resolved;
+    }
+    state = merged;
+
+    if (merged.source !== prev.source) emit('source-changed', { source: merged.source, prev: prev.source });
+    if (merged.route !== prev.route)   emit('route-changed',   { route: merged.route, prev: prev.route });
+
+    const pe = prev.encounter, ne = merged.encounter;
+    const sp = e => (e && e.species) || null;
+    if (sp(ne) !== sp(pe)) {
+      if (sp(pe)) emit('encounter-ended', { species: sp(pe) });
+      if (sp(ne)) emit('encounter-started', { species: ne.species, level: ne.level, kind: ne.kind || 'wild' });
+    }
+
+    // Party diffing is by SLOT, matching how the games lay party memory out.
+    // A slot whose species changed is a swap, not a faint — only an hp>0→hp===0
+    // transition on the same species counts as a death.
+    if (next.party !== undefined) {
+      const before = prev.party || [], after = merged.party || [];
+      for (let i = 0; i < after.length; i++) {
+        const a = after[i], b = before[i];
+        if (!a || !b || a.species !== b.species) continue;
+        if (typeof a.hp === 'number' && typeof b.hp === 'number' && b.hp > 0 && a.hp === 0) {
+          emit('party-fainted', { slot: i, species: a.species, level: a.level });
+        }
+        if (typeof a.level === 'number' && typeof b.level === 'number' && a.level > b.level) {
+          emit('party-levelup', { slot: i, species: a.species, from: b.level, to: a.level });
+        }
+      }
+    }
+
+    emit('state', merged);
+    return state;
+  }
+
+  return {
+    on, apply, resolveLocation,
+    get: () => state,
+    isLive: () => state.source !== 'manual'
+  };
+})();
+window.NUZ_LIVE = NUZ_LIVE;
+
+/* ── Bridge client ──────────────────────────────────────────────────────────
+   Connects to a companion app on localhost and pipes its messages into
+   NUZ_LIVE.apply(). Entirely optional: with no companion running this just
+   retries quietly in the background and Play mode stays in manual mode. Opt-in
+   (off by default) so we never open sockets for users who aren't on a Thor. */
+const NUZ_BRIDGE = (function () {
+  const LS_URL = 'nuz-bridge-url', LS_ON = 'nuz-bridge-enabled';
+  let ws = null, timer = null, backoff = 1000, status = 'off';
+
+  const url = () => localStorage.getItem(LS_URL) || 'ws://127.0.0.1:8765';
+  const enabled = () => localStorage.getItem(LS_ON) === '1';
+
+  function setStatus(s) { status = s; if (typeof pmRender === 'function' && pmIsOpen()) pmRender(); }
+
+  function connect() {
+    if (!enabled() || (ws && (ws.readyState === 0 || ws.readyState === 1))) return;
+    clearTimeout(timer);
+    try { ws = new WebSocket(url()); }
+    catch (e) { console.warn('[bridge] bad url', e); setStatus('error'); return; }
+    setStatus('connecting');
+    ws.onopen = () => { backoff = 1000; setStatus('connected'); };
+    ws.onmessage = ev => {
+      let msg; try { msg = JSON.parse(ev.data); } catch (e) { return; }
+      if (!msg || (msg.type && msg.type !== 'state' && msg.type !== 'hello')) return;
+      // 'hello' announces the producer; 'state' carries data. Both set source.
+      NUZ_LIVE.apply(Object.assign({ source: msg.source || 'memory' }, msg, { type: undefined }));
+    };
+    ws.onclose = () => {
+      ws = null;
+      if (!enabled()) { setStatus('off'); return; }
+      setStatus('retrying');
+      timer = setTimeout(connect, backoff);
+      backoff = Math.min(backoff * 2, 30000);   // 1s → 30s ceiling
+    };
+    ws.onerror = () => { try { ws.close(); } catch (e) {} };
+  }
+
+  function start() { localStorage.setItem(LS_ON, '1'); backoff = 1000; connect(); }
+  function stop() {
+    localStorage.setItem(LS_ON, '0');
+    clearTimeout(timer);
+    if (ws) { try { ws.close(); } catch (e) {} ws = null; }
+    setStatus('off');
+    // Hand control back to manual so the UI stops claiming it's live.
+    NUZ_LIVE.apply({ source: 'manual', encounter: null });
+  }
+  function setUrl(u) { localStorage.setItem(LS_URL, u); if (enabled()) { stop(); start(); } }
+
+  return { start, stop, setUrl, connect, url, enabled, status: () => status };
+})();
+window.NUZ_BRIDGE = NUZ_BRIDGE;
+
+/* ── Play mode ──────────────────────────────────────────────────────────────
+   A full-screen surface sized for the Thor's bottom panel. Deliberately a
+   sibling overlay rather than a ninth tab: it must not inherit the header or
+   the tab strip, and the normal app has to stay exactly as it is underneath. */
+let pmView = 'route';            // route | team | boss | log
+let pmPickerOpen = false;
+
+function pmIsOpen() { const el = document.getElementById('play-mode'); return !!el && el.classList.contains('open'); }
+
+// Location list for the current game, in progression order where we have it.
+// Mirrors the rail-building logic of the three encounter renderers so Play mode
+// offers exactly the locations the Encounters tab would.
+function playLocationList() {
+  const game = GAMES[curGame()];
+  if (!game) return [];
+  const ver = curVersion();
+  try {
+    const routeFile = resolveDataSource(game.dataSources?.routes, game, ver, curVariant());
+    const txt = routeFile && window.NUZ_DATA?.routes?.[routeFile];
+    if (txt?.locations?.length) {
+      const seen = new Set(), out = [];
+      for (const loc of txt.locations) {
+        if (seen.has(loc.name)) continue;
+        seen.add(loc.name);
+        out.push(loc.name);
+      }
+      return out;
+    }
+    if (game.dataSources?.routes) {
+      const merged = getMergedRoutes(game);
+      return (merged?.locations || []).map(l => l.name);
+    }
+    const slugs = getGameRegionSlugs(game);
+    const names = [];
+    for (const s of slugs) for (const l of (regionCache[s]?.locations || [])) names.push(l.name);
+    return names;
+  } catch (e) { console.warn('[play] location list', e); return []; }
+}
+
+// Render the encounter panel for one location, dispatching on the game's data
+// source exactly like renderEncounters() does (index.html:12520). Reusing the
+// real builders means Play mode gets rates, day/night tabs, seasons, the reco
+// scoring AND the existing one-tap encActionMenu logging for free.
+function playBuildEncounterPanel(loc) {
+  const gameKey = curGame(), game = GAMES[gameKey], ver = curVersion();
+  if (!game) return `<div class="pm-empty">No game selected.</div>`;
+  if (!loc) return `<div class="pm-empty">Tap the route name above to pick where you are.</div>`;
+  try {
+    startLocationRecoPass();
+    let html;
+    if (game.dataSources?.encounterTables)   html = buildEncounterMainFromTables(loc, ver, game);
+    else if (game.dataSources?.pokeapiRegion) html = buildEncounterMain(loc, ver);
+    else if (game.dataSources?.routes)        html = buildEncounterMainNuzData(loc, getMergedRoutes(game), ver, game);
+    else { finishLocationRecoPass(''); return `<div class="pm-empty">No encounter data for ${game.name}.</div>`; }
+    return finishLocationRecoPass(html);
+  } catch (e) {
+    console.error('[play] encounter panel', e);
+    return `<div class="pm-empty">Couldn't build the encounter panel for ${loc}.</div>`;
+  }
+}
+
+// Set the current route. Goes through NUZ_LIVE so a tap and a bridge message
+// travel the identical path, and mirrors into the main app's Encounters tab so
+// leaving Play mode lands you on the same location.
+function pmSetRoute(loc) {
+  pmPickerOpen = false;
+  NUZ_LIVE.apply({ source: NUZ_LIVE.get().source, route: loc });
+  try { setEncLocation(loc); } catch (e) {}
+  pmRender();
+}
+
+function pmStepRoute(delta) {
+  const list = playLocationList();
+  if (!list.length) return;
+  const cur = NUZ_LIVE.get().route;
+  const i = list.indexOf(cur);
+  const next = i < 0 ? list[0] : list[Math.max(0, Math.min(list.length - 1, i + delta))];
+  if (next && next !== cur) pmSetRoute(next);
+}
+
+function pmSetView(v) { pmView = v; pmPickerOpen = false; pmRender(); }
+function pmTogglePicker() { pmPickerOpen = !pmPickerOpen; pmRender(); }
+
+// Live party entries (from the bridge) merged onto the tracker's roster. The
+// roster is authoritative for identity; live data supplies level/HP when a
+// producer is connected. Matched by species, since slot order in the emulator
+// won't match the tracker's ordering.
+function pmPartyRows() {
+  const roster = curTeam().map((p, i) => ({ p, i })).filter(x => x.p.alive && x.p.inParty);
+  const live = NUZ_LIVE.get().party || [];
+  return roster.map(({ p, i }) => {
+    const l = live.find(e => e && e.species && p.species &&
+                            _normLocName(e.species) === _normLocName(p.species));
+    return {
+      p, i,
+      level: (l && l.level) || p.level || null,
+      hp: l ? l.hp : null,
+      maxHp: l ? l.maxHp : null,
+      status: (l && l.status) || ''
+    };
+  });
+}
+
+function pmNextBoss() {
+  const bosses = getBosses(curGame());
+  if (!bosses.length) return null;
+  const cap = curCap();
+  if (cap) { const hit = bosses.find(b => b.name === cap); if (hit) return hit; }
+  return bosses.find(b => !isBossDefeated(b.name)) || bosses[bosses.length - 1];
+}
+
+function pmRender() {
+  const root = document.getElementById('play-mode');
+  if (!root || !root.classList.contains('open')) return;
+  const st = NUZ_LIVE.get();
+  const game = GAMES[curGame()];
+  const cap = curCap();
+  const capBoss = cap ? getBosses(curGame()).find(b => b.name === cap) : null;
+  const capLv = capBoss ? (capBoss.cap ?? capBoss.sortLv) : null;
+
+  // Header: live dot, route (tap = picker), cap, exit.
+  const bs = NUZ_BRIDGE.status();
+  const dotCls = bs === 'connected' ? 'live' : (bs === 'connecting' || bs === 'retrying' ? 'wait' : 'off');
+  const dotTitle = bs === 'connected' ? `Live via ${st.source}` : `Manual (bridge: ${bs})`;
+  const head = `
+    <div class="pm-head">
+      <span class="pm-dot ${dotCls}" title="${dotTitle}" onclick="pmSetView('bridge')"></span>
+      <button class="pm-route" onclick="pmTogglePicker()">
+        <span class="pm-route-name">${st.route || 'Pick a route'}</span>
+        <span class="pm-caret">${pmPickerOpen ? '▲' : '▼'}</span>
+      </button>
+      <button class="pm-step" onclick="pmStepRoute(-1)" title="Previous location">‹</button>
+      <button class="pm-step" onclick="pmStepRoute(1)" title="Next location">›</button>
+      ${capLv ? `<span class="pm-cap" title="Level cap: ${cap}">Lv ${capLv}</span>` : ''}
+      <button class="pm-exit" onclick="closePlayMode()" title="Leave Play mode">✕</button>
+    </div>`;
+
+  // Route picker — a full-height overlay list; the only comfortable way to jump
+  // across a 60+ location game on a 3.9" screen.
+  let picker = '';
+  if (pmPickerOpen) {
+    const list = playLocationList();
+    const routesLogged = curRoutes();
+    picker = `<div class="pm-picker">${
+      list.length
+        ? list.map(loc => {
+            const logged = routesLogged.find(rt => routesMatch(rt.route, loc));
+            const dot = logged ? `<span class="pm-pick-dot ${logged.result === 'caught' ? '' : (logged.result === 'failed' ? 'failed' : 'skipped')}"></span>` : '';
+            return `<div class="pm-pick${st.route === loc ? ' active' : ''}" onclick="pmSetRoute('${loc.replace(/'/g, "\\'")}')">${loc}${dot}</div>`;
+          }).join('')
+        : `<div class="pm-empty">No locations for this game.</div>`
+    }</div>`;
+  }
+
+  let body = '';
+  if (pmView === 'route') {
+    // Encounter announced by the bridge gets pinned above the table so the
+    // species you're actually looking at is one tap from being logged.
+    let banner = '';
+    if (st.encounter && st.encounter.species) {
+      const e = st.encounter, safe = String(e.species).replace(/'/g, "\\'");
+      banner = `<div class="pm-enc-banner" onclick="encActionMenu('${(st.route || '').replace(/'/g, "\\'")}', '${safe}', event, 0)">
+        <span class="pm-enc-label">WILD</span>
+        <span class="pm-enc-name">${e.species}${e.level ? ` Lv ${e.level}` : ''}</span>
+        <span class="pm-enc-cta">tap to log ›</span>
+      </div>`;
+    }
+    body = banner + `<div class="pm-enc">${playBuildEncounterPanel(st.route)}</div>`;
+  } else if (pmView === 'team') {
+    const rows = pmPartyRows();
+    body = rows.length ? `<div class="pm-team">${rows.map(r => {
+      const over = capLv && r.level && +r.level > +capLv;
+      const pct = (typeof r.hp === 'number' && r.maxHp) ? Math.max(0, Math.min(100, Math.round(r.hp / r.maxHp * 100))) : null;
+      const hpCls = pct === null ? '' : (pct === 0 ? 'dead' : pct <= 20 ? 'crit' : pct <= 50 ? 'warn' : '');
+      return `<div class="pm-mon" onclick="openEdit(${r.i})">
+        ${spriteImg(r.p.species, { sm: true, shiny: r.p.isShiny })}
+        <div class="pm-mon-main">
+          <div class="pm-mon-name">${r.p.nickname || r.p.species}${r.p.isShiny ? ' ✨' : ''}</div>
+          <div class="pm-mon-sub">${r.p.species}${r.status ? ` · ${r.status}` : ''}</div>
+          ${pct === null ? '' : `<div class="pm-hp"><div class="pm-hp-bar ${hpCls}" style="width:${pct}%"></div></div>`}
+        </div>
+        <div class="pm-mon-lv ${over ? 'over' : ''}" title="${over ? 'Over the level cap' : ''}">Lv ${r.level || '?'}</div>
+      </div>`;
+    }).join('')}</div>` : `<div class="pm-empty">No Pokémon in your active party yet.</div>`;
+  } else if (pmView === 'boss') {
+    const b = pmNextBoss();
+    body = b ? `<div class="pm-boss">
+      <div class="pm-boss-hd">${b.name}${(b.cap ?? b.sortLv) ? ` <span>· cap ${b.cap ?? b.sortLv}</span>` : ''}</div>
+      ${(b.team || []).map(m => `<div class="pm-bmon">
+        ${spriteImg(m.species, { sm: true })}
+        <div class="pm-bmon-main">
+          <div class="pm-mon-name">${m.species}</div>
+          <div class="pm-mon-sub">${(m.types || []).join(' / ') || ''}</div>
+        </div>
+        <div class="pm-mon-lv">Lv ${m.lv || '?'}</div>
+      </div>`).join('')}
+      <button class="pm-wide-btn" onclick="closePlayMode(); switchTab('matchup')">Full matchup analysis ›</button>
+    </div>` : `<div class="pm-empty">No boss data for this game.</div>`;
+  } else if (pmView === 'log') {
+    const r = curRoutes();
+    body = r.length ? `<div class="pm-log">${r.slice(-25).reverse().map(rt => {
+      const cls = rt.result === 'caught' ? 'ok' : (rt.result === 'failed' ? 'bad' : 'skip');
+      return `<div class="pm-log-row" onclick="pmSetRoute('${(rt.route || '').replace(/'/g, "\\'")}')">
+        <span class="pm-log-res ${cls}">${rt.result || 'logged'}</span>
+        <span class="pm-log-enc">${rt.encounter || '—'}</span>
+        <span class="pm-log-loc">${rt.route || '—'}</span>
+      </div>`;
+    }).join('')}</div>` : `<div class="pm-empty">Nothing logged yet.</div>`;
+  } else if (pmView === 'bridge') {
+    // Settings pane for the companion app. Lives inside Play mode because it's
+    // the only place the connection state matters.
+    body = `<div class="pm-bridge">
+      <div class="pm-brow"><span>Status</span><strong class="pm-bstat ${dotCls}">${bs}</strong></div>
+      <div class="pm-brow"><span>Source</span><strong>${st.source}</strong></div>
+      <label class="pm-blabel">Companion URL</label>
+      <input class="pm-binput" id="pm-bridge-url" value="${NUZ_BRIDGE.url()}" spellcheck="false">
+      <div class="pm-brow2">
+        <button class="pm-wide-btn" onclick="NUZ_BRIDGE.setUrl(document.getElementById('pm-bridge-url').value.trim()); NUZ_BRIDGE.start(); pmRender();">Connect</button>
+        <button class="pm-wide-btn ghost" onclick="NUZ_BRIDGE.stop(); pmRender();">Disconnect</button>
+      </div>
+      <p class="pm-bhint">Without a companion app this stays in manual mode — everything still works, you just pick the route yourself.</p>
+    </div>`;
+  }
+
+  const tab = (id, label) => `<button class="pm-tab${pmView === id ? ' active' : ''}" onclick="pmSetView('${id}')">${label}</button>`;
+  root.innerHTML = head + picker + `<div class="pm-body">${body}</div>` +
+    `<div class="pm-bar">${tab('route', 'Route')}${tab('team', 'Team')}${tab('boss', 'Boss')}${tab('log', 'Log')}</div>`;
+}
+
+function openPlayMode() {
+  let root = document.getElementById('play-mode');
+  if (!root) { root = document.createElement('div'); root.id = 'play-mode'; document.body.appendChild(root); }
+  root.classList.add('open');
+  document.body.classList.add('pm-active');
+  localStorage.setItem('nuz-play-mode', '1');
+  // Seed the route from whatever the Encounters tab already had selected.
+  if (!NUZ_LIVE.get().route && selectedEncLocation) NUZ_LIVE.apply({ route: selectedEncLocation });
+  if (NUZ_BRIDGE.enabled()) NUZ_BRIDGE.connect();
+  pmRender();
+}
+function closePlayMode() {
+  const root = document.getElementById('play-mode');
+  if (root) root.classList.remove('open');
+  document.body.classList.remove('pm-active');
+  localStorage.setItem('nuz-play-mode', '0');
+}
+function togglePlayMode() { pmIsOpen() ? closePlayMode() : openPlayMode(); }
+
+/* ── Wiring ─────────────────────────────────────────────────────────────────
+   Play mode re-renders on live state and on PokeAPI backfill (so sprites and
+   types fill in), and auto-logs nothing — a faint still asks, because the
+   graveyard is destructive and an OCR/memory misread must never bury a mon. */
+NUZ_LIVE.on('state', () => { if (pmIsOpen()) pmRender(); });
+NUZ_LIVE.on('route-changed', ({ route }) => { if (route) { try { setEncLocation(route); } catch (e) {} } });
+NUZ_LIVE.on('party-fainted', ({ species }) => {
+  if (typeof showToast === 'function') showToast(`${species} fainted — mark it in the Team tab`, 'error');
+});
+if (typeof onBackfill === 'function') onBackfill(() => { if (pmIsOpen()) pmRender(); });
+
+(function initPlayMode() {
+  const boot = () => {
+    // Header entry point, injected rather than hard-coded into the markup so
+    // this whole feature stays one contiguous, revertible block.
+    const btns = document.querySelector('.hdr-btns');
+    if (btns && !document.getElementById('play-mode-btn')) {
+      const b = document.createElement('button');
+      b.id = 'play-mode-btn';
+      b.className = 'hdr-btn';
+      b.title = 'Second-screen Play mode (for dual-screen handhelds)';
+      b.textContent = '🎮 Play';
+      b.onclick = togglePlayMode;
+      btns.insertBefore(b, btns.firstChild);
+    }
+    const wantsPlay = new URLSearchParams(location.search).get('play') === '1'
+                   || localStorage.getItem('nuz-play-mode') === '1';
+    if (wantsPlay && curRun()) openPlayMode();
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+  // The header only exists once a save is loaded, so retry briefly after boot.
+  let tries = 0;
+  const t = setInterval(() => { boot(); if (++tries > 20 || document.getElementById('play-mode-btn')) clearInterval(t); }, 500);
+})();
+
+/* ── Play mode styles ──────────────────────────────────────────────────────
+   Injected from JS so the feature is a single self-contained block. Sized for
+   ~420×360 CSS px: 30px header, 46px thumb bar, everything else scrolls. */
+(function playModeStyles() {
+  if (document.getElementById('play-mode-css')) return;
+  const s = document.createElement('style');
+  s.id = 'play-mode-css';
+  s.textContent = `
+  #play-mode { display:none; }
+  #play-mode.open { display:flex; flex-direction:column; position:fixed; inset:0;
+    z-index:9000; background:var(--bg); color:var(--text);
+    font-size:13px; overscroll-behavior:contain; }
+  body.pm-active { overflow:hidden; }
+  .pm-head { display:flex; align-items:center; gap:5px; padding:4px 6px;
+    background:var(--bg2); border-bottom:1px solid var(--border); flex:0 0 auto; }
+  .pm-dot { width:9px; height:9px; border-radius:50%; flex:0 0 auto; cursor:pointer;
+    background:var(--text3); }
+  .pm-dot.live { background:var(--green); box-shadow:0 0 6px var(--green); }
+  .pm-dot.wait { background:var(--amber); }
+  .pm-route { flex:1 1 auto; min-width:0; display:flex; align-items:center; gap:4px;
+    background:var(--bg3); border:1px solid var(--border); color:var(--text);
+    border-radius:var(--radius-sm); padding:5px 8px; font-size:13px; font-weight:600;
+    text-align:left; overflow:hidden; }
+  .pm-route-name { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .pm-caret { margin-left:auto; color:var(--text2); font-size:9px; }
+  .pm-step, .pm-exit { flex:0 0 auto; background:var(--bg3); border:1px solid var(--border);
+    color:var(--text2); border-radius:var(--radius-sm); width:28px; height:28px; font-size:15px; }
+  .pm-cap { flex:0 0 auto; font-size:11px; font-weight:700; color:var(--amber);
+    background:var(--amber-bg); border-radius:var(--radius-sm); padding:4px 6px; }
+  .pm-picker { position:absolute; top:36px; left:0; right:0; bottom:46px; z-index:5;
+    background:var(--bg); overflow-y:auto; -webkit-overflow-scrolling:touch;
+    border-bottom:1px solid var(--border); }
+  .pm-pick { padding:11px 12px; border-bottom:1px solid var(--border);
+    display:flex; align-items:center; gap:6px; }
+  .pm-pick.active { background:var(--accent-bg); color:var(--accent); font-weight:700; }
+  .pm-pick-dot { width:7px; height:7px; border-radius:50%; background:var(--green); margin-left:auto; }
+  .pm-pick-dot.failed { background:var(--red); } .pm-pick-dot.skipped { background:var(--text3); }
+  .pm-body { flex:1 1 auto; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:6px; }
+  .pm-bar { flex:0 0 auto; display:flex; background:var(--bg2);
+    border-top:1px solid var(--border); padding-bottom:env(safe-area-inset-bottom,0); }
+  .pm-tab { flex:1 1 0; padding:13px 0; background:none; border:none; color:var(--text2);
+    font-size:12px; font-weight:700; letter-spacing:0.02em; }
+  .pm-tab.active { color:var(--accent); box-shadow:inset 0 2px 0 var(--accent); }
+  .pm-empty { padding:26px 16px; text-align:center; color:var(--text2); font-size:12px; }
+  .pm-enc-banner { display:flex; align-items:center; gap:7px; margin-bottom:6px; padding:9px 10px;
+    background:var(--accent-bg); border:1px solid var(--accent); border-radius:var(--radius-sm); }
+  .pm-enc-label { font-size:9px; font-weight:800; letter-spacing:0.08em; color:var(--accent); }
+  .pm-enc-name { font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .pm-enc-cta { margin-left:auto; font-size:10px; color:var(--text2); white-space:nowrap; }
+  /* The reused encounter panel assumes a wide desktop column — force its inner
+     grids to a single column so species rows stay tappable at 420px. */
+  .pm-enc .enc-main, .pm-enc .enc-layout { display:block; }
+  .pm-enc .enc-pool-grid, .pm-enc .enc-species-grid { grid-template-columns:1fr !important; }
+  .pm-team, .pm-log, .pm-boss { display:flex; flex-direction:column; gap:5px; }
+  .pm-mon, .pm-bmon { display:flex; align-items:center; gap:8px; padding:7px 9px;
+    background:var(--bg2); border:1px solid var(--border); border-radius:var(--radius-sm); }
+  .pm-mon-main, .pm-bmon-main { flex:1 1 auto; min-width:0; }
+  .pm-mon-name { font-weight:700; font-size:13px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .pm-mon-sub { font-size:10px; color:var(--text2); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .pm-mon-lv { flex:0 0 auto; font-size:12px; font-weight:700; color:var(--text2); }
+  .pm-mon-lv.over { color:var(--red); }
+  .pm-hp { height:4px; border-radius:2px; background:var(--bg4); margin-top:4px; overflow:hidden; }
+  .pm-hp-bar { height:100%; background:var(--green); border-radius:2px; }
+  .pm-hp-bar.warn { background:var(--amber); } .pm-hp-bar.crit, .pm-hp-bar.dead { background:var(--red); }
+  .pm-boss-hd { font-weight:800; font-size:13px; padding:2px 2px 4px; }
+  .pm-boss-hd span { font-weight:500; color:var(--text2); font-size:11px; }
+  .pm-wide-btn { width:100%; margin-top:6px; padding:11px; background:var(--bg3);
+    border:1px solid var(--border2); color:var(--text); border-radius:var(--radius-sm); font-size:12px; font-weight:600; }
+  .pm-wide-btn.ghost { background:none; color:var(--text2); }
+  .pm-log-row { display:flex; align-items:center; gap:7px; padding:7px 9px; background:var(--bg2);
+    border:1px solid var(--border); border-radius:var(--radius-sm); font-size:11px; }
+  .pm-log-res { flex:0 0 auto; font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:0.04em; }
+  .pm-log-res.ok { color:var(--green); } .pm-log-res.bad { color:var(--red); } .pm-log-res.skip { color:var(--text3); }
+  .pm-log-enc { font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .pm-log-loc { margin-left:auto; color:var(--text2); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .pm-bridge { padding:4px 2px; }
+  .pm-brow, .pm-brow2 { display:flex; align-items:center; gap:8px; padding:7px 2px; font-size:12px; }
+  .pm-brow span { color:var(--text2); } .pm-brow strong { margin-left:auto; }
+  .pm-bstat.live { color:var(--green); } .pm-bstat.wait { color:var(--amber); } .pm-bstat.off { color:var(--text3); }
+  .pm-blabel { display:block; font-size:10px; color:var(--text2); margin:8px 2px 4px; }
+  .pm-binput { width:100%; padding:9px; background:var(--bg3); border:1px solid var(--border);
+    color:var(--text); border-radius:var(--radius-sm); font-size:12px; font-family:monospace; }
+  .pm-brow2 .pm-wide-btn { margin-top:0; }
+  .pm-bhint { font-size:10px; color:var(--text3); line-height:1.5; margin:10px 2px 0; }
+  /* Play mode sits at z-index 9000, above the app's whole stacking order — so
+     while it's active, the shared popups it reuses (catch/action menu z:200,
+     modal overlay z:100, toast) must be lifted above it or taps would open
+     them invisibly underneath. Scoped to body.pm-active: outside Play mode
+     nothing changes. */
+  body.pm-active .overlay { z-index:9050; }
+  body.pm-active .enc-action-backdrop { z-index:9100; }
+  body.pm-active .toast { z-index:9200; }
+  `;
+  document.head.appendChild(s);
+})();
+
 // Phase 1 smoke test: surface NUZ_DATA load status in dev tools. Not wired into
 // rendering yet — that comes in Phase 2.
 (function nuzDataSmokeTest() {
