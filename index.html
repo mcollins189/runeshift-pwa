@@ -17284,11 +17284,12 @@ NUZ_LIVE.on('route-changed', ({ route }) => { if (route) { try { setEncLocation(
 let _pmViewBeforeBattle = null;
 let pmBattleFocus = 'main';   // doubles: which enemy the battle panel details
 let pmMyMon = null;           // team index of YOUR mon in the moves readout (null = auto)
-// Same confusables fold as NuzBridge's OcrParser.canon() — keep the two maps
-// in sync so nickname matching survives the GBA pixel font (EMBER↔EM8ER etc.).
+// Same confusables fold as NuzBridge's OcrParser.ident() — keep the two maps
+// in sync so nickname matching survives the GBA pixel font (EMBER↔EM8ER,
+// and L→I because L/I/1 are one glyph family in that font).
 function pmCanon(s) {
-  const MAP = { V:'U', '0':'O', '1':'I', '2':'Z', '3':'E', '4':'A', '5':'S', '6':'G', '8':'B', '9':'G' };
-  return String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, '').replace(/[V012345689]/g, c => MAP[c]);
+  const MAP = { V:'U', L:'I', '0':'O', '1':'I', '2':'Z', '3':'E', '4':'A', '5':'S', '6':'G', '8':'B', '9':'G' };
+  return String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, '').replace(/[VL012345689]/g, c => MAP[c]);
 }
 NUZ_LIVE.on('encounter-started', () => {
   pmBattleFocus = 'main';
