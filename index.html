@@ -16946,9 +16946,12 @@ function pmRender() {
   const bs = NUZ_BRIDGE.status();
   const dotCls = bs === 'connected' ? 'live' : (bs === 'connecting' || bs === 'retrying' ? 'wait' : 'off');
   const dotTitle = bs === 'connected' ? `Live via ${st.source}` : `Manual (bridge: ${bs})`;
+  const pillLabel = bs === 'connected' ? (st.source === 'ocr' ? 'OCR' : 'LIVE')
+                  : (bs === 'connecting' || bs === 'retrying') ? '…'
+                  : 'OFF';
   const head = `
     <div class="pm-head">
-      <span class="pm-dot ${dotCls}" title="${dotTitle}" onclick="pmSetView('bridge')"></span>
+      <button class="pm-live-pill ${dotCls}" title="${dotTitle}" onclick="pmSetView('bridge')"><span class="pm-dot ${dotCls}"></span>${pillLabel}</button>
       <button class="pm-route" onclick="pmTogglePicker()">
         <span class="pm-route-name">${st.route || 'Pick a route'}</span>
         <span class="pm-caret">${pmPickerOpen ? '▲' : '▼'}</span>
@@ -17201,6 +17204,13 @@ if (typeof onBackfill === 'function') onBackfill(() => { if (pmIsOpen()) pmRende
     background:var(--text3); }
   .pm-dot.live { background:var(--green); box-shadow:0 0 6px var(--green); }
   .pm-dot.wait { background:var(--amber); }
+  /* Labeled bridge button — the bare dot was undiscoverable ("I don't see any
+     dropdown or three dots to connect"). Opens the bridge/connect pane. */
+  .pm-live-pill { flex:0 0 auto; display:flex; align-items:center; gap:5px; padding:6px 9px;
+    background:var(--bg3); border:1px solid var(--border2); border-radius:var(--radius-sm);
+    color:var(--text2); font-size:10px; font-weight:800; letter-spacing:0.05em; }
+  .pm-live-pill.live { color:var(--green); border-color:var(--green); }
+  .pm-live-pill.wait { color:var(--amber); }
   .pm-route { flex:1 1 auto; min-width:0; display:flex; align-items:center; gap:4px;
     background:var(--bg3); border:1px solid var(--border); color:var(--text);
     border-radius:var(--radius-sm); padding:5px 8px; font-size:13px; font-weight:600;
