@@ -16664,7 +16664,7 @@ setTimeout(hideBootSplash, 12000);
    ═════════════════════════════════════════════════════════════════════════ */
 const NUZ_LIVE = (function () {
   const subs = new Map();
-  let state = { source:'manual', game:null, mapId:null, route:null, party:[], encounter:null, ts:0 };
+  let state = { source:'manual', game:null, mapId:null, route:null, party:[], encounter:null, allies:[], ts:0 };
 
   function on(evt, fn) {
     if (!subs.has(evt)) subs.set(evt, new Set());
@@ -16709,6 +16709,7 @@ const NUZ_LIVE = (function () {
       mapId:     next.mapId     !== undefined ? next.mapId     : prev.mapId,
       party:     next.party     !== undefined ? next.party     : prev.party,
       encounter: next.encounter !== undefined ? next.encounter : prev.encounter,
+      allies:    next.allies    !== undefined ? next.allies    : prev.allies,
       ts:        next.ts || Date.now(),
       route:     prev.route
     };
@@ -17015,6 +17016,48 @@ function pmRender() {
              <button class="pm-chip${focus === e.partner ? ' active' : ''}" onclick="pmBattleFocus='partner';pmRender()">${e.partner.species}${e.partner.level ? ` Lv${e.partner.level}` : ''}</button>
            </div>`
         : '';
+      // ── "Your moves" — the mon YOU have out, scored against this enemy ──
+      // Auto-picked from the bridge's allies report (OCR of the bottom-half
+      // name boxes); chips override it; falls back to first party mon.
+      const bparty = curTeam().map((p, i) => ({ p, i })).filter(x => x.p.alive && x.p.inParty);
+      let myIdx = (pmMyMon != null && bparty.some(x => x.i === pmMyMon)) ? pmMyMon : null;
+      if (myIdx === null && (st.allies || []).length) {
+        const hit = bparty.find(x => st.allies.some(a => _normLocName(a) === _normLocName(x.p.species)));
+        if (hit) myIdx = hit.i;
+      }
+      if (myIdx === null && bparty.length) myIdx = bparty[0].i;
+      const mine = bparty.find(x => x.i === myIdx);
+      let myMovesHtml = '';
+      if (mine) {
+        const fi = pokeInfo(focus.species);
+        const ft = fi ? fi.t : null;
+        const mv = (typeof mine.p.moves === 'string')
+          ? mine.p.moves.split(',').map(s => s.trim()).filter(Boolean)
+          : (Array.isArray(mine.p.moves) ? mine.p.moves.filter(Boolean) : []);
+        const rows = mv.map(m => {
+          const t = getMoveType(m), pw = movePower(m), cat = moveCategory(m);
+          const isAtk = (cat === 'P' || cat === 'S') && pw;
+          const eff = (isAtk && t && ft) ? effectiveness(t, ft[0], ft[1] || null) : null;
+          const stab = t && (t === mine.p.type1 || t === mine.p.type2);
+          const effLbl = eff === null ? '' :
+            eff === 0 ? '×0' : eff === 0.25 ? '×¼' : eff === 0.5 ? '×½' : eff === 1 ? '×1' : `×${eff}`;
+          const effCls = eff === null ? '' : eff >= 2 ? 'good' : (eff === 1 ? '' : 'bad');
+          return `<div class="pm-move">
+            ${t ? typeBadge(t) : '<span class="type-badge">?</span>'}
+            <span class="pm-move-name">${m}${stab ? '<span class="pm-stab" title="STAB">•</span>' : ''}</span>
+            <span class="pm-move-pw">${isAtk ? pw : (cat === 'P' || cat === 'S') ? '?' : 'status'}</span>
+            ${eff === null ? '' : `<span class="pm-move-eff ${effCls}">${effLbl}</span>`}
+          </div>`;
+        }).join('');
+        const monChips = bparty.length > 1
+          ? `<div class="pm-battle-chips pm-mine-chips">${bparty.map(x =>
+              `<button class="pm-chip${x.i === myIdx ? ' active' : ''}" onclick="pmMyMon=${x.i};pmRender()">${x.p.nickname || x.p.species}</button>`
+            ).join('')}</div>`
+          : '';
+        myMovesHtml = `<div class="pm-sec-hd">Your moves — ${mine.p.nickname || mine.p.species}${ft ? '' : ' (enemy typing still loading)'}</div>
+          ${monChips}
+          <div class="pm-mymoves">${rows || `<div class="pm-empty" style="padding:8px">No moves set — tap the mon in Team view to add them.</div>`}</div>`;
+      }
       body = `<div class="pm-battle">
         <div class="pm-battle-hd">
           <span class="pm-enc-label">WILD${e.partner ? ' ×2' : ''}</span>
@@ -17028,6 +17071,7 @@ function pmRender() {
           <button class="pm-act" onclick="encActionLog('${safeLoc}', '${safeSp}', 'skipped')">⊘ Skip</button>
           <button class="pm-act bad" onclick="encActionLog('${safeLoc}', '${safeSp}', 'failed')">✗ Missed</button>
         </div>
+        ${myMovesHtml}
         <div class="pm-battle-body">${speciesView(focus.species)}</div>
       </div>`;
     }
@@ -17143,8 +17187,10 @@ NUZ_LIVE.on('route-changed', ({ route }) => { if (route) { try { setEncLocation(
 // Play mode, and never away from a view the user switched to mid-battle.
 let _pmViewBeforeBattle = null;
 let pmBattleFocus = 'main';   // doubles: which enemy the battle panel details
+let pmMyMon = null;           // team index of YOUR mon in the moves readout (null = auto)
 NUZ_LIVE.on('encounter-started', () => {
   pmBattleFocus = 'main';
+  pmMyMon = null;
   if (!pmIsOpen()) return;
   if (pmView !== 'battle') { _pmViewBeforeBattle = pmView; pmView = 'battle'; }
   pmPickerOpen = false;
@@ -17265,6 +17311,15 @@ if (typeof onBackfill === 'function') onBackfill(() => { if (pmIsOpen()) pmRende
     overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .pm-chip.active { color:var(--accent); border-color:var(--accent); background:var(--accent-bg); }
   .pm-battle-actions { display:flex; gap:5px; margin-bottom:8px; }
+  .pm-mine-chips .pm-chip { padding:6px; font-size:11px; }
+  .pm-mymoves { display:flex; flex-direction:column; gap:4px; margin-bottom:8px; }
+  .pm-move { display:flex; align-items:center; gap:7px; padding:6px 9px;
+    background:var(--bg2); border:1px solid var(--border); border-radius:var(--radius-sm); font-size:12px; }
+  .pm-move-name { flex:1 1 auto; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .pm-stab { color:var(--amber); margin-left:3px; font-size:14px; line-height:0; }
+  .pm-move-pw { flex:0 0 auto; color:var(--text2); font-size:11px; }
+  .pm-move-eff { flex:0 0 auto; font-weight:800; font-size:11px; min-width:26px; text-align:right; }
+  .pm-move-eff.good { color:var(--green); } .pm-move-eff.bad { color:var(--red); }
   .pm-act { flex:1 1 0; padding:10px 4px; background:var(--bg3); border:1px solid var(--border2);
     color:var(--text); border-radius:var(--radius-sm); font-size:12px; font-weight:700; white-space:nowrap; }
   .pm-act.ok { color:var(--green); border-color:var(--green); background:var(--green-bg); }
