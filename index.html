@@ -16898,10 +16898,9 @@ function pmTogglePicker() { pmPickerOpen = !pmPickerOpen; pmRender(); }
 // roster is authoritative for identity; live data supplies level/HP when a
 // producer is connected. Matched by species, since slot order in the emulator
 // won't match the tracker's ordering.
-function pmPartyRows() {
-  const roster = curTeam().map((p, i) => ({ p, i })).filter(x => x.p.alive && x.p.inParty);
+function pmTeamRows() {
   const live = NUZ_LIVE.get().party || [];
-  return roster.map(({ p, i }) => {
+  const decorate = ({ p, i }) => {
     const l = live.find(e => e && e.species && p.species &&
                             _normLocName(e.species) === _normLocName(p.species));
     return {
@@ -16911,7 +16910,19 @@ function pmPartyRows() {
       maxHp: l ? l.maxHp : null,
       status: (l && l.status) || ''
     };
-  });
+  };
+  const alive = curTeam().map((p, i) => ({ p, i })).filter(x => x.p.alive);
+  return {
+    party: alive.filter(x => x.p.inParty).map(decorate),
+    bench: alive.filter(x => !x.p.inParty).map(decorate)
+  };
+}
+
+// Party toggle from inside Play mode: reuse the app's toggleParty (handles the
+// 6-mon cap + save + main-app repaint), then repaint this overlay too.
+function pmToggleParty(idx, on) {
+  toggleParty(idx, on);
+  pmRender();
 }
 
 function pmNextBoss() {
@@ -16980,11 +16991,14 @@ function pmRender() {
     }
     body = banner + `<div class="pm-enc">${playBuildEncounterPanel(st.route)}</div>`;
   } else if (pmView === 'team') {
-    const rows = pmPartyRows();
-    body = rows.length ? `<div class="pm-team">${rows.map(r => {
+    const { party, bench } = pmTeamRows();
+    const monRow = (r, inParty) => {
       const over = capLv && r.level && +r.level > +capLv;
       const pct = (typeof r.hp === 'number' && r.maxHp) ? Math.max(0, Math.min(100, Math.round(r.hp / r.maxHp * 100))) : null;
       const hpCls = pct === null ? '' : (pct === 0 ? 'dead' : pct <= 20 ? 'crit' : pct <= 50 ? 'warn' : '');
+      const btn = inParty
+        ? `<button class="pm-party-btn rm" onclick="event.stopPropagation();pmToggleParty(${r.i},false)" title="Move to bench">–</button>`
+        : `<button class="pm-party-btn add" onclick="event.stopPropagation();pmToggleParty(${r.i},true)" title="Add to party">+</button>`;
       return `<div class="pm-mon" onclick="openEdit(${r.i})">
         ${spriteImg(r.p.species, { sm: true, shiny: r.p.isShiny })}
         <div class="pm-mon-main">
@@ -16993,8 +17007,16 @@ function pmRender() {
           ${pct === null ? '' : `<div class="pm-hp"><div class="pm-hp-bar ${hpCls}" style="width:${pct}%"></div></div>`}
         </div>
         <div class="pm-mon-lv ${over ? 'over' : ''}" title="${over ? 'Over the level cap' : ''}">Lv ${r.level || '?'}</div>
+        ${btn}
       </div>`;
-    }).join('')}</div>` : `<div class="pm-empty">No Pokémon in your active party yet.</div>`;
+    };
+    body = `<div class="pm-team">
+      <div class="pm-sec-hd">Party <span>${party.length}/6</span></div>
+      ${party.length ? party.map(r => monRow(r, true)).join('') : `<div class="pm-empty" style="padding:10px">Empty — add from the bench below.</div>`}
+      <div class="pm-sec-hd">Bench <span>${bench.length}</span></div>
+      ${bench.length ? bench.map(r => monRow(r, false)).join('') : `<div class="pm-empty" style="padding:10px">No benched Pokémon.</div>`}
+      <button class="pm-wide-btn" onclick="openAdd('poke')">+ Add Pokémon</button>
+    </div>`;
   } else if (pmView === 'boss') {
     const b = pmNextBoss();
     body = b ? `<div class="pm-boss">
@@ -17064,6 +17086,16 @@ function togglePlayMode() { pmIsOpen() ? closePlayMode() : openPlayMode(); }
    types fill in), and auto-logs nothing — a faint still asks, because the
    graveyard is destructive and an OCR/memory misread must never bury a mon. */
 NUZ_LIVE.on('state', () => { if (pmIsOpen()) pmRender(); });
+// Every data mutation in the app funnels through render() — piggyback on it so
+// Play mode reflects catches, edits, party toggles, and faints made anywhere
+// (incl. from its own modals) without each call site knowing about the overlay.
+(function hookRenderForPlayMode() {
+  const orig = render;
+  render = function () {
+    orig.apply(this, arguments);
+    if (pmIsOpen()) { try { pmRender(); } catch (e) { console.error('[play] render hook', e); } }
+  };
+})();
 NUZ_LIVE.on('route-changed', ({ route }) => { if (route) { try { setEncLocation(route); } catch (e) {} } });
 NUZ_LIVE.on('party-fainted', ({ species }) => {
   if (typeof showToast === 'function') showToast(`${species} fainted — mark it in the Team tab`, 'error');
@@ -17159,6 +17191,13 @@ if (typeof onBackfill === 'function') onBackfill(() => { if (pmIsOpen()) pmRende
   .pm-hp { height:4px; border-radius:2px; background:var(--bg4); margin-top:4px; overflow:hidden; }
   .pm-hp-bar { height:100%; background:var(--green); border-radius:2px; }
   .pm-hp-bar.warn { background:var(--amber); } .pm-hp-bar.crit, .pm-hp-bar.dead { background:var(--red); }
+  .pm-sec-hd { font-size:10px; font-weight:800; letter-spacing:0.06em; text-transform:uppercase;
+    color:var(--text2); padding:6px 2px 2px; }
+  .pm-sec-hd span { color:var(--text3); font-weight:600; }
+  .pm-party-btn { flex:0 0 auto; width:32px; height:32px; border-radius:var(--radius-sm);
+    border:1px solid var(--border2); background:var(--bg3); color:var(--text); font-size:17px; font-weight:700; }
+  .pm-party-btn.add { color:var(--green); border-color:var(--green); background:var(--green-bg); }
+  .pm-party-btn.rm { color:var(--text2); }
   .pm-boss-hd { font-weight:800; font-size:13px; padding:2px 2px 4px; }
   .pm-boss-hd span { font-weight:500; color:var(--text2); font-size:11px; }
   .pm-wide-btn { width:100%; margin-top:6px; padding:11px; background:var(--bg3);
