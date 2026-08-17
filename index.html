@@ -16963,6 +16963,33 @@ function pmToggleParty(idx, on) {
   pmRender();
 }
 
+// Routes (other than the current one) whose encounter pool contains the given
+// species. Returns null when the CURRENT route already has it (no hint needed)
+// or when nothing useful can be said (species nowhere / too many candidates —
+// a 12-route Zubat tells you nothing). Reuses encLocSpeciesNames, the same
+// species index the encounter-search rail uses.
+function pmRouteSuggestions(species) {
+  const game = GAMES[curGame()];
+  if (!game || !species || typeof encLocSpeciesNames !== 'function') return null;
+  const ver = curVersion();
+  const cur = NUZ_LIVE.get().route;
+  const wanted = [String(species).toLowerCase(), speciesSlug(species)].filter(Boolean);
+  const hasIt = loc => {
+    const names = encLocSpeciesNames(game, ver, loc);
+    return wanted.some(w => names.has(w));
+  };
+  if (cur && hasIt(cur)) return null;          // current route checks out
+  const candidates = [];
+  for (const loc of playLocationList()) {
+    if (loc === cur) continue;
+    if (hasIt(loc)) {
+      candidates.push(loc);
+      if (candidates.length > 3) return null;  // too common to be a signal
+    }
+  }
+  return candidates.length ? candidates : null;
+}
+
 function pmNextBoss() {
   const bosses = getBosses(curGame());
   if (!bosses.length) return null;
@@ -17041,6 +17068,21 @@ function pmRender() {
     if (!e || !e.species) {
       body = `<div class="pm-empty">No active encounter.<br><span style="font-size:11px">This panel opens automatically when a wild battle starts.</span></div>`;
     } else {
+      // Stale-route detection: scans can miss a fast area transition (the
+      // entry banner is only up ~2s), but the encounter itself is evidence —
+      // if this species isn't in the current route's pool, suggest the routes
+      // it DOES live on. Tap = switch + the panel re-renders.
+      let staleHint = '';
+      try {
+        const suggestions = pmRouteSuggestions(e.species);
+        if (suggestions) {
+          staleHint = `<div class="pm-stale">
+            <span>${e.species} isn't found on ${st.route || 'this route'} — are you here instead?</span>
+            <div class="pm-stale-btns">${suggestions.map(l =>
+              `<button class="pm-chip" onclick="pmSetRoute('${l.replace(/'/g, "\\'")}');pmSetView('battle')">${l}</button>`).join('')}</div>
+          </div>`;
+        }
+      } catch (err) {}
       // Doubles: the bridge may report a second enemy in encounter.partner.
       // Chips switch which one's details (and log actions) are in focus.
       const focus = (pmBattleFocus === 'partner' && e.partner && e.partner.species) ? e.partner : e;
@@ -17112,6 +17154,7 @@ function pmRender() {
           <span class="pm-battle-loc">${st.route || ''}</span>
         </div>
         ${chips}
+        ${staleHint}
         <div class="pm-battle-actions">
           <button class="pm-act ok" onclick="encActionCaught('${safeLoc}', '${safeSp}')">✓ Caught</button>
           <button class="pm-act" onclick="encActionCaught('${safeLoc}', '${safeSp}', true)">✨</button>
@@ -17364,6 +17407,10 @@ if (typeof onBackfill === 'function') onBackfill(() => { if (pmIsOpen()) pmRende
   .pm-battle-hd { display:flex; align-items:center; gap:7px; padding:8px 10px; margin-bottom:6px;
     background:var(--accent-bg); border:1px solid var(--accent); border-radius:var(--radius-sm); }
   .pm-battle-loc { margin-left:auto; font-size:10px; color:var(--text2); white-space:nowrap; }
+  .pm-stale { padding:8px 10px; margin-bottom:6px; background:var(--amber-bg);
+    border:1px solid var(--amber); border-radius:var(--radius-sm); font-size:11px; color:var(--text); }
+  .pm-stale-btns { display:flex; gap:5px; margin-top:6px; flex-wrap:wrap; }
+  .pm-stale-btns .pm-chip { flex:0 1 auto; color:var(--amber); border-color:var(--amber); }
   .pm-battle-chips { display:flex; gap:5px; margin-bottom:6px; }
   .pm-chip { flex:1 1 0; padding:8px 6px; background:var(--bg3); border:1px solid var(--border);
     color:var(--text2); border-radius:var(--radius-sm); font-size:12px; font-weight:700;
