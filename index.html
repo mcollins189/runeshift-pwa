@@ -16982,14 +16982,41 @@ function pmRender() {
     // species you're actually looking at is one tap from being logged.
     let banner = '';
     if (st.encounter && st.encounter.species) {
-      const e = st.encounter, safe = String(e.species).replace(/'/g, "\\'");
-      banner = `<div class="pm-enc-banner" onclick="encActionMenu('${(st.route || '').replace(/'/g, "\\'")}', '${safe}', event, 0)">
+      const e = st.encounter;
+      banner = `<div class="pm-enc-banner" onclick="pmSetView('battle')">
         <span class="pm-enc-label">WILD</span>
         <span class="pm-enc-name">${e.species}${e.level ? ` Lv ${e.level}` : ''}</span>
-        <span class="pm-enc-cta">tap to log ›</span>
+        <span class="pm-enc-cta">battle info ›</span>
       </div>`;
     }
     body = banner + `<div class="pm-enc">${playBuildEncounterPanel(st.route)}</div>`;
+  } else if (pmView === 'battle') {
+    // Battle helper — auto-opened when the bridge announces a wild encounter.
+    // Everything you need mid-battle: what NOT to attack with (weakness grid,
+    // 4×/2× first), what's safe to chip with, stats, team fit — plus the log
+    // actions so the encounter gets recorded without leaving the panel.
+    const e = st.encounter;
+    if (!e || !e.species) {
+      body = `<div class="pm-empty">No active encounter.<br><span style="font-size:11px">This panel opens automatically when a wild battle starts.</span></div>`;
+    } else {
+      const safeSp = String(e.species).replace(/'/g, "\\'");
+      const safeLoc = (st.route || '').replace(/'/g, "\\'");
+      if (typeof ensurePokemonBackfilled === 'function' && !pokeInfo(e.species)) ensurePokemonBackfilled(e.species);
+      body = `<div class="pm-battle">
+        <div class="pm-battle-hd">
+          <span class="pm-enc-label">WILD</span>
+          <span class="pm-enc-name">${e.species}${e.level ? ` Lv ${e.level}` : ''}</span>
+          <span class="pm-battle-loc">${st.route || ''}</span>
+        </div>
+        <div class="pm-battle-actions">
+          <button class="pm-act ok" onclick="encActionCaught('${safeLoc}', '${safeSp}')">✓ Caught</button>
+          <button class="pm-act" onclick="encActionCaught('${safeLoc}', '${safeSp}', true)">✨</button>
+          <button class="pm-act" onclick="encActionLog('${safeLoc}', '${safeSp}', 'skipped')">⊘ Skip</button>
+          <button class="pm-act bad" onclick="encActionLog('${safeLoc}', '${safeSp}', 'failed')">✗ Missed</button>
+        </div>
+        <div class="pm-battle-body">${speciesView(e.species)}</div>
+      </div>`;
+    }
   } else if (pmView === 'team') {
     const { party, bench } = pmTeamRows();
     const monRow = (r, inParty) => {
@@ -17097,6 +17124,21 @@ NUZ_LIVE.on('state', () => { if (pmIsOpen()) pmRender(); });
   };
 })();
 NUZ_LIVE.on('route-changed', ({ route }) => { if (route) { try { setEncLocation(route); } catch (e) {} } });
+// A live wild battle pulls the battle helper up automatically; when the
+// battle ends it steps back to wherever the user was. Only auto-navigates in
+// Play mode, and never away from a view the user switched to mid-battle.
+let _pmViewBeforeBattle = null;
+NUZ_LIVE.on('encounter-started', () => {
+  if (!pmIsOpen()) return;
+  if (pmView !== 'battle') { _pmViewBeforeBattle = pmView; pmView = 'battle'; }
+  pmPickerOpen = false;
+  pmRender();
+});
+NUZ_LIVE.on('encounter-ended', () => {
+  if (!pmIsOpen()) return;
+  if (pmView === 'battle') { pmView = _pmViewBeforeBattle || 'route'; pmRender(); }
+  _pmViewBeforeBattle = null;
+});
 NUZ_LIVE.on('party-fainted', ({ species }) => {
   if (typeof showToast === 'function') showToast(`${species} fainted — mark it in the Team tab`, 'error');
 });
@@ -17191,6 +17233,18 @@ if (typeof onBackfill === 'function') onBackfill(() => { if (pmIsOpen()) pmRende
   .pm-hp { height:4px; border-radius:2px; background:var(--bg4); margin-top:4px; overflow:hidden; }
   .pm-hp-bar { height:100%; background:var(--green); border-radius:2px; }
   .pm-hp-bar.warn { background:var(--amber); } .pm-hp-bar.crit, .pm-hp-bar.dead { background:var(--red); }
+  .pm-battle-hd { display:flex; align-items:center; gap:7px; padding:8px 10px; margin-bottom:6px;
+    background:var(--accent-bg); border:1px solid var(--accent); border-radius:var(--radius-sm); }
+  .pm-battle-loc { margin-left:auto; font-size:10px; color:var(--text2); white-space:nowrap; }
+  .pm-battle-actions { display:flex; gap:5px; margin-bottom:8px; }
+  .pm-act { flex:1 1 0; padding:10px 4px; background:var(--bg3); border:1px solid var(--border2);
+    color:var(--text); border-radius:var(--radius-sm); font-size:12px; font-weight:700; white-space:nowrap; }
+  .pm-act.ok { color:var(--green); border-color:var(--green); background:var(--green-bg); }
+  .pm-act.bad { color:var(--red); }
+  /* speciesView markup was built for the wide modal — compact it for 420px. */
+  .pm-battle .pv-header { flex-direction:row; gap:10px; align-items:center; }
+  .pm-battle .pv-sprite img, .pm-battle .pv-sprite .pv-hq { max-width:72px; max-height:72px; }
+  .pm-battle .pv-section { margin-top:8px; }
   .pm-sec-hd { font-size:10px; font-weight:800; letter-spacing:0.06em; text-transform:uppercase;
     color:var(--text2); padding:6px 2px 2px; }
   .pm-sec-hd span { color:var(--text3); font-weight:600; }
