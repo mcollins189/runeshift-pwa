@@ -12131,7 +12131,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-18 14:30';
+const APP_BUILD = '2026-08-18 14:45';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -17841,6 +17841,30 @@ NUZ_LIVE.on('state', (s, st) => {
           changed = true;
         }
       }
+      // NATURE + ABILITY SYNC: both are fixed for a mon's whole life, so RAM is
+      // simply the truth. Nature was being read and sent all along but only ever
+      // consumed when a mon was first ADDED — anything already on the roster,
+      // or added from the box before nature was decoded there, kept a blank
+      // forever (field report). Ability comes across as a SLOT index; the
+      // species' ability list is already known here, so the slot picks the name.
+      if (matches.length === 1 && l.nature && matches[0].nature !== l.nature) {
+        matches[0].nature = l.nature;
+        changed = true;
+      }
+      if (matches.length === 1 && typeof l.abilitySlot === 'number' && !matches[0].ability) {
+        try {
+          const abils = (typeof pokeAbilities === 'function' ? pokeAbilities(matches[0].species) : []) || [];
+          // Slot 0/1 only — a hidden ability isn't distinguishable from this bit,
+          // so clamp rather than reach for a third entry we can't verify.
+          const pick = abils[Math.min(l.abilitySlot, 1)] || abils[0];
+          if (pick) { matches[0].ability = pick; changed = true; }
+          // Species outside the bundled data have no ability list until PokeAPI
+          // backfills them, which is why a freshly caught mon could arrive with
+          // a slot we could not name. Kick the fetch off; the guard above is
+          // `!ability`, so the next frame fills it in once the data lands.
+          else if (typeof ensurePokemonBackfilled === 'function') ensurePokemonBackfilled(matches[0].species);
+        } catch (e) {}
+      }
       // EV/IV SYNC: exact values from party RAM feed the roster fields the
       // manual editor already uses (p.evs/p.ivs → stat displays + battle sim).
       // EVs change constantly while training, so update whenever different;
@@ -17931,9 +17955,16 @@ NUZ_LIVE.on('state', (s, st) => {
         const add = {
           species: l.species, nickname: l.nickname || '', level: l.level || 1,
           alive: true, inParty: false,
-          moves: '', nature: '', held: typeof l.item === 'string' ? l.item : '',
+          moves: '', nature: l.nature || '', held: typeof l.item === 'string' ? l.item : '',
           events: [], dismissedMoves: []
         };
+        if (typeof l.abilitySlot === 'number') {
+          try {
+            const abils = (typeof pokeAbilities === 'function' ? pokeAbilities(add.species) : []) || [];
+            const pick = abils[Math.min(l.abilitySlot, 1)] || abils[0];
+            if (pick) add.ability = pick;
+          } catch (e) {}
+        }
         if (origin) add.route = origin;
         curTeam().push(add);
         const bIdx = curTeam().length - 1;
