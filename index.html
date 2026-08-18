@@ -17441,6 +17441,30 @@ NUZ_LIVE.on('state', (s, st) => {
           }
         }
       }
+      // Downward sync (savestate loads / retests): a single frame can't
+      // lower anyone, but the same lower level reported ~3 consecutive
+      // frames is the game's truth — mirror it (field request: "characters
+      // always match what is actively in game").
+      if (matches.length === 1 && l.level >= 1 && l.level < (+matches[0].level || 0)) {
+        const k = _normLocName(l.species);
+        const seen = _levelLowerSeen.get(k);
+        if (seen && seen.level === l.level) {
+          if (++seen.count >= 3) {
+            matches[0].level = l.level;
+            _levelLowerSeen.delete(k);
+            changed = true;
+            if (typeof _pendingLearnMoves !== 'undefined') {
+              const di = curTeam().indexOf(matches[0]);
+              if (di >= 0) _pendingLearnMoves.delete(di);
+            }
+            if (typeof showToast === 'function') showToast((matches[0].nickname || matches[0].species) + ' synced down to Lv ' + l.level, 'success');
+          }
+        } else {
+          _levelLowerSeen.set(k, { level: l.level, count: 1 });
+        }
+      } else if (matches.length === 1) {
+        _levelLowerSeen.delete(_normLocName(l.species));
+      }
       if (matches.length === 1 && (+matches[0].level || 0) < l.level && l.level <= 100) {
         const oldLv = +matches[0].level || 0;
         matches[0].level = l.level;
@@ -17499,6 +17523,7 @@ let _pmViewBeforeBattle = null;
 let pmBattleFocus = 'main';   // doubles: which enemy the battle panel details
 let pmMyMon = null;           // team index of YOUR mon in the moves readout (null = auto)
 let _lastLiveTimeOfDay = null; // last game-clock day/night applied to the enc tabs
+let _levelLowerSeen = new Map(); // species → {level, count}: pending downward level sync
 // Same confusables fold as NuzBridge's OcrParser.ident() — keep the two maps
 // in sync so nickname matching survives the GBA pixel font (EMBER↔EM8ER,
 // and L→I because L/I/1 are one glyph family in that font).
