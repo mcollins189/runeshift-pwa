@@ -12131,7 +12131,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-18 13:10';
+const APP_BUILD = '2026-08-18 13:24';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -14447,7 +14447,13 @@ function encActionDetails(species) {
 // Read-only — no roster fields, no actions, no learnset planner. Just the
 // matchup-critical info: types, BST, base stats, and the full defensive
 // type-effectiveness grid (4× / 2× / ½× / ¼× / 0× entries).
-function speciesView(species) {
+// opts.hideCatchInfo — drop the catch-oriented sections (the "safe to chip
+// with" tip and the team-fit tier recommendation). They exist to help decide
+// whether to CATCH something, which is meaningless for a trainer's Pokémon;
+// against a trainer the useful information is what it can do to you, so this
+// keeps the panel from burying that under advice you can't act on.
+function speciesView(species, opts) {
+  const hideCatchInfo = !!(opts && opts.hideCatchInfo);
   const info = pokeInfo(species);
   // Gate on spriteUrl itself — it resolves regional forms via formIdBySlug,
   // which pokeId (POKEMON_DB/backfill only) cannot ('Sandshrew Alola' showed
@@ -14552,14 +14558,14 @@ function speciesView(species) {
 
     ${abilitiesHtml ? `<div class="pv-section">${abilitiesHtml}</div>` : ''}
 
-    ${recoHtml}
+    ${hideCatchInfo ? '' : recoHtml}
 
     ${statsHtml ? `<div class="pv-section"><div class="pv-section-title">Base stats</div>${statsHtml}</div>` : ''}
 
     ${weakHtml ? `<div class="pv-section">
       <div class="pv-section-title">Type matchups (defending)</div>
       ${weakHtml}
-      ${safeTypesHtml}
+      ${hideCatchInfo ? '' : safeTypesHtml}
     </div>` : ''}
 
     ${!info ? '<div class="pv-section" style="color:var(--text3);font-size:11px;font-style:italic">No data for this species yet — typing/stats may load after PokeAPI backfill completes.</div>' : ''}
@@ -17347,6 +17353,42 @@ function pmRender() {
           }).join('')}</div>
         </div>`;
       }
+      // ── "Their moves" — what the focused foe can actually DO to you ────
+      // The bridge reads the opponent's real moveset out of the enemy party
+      // struct. This is the piece that decides a switch: a mon with two
+      // super-effective attacks is still a bad send-in if it takes a
+      // super-effective hit first (field report). Scored against whichever of
+      // your mons is currently in focus, so it answers "for THIS matchup".
+      let theirMovesHtml = '';
+      {
+        const fmv = Array.isArray(focus.moves) ? focus.moves.filter(Boolean)
+          : (typeof focus.moves === 'string' ? focus.moves.split(',').map(s => s.trim()).filter(Boolean) : []);
+        if (fmv.length) {
+          const meNow = curTeam().find((p, i) => p && p.alive && p.inParty &&
+            (pmMyMon != null ? i === pmMyMon : (st.allies || []).some(a => _normSpeciesName(a) === _normSpeciesName(p.species))));
+          const mt1 = meNow ? meNow.type1 : null, mt2 = meNow ? meNow.type2 : null;
+          let worst = 0;
+          const rows = fmv.map(m => {
+            const t = getMoveType(m), pw = movePower(m), cat = moveCategory(m);
+            const isAtk = (cat === 'P' || cat === 'S') && pw;
+            const eff = (isAtk && t && mt1) ? effectiveness(t, mt1, mt2 || null) : null;
+            if (eff !== null) worst = Math.max(worst, eff);
+            const lbl = eff === null ? '' : eff === 0 ? '×0' : eff === 0.25 ? '×¼' : eff === 0.5 ? '×½' : eff === 1 ? '×1' : `×${eff}`;
+            // Danger is coloured from THEIR point of view: red = it hurts you.
+            const cls = eff === null ? '' : eff >= 2 ? 'bad' : (eff <= 0.5 ? 'good' : '');
+            return `<div class="pm-move">
+              ${t ? typeBadge(t) : '<span class="type-badge">?</span>'}
+              <span class="pm-move-name">${m}</span>
+              <span class="pm-move-pw">${isAtk ? pw : (cat === 'P' || cat === 'S') ? '?' : 'status'}</span>
+              ${eff === null ? '' : `<span class="pm-move-eff ${cls}">${lbl}</span>`}
+            </div>`;
+          }).join('');
+          const warn = worst >= 2 && meNow
+            ? `<span class="pm-threat">hits ${meNow.nickname || meNow.species} ×${worst}</span>` : '';
+          theirMovesHtml = `<div class="pm-sec-hd">Their moves — ${focus.species} ${warn}</div>
+            <div class="pm-mymoves pm-theirmoves">${rows}</div>`;
+        }
+      }
       // ── "Your moves" — the mon YOU have out, scored against this enemy ──
       // Auto-picked from the bridge's allies report (OCR of the bottom-half
       // name boxes); chips override it; falls back to first party mon.
@@ -17516,8 +17558,9 @@ function pmRender() {
           <button class="pm-act" onclick="encActionLog('${safeLoc}', '${safeSp}', 'skipped')">⊘ Skip</button>
           <button class="pm-act bad" onclick="encActionLog('${safeLoc}', '${safeSp}', 'failed')">✗ Missed</button>
         </div>`}
+        ${theirMovesHtml}
         ${myMovesHtml}
-        <div class="pm-battle-body">${speciesView(focus.species)}</div>
+        <div class="pm-battle-body">${speciesView(focus.species, { hideCatchInfo: isTrainer })}</div>
       </div>`;
     }
   } else if (pmView === 'team') {
@@ -17989,6 +18032,8 @@ if (typeof onBackfill === 'function') onBackfill(() => { if (pmIsOpen()) pmRende
   .pm-chip.down { opacity:.45; text-decoration:line-through; }
   .pm-chip.out { border-color:var(--accent); }
   .pm-mymoves-hd { font-size:11px; color:var(--text2); margin:4px 0 2px; }
+  .pm-theirmoves { margin-bottom:7px; }
+  .pm-threat { font-size:10px; color:var(--red); font-weight:600; }
   .pm-mymoves-hd b { color:var(--text3); font-weight:400; }
   .pm-mgrid { display:grid; gap:3px; align-items:center; margin-bottom:6px; }
   .pm-mgrid .mg-h { font-size:9px; color:var(--text3); text-align:center;
