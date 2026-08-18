@@ -1129,7 +1129,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1784179565893"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787014712050"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -2683,7 +2683,10 @@ const GAMES = {
       routes: { N: 'Unbound', E: 'UnboundExpert' },
       encounterTables: 'Unbound',
       leagues: 'Unbound',
-      patches: 'Unbound'
+      patches: 'Unbound',
+      // ROM-dumped level-up learnsets (916 species) + the full ROM movedex in
+      // patches (677 moves incl. customs) — _tools/dump-unbound-movedata.mjs.
+      learnsets: 'Unbound'
     }
   },
   'renegade_platinum': {
