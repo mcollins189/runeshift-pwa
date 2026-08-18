@@ -16858,6 +16858,7 @@ window.NUZ_BRIDGE = NUZ_BRIDGE;
    the tab strip, and the normal app has to stay exactly as it is underneath. */
 let pmView = 'route';            // route | team | boss | log
 let pmPickerOpen = false;
+let _pmScrollKey = null;         // view identity at last render, for scroll preservation
 
 function pmIsOpen() { const el = document.getElementById('play-mode'); return !!el && el.classList.contains('open'); }
 
@@ -17239,8 +17240,19 @@ function pmRender() {
   }
 
   const tab = (id, label) => `<button class="pm-tab${pmView === id ? ' active' : ''}" onclick="pmSetView('${id}')">${label}</button>`;
+  // Live updates re-render this whole panel (the memory bridge pushes every
+  // HP tick mid-battle), which resets the scroll position — "I scroll down
+  // and it snaps back to the top". Preserve .pm-body/.pm-picker scroll across
+  // SAME-VIEW re-renders; an intentional view switch still starts at the top.
+  const _scrollKey = pmView + '|' + pmPickerOpen;
+  const _keepScroll = _pmScrollKey === _scrollKey;
+  const _bodyScroll = _keepScroll ? (root.querySelector('.pm-body')?.scrollTop || 0) : 0;
+  const _pickScroll = _keepScroll ? (root.querySelector('.pm-picker')?.scrollTop || 0) : 0;
+  _pmScrollKey = _scrollKey;
   root.innerHTML = head + picker + `<div class="pm-body">${body}</div>` +
     `<div class="pm-bar">${tab('route', 'Route')}${tab('team', 'Team')}${tab('boss', 'Boss')}${tab('log', 'Log')}</div>`;
+  if (_bodyScroll) { const el = root.querySelector('.pm-body'); if (el) el.scrollTop = _bodyScroll; }
+  if (_pickScroll) { const el = root.querySelector('.pm-picker'); if (el) el.scrollTop = _pickScroll; }
 }
 
 function openPlayMode() {
