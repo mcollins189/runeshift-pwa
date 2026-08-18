@@ -12131,7 +12131,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-18 13:24';
+const APP_BUILD = '2026-08-18 13:32';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -17714,8 +17714,22 @@ NUZ_LIVE.on('state', (s, st) => {
     let changed = false;
     for (const l of st.party) {
       if (!l || !l.species || typeof l.level !== 'number') continue;
-      const matches = curTeam().filter(p => p.alive && p.inParty && p.species &&
+      // Nickname first, species second. The nickname is what the player
+      // actually recognises a mon by, and it disambiguates duplicates of the
+      // same species — which plain species matching silently got wrong by
+      // picking whichever came first. Falls back to species for mons with no
+      // nickname (the game stores the species name there when unnamed).
+      const liveNick = _normSpeciesName(l.nickname || '');
+      const byNick = liveNick ? curTeam().filter(p => p.alive && p.inParty && p.nickname &&
+        _normSpeciesName(p.nickname) === liveNick) : [];
+      const matches = byNick.length === 1 ? byNick : curTeam().filter(p => p.alive && p.inParty && p.species &&
         _normSpeciesName(p.species) === _normSpeciesName(l.species));
+      // The game's nickname is the truth, same as its levels and moves — a
+      // roster nickname that drifted from it is a typo, not a preference.
+      if (matches.length === 1 && l.nickname && (matches[0].nickname || '') !== l.nickname) {
+        matches[0].nickname = l.nickname;
+        changed = true;
+      }
       // MOVESET SYNC: the game's actual moveset comes straight from party
       // RAM (answers "what happens with new moves on level-up?" — nothing to
       // prompt; the tracker simply mirrors the game). Same guardrails as the
@@ -17841,6 +17855,57 @@ NUZ_LIVE.on('state', (s, st) => {
         }
       }
 
+    }
+
+    // ── Roster ↔ party mirroring ─────────────────────────────────────────
+    // Everything above updates mons the roster ALREADY knows. These two steps
+    // make the roster follow the game's party itself: a gift or a catch shows
+    // up on its own, and party-vs-box membership stops being hand-maintained.
+    // Guarded on a plausible party read — a garbled or empty frame must never
+    // be read as "the player has no Pokémon".
+    if (st.party.length) {
+      const liveKey = m => _normSpeciesName(m.nickname || '') || _normSpeciesName(m.species || '');
+      const rosterKey = p => _normSpeciesName(p.nickname || '') || _normSpeciesName(p.species || '');
+      const liveKeys = new Set(st.party.map(liveKey).filter(Boolean));
+      const liveSpecies = new Set(st.party.map(m => _normSpeciesName(m.species || '')).filter(Boolean));
+
+      // 1. Party membership follows the game. Only ever toggles inParty — a mon
+      //    that leaves the party is boxed, NOT dead, so alive/graveyard state is
+      //    never touched here.
+      for (const p of curTeam()) {
+        if (!p || !p.alive || !p.species) continue;
+        const inGame = liveKeys.has(rosterKey(p)) ||
+          (!p.nickname && liveSpecies.has(_normSpeciesName(p.species)));
+        if (!!p.inParty !== inGame) { p.inParty = inGame; changed = true; }
+      }
+
+      // 2. Anything in the game's party with no roster entry gets added —
+      //    gifts, in-game trades, and catches logged straight from the game.
+      //    Matched against the WHOLE roster (including boxed and fallen mons)
+      //    so a benched or dead mon is never silently duplicated.
+      for (const l of st.party) {
+        if (!l || !l.species) continue;
+        const k = liveKey(l);
+        const known = curTeam().some(p => p && p.species && (
+          rosterKey(p) === k ||
+          (!l.nickname && _normSpeciesName(p.species) === _normSpeciesName(l.species))));
+        if (known) continue;
+        const add = {
+          species: l.species, nickname: l.nickname || '', level: l.level || 1,
+          alive: true, inParty: true,
+          moves: Array.isArray(l.moves) ? l.moves.join(', ') : '',
+          nature: l.nature || '', held: typeof l.item === 'string' ? l.item : '',
+          events: [], dismissedMoves: []
+        };
+        if (Array.isArray(l.evs)) add.evs = l.evs.slice();
+        if (Array.isArray(l.ivs)) add.ivs = l.ivs.slice();
+        if (Array.isArray(l.stats)) add.gameStats = l.stats.slice();
+        curTeam().push(add);
+        changed = true;
+        if (typeof showToast === 'function') {
+          showToast(`${add.nickname || add.species} joined your party — added to the roster`, 'success');
+        }
+      }
     }
     if (changed) { save(); render(); }
   }
