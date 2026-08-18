@@ -17822,6 +17822,12 @@ function pmCanon(s) {
 NUZ_LIVE.on('encounter-started', () => {
   pmBattleFocus = 'main';
   pmMyMon = null;
+  // Clear the cursor-follow memory per battle. These hold the last value the
+  // game reported, and focus is only re-applied when it CHANGES — so without a
+  // reset, a new battle whose first cursor reading matches the previous
+  // battle's last one would never apply at all.
+  _lastChoosing = null;
+  _lastTargetSlot = null;
   if (!pmIsOpen()) return;
   if (pmView !== 'battle') { _pmViewBeforeBattle = pmView; pmView = 'battle'; }
   pmPickerOpen = false;
