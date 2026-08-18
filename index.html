@@ -638,6 +638,7 @@
   .pv-evcell i{display:block;font-style:normal;font-size:8px;opacity:.65;letter-spacing:.3px}
   .pv-evcell.on{color:var(--text);background:var(--bg4)}
   .pv-evcell.max{color:var(--green)}
+  .pv-evnote{font-size:9px;color:var(--text3);opacity:.8;margin-top:3px;line-height:1.35}
   .se2-evgrid{margin-top:9px;display:flex;flex-direction:column;gap:3px}
   .se2-evline{display:flex;align-items:center;gap:3px}
   .se2-evtag{font-size:9px;font-weight:700;color:var(--text3);width:16px;flex:0 0 auto;letter-spacing:.5px}
@@ -14742,12 +14743,19 @@ function pokeView(p, idx) {
   if (info && info.s && info.s.length === 6 && info.s.some(v => v != null)) {
     const labels = ['HP','Atk','Def','SpA','SpD','Spe'];
     const calc = p.level ? calcStatAtLevel(info.s, p.level, { nature: p.nature, ability: p.ability, species: p.species, item: p.held, ivs: p.ivs, evs: p.evs, statOverrides: p.statOverrides }) : null;
-    const displayStats = calc ? calc.stats : info.s;
+    // When the bridge has handed us the cartridge's own stat block, SHOW THAT.
+    // Recomputing is only ever an approximation of the real machine — a hack's
+    // rebalanced base stats or a stale IV shifts it by a point, and the player
+    // is holding the summary screen next to this panel.
+    const liveStats = (Array.isArray(p.gameStats) && p.gameStats.length === 6 &&
+                       p.gameStats.every(v => typeof v === 'number')) ? p.gameStats : null;
+    const displayStats = liveStats || (calc ? calc.stats : info.s);
     const statNotes = calc ? calc.notes : [];
     // Level-aware denominator: 100-base lands ~67% of bar regardless of level.
     // Without scaling, level-scaled stats peg at 100% in mid-game.
     const denom = (calc && p.level) ? 180 * Math.max(1, p.level/50) : 180;
     if (calc && p.level) statsTitle = `Stats (Lv ${p.level})`;
+    if (liveStats) statsTitle += ' · from game';
     statsHtml = `<div class="stat-bars">` + displayStats.map((v,i) => {
       if (v == null) return `<span class="sb-label">${labels[i]}</span><span class="sb-wrap"></span><span class="sb-val">—</span>`;
       const pct = Math.min(100, Math.round(v / denom * 100));
@@ -14769,7 +14777,12 @@ function pokeView(p, idx) {
         labels.map((l, i) => cell(l, evA[i] || 0, (evA[i] ? ' on' : ''))).join('')}</div>`);
       if (ivA) rows.push(`<div class="pv-evline"><span class="pv-evtag">IV</span>${
         labels.map((l, i) => cell(l, ivA[i] == null ? '—' : ivA[i], ivA[i] === 31 ? ' max' : '')).join('')}</div>`);
-      statsHtml += `<div class="pv-evgrid" title="Effort / Individual values — mirrored from game RAM when the bridge is connected">${rows.join('')}</div>`;
+      // These are the game's HIDDEN numbers — no Gen-3 summary screen shows
+      // them, so without a caption they read as mystery rows (field report:
+      // "I don't really get what the iv and ev lines mean").
+      statsHtml += `<div class="pv-evgrid">${rows.join('')}` +
+        `<div class="pv-evnote">hidden values the game never shows you — ` +
+        `EVs grow as you battle, IVs are fixed at catch (31 = perfect)</div></div>`;
     }
     const bst = info.s.reduce((a,b)=>a+(b||0),0);
     statsHtml += `<div style="margin-top:6px;font-size:11px;color:var(--text3);text-align:right">BST ${bst}</div>`;
@@ -15275,7 +15288,10 @@ function buildStatPanel(p) {
   const info = pokeInfo(p.species);
   const base = (info && Array.isArray(info.s) && info.s.length === 6) ? info.s : null;
   const lvl = p.level || 1;
-  const summary = base ? calcStatAtLevel(base, lvl, { species: p.species, nature: p.nature, ivs: ivArr, evs: evArr }).stats : null;
+  const solved = base ? calcStatAtLevel(base, lvl, { species: p.species, nature: p.nature, ivs: ivArr, evs: evArr }).stats : null;
+  // Same rule as the detail view: the cartridge's own numbers outrank ours.
+  const summary = (Array.isArray(p.gameStats) && p.gameStats.length === 6 &&
+                   p.gameStats.every(v => typeof v === 'number')) ? p.gameStats : solved;
   const evTot = evArr.reduce((a, b) => a + (b || 0), 0);
   const customized = evArr.some(v => v) || ivArr.some(v => v !== 31);
   const denom = 180 * Math.max(1, lvl / 50);
@@ -17580,8 +17596,20 @@ NUZ_LIVE.on('state', (s, st) => {
           matches[0].evs = l.evs.slice();
           changed = true;
         }
-        if (Array.isArray(l.ivs) && l.ivs.length === 6 && !Array.isArray(matches[0].ivs)) {
+        // IVs are fixed at catch, so RAM is ALWAYS the truth: a stored value
+        // that disagrees is stale (hand-entered, or back-solved by the stat
+        // editor when the player typed a stat). The old write-once guard let
+        // such a value survive forever and threw the computed stats off by a
+        // point or two versus the in-game summary.
+        if (Array.isArray(l.ivs) && l.ivs.length === 6 &&
+            JSON.stringify(matches[0].ivs || null) !== JSON.stringify(l.ivs)) {
           matches[0].ivs = l.ivs.slice();
+          changed = true;
+        }
+        // The game's own stat block — displayed verbatim, see renderPokeView.
+        if (Array.isArray(l.stats) && l.stats.length === 6 &&
+            JSON.stringify(matches[0].gameStats || null) !== JSON.stringify(l.stats)) {
+          matches[0].gameStats = l.stats.slice();
           changed = true;
         }
         // A manual stat OVERRIDE outranks the IV/EV-solved number everywhere it
