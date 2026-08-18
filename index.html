@@ -17423,10 +17423,18 @@ NUZ_LIVE.on('state', (s, st) => {
           matches[0].moves = next.join(', ');
           changed = true;
           // The in-game choice just landed — the pending learn-advice for
-          // this mon is answered; clear it so the banner doesn't linger.
+          // this mon is answered; clear it so the banner doesn't linger. And
+          // if the ADVICE MODAL is open on this very mon, refresh it in place:
+          // the user answered in the GAME while reading the advice, and a
+          // stale prompt with dead buttons shouldn't need a manual close
+          // (field report). Same refresh-via-openEdit pattern as toggleShiny.
           try {
             const idx = curTeam().indexOf(matches[0]);
             if (idx >= 0 && typeof _pendingLearnMoves !== 'undefined') _pendingLearnMoves.delete(idx);
+            if (idx >= 0 && typeof editIdx !== 'undefined' && editIdx === idx &&
+                document.getElementById('overlay')?.classList.contains('open')) {
+              setTimeout(() => { try { if (editIdx === idx) openEdit(idx); } catch (e) {} }, 80);
+            }
           } catch (e) {}
           if (added.length && typeof showToast === 'function' && cur.length) {
             showToast((matches[0].nickname || matches[0].species) + ' learned ' + added.join(', '), 'success');
