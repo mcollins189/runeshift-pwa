@@ -17396,6 +17396,21 @@ NUZ_LIVE.on('state', (s, st) => {
           }
         }
       }
+      // EV/IV SYNC: exact values from party RAM feed the roster fields the
+      // manual editor already uses (p.evs/p.ivs → stat displays + battle sim).
+      // EVs change constantly while training, so update whenever different;
+      // IVs are fixed at catch — write once.
+      if (matches.length === 1) {
+        if (Array.isArray(l.evs) && l.evs.length === 6 &&
+            JSON.stringify(matches[0].evs || null) !== JSON.stringify(l.evs)) {
+          matches[0].evs = l.evs.slice();
+          changed = true;
+        }
+        if (Array.isArray(l.ivs) && l.ivs.length === 6 && !Array.isArray(matches[0].ivs)) {
+          matches[0].ivs = l.ivs.slice();
+          changed = true;
+        }
+      }
       // MOVESET SYNC: the game's actual moveset comes straight from party
       // RAM (answers "what happens with new moves on level-up?" — nothing to
       // prompt; the tracker simply mirrors the game). Same guardrails as the
