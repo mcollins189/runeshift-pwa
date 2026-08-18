@@ -17323,7 +17323,10 @@ function pmRender() {
           <div class="pm-battle-chips">${foeTeam.map((m, i) => {
             const down = m.hp === 0;
             const sel = (typeof pmBattleFocus === 'number') ? pmBattleFocus === i : isLive(m);
-            return `<button class="pm-chip${sel ? ' active' : ''}${down ? ' down' : ''}" onclick="pmBattleFocus=${i};pmRender()" title="${down ? 'Fainted' : 'Tap to scout'}">${isLive(m) ? '▶ ' : ''}${m.species}${m.level ? ` Lv${m.level}` : ''}</button>`;
+            // Screen side on the live ones, so the strip can be matched against
+            // the game without counting positions (battler 1 = your right).
+            const side = isLive(m) ? (m.pos === 3 ? '◀ ' : m.pos === 1 ? '▶ ' : '• ') : '';
+            return `<button class="pm-chip${sel ? ' active' : ''}${down ? ' down' : ''}" onclick="pmBattleFocus=${i};pmRender()" title="${down ? 'Fainted' : (m.pos === 3 ? 'On the field — your LEFT' : m.pos === 1 ? 'On the field — your RIGHT' : 'Tap to scout')}">${side}${m.species}${m.level ? ` Lv${m.level}` : ''}</button>`;
           }).join('')}</div>
         </div>`;
       }
@@ -17416,7 +17419,14 @@ function pmRender() {
         // columns theirs, each cell your BEST multiplier into that target,
         // with ⚠ when that target threatens you back super-effectively. Tap a
         // cell to load that exact pairing into the move list underneath.
-        const foeOut = foeTeam.filter(m => m.active && m.hp !== 0);
+        // Lay the columns out the way the SCREEN does. Gen-3 names battler
+        // positions from each side's own point of view, so the opponent's
+        // battler 1 renders on YOUR right and battler 3 on your left — reading
+        // the grid straight off party-slot order made it look mirrored against
+        // the game (field report). Identity was never wrong, only the order.
+        const screenSide = m => (m.pos === 3 ? 'L' : m.pos === 1 ? 'R' : '');
+        const foeOut = foeTeam.filter(m => m.active && m.hp !== 0)
+          .slice().sort((a, b) => (b.pos || 0) - (a.pos || 0));   // pos 3 (your left) first
         const myOut = bparty.filter(x => isOut(x.p));
         let matchupHtml = '';
         if (foeOut.length > 1 && myOut.length > 1) {
@@ -17447,7 +17457,7 @@ function pmRender() {
           };
           const lbl = v => v == null ? '—' : v === 0 ? '×0' : v === 0.25 ? '×¼' : v === 0.5 ? '×½' : v === 1 ? '×1' : '×' + v;
           const cellCls = v => v == null ? '' : v >= 2 ? ' good' : v <= 0.5 ? ' bad' : '';
-          const head = foeOut.map(f => `<span class="mg-h">${f.species}</span>`).join('');
+          const head = foeOut.map(f => `<span class="mg-h">${screenSide(f) ? `<i>${screenSide(f)}</i> ` : ''}${f.species}</span>`).join('');
           const gridRows = myOut.map(x => {
             const cells = foeOut.map(f => {
               const ftypes = (pokeInfo(f.species) || {}).t || null;
@@ -17965,6 +17975,7 @@ if (typeof onBackfill === 'function') onBackfill(() => { if (pmIsOpen()) pmRende
   .pm-mgrid { display:grid; gap:3px; align-items:center; margin-bottom:6px; }
   .pm-mgrid .mg-h { font-size:9px; color:var(--text3); text-align:center;
     overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .pm-mgrid .mg-h i { font-style:normal; color:var(--accent); font-weight:700; }
   .pm-mgrid .mg-r { font-size:10px; color:var(--text2); padding-right:4px;
     overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .mg-cell { font-size:11px; padding:5px 0; border-radius:4px; cursor:pointer;
