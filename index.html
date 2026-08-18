@@ -17481,6 +17481,16 @@ NUZ_LIVE.on('state', (s, st) => {
           }
         }
       }
+      // HELD-ITEM SYNC: mirrors both ways — equips, swaps, AND consumption
+      // (a Berry Juice drunk mid-battle disappears from the roster too).
+      // The producer (v0.25+) always sends 'item' as a string, "" = nothing;
+      // older producers omit the field entirely and are left untouched.
+      if (matches.length === 1 && typeof l.item === 'string') {
+        if ((matches[0].held || '') !== l.item) {
+          matches[0].held = l.item;
+          changed = true;
+        }
+      }
       // EV/IV SYNC: exact values from party RAM feed the roster fields the
       // manual editor already uses (p.evs/p.ivs → stat displays + battle sim).
       // EVs change constantly while training, so update whenever different;
