@@ -14958,6 +14958,17 @@ async function computeEvolutionAdvice(species, level, currentMoves, noRelearning
 }
 
 async function renderPokeViewLearnset(idx) {
+  // Self-heal the learn-advice queue: it is in-memory only, so a reload (or
+  // the level/moveset arriving in one live frame) could lose the prompt while
+  // the move is still genuinely undecided. Recompute for the CURRENT level —
+  // the owned/dismissed filters keep this from ever nagging about settled
+  // moves. (Field report: level-up advice vanished after PWA refreshes.)
+  try {
+    const _p = curRun().team[idx];
+    if (_p && (!_pendingLearnMoves.has(idx)) && +_p.level > 0) {
+      await queueLearnableMoves(idx, _p.species, { atLevel: +_p.level });
+    }
+  } catch (e) {}
   const container = document.getElementById('pv-learnset-container');
   if (!container) return;
   const p = curTeam()[idx];
@@ -17095,16 +17106,34 @@ function pmRender() {
   // where the existing scored Learn/Replace/Skip prompt lives.
   let adviceHtml = '';
   try {
-    if (typeof _pendingLearnMoves !== 'undefined' && _pendingLearnMoves.size) {
-      for (const [ai, q] of _pendingLearnMoves) {
-        const ap = curTeam()[ai];
-        if (!ap || !ap.alive || !q || !q.length) continue;
-        adviceHtml += `<div class="pm-advice" onclick="openEdit(${ai})">
-          <span class="pm-advice-icon">⚡</span>
-          <span class="pm-advice-txt"><strong>${ap.nickname || ap.species}</strong> wants to learn <strong>${q[0].name}</strong></span>
-          <span class="pm-enc-cta">advice ›</span>
-        </div>`;
-      }
+    const advisees = new Map();   // idx → move name
+    if (typeof _pendingLearnMoves !== 'undefined') {
+      for (const [ai, q] of _pendingLearnMoves) if (q && q.length) advisees.set(ai, q[0].name);
+    }
+    // Stateless pass (reload-proof): any in-party mon with an unowned,
+    // undismissed ROM-learnset move at its CURRENT level.
+    const ov = (typeof curLearnsetOverride === 'function') ? curLearnsetOverride() : null;
+    if (ov) {
+      curTeam().forEach((ap, ai) => {
+        if (!ap || !ap.alive || !ap.inParty || advisees.has(ai)) return;
+        const list = ov[speciesSlug(ap.species)];
+        if (!list) return;
+        const ownedSet = new Set(((typeof ap.moves === 'string') ? ap.moves.split(',') : (ap.moves || []))
+          .map(s => String(s).trim().toLowerCase()).filter(Boolean));
+        const dis = new Set((ap.dismissedMoves || []).map(s => s.toLowerCase()));
+        const hit = list.find(([lv, m]) => lv === +ap.level &&
+          !ownedSet.has(prettifyMoveName(m).toLowerCase()) && !dis.has(prettifyMoveName(m).toLowerCase()));
+        if (hit) advisees.set(ai, prettifyMoveName(hit[1]));
+      });
+    }
+    for (const [ai, mv] of advisees) {
+      const ap = curTeam()[ai];
+      if (!ap) continue;
+      adviceHtml += `<div class="pm-advice" onclick="openEdit(${ai})">
+        <span class="pm-advice-icon">⚡</span>
+        <span class="pm-advice-txt"><strong>${ap.nickname || ap.species}</strong> wants to learn <strong>${mv}</strong></span>
+        <span class="pm-enc-cta">advice ›</span>
+      </div>`;
     }
   } catch (e) {}
 
@@ -17380,6 +17409,30 @@ NUZ_LIVE.on('state', (s, st) => {
       if (!l || !l.species || typeof l.level !== 'number') continue;
       const matches = curTeam().filter(p => p.alive && p.inParty && p.species &&
         _normLocName(p.species) === _normLocName(l.species));
+      // MOVESET SYNC: the game's actual moveset comes straight from party
+      // RAM (answers "what happens with new moves on level-up?" — nothing to
+      // prompt; the tracker simply mirrors the game). Same guardrails as the
+      // level sync. Replaces wholesale — RAM is the truth, including forgets.
+      if (matches.length === 1 && Array.isArray(l.moves) && l.moves.length) {
+        const cur = (typeof matches[0].moves === 'string')
+          ? matches[0].moves.split(',').map(s => s.trim()).filter(Boolean)
+          : (Array.isArray(matches[0].moves) ? matches[0].moves.filter(Boolean) : []);
+        const next = l.moves.map(String);
+        if (JSON.stringify(cur) !== JSON.stringify(next)) {
+          const added = next.filter(m => !cur.includes(m));
+          matches[0].moves = next.join(', ');
+          changed = true;
+          // The in-game choice just landed — the pending learn-advice for
+          // this mon is answered; clear it so the banner doesn't linger.
+          try {
+            const idx = curTeam().indexOf(matches[0]);
+            if (idx >= 0 && typeof _pendingLearnMoves !== 'undefined') _pendingLearnMoves.delete(idx);
+          } catch (e) {}
+          if (added.length && typeof showToast === 'function' && cur.length) {
+            showToast((matches[0].nickname || matches[0].species) + ' learned ' + added.join(', '), 'success');
+          }
+        }
+      }
       if (matches.length === 1 && (+matches[0].level || 0) < l.level && l.level <= 100) {
         const oldLv = +matches[0].level || 0;
         matches[0].level = l.level;
@@ -17411,30 +17464,7 @@ NUZ_LIVE.on('state', (s, st) => {
           changed = true;
         }
       }
-      // MOVESET SYNC: the game's actual moveset comes straight from party
-      // RAM (answers "what happens with new moves on level-up?" — nothing to
-      // prompt; the tracker simply mirrors the game). Same guardrails as the
-      // level sync. Replaces wholesale — RAM is the truth, including forgets.
-      if (matches.length === 1 && Array.isArray(l.moves) && l.moves.length) {
-        const cur = (typeof matches[0].moves === 'string')
-          ? matches[0].moves.split(',').map(s => s.trim()).filter(Boolean)
-          : (Array.isArray(matches[0].moves) ? matches[0].moves.filter(Boolean) : []);
-        const next = l.moves.map(String);
-        if (JSON.stringify(cur) !== JSON.stringify(next)) {
-          const added = next.filter(m => !cur.includes(m));
-          matches[0].moves = next.join(', ');
-          changed = true;
-          // The in-game choice just landed — the pending learn-advice for
-          // this mon is answered; clear it so the banner doesn't linger.
-          try {
-            const idx = curTeam().indexOf(matches[0]);
-            if (idx >= 0 && typeof _pendingLearnMoves !== 'undefined') _pendingLearnMoves.delete(idx);
-          } catch (e) {}
-          if (added.length && typeof showToast === 'function' && cur.length) {
-            showToast((matches[0].nickname || matches[0].species) + ' learned ' + added.join(', '), 'success');
-          }
-        }
-      }
+
     }
     if (changed) { save(); render(); }
   }
