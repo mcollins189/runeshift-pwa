@@ -1,0 +1,966 @@
+==========
+Map: 001 - Archan Tunnel (A)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 2-3): Zubat (40%), Whismur (20%), Roggenrola (20%), Woobat (10%), Spinarak (8%), Makuhita (2%)
+Additional SOS encounters: (None)
+==========
+Map: 002 - Archan Tunnel (B)
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 2-3): Whismur (40%), Spinarak (20%), Roggenrola (20%), Zubat (10%), Woobat (8%), Makuhita (2%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 20-24): Binacle (90%), Barboach (5%), Relicanth (5%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 3-4): Barboach (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 20-24): Barboach (80%), Binacle (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 33-36): Barboach (55%), Binacle (40%), Whiscash (5%)
+Additional SOS encounters: (None)
+==========
+Map: 003 - Archan Tunnel (C)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 15-18): Zubat (100%)
+Additional SOS encounters: (None)
+==========
+Map: 004 - Archan Tunnel (D)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 2-3): Whismur (40%), Zubat (20%), Drilbur (20%), Geodude (10%), Dwebble (8%), Makuhita (2%)
+Additional SOS encounters: (None)
+==========
+Map: 005 - Archan Tunnel (E)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 2-3): Zubat (40%), Roggenrola (20%), Woobat (20%), Makuhita (10%), Dwebble (8%), Drilbur (2%)
+Additional SOS encounters: (None)
+==========
+Map: 006 - Archan Tunnel (F)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 2-3): Whismur (40%), Zubat (28%), Scraggy (20%), Joltik (10%), Dwebble (2%)
+Additional SOS encounters: (None)
+==========
+Map: 007 - Archan Tunnel (G)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 9-11): Roggenrola (40%), Aron (20%), Dwebble (20%), Zubat (10%), Woobat (8%), Larvitar (2%)
+Additional SOS encounters: (None)
+==========
+Map: 008 - Archan Tunnel (H)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 8-12): Paras (40%), Numel (20%), Drilbur (20%), Aron (10%), Joltik (8%), Larvitar (2%)
+Additional SOS encounters: (None)
+==========
+Map: 009 - Wisp Forest
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 5-8): Bergmite (25%), Burmy (20%), Gastly (10%), Shroomish (10%), Duskull (10%), Shuppet (10%), Litwick (5%), Phantump (5%), Avalugg (5%)
+Additional SOS encounters: (None)
+==========
+Map: 010 - Frostbite Cave (A)
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 16-19): Woobat (40%), Zubat (20%), Spheal (20%), Roggenrola (10%), Psyduck (5%), Mime Jr. (5%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 27-29): Sealeo (90%), Psyduck (5%), Slowpoke (5%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 3-19): Poliwag (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 20-24): Poliwag (100%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 33-36): Poliwhirl (100%)
+Additional SOS encounters: (None)
+==========
+Map: 011 - Frostbite Cave (B)
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 17-20): Woobat (40%), Zubat (20%), Swinub (20%), Spheal (10%), Slowpoke (5%), Bergmite (5%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 27-29): Sealeo (90%), Psyduck (5%), Slowpoke (5%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 3-20): Poliwag (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 20-24): Poliwag (100%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 33-36): Poliwhirl (100%)
+Additional SOS encounters: (None)
+==========
+Map: 012 - Frostbite Cave (C)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 17-20): Snorunt (40%), Zubat (20%), Bergmite (20%), Swinub (10%), Delibird (5%), Vanillite (5%)
+Additional SOS encounters: (None)
+==========
+Map: 013 - Frostbite Cave (D)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 17-20): Vanillite (40%), Swinub (20%), Woobat (20%), Snorunt (10%), Zubat (8%), Chimecho (2%)
+Additional SOS encounters: (None)
+==========
+Map: 014 - Frostbite Cave (E)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 14-20): Zubat (25%), Swinub (23%), Snorunt (20%), Bergmite (15%), Woobat (14%), Cryogonal (4%)
+Additional SOS encounters: (None)
+==========
+Map: 015 - Frostbite Cave (F)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 17-20): Zubat (20%), Swinub (20%), Smoochum (20%), Woobat (20%), Vanillite (10%), Bergmite (8%), Snorunt (2%)
+Additional SOS encounters: (None)
+==========
+Map: 016 - Frostbite Cave (G)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 17-20): Zubat (40%), Vanillite (20%), Bergmite (20%), Roggenrola (10%), Delibird (5%), Spheal (5%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 5-25): Marill (99%), Woobat (1%)
+Additional SOS encounters: (None)
+==========
+Map: 017 - Frostbite Cave (H)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 32-37): Golbat (20%), Piloswine (20%), Delibird (20%), Swoobat (20%), Bergmite (5%), Avalugg (5%), Vanillite (4%), Vanillish (4%), Snorunt (2%)
+Additional SOS encounters: (None)
+==========
+Map: 018 - Frostbite Cave (I)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 14-17): Vanillite (40%), Snorunt (20%), Woobat (20%), Swinub (10%), Bergmite (8%), Delibird (2%)
+Additional SOS encounters: (None)
+==========
+Map: 019 - Emerald Peak (A)
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 40-44): Golbat (20%), Gothorita (20%), Duosion (20%), Beheeyem (20%), Mr. Mime (10%), Slowpoke (5%), Slowbro (5%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 40-44): Slowpoke (60%), Slowbro (30%), Psyduck (5%), Golduck (4%), Golbat (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 3-20): Staryu (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 20-24): Staryu (100%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 40-44): Staryu (80%), Starmie (20%)
+Additional SOS encounters: (None)
+==========
+Map: 020 - Emerald Peak (B)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 40-44): Wobbuffet (40%), Piloswine (20%), Musharna (20%), Swoobat (10%), Dratini (5%), Gothitelle (5%)
+Additional SOS encounters: (None)
+==========
+Map: 021 - Emerald Peak (C)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 40-44): Wobbuffet (40%), Piloswine (20%), Beheeyem (20%), Swoobat (10%), Dratini (5%), Reuniclus (5%)
+Additional SOS encounters: (None)
+==========
+Map: 022 - Rimewood Forest
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 24-27): Pineco (20%), Munchlax (20%), Snover (20%), Noctowl (15%), Murkrow (15%), Aipom (5%), Sneasel (5%)
+Additional SOS encounters: (None)
+==========
+Map: 023 - Nemesis Cave
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 27-30): Durant (40%), Zubat (20%), Paras (10%), Parasect (10%), Volbeat (5%), Illumise (5%), Foongus (5%), Heatmor (5%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 24-27): Lombre (60%), Shellos (35%), Palpitoad (5%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 3-20): Poliwag (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 20-26): Poliwag (60%), Krookodile (20%), Dwebble (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 33-36): Krookodile (40%), Dwebble (40%), Poliwag (15%), Poliwhirl (5%)
+Additional SOS encounters: (None)
+==========
+Map: 024 - Valoon Reserve
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 12-25): Caterpie (20%), Weedle (20%), Beedrill (10%), Wurmple (10%), Beautifly (10%), Dustox (10%), Yanma (5%), Nincada (5%), Scyther (4%), Pinsir (4%), Heracross (1%), Larvesta (1%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 12-25): Surskit (100%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 12-20): Surskit (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 20-25): Surskit (100%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 20-25): Surskit (100%)
+Additional SOS encounters: (None)
+==========
+Map: 025 - Telmurk Warehouses (A)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 24-27): Raticate (40%), Golbat (20%), Watchog (20%), Rotom (10%), Klink (10%)
+Additional SOS encounters: (None)
+==========
+Map: 026 - Telmurk Warehouses (B)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 25-28): Trubbish (40%), Magnemite (20%), Watchog (20%), Voltorb (10%), Ditto (5%), Klefki (5%)
+Additional SOS encounters: (None)
+==========
+Map: 027 - Telmurk Warehouses (C)
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 25-27): Trubbish (40%), Diglett (20%), Zubat (10%), Golbat (10%), Koffing (10%), Sandshrew (8%), Klefki (2%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 20-24): Grimer (70%), Zubat (30%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 3-20): Grimer (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 20-33): Grimer (100%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 33-38): Grimer (99%), Muk (1%)
+Additional SOS encounters: (None)
+==========
+Map: 028 - Telmurk Warehouses (D)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 25-28): Raticate (40%), Golbat (20%), Litwick (15%), Zubat (10%), Bronzor (9%), Ditto (6%)
+Additional SOS encounters: (None)
+==========
+Map: 029 - Telmurk Warehouses (E)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 24-27): Raticate (40%), Golbat (20%), Ferroseed (20%), Ditto (10%), Klefki (10%)
+Additional SOS encounters: (None)
+==========
+Map: 030 - Ferre Ruins (A)
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 29-34): Parasect (20%), Kingler (20%), Clauncher (20%), Golbat (10%), Gastrodon (10%), Nosepass (5%), Bronzor (5%), Bronzong (5%), Honedge (5%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 28-32): Poliwag (60%), Poliwhirl (30%), Slowpoke (5%), Marill (4%), Relicanth (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 3-20): Poliwag (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 20-33): Krabby (60%), Corsola (20%), Clauncher (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 33-37): Clauncher (80%), Crawdaunt (15%), Clawitzer (5%)
+Additional SOS encounters: (None)
+==========
+Map: 031 - Ferre Ruins (B)
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 29-34): Golbat (20%), Nosepass (20%), Lairon (20%), Clauncher (20%), Onix (5%), Bronzor (5%), Bronzong (5%), Honedge (5%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 25-35): Poliwag (60%), Poliwhirl (30%), Slowpoke (5%), Marill (4%), Relicanth (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 3-20): Poliwag (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 20-33): Krabby (60%), Corsola (20%), Clauncher (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 33-37): Krabby (40%), Clauncher (40%), Kingler (19%), Clawitzer (1%)
+Additional SOS encounters: (None)
+==========
+Map: 032 - Ferre Ruins (C)
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 30-35): Poliwag (60%), Poliwhirl (30%), Slowpoke (5%), Marill (4%), Relicanth (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 3-20): Poliwag (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 20-33): Krabby (60%), Corsola (20%), Clauncher (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 33-37): Krabby (40%), Clauncher (40%), Kingler (19%), Clawitzer (1%)
+Additional SOS encounters: (None)
+==========
+Map: 033 - Cosmic Caverns (A)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 36-42): Boldore (20%), Woobat (20%), Swoobat (20%), Mawile (15%), Elgyem (15%), Excadrill (5%), Clefairy (4%), Clefable (1%)
+Additional SOS encounters: (None)
+==========
+Map: 034 - Cosmic Caverns (B)
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 36-42): Sableye (20%), Boldore (20%), Swoobat (20%), Mawile (15%), Elgyem (15%), Clefairy (5%), Eelektrik (5%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 36-42): Zubat (90%), Staryu (10%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 3-20): Poliwag (70%), Staryu (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 20-33): Staryu (60%), Poliwhirl (20%), Dratini (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 33-42): Poliwhirl (40%), Staryu (40%), Dratini (20%)
+Additional SOS encounters: (None)
+==========
+Map: 035 - Cosmic Caverns (C)
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 36-42): Boldore (30%), Swoobat (30%), Misdreavus (15%), Carbink (15%), Mawile (5%), Eelektrik (5%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 36-42): Swoobat (60%), Staryu (35%), Inkay (5%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 3-20): Poliwag (70%), Staryu (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 20-33): Staryu (80%), Inkay (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 33-42): Inkay (55%), Staryu (40%), Dratini (5%)
+Additional SOS encounters: (None)
+==========
+Map: 036 - Cosmic Caverns (D)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 36-42): Swoobat (40%), Boldore (30%), Carbink (20%), Excadrill (10%)
+Additional SOS encounters: (None)
+==========
+Map: 037 - Southsea Stretch (A)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 32-36): Staryu (40%), Chinchou (40%), Clamperl (10%), Relicanth (10%)
+Additional SOS encounters: (None)
+==========
+Map: 038 - Southsea Stretch (B)
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 25-28): Wingull (60%), Tentacool (30%), Carvanha (9%), Inkay (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 3-20): Remoraid (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 20-26): Skrelp (60%), Horsea (40%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 33-36): Seadra (95%), Skrelp (5%)
+Additional SOS encounters: (None)
+==========
+Map: 039 - Precimos Strait (A)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 33-35): Chinchou (40%), Staryu (20%), Corsola (20%), Clamperl (10%), Clauncher (8%), Lanturn (2%)
+Additional SOS encounters: (None)
+==========
+Map: 040 - Precimos Strait (B)
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 30-33): Tentacool (60%), Wingull (30%), Mantine (5%), Wailmer (5%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 3-20): Luvdisc (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 20-33): Luvdisc (60%), Staryu (40%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 33-36): Staryu (80%), Starmie (15%), Alomomola (5%)
+Additional SOS encounters: (None)
+==========
+Map: 041 - Precimos Depths (A)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 34-40): Chinchou (60%), Finneon (20%), Clamperl (14%), Relicanth (4%), Huntail (2%)
+Additional SOS encounters: (None)
+==========
+Map: 042 - Precimos Depths (B)
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 34-40): Joltik (90%), Tentacruel (5%), Pelipper (5%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 3-20): Horsea (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 20-32): Horsea (60%), Shellder (40%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 33-36): Cloyster (55%), Seadra (44%), Kingdra (1%)
+Additional SOS encounters: (None)
+==========
+Map: 043 - Katosurf Trench (A)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 26-36): Skrelp (60%), Clamperl (20%), Chinchou (18%), Lanturn (2%)
+Additional SOS encounters: (None)
+==========
+Map: 044 - Katosurf Trench (B)
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 30-35): Tentacool (60%), Wingull (30%), Mantine (5%), Pelipper (5%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 3-20): Horsea (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 20-32): Horsea (60%), Shellder (40%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 33-36): Cloyster (55%), Seadra (44%), Kingdra (1%)
+Additional SOS encounters: (None)
+==========
+Map: 045 - Aerous City
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 16-20): Tentacool (60%), Wingull (30%), Lapras (5%), Mantyke (5%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 3-6): Finneon (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 20-24): Finneon (60%), Shellder (40%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 33-36): Lumineon (80%), Cloyster (20%)
+Additional SOS encounters: (None)
+==========
+Map: 046 - Nestpine Town
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 5-40): Wooper (100%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 3-16): Wooper (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 20-24): Wooper (100%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 33-36): Wooper (80%), Quagsire (20%)
+Additional SOS encounters: (None)
+==========
+Map: 047 - Sabulo Island
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 18-22): Joltik (90%), Relicanth (5%), Alomomola (5%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 3-20): Krabby (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 20-24): Krabby (60%), Clamperl (40%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 33-36): Krabby (80%), Clamperl (15%), Gorebyss (4%), Huntail (1%)
+Additional SOS encounters: (None)
+==========
+Map: 048 - Telmurk City
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 20-29): Grimer (90%), Tympole (5%), Palpitoad (5%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 3-20): Grimer (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 20-29): Grimer (60%), Tympole (40%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 33-36): Palpitoad (95%), Seismitoad (5%)
+Additional SOS encounters: (None)
+==========
+Map: 049 - Precimos Island
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 32-35): Tentacool (90%), Seaking (9%), Mantine (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 3-20): Luvdisc (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 20-32): Luvdisc (60%), Staryu (40%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 33-36): Staryu (80%), Starmie (15%), Alomomola (5%)
+Additional SOS encounters: (None)
+==========
+Map: 050 - Atsail City
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 30-33): Joltik (90%), Tentacool (5%), Mantine (5%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 3-20): Remoraid (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 20-32): Chinchou (100%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 33-36): Chinchou (80%), Lanturn (15%), Octillery (5%)
+Additional SOS encounters: (None)
+==========
+Map: 051 - Loamas Town
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 33-36): Marill (90%), Azumarill (10%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 3-20): Corphish (70%), Clauncher (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 20-32): Clauncher (100%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 33-37): Clauncher (80%), Crawdaunt (19%), Clawitzer (1%)
+Additional SOS encounters: (None)
+==========
+Map: 052 - Katosurf Town
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 5-35): Wooper (70%), Psyduck (30%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Poliwag (60%), Goldeen (20%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Poliwag (40%), Poliwhirl (40%), Gyarados (15%), Psyduck (5%)
+Additional SOS encounters: (None)
+==========
+Map: 053 - Battle Marsh
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 29-33): Mankey (20%), Stunky (20%), Croagunk (20%), Stunfisk (15%), Gloom (10%), Weepinbell (10%), Goomy (5%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 20-29): Tympole (60%), Poliwhirl (35%), Palpitoad (5%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 3-20): Barboach (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 20-29): Barboach (80%), Feebas (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 33-36): Whiscash (95%), Milotic (5%)
+Additional SOS encounters: (None)
+==========
+Map: 054 - Reliquia Ruins
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 14-16): Natu (40%), Swablu (20%), Elgyem (20%), Chimecho (10%), Lunatone (4%), Solrock (4%), Sigilyph (2%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 15-20): Tentacool (90%), Relicanth (10%)
+Additional SOS encounters: (None)
+==========
+Map: 055 - Celanto Path
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 2-3): Zigzagoon (40%), Taillow (20%), Bidoof (20%), Bunnelby (10%), Hoppip (5%), Budew (5%)
+Additional SOS encounters: (None)
+==========
+Map: 056 - Archan Hills
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 3-4): Marill (30%), Lotad (30%), Pidgey (15%), Buneary (15%), Glameow (5%), Purrloin (5%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 15-20): Marill (60%), Lotad (30%), Psyduck (10%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 3-4): Magikarp (70%), Goldeen (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 20-24): Magikarp (60%), Goldeen (20%), Corphish (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 33-36): Seaking (40%), Gyarados (40%), Crawdaunt (20%)
+Additional SOS encounters: (None)
+==========
+Map: 057 - Seros Path
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 3-4): Mareep (30%), Bunnelby (30%), Nidoran♀ (10%), Nidoran♂ (10%), Ralts (10%), Shellos (5%), Spritzee (5%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 3-4): Flabebe (100%)
+Additional SOS encounters: (None)
+==========
+Map: 058 - Aerous Road
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 4-6): Shinx (40%), Snubbull (20%), Starly (20%), Skiddo (10%), Blitzle (5%), Litleo (5%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 15-20): Psyduck (90%), Marill (10%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 3-6): Magikarp (70%), Goldeen (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 20-24): Magikarp (60%), Goldeen (20%), Corphish (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 33-36): Seaking (40%), Gyarados (40%), Crawdaunt (20%)
+Additional SOS encounters: (None)
+==========
+Map: 059 - Nestpine Climb
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 14-16): Spearow (20%), Phanpy (20%), Munna (20%), Timburr (20%), Fletchling (10%), Abra (5%), Meditite (5%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 23-26): Psyduck (90%), Slowpoke (10%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 3-16): Barboach (70%), Goldeen (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 20-24): Barboach (60%), Goldeen (20%), Corphish (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 33-36): Seaking (40%), Whiscash (40%), Crawdaunt (20%)
+Additional SOS encounters: (None)
+==========
+Map: 060 - Windmist Summit
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 18-21): Cubchoo (40%), Mienfoo (20%), Teddiursa (10%), Snover (10%), Herdier (10%), Sneasel (5%), Hoothoot (4%), Noctowl (1%)
+Additional SOS encounters: (None)
+==========
+Map: 061 - Ignis Roost
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 18-21): Golett (40%), Pidgeotto (20%), Baltoy (20%), Bronzor (10%), Sigilyph (5%), Chingling (4%), Chimecho (1%)
+Additional SOS encounters: (None)
+==========
+Map: 062 - Sabulo Cross
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 23-27): Swablu (40%), Jigglypuff (20%), Electrike (20%), Skitty (10%), Slowpoke (5%), Wingull (5%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 19-26): Tentacool (60%), Joltik (35%), Wingull (4%), Mantyke (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 3-20): Finneon (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 20-24): Finneon (60%), Shellder (20%), Luvdisc (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 33-36): Luvdisc (40%), Lumineon (40%), Cloyster (20%)
+Additional SOS encounters: (None)
+==========
+Map: 063 - Sharpgust Span
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 24-26): Rufflet (50%), Wingull (20%), Swablu (20%), Pelipper (5%), Inkay (5%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 24-26): Tentacool (60%), Wingull (30%), Joltik (10%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 3-20): Remoraid (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 20-26): Remoraid (60%), Qwilfish (20%), Carvanha (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 33-36): Octillery (59%), Qwilfish (40%), Sharpedo (1%)
+Additional SOS encounters: (None)
+==========
+Map: 064 - Valoon Way
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 25-28): Ekans (20%), Yanma (20%), Seviper (20%), Skorupi (20%), Arbok (5%), Pansage (5%), Pansear (5%), Panpour (5%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 24-26): Lombre (60%), Poliwag (30%), Poliwhirl (10%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 3-20): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 20-24): Magikarp (60%), Barboach (40%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 33-36): Whiscash (60%), Gyarados (40%)
+Additional SOS encounters: (None)
+==========
+Map: 065 - Nemesis River
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 26-29): Tangela (40%), Ledyba (20%), Nuzleaf (20%), Zangoose (5%), Carnivine (5%), Cottonee (5%), Petilil (5%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 24-26): Lombre (60%), Poliwhirl (30%), Buizel (10%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 3-20): Feebas (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 20-26): Feebas (60%), Poliwhirl (20%), Carvanha (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 33-36): Milotic (40%), Sharpedo (40%), Poliwhirl (19%), Politoed (1%)
+Additional SOS encounters: (None)
+==========
+Map: 066 - Telmurk Swamp
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 29-33): Oddish (20%), Bellsprout (20%), Gloom (10%), Weepinbell (10%), Karrablast (10%), Ferroseed (10%), Shelmet (10%), Swalot (5%), Goomy (5%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 27-29): Wooper (90%), Grimer (5%), Tympole (4%), Poliwag (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 3-20): Tympole (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 20-29): Tympole (60%), Palpitoad (40%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 33-36): Palpitoad (55%), Tympole (40%), Seismitoad (5%)
+Additional SOS encounters: (None)
+==========
+Map: 067 - Telmurk Outskirts
+Tables: 6
+Table 1 [grass] (All):
+Encounters (Levels 29-32): Mightyena (20%), Whirlipede (20%), Electabuzz (15%), Magmar (15%), Skarmory (15%), Hawlucha (10%), Absol (5%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 25-30): Azumarill (60%), Floatzel (30%), Krookodile (5%), Dwebble (5%)
+Additional SOS encounters: (None)
+Table 3 [rockSmash] (All):
+Encounters (Levels 30-35): Graveler (60%), Binacle (30%), Larvitar (5%), Crustle (5%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 3-20): Corphish (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 20-32): Corphish (60%), Krookodile (20%), Dwebble (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 33-36): Dwebble (41%), Crawdaunt (40%), Krookodile (19%)
+Additional SOS encounters: (None)
+==========
+Map: 068 - Edashore Reach
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 36-42): Linoone (20%), Pelipper (20%), Bibarel (20%), Clefairy (15%), Tangela (15%), Absol (10%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 36-42): Tentacool (60%), Wingull (30%), Tentacruel (5%), Pelipper (5%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 3-20): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 20-32): Shellder (100%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 33-36): Cloyster (55%), Shellder (40%), Gyarados (5%)
+Additional SOS encounters: (None)
+==========
+Map: 069 - Loamas Fields
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 38-44): Flaaffy (20%), Miltank (20%), Pachirisu (10%), Swadloon (10%), Emolga (10%), Bouffalant (10%), Pikachu (5%), Ponyta (5%), Tauros (5%), Grumpig (5%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 38-44): Dedenne (60%), Ledian (30%), Murkrow (5%), Dunsparce (5%)
+Additional SOS encounters: (None)
+==========
+Map: 070 - Ikos Canyon
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 39-45): Vibrava (20%), Krokorok (20%), Sandslash (10%), Dodrio (10%), Cacturne (10%), Crustle (10%), Gabite (5%), Hippopotas (5%), Hippowdon (5%), Vullaby (5%)
+Additional SOS encounters: (None)
+==========
+Map: 071 - Ignis Valley
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 40-45): Machoke (20%), Rhyhorn (20%), Rufflet (20%), Throh (10%), Sawk (10%), Gligar (5%), Sigilyph (5%), Florges (5%), Jangmo-o (5%)
+Additional SOS encounters: (None)
+==========
+Map: 072 - Atsail Bay (A)
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 40-46): Dodrio (25%), Braviary (25%), Gligar (20%), Swanna (20%), Unfezant (5%), Mandibuzz (5%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 32-35): Tentacool (60%), Tentacruel (30%), Seaking (5%), Joltik (5%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 3-20): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 20-32): Magikarp (60%), Staryu (40%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 33-36): Staryu (40%), Starmie (40%), Gyarados (20%)
+Additional SOS encounters: (None)
+==========
+Map: 073 - Atsail Bay (B)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 33-35): Skrelp (60%), Clamperl (20%), Relicanth (10%), Chinchou (8%), Lanturn (2%)
+Additional SOS encounters: (None)
+==========
+Map: 074 - Ignis Catacombs (A)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 40-44): Golbat (20%), Noibat (20%), Magcargo (10%), Numel (10%), Camerupt (10%), Yamask (10%), Lairon (9%), Cofagrigus (5%), Bagon (4%), Shelgon (2%)
+Additional SOS encounters: (None)
+==========
+Map: 075 - Ignis Catacombs (B)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 40-44): Noibat (40%), Camerupt (20%), Lairon (20%), Bagon (10%), Shelgon (5%), Yamask (4%), Cofagrigus (1%)
+Additional SOS encounters: (None)
+==========
+Map: 076 - Ignis Catacombs (C)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 40-44): Golbat (40%), Loudred (20%), Lairon (20%), Shelgon (11%), Cofagrigus (5%), Yamask (4%)
+Additional SOS encounters: (None)
+==========
+Map: 077 - Ignis Catacombs (D)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 40-44): Golbat (50%), Noibat (20%), Lairon (15%), Larvitar (5%), Pupitar (5%), Cofagrigus (5%)
+Additional SOS encounters: (None)
+==========
+Map: 078 - Ignis Catacombs (E)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 40-44): Golbat (80%), Noibat (14%), Loudred (4%), Exploud (2%)
+Additional SOS encounters: (None)
+==========
+Map: 079 - Ignis Catacombs (F)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 40-44): Golbat (40%), Lairon (20%), Noibat (20%), Shelgon (9%), Bagon (5%), Loudred (4%), Exploud (2%)
+Additional SOS encounters: (None)
+==========
+Map: 080 - Edamist Heights
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 15-17): Staravia (25%), Snover (20%), Timburr (20%), Cubchoo (20%), Spinda (10%), Munchlax (5%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 36-42): Gurdurr (60%), Ursaring (30%), Spinda (5%), Staraptor (5%)
+Additional SOS encounters: (None)
+==========
+Map: 081 - Ikos Town
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 35-40): Luvdisc (95%), Alomomola (5%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 3-20): Luvdisc (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 20-32): Luvdisc (60%), Alomomola (40%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 33-40): Alomomola (60%), Luvdisc (40%)
+Additional SOS encounters: (None)
+==========
+Map: 082 - Victory Falls
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 40-46): Sunflora (30%), Sawsbuck (30%), Heliolisk (15%), Altaria (10%), Chansey (5%), Togetic (5%), Audino (5%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 35-40): Luvdisc (60%), Floatzel (30%), Lombre (10%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 3-20): Luvdisc (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 20-32): Luvdisc (60%), Alomomola (40%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 33-40): Alomomola (60%), Luvdisc (40%)
+Additional SOS encounters: (None)
+==========
+Map: 083 - Ikos Ruins
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 25-25): Unown (100%)
+Additional SOS encounters: (None)
+==========
+Map: 084 - Victory Road (A)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 40-46): Golbat (40%), Lickitung (20%), Bronzong (20%), Claydol (10%), Chimecho (5%), Golurk (5%)
+Additional SOS encounters: (None)
+==========
+Map: 085 - Victory Road (B)
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 40-46): Swoobat (40%), Boldore (20%), Lickitung (10%), Chimecho (10%), Pawniard (10%), Bronzong (5%), Gigalith (5%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 40-46): Poliwhirl (90%), Floatzel (9%), Swoobat (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 40-46): Poliwag (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 40-46): Poliwhirl (100%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 40-46): Krookodile (44%), Poliwhirl (40%), Dwebble (16%)
+Additional SOS encounters: (None)
+==========
+Map: 086 - Victory Road (C)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 40-46): Pawniard (40%), Swoobat (20%), Claydol (15%), Golurk (15%), Gigalith (5%), Druddigon (5%)
+Additional SOS encounters: (None)
+==========
+Map: 087 - Victory Road (D)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 40-46): Relicanth (40%), Huntail (20%), Gorebyss (20%), Lanturn (10%), Skrelp (10%)
+Additional SOS encounters: (None)

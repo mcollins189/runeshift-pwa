@@ -1129,7 +1129,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787014712050"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787074886807"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -2671,6 +2671,18 @@ const GAMES = {
       patches: 'RadicalRed'
     }
   },
+  'team_rocket_edition': {
+    // Pokémon Fire Red: Team Rocket Edition — vanilla FR engine (BPRE, Gen 3 species
+    // space, level curve reordered around the Rocket storyline: its Route 1 is L17-20).
+    // ROM-extracted encounter tables (104 maps, _converters mode 'tre' — the whole ROM
+    // sits 0x70 bytes before vanilla FR's layout). No leagues data yet — boss/league
+    // wiring is a follow-up from community docs.
+    name: 'Team Rocket Edition', short: 'TRE', gen: 3, category: 'Other ROM hacks',
+    dataSources: {
+      routes: 'TeamRocketEdition',
+      encounterTables: 'TeamRocketEdition'
+    }
+  },
   'unbound': {
     // Pokémon Unbound — FireRed base (BPRE expansion), Mega + Fairy era content (Gen 6+).
     // Normal / Expert mode share leagues/patches but routes differ. Wild encounter data
@@ -2687,6 +2699,17 @@ const GAMES = {
       // ROM-dumped level-up learnsets (916 species) + the full ROM movedex in
       // patches (677 moves incl. customs) — _tools/dump-unbound-movedata.mjs.
       learnsets: 'Unbound'
+    }
+  },
+  'gaia': {
+    // Pokémon Gaia v3.2 — FireRed base (FR v1.0, in-place expansion to 934 species,
+    // Gen 4-6 mons + Fairy typing in the Orbtus region). ROM-extracted encounter
+    // tables (87 maps, _converters mode 'gaia'). Treat as Gen 6 for typing.
+    // No leagues data yet — bosses are a follow-up from the Gaia wiki.
+    name: 'Gaia', short: 'Gaia', gen: 6, category: 'Other ROM hacks',
+    dataSources: {
+      routes: 'Gaia',
+      encounterTables: 'Gaia'
     }
   },
   'renegade_platinum': {
@@ -6534,6 +6557,8 @@ const GAME_DISPLAY_ORDER = [
   'scarlet_violet',
   // Other ROM hacks — roughly grouped by base game / popularity.
   'radical_red',                       // FR-based
+  'team_rocket_edition',               // FR-based (vanilla engine, Rocket storyline)
+  'gaia',                               // FR-based (Orbtus region, Gen 4-6 expansion)
   'unbound',                            // Emerald-based, modern era
   'blazing_emerald',
   'emerald_kaizo',
@@ -16793,8 +16818,15 @@ const NUZ_LIVE = (function () {
     const pe = prev.encounter, ne = merged.encounter;
     const sp = e => (e && e.species) || null;
     if (sp(ne) !== sp(pe)) {
-      if (sp(pe)) emit('encounter-ended', { species: sp(pe) });
-      if (sp(ne)) emit('encounter-started', { species: ne.species, level: ne.level, kind: ne.kind || 'wild' });
+      // A trainer swapping Pokémon mid-fight is ONE battle, not an end + a new
+      // start: treating it as the latter reset the battle panel's focus and
+      // clobbered the "view before battle" memory. Both sides present = switch.
+      if (sp(pe) && sp(ne)) {
+        emit('encounter-switched', { species: ne.species, level: ne.level, prev: sp(pe), kind: ne.kind || 'wild' });
+      } else {
+        if (sp(pe)) emit('encounter-ended', { species: sp(pe) });
+        if (sp(ne)) emit('encounter-started', { species: ne.species, level: ne.level, kind: ne.kind || 'wild' });
+      }
     }
 
     // Party diffing is by SLOT, matching how the games lay party memory out.
@@ -17165,9 +17197,14 @@ function pmRender() {
       // entry banner is only up ~2s), but the encounter itself is evidence —
       // if this species isn't in the current route's pool, suggest the routes
       // it DOES live on. Tap = switch + the panel re-renders.
+      // A trainer's Pokémon is not a wild encounter: it can't be caught, and it
+      // says nothing about where you're standing (a Youngster's Rattata on an
+      // ice route is normal), so suppress both the catch actions and the
+      // route-mismatch prompt for trainer/boss fights.
+      const isTrainer = (e.kind === 'trainer');
       let staleHint = '';
       try {
-        const suggestions = pmRouteSuggestions(e.species);
+        const suggestions = isTrainer ? null : pmRouteSuggestions(e.species);
         if (suggestions) {
           staleHint = `<div class="pm-stale">
             <span>${e.species} isn't found on ${st.route || 'this route'} — are you here instead?</span>
@@ -17263,18 +17300,18 @@ function pmRender() {
       }
       body = `<div class="pm-battle">
         <div class="pm-battle-hd">
-          <span class="pm-enc-label">WILD${e.partner ? ' ×2' : ''}</span>
+          <span class="pm-enc-label${isTrainer ? ' trainer' : ''}">${isTrainer ? 'TRAINER' : 'WILD'}${e.partner ? ' ×2' : ''}</span>
           <span class="pm-enc-name">${focus.species}${focus.level ? ` Lv ${focus.level}` : ''}</span>
           <span class="pm-battle-loc">${st.route || ''}</span>
         </div>
         ${chips}
         ${staleHint}
-        <div class="pm-battle-actions">
+        ${isTrainer ? '' : `<div class="pm-battle-actions">
           <button class="pm-act ok" onclick="encActionCaught('${safeLoc}', '${safeSp}')">✓ Caught</button>
           <button class="pm-act" onclick="encActionCaught('${safeLoc}', '${safeSp}', true)">✨</button>
           <button class="pm-act" onclick="encActionLog('${safeLoc}', '${safeSp}', 'skipped')">⊘ Skip</button>
           <button class="pm-act bad" onclick="encActionLog('${safeLoc}', '${safeSp}', 'failed')">✗ Missed</button>
-        </div>
+        </div>`}
         ${myMovesHtml}
         <div class="pm-battle-body">${speciesView(focus.species)}</div>
       </div>`;
@@ -17431,9 +17468,13 @@ NUZ_LIVE.on('state', (s, st) => {
           try {
             const idx = curTeam().indexOf(matches[0]);
             if (idx >= 0 && typeof _pendingLearnMoves !== 'undefined') _pendingLearnMoves.delete(idx);
+            // The move choice was made IN THE GAME, so the advice modal has
+            // served its purpose — close it outright rather than re-rendering a
+            // prompt whose decision is already spent (field request). Deferred a
+            // tick so the tap that triggered it can't re-open the panel.
             if (idx >= 0 && typeof editIdx !== 'undefined' && editIdx === idx &&
                 document.getElementById('overlay')?.classList.contains('open')) {
-              setTimeout(() => { try { if (editIdx === idx) openEdit(idx); } catch (e) {} }, 80);
+              setTimeout(() => { try { if (editIdx === idx && typeof closeModal === 'function') closeModal(); } catch (e) {} }, 80);
             }
           } catch (e) {}
           if (added.length && typeof showToast === 'function' && cur.length) {
@@ -17505,6 +17546,17 @@ NUZ_LIVE.on('state', (s, st) => {
           matches[0].ivs = l.ivs.slice();
           changed = true;
         }
+        // A manual stat OVERRIDE outranks the IV/EV-solved number everywhere it
+        // renders (buildStatPanel, the sims), so any override left over from
+        // hand-entering stats silently masked the live values — the roster read
+        // "right" while the details page showed the old typed figure (field
+        // report). RAM is the truth now, so drop the overrides once real EV/IV
+        // data arrives for this mon.
+        if (Array.isArray(matches[0].statOverrides) &&
+            (Array.isArray(l.evs) || Array.isArray(l.ivs))) {
+          delete matches[0].statOverrides;
+          changed = true;
+        }
       }
 
     }
@@ -17548,6 +17600,17 @@ NUZ_LIVE.on('encounter-started', () => {
   if (pmView !== 'battle') { _pmViewBeforeBattle = pmView; pmView = 'battle'; }
   pmPickerOpen = false;
   pmRender();
+});
+// The opponent switched: keep the battle view and the user's own mon pick,
+// just re-point the panel at whoever is now on the field (mirrors how our own
+// active mon already follows gBattlerPartyIndexes[0]).
+NUZ_LIVE.on('encounter-switched', ({ species }) => {
+  pmBattleFocus = 'main';
+  if (!pmIsOpen()) return;
+  if (pmView !== 'battle') { _pmViewBeforeBattle = pmView; pmView = 'battle'; }
+  pmPickerOpen = false;
+  pmRender();
+  if (typeof showToast === 'function' && species) showToast('Opponent sent out ' + species, 'info');
 });
 NUZ_LIVE.on('encounter-ended', () => {
   if (!pmIsOpen()) return;
@@ -17602,6 +17665,7 @@ if (typeof onBackfill === 'function') onBackfill(() => { if (pmIsOpen()) pmRende
   .pm-dot { width:9px; height:9px; border-radius:50%; flex:0 0 auto; cursor:pointer;
     background:var(--text3); }
   .pm-dot.live { background:var(--green); box-shadow:0 0 6px var(--green); }
+  .pm-enc-label.trainer { background:rgba(240,128,48,.18); color:#f08030; }
   .pm-dot.wait { background:var(--amber); }
   /* Labeled bridge button — the bare dot was undiscoverable ("I don't see any
      dropdown or three dots to connect"). Opens the bridge/connect pane. */
