@@ -17354,6 +17354,24 @@ NUZ_LIVE.on('state', (s, st) => {
         matches[0].level = l.level;
         changed = true;
       }
+      // MOVESET SYNC: the game's actual moveset comes straight from party
+      // RAM (answers "what happens with new moves on level-up?" — nothing to
+      // prompt; the tracker simply mirrors the game). Same guardrails as the
+      // level sync. Replaces wholesale — RAM is the truth, including forgets.
+      if (matches.length === 1 && Array.isArray(l.moves) && l.moves.length) {
+        const cur = (typeof matches[0].moves === 'string')
+          ? matches[0].moves.split(',').map(s => s.trim()).filter(Boolean)
+          : (Array.isArray(matches[0].moves) ? matches[0].moves.filter(Boolean) : []);
+        const next = l.moves.map(String);
+        if (JSON.stringify(cur) !== JSON.stringify(next)) {
+          const added = next.filter(m => !cur.includes(m));
+          matches[0].moves = next.join(', ');
+          changed = true;
+          if (added.length && typeof showToast === 'function' && cur.length) {
+            showToast((matches[0].nickname || matches[0].species) + ' learned ' + added.join(', '), 'success');
+          }
+        }
+      }
     }
     if (changed) { save(); render(); }
   }
