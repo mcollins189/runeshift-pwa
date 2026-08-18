@@ -12131,7 +12131,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-18 13:40';
+const APP_BUILD = '2026-08-18 13:43';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -17731,6 +17731,9 @@ NUZ_LIVE.on('state', (s, st) => {
     }
     if (moved) { try { pmRender(); } catch (e) {} }
   }
+  if (st.source === 'memory' && st.encounter && st.encounter.species) {
+    _lastEncSeen = { species: st.encounter.species, route: st.route || '', at: Date.now() };
+  }
   if (st.source === 'memory' && Array.isArray(st.party)) {
     let changed = false;
     for (const l of st.party) {
@@ -17922,9 +17925,19 @@ NUZ_LIVE.on('state', (s, st) => {
           rosterKey(p) === k ||
           _normSpeciesName(p.species) === _normSpeciesName(l.species)));
         if (known) continue;
+        // Where it came from. A mon that shows up in the party right after an
+        // encounter with the SAME species was caught there, so it inherits that
+        // route and the encounter grid marks the location as caught. Anything
+        // else arrived some other way — gift, in-game trade, egg — and gets a
+        // label rather than a route, which deliberately matches no location.
+        const recentEnc = _lastEncSeen &&
+          (Date.now() - _lastEncSeen.at) < 120000 &&
+          _normSpeciesName(_lastEncSeen.species) === _normSpeciesName(l.species)
+            ? _lastEncSeen : null;
+        const origin = recentEnc && recentEnc.route ? recentEnc.route : 'Gift / Trade';
         const add = {
           species: l.species, nickname: l.nickname || '', level: l.level || 1,
-          alive: true, inParty: true,
+          alive: true, inParty: true, route: origin,
           moves: Array.isArray(l.moves) ? l.moves.join(', ') : '',
           nature: l.nature || '', held: typeof l.item === 'string' ? l.item : '',
           events: [], dismissedMoves: []
@@ -17935,7 +17948,7 @@ NUZ_LIVE.on('state', (s, st) => {
         curTeam().push(add);
         changed = true;
         if (typeof showToast === 'function') {
-          showToast(`${add.nickname || add.species} joined your party — added to the roster`, 'success');
+          showToast(`${add.nickname || add.species} joined your party — added from ${origin}`, 'success');
         }
       }
     }
@@ -17965,6 +17978,12 @@ let pmBattleFocus = 'main';   // doubles: which enemy the battle panel details
 let pmMyMon = null;           // team index of YOUR mon in the moves readout (null = auto)
 let _lastLiveTimeOfDay = null; // last game-clock day/night applied to the enc tabs
 let _levelLowerSeen = new Map(); // species → {level, count}: pending downward level sync
+// Last encounter the bridge reported, kept briefly so a mon that appears in the
+// party can be attributed to it. A catch lands in the party at the moment the
+// battle is ending, so by the time the new mon shows up the encounter may
+// already have cleared — remembering it for a short window is what lets a wild
+// catch be told apart from a gift.
+let _lastEncSeen = null;         // { species, route, at }
 let _lastChoosing = null;        // last mon the game asked a move for (auto-focus)
 let _lastTargetSlot = null;      // last foe party slot the target cursor sat on
 // Same confusables fold as NuzBridge's OcrParser.ident() — keep the two maps
