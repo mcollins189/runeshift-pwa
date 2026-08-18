@@ -630,6 +630,22 @@
   .se2-foot{display:flex;align-items:center;gap:12px;margin-top:11px;flex-wrap:wrap}
   .se2-vitsel{font-size:11px;padding:5px 7px;border:1px solid var(--border2);border-radius:6px;background:var(--bg2);color:var(--text2);cursor:pointer}
   .se2-evused{font-size:11px;color:var(--text3)}
+  .pv-evgrid{margin-top:8px;display:flex;flex-direction:column;gap:3px}
+  .pv-evline{display:flex;align-items:center;gap:3px}
+  .pv-evtag{font-size:9px;font-weight:700;color:var(--text3);width:16px;flex:0 0 auto;letter-spacing:.5px}
+  .pv-evcell{flex:1 1 0;min-width:0;text-align:center;font-size:10px;color:var(--text3);
+    background:var(--bg3);border-radius:3px;padding:2px 0;line-height:1.25}
+  .pv-evcell i{display:block;font-style:normal;font-size:8px;opacity:.65;letter-spacing:.3px}
+  .pv-evcell.on{color:var(--text);background:var(--bg4)}
+  .pv-evcell.max{color:var(--green)}
+  .se2-evgrid{margin-top:9px;display:flex;flex-direction:column;gap:3px}
+  .se2-evline{display:flex;align-items:center;gap:3px}
+  .se2-evtag{font-size:9px;font-weight:700;color:var(--text3);width:16px;flex:0 0 auto;letter-spacing:.5px}
+  .se2-evcell{flex:1 1 0;min-width:0;text-align:center;font-size:10px;color:var(--text3);
+    background:var(--bg3);border-radius:3px;padding:2px 0;line-height:1.25}
+  .se2-evcell i{display:block;font-style:normal;font-size:8px;opacity:.65;letter-spacing:.3px}
+  .se2-evcell.on{color:var(--text);background:var(--bg4)}
+  .se2-evcell.max{color:var(--green)}
   .sprite-sm{width:32px;height:32px}
   .sprite-sm .sprite-img{width:32px;height:32px}
   .sprite-lg{width:72px;height:72px}
@@ -14739,6 +14755,22 @@ function pokeView(p, idx) {
       const noteHtml = noteText ? `<span class="sb-note">${noteText}</span>` : '';
       return `<span class="sb-label">${labels[i]}</span><span class="sb-wrap"><span class="sb-fill" style="width:${pct}%;background:${statColor(v)}"></span></span><span class="sb-val">${v}</span>${noteHtml}`;
     }).join('') + `</div>`;
+    // EV/IV readout: with the memory bridge connected these mirror the game
+// exactly, so the player can eyeball them against the in-game summary rather
+// than trusting that the sync happened (field report: "the EVs don't match" —
+// they did, the app simply never showed them). Only rendered once real values
+// exist; an untouched mon shows nothing rather than a wall of zeros.
+    const evA = Array.isArray(p.evs) ? p.evs : null;
+    const ivA = Array.isArray(p.ivs) ? p.ivs : null;
+    if ((evA && evA.some(v => v)) || ivA) {
+      const cell = (lbl, v, cls) => `<span class="pv-evcell${cls}"><i>${lbl}</i>${v}</span>`;
+      const rows = [];
+      if (evA && evA.some(v => v)) rows.push(`<div class="pv-evline"><span class="pv-evtag">EV</span>${
+        labels.map((l, i) => cell(l, evA[i] || 0, (evA[i] ? ' on' : ''))).join('')}</div>`);
+      if (ivA) rows.push(`<div class="pv-evline"><span class="pv-evtag">IV</span>${
+        labels.map((l, i) => cell(l, ivA[i] == null ? '—' : ivA[i], ivA[i] === 31 ? ' max' : '')).join('')}</div>`);
+      statsHtml += `<div class="pv-evgrid" title="Effort / Individual values — mirrored from game RAM when the bridge is connected">${rows.join('')}</div>`;
+    }
     const bst = info.s.reduce((a,b)=>a+(b||0),0);
     statsHtml += `<div style="margin-top:6px;font-size:11px;color:var(--text3);text-align:right">BST ${bst}</div>`;
   }
@@ -15270,6 +15302,12 @@ function buildStatPanel(p) {
     <summary>Stats <span class="se-total">edit to match your game</span></summary>
     <div class="se-body">
       <div class="se2-grid">${rows}</div>
+      ${base ? `<div class="se2-evgrid" title="Effort / Individual values — mirrored live from the game when the bridge is connected, so these should read exactly like your in-game summary">
+        <div class="se2-evline"><span class="se2-evtag">EV</span>${STAT_EDIT_LABELS.map((l, i) =>
+          `<span class="se2-evcell${evArr[i] ? ' on' : ''}"><i>${l}</i>${evArr[i] || 0}</span>`).join('')}</div>
+        <div class="se2-evline"><span class="se2-evtag">IV</span>${STAT_EDIT_LABELS.map((l, i) =>
+          `<span class="se2-evcell${(ivArr[i] == null ? 31 : ivArr[i]) === 31 ? ' max' : ''}"><i>${l}</i>${ivArr[i] == null ? 31 : ivArr[i]}</span>`).join('')}</div>
+      </div>` : ''}
       ${base ? `<div class="se2-foot">
         <select id="f-vit" class="se2-vitsel" onchange="addVitamin()" title="Add a vitamin (+10 EV)"><option value="">＋ add vitamin…</option>${vitOpts}</select>
         <span class="se2-evused" id="se2-evused" title="Effort Values — vitamins/training, capped 252 per stat &amp; 510 total">EVs ${evTot}/${EV_TOTAL_CAP}</span>
@@ -17231,7 +17269,7 @@ function pmRender() {
       const bparty = curTeam().map((p, i) => ({ p, i })).filter(x => x.p.alive && x.p.inParty);
       let myIdx = (pmMyMon != null && bparty.some(x => x.i === pmMyMon)) ? pmMyMon : null;
       if (myIdx === null && (st.allies || []).length) {
-        const hit = bparty.find(x => st.allies.some(a => _normLocName(a) === _normLocName(x.p.species)));
+        const hit = bparty.find(x => st.allies.some(a => _normSpeciesName(a) === _normSpeciesName(x.p.species)));
         if (hit) myIdx = hit.i;
       }
       // Nickname match against the raw bottom-half OCR text (nuzlocke mons
@@ -17445,7 +17483,7 @@ NUZ_LIVE.on('state', (s, st) => {
     for (const l of st.party) {
       if (!l || !l.species || typeof l.level !== 'number') continue;
       const matches = curTeam().filter(p => p.alive && p.inParty && p.species &&
-        _normLocName(p.species) === _normLocName(l.species));
+        _normSpeciesName(p.species) === _normSpeciesName(l.species));
       // MOVESET SYNC: the game's actual moveset comes straight from party
       // RAM (answers "what happens with new moves on level-up?" — nothing to
       // prompt; the tracker simply mirrors the game). Same guardrails as the
@@ -17589,6 +17627,18 @@ let _levelLowerSeen = new Map(); // species → {level, count}: pending downward
 // Same confusables fold as NuzBridge's OcrParser.ident() — keep the two maps
 // in sync so nickname matching survives the GBA pixel font (EMBER↔EM8ER,
 // and L→I because L/I/1 are one glyph family in that font).
+// Species names cross a naming boundary the location normalizer can't span:
+// the ROM/producer emits the cartridge form ("Sandshrew Alola") while the
+// roster stores the PokeAPI-style name ("Sandshrew-Alola"). _normLocName keeps
+// hyphens and spaces distinct, so regional forms NEVER matched and those mons
+// silently skipped every live sync (levels, moves, EVs — field report: the
+// Alolan Sandshrew's EVs never tracked the game). Fold to bare alphanumerics
+// and unify the form adjectives so all three spellings converge.
+function _normSpeciesName(s) {
+  return String(s || '').toLowerCase().replace(/[^a-z0-9]/g, '')
+    .replace(/alolan/g, 'alola').replace(/galarian/g, 'galar')
+    .replace(/hisuian/g, 'hisui').replace(/paldean/g, 'paldea');
+}
 function pmCanon(s) {
   const MAP = { V:'U', L:'I', '0':'O', '1':'I', '2':'Z', '3':'E', '4':'A', '5':'S', '6':'G', '8':'B', '9':'G' };
   return String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, '').replace(/[VL012345689]/g, c => MAP[c]);
