@@ -1146,7 +1146,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787074886807"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787078018779"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -2727,6 +2727,19 @@ const GAMES = {
     dataSources: {
       routes: 'Gaia',
       encounterTables: 'Gaia'
+    }
+  },
+  'lazarus': {
+    // Pokémon Lazarus — Emerald base (BPEE, pokeemerald-expansion decomp), the
+    // Ilios region, dex through Gen 9. ROM-extracted encounter tables (50 maps,
+    // _converters mode 'lazarus'); map names were anchored via the game's own
+    // documentation PDFs. No leagues data yet — the docs list gym leaders, so
+    // that's the follow-up. No memory profile either: a decomp build's RAM
+    // addresses are NOT vanilla Emerald's and need their own probe session.
+    name: 'Lazarus', short: 'Lazarus', gen: 9, category: 'Other ROM hacks',
+    dataSources: {
+      routes: 'Lazarus',
+      encounterTables: 'Lazarus'
     }
   },
   'renegade_platinum': {
@@ -6576,6 +6589,7 @@ const GAME_DISPLAY_ORDER = [
   'radical_red',                       // FR-based
   'team_rocket_edition',               // FR-based (vanilla engine, Rocket storyline)
   'gaia',                               // FR-based (Orbtus region, Gen 4-6 expansion)
+  'lazarus',                            // Emerald decomp (Ilios region, Gen 9 dex)
   'unbound',                            // Emerald-based, modern era
   'blazing_emerald',
   'emerald_kaizo',
@@ -14260,14 +14274,17 @@ function renderEncListInternal(list, teamLineSet, deadSpecies, caughtAtThisLoc, 
     // in the encounter list — mirrors the Add-Pokémon picker's fallback.
     let encTypes = pokeTypes(e.p);
     if ((!encTypes || !encTypes.length) && typeof NUZ_DATA !== 'undefined' && NUZ_DATA.typesBySlug && typeof speciesSlug === 'function') {
-      encTypes = NUZ_DATA.typesBySlug[speciesSlug(e.p)] || [];
+      // Single-type species are stored as ["Normal", null] — the null is a real
+      // element, so mapping straight over it rendered a literal "null" badge
+      // next to the type (visible on any single-type wild mon).
+      encTypes = (NUZ_DATA.typesBySlug[speciesSlug(e.p)] || []).filter(Boolean);
     }
     return `<div class="enc-poke clickable${stateClass}" title="Click to log encounter" onclick="encActionMenu('${safeLoc}', '${safeSp}', event, ${rate||0})">
       ${spriteImg(e.p, {sm:true, faded:isDead||isDupe||isMissed||isSkipped, apiId:e.apiId})}
       <div class="enc-poke-info">
         <div class="enc-poke-name">${e.p}${verTag}${flag}</div>
         <div class="enc-poke-meta">
-          ${(encTypes||[]).map(t=>`<span class="type-badge t-${t}">${t}</span>`).join('')}
+          ${(encTypes||[]).filter(Boolean).map(t=>`<span class="type-badge t-${t}">${t}</span>`).join('')}
           ${metaTrail?`<span class="enc-poke-rate">${metaTrail}</span>`:''}
         </div>
       </div>
@@ -15585,7 +15602,7 @@ function sdFilter(input, kind) {
         const info = pokeInfo(name);
         let types = info ? info.t : [];
         if ((!types || !types.length) && typeof window !== 'undefined' && window.NUZ_DATA?.typesBySlug && typeof speciesSlug === 'function') {
-          types = window.NUZ_DATA.typesBySlug[speciesSlug(name)] || [];
+          types = (window.NUZ_DATA.typesBySlug[speciesSlug(name)] || []).filter(Boolean);
         }
         badgeHtml = types.map(t=>`<span class="type-badge t-${t}">${t}</span>`).join('');
       } else if (kind === 'route') {

@@ -1,0 +1,372 @@
+==========
+Map: 001 - Magma Hideout
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 27-33): Geodude (55%), Torkoal (30%), Graveler (15%)
+Additional SOS encounters: (None)
+==========
+Map: 002 - Mirage Tower
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 20-24): Sandshrew (50%), Trapinch (50%)
+Additional SOS encounters: (None)
+==========
+Map: 003 - Desert Underpass
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 35-45): Ditto (50%), Whismur (34%), Loudred (16%)
+Additional SOS encounters: (None)
+==========
+Map: 004 - Artisan Cave
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 40-50): Smeargle (100%)
+Additional SOS encounters: (None)
+==========
+Map: 005 - Altering Cave
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 6-16): Zubat (100%)
+Additional SOS encounters: (None)
+==========
+Map: 006 - Bronze Fields (A)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 2-5): Nincada (20%), Lillipup (20%), Pikipek (20%), Hoppip (10%), Grubbin (10%), Bellsprout (5%), Cubone (5%), Phanpy (5%), Ducklett (5%)
+Additional SOS encounters: (None)
+==========
+Map: 007 - Bronze Fields (B)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 3-7): Mareep (20%), Lillipup (20%), Hoppip (10%), Nincada (10%), Cutiefly (10%), Fomantis (10%), Mudbray (9%), Comfey (5%), Grubbin (4%), Cubone (2%)
+Additional SOS encounters: (None)
+==========
+Map: 008 - Jusmail Town
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 4-8): Wurmple (20%), Pikipek (20%), Cutiefly (20%), Eevee (10%), Skiddo (10%), Bounsweet (10%), Growlithe (8%), Oricorio Baile (2%)
+Additional SOS encounters: (None)
+==========
+Map: 009 - Acrisia Mountains (A)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 8-12): Sandshrew (20%), Rockruff (20%), Nosepass (10%), Woobat (10%), Timburr (10%), Vullaby (10%), Aron (8%), Mankey (5%), Mawile (5%), Klawf (2%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 5-25): Wimpod (60%), Remoraid (30%), Finneon (10%)
+Additional SOS encounters: (None)
+==========
+Map: 010 - Acrisia Mountains (B)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 5-10): Unown (100%)
+Additional SOS encounters: (None)
+==========
+Map: 011 - Acrisia Mountains (C)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 10-12): Flabebe (50%), Pichu (20%), Flittle (20%), Snover (10%)
+Additional SOS encounters: (None)
+==========
+Map: 012 - Acrisia City
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 2-3): Sandshrew (20%), Pikipek (20%), Poliwag (10%), Phanpy (10%), Shroomish (10%), Ducklett (10%), Grimer (5%), Pansage (5%), Pansear (5%), Panpour (5%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 5-25): Wimpod (60%), Remoraid (30%), Finneon (10%)
+Additional SOS encounters: (None)
+==========
+Map: 013 - Wanderer's Woods (A)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 11-15): Aipom (20%), Shroomish (20%), Wooper (10%), Pumpkaboo Average (10%), Applin (10%), Toedscool (10%), Poliwag (5%), Heracross (5%), Chikorita (4%), Pichu (4%), Blitzle (2%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 5-25): Wimpod (60%), Psyduck (30%), Ducklett (10%)
+Additional SOS encounters: (None)
+==========
+Map: 014 - Wanderer's Woods (B)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 13-15): Paras (20%), Natu (20%), Aipom (10%), Wooper (10%), Ralts (10%), Munna (10%), Goomy (8%), Heracross (5%), Lileep (5%), Scyther (2%)
+Additional SOS encounters: (None)
+==========
+Map: 015 - Pythios Town (A)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 13-16): Dwebble (20%), Rufflet (20%), Meowth (10%), Doduo (10%), Drowzee (10%), Mienfoo (10%), Flittle (10%), Wingull (8%), Honedge (2%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 15-30): Spheal (60%), Seel (30%), Shellder (10%)
+Additional SOS encounters: (None)
+==========
+Map: 016 - Pythios Town (B)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 11-16): Bellsprout (20%), Wattrel (20%), Paras (10%), Trapinch (10%), Scraggy (10%), Sizzlipede (10%), Shuppet (8%), Natu (5%), Goomy (5%), Cyndaquil (2%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 15-25): Wimpod (60%), Remoraid (30%), Clauncher (10%)
+Additional SOS encounters: (None)
+==========
+Map: 017 - Erinys Path (A)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 15-17): Sandile (20%), Solosis (20%), Omanyte (10%), Zigzagoon (10%), Baltoy (10%), Zorua (10%), Komala (10%), Minior Red Meteor (8%), Togepi (2%)
+Additional SOS encounters: (None)
+==========
+Map: 018 - Erinys Path (B)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 15-18): Gastly (20%), Cherubi (20%), Onix (10%), Kabuto (10%), Spinarak (10%), Houndour (10%), Falinks (10%), Minior Red Meteor (8%), Mimikyu Disguised (2%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 15-30): Spheal (60%), Seel (30%), Finizen (10%)
+Additional SOS encounters: (None)
+==========
+Map: 019 - Froslass Cavern (A)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 16-18): Sneasel (40%), Snorunt (30%), Seel (10%), Spheal (10%), Swinub (8%), Amaura (2%)
+Additional SOS encounters: (None)
+==========
+Map: 020 - Froslass Cavern (B)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 16-18): Snorunt (30%), Bronzor (20%), Vulpix (20%), Onix (10%), Spheal (10%), Swinub (8%), Amaura (2%)
+Additional SOS encounters: (None)
+==========
+Map: 021 - Froslass Cavern (C)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 16-19): Snorunt (30%), Bronzor (20%), Swinub (13%), Seel (10%), Spheal (10%), Cubchoo (10%), Snom (5%), Amaura (2%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 10-30): Shellder (60%), Spheal (30%), Sealeo (9%), Lapras (1%)
+Additional SOS encounters: (None)
+==========
+Map: 022 - Asfal Hills
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 21-23): Tauros (40%), Pawmi (15%), Pachirisu (10%), Yamper (10%), Meowth (10%), Chatot (6%), Buizel (5%), Hawlucha (4%)
+Additional SOS encounters: (None)
+==========
+Map: 023 - Sofos City
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 21-24): Wingull (20%), Swablu (20%), Ponyta (10%), Helioptile (10%), Crabrawler (10%), Comfey (10%), Corphish (8%), Girafarig (5%), Nosepass (5%), Honedge (2%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 10-25): Tentacool (60%), Wailmer (30%), Corsola (10%)
+Additional SOS encounters: (None)
+==========
+Map: 024 - Sea of Asteri (A)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 22-25): Fomantis (20%), Stufful (20%), Crabrawler (15%), Wattrel (15%), Bellsprout (10%), Chatot (10%), Scyther (8%), Dreepy (2%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 18-26): Tentacool (60%), Wingull (30%), Wailmer (10%)
+Additional SOS encounters: (None)
+==========
+Map: 025 - Sea of Asteri (B)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 23-26): Rufflet (20%), Crabrawler (20%), Ninjask (10%), Trumbeak (10%), Charjabug (10%), Stufful (10%), Cufant (10%), Jangmo-o (5%), Charcadet (5%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 20-26): Tentacool (60%), Wattrel (30%), Skrelp (10%)
+Additional SOS encounters: (None)
+==========
+Map: 026 - Sea of Asteri (C)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 25-28): Tentacool (20%), Wailmer (20%), Finneon (20%), Magikarp (10%), Chinchou (10%), Corsola (8%), Skrelp (5%), Clauncher (5%), Gyarados (2%)
+Additional SOS encounters: (None)
+==========
+Map: 027 - Sea of Asteri (D)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 25-28): Tentacool (20%), Wailmer (20%), Finneon (20%), Remoraid (10%), Corphish (10%), Finizen (10%), Clamperl (8%), Floatzel (2%)
+Additional SOS encounters: (None)
+==========
+Map: 028 - Marmaro Island
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 22-26): Swablu (20%), Dwebble (20%), Growlithe (10%), Meditite (10%), Sizzlipede (10%), Tinkatink (10%), Dedenne (8%), Lileep (6%), Anorith (6%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 20-28): Chinchou (60%), Finizen (30%), Corsola (10%)
+Additional SOS encounters: (None)
+==========
+Map: 029 - Myrrini Island
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 24-27): Meditite (20%), Oricorio Baile (20%), Steenee (20%), Jigglypuff (10%), Cherubi (10%), Pancham (10%), Hawlucha (10%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 22-27): Basculin Red Striped (90%), Finizen (10%)
+Additional SOS encounters: (None)
+==========
+Map: 030 - Sea of Vulcai (A)
+Tables: 1
+Table 2 [surf] (All):
+Encounters (Levels 22-30): Tentacool (60%), Wailmer (30%), Remoraid (5%), Octillery (5%)
+Additional SOS encounters: (None)
+==========
+Map: 031 - Sea of Vulcai (B)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 20-30): Scyther (20%), Tinkatuff (20%), Kecleon (10%), Sizzlipede (10%), Voltorb (10%), Charcadet (10%), Sprigatito (5%), Fuecoco (5%), Quaxly (5%), Kilowattrel (5%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 22-30): Tentacool (60%), Wailmer (30%), Remoraid (5%), Octillery (5%)
+Additional SOS encounters: (None)
+==========
+Map: 032 - Sea of Vulcai (C)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 26-28): Remoraid (20%), Wailmer (20%), Finneon (20%), Chinchou (10%), Skrelp (10%), Corsola (8%), Octillery (5%), Clamperl (5%), Relicanth (2%)
+Additional SOS encounters: (None)
+==========
+Map: 033 - Fresco Isles
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 27-31): Trapinch (20%), Scraggy (20%), Doduo (10%), Gligar (10%), Numel (10%), Tinkatuff (10%), Krokorok (5%), Helioptile (5%), Skorupi (4%), Cyclizar (4%), Larvitar (2%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 22-30): Tentacool (60%), Wailmer (30%), Dratini (5%), Remoraid (5%)
+Additional SOS encounters: (None)
+==========
+Map: 034 - Kaptara Island (A)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 31-34): Trumbeak (20%), Fomantis (20%), Yanma (10%), Oranguru (10%), Passimian (10%), Morgrem (10%), Duosion (8%), Altaria (5%), Lurantis (5%), Reuniclus (2%)
+Additional SOS encounters: (None)
+==========
+Map: 035 - Kaptara Island (B)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 31-34): Tauros (20%), Skiploom (20%), Charjabug (20%), Weepinbell (10%), Goomy (10%), Sliggoo (5%), Perrserker (5%), Cherrim (4%), Dedenne (4%), Doublade (2%)
+Additional SOS encounters: (None)
+==========
+Map: 036 - Palati City
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 29-33): Baltoy (20%), Klawf (20%), Quagsire (10%), Girafarig (10%), Archen (10%), Pawmo (10%), Toedscool (10%), Timburr (4%), Gurdurr (4%), Lycanroc Midday (2%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 24-32): Tentacool (60%), Wailmer (30%), Tirtouga (10%)
+Additional SOS encounters: (None)
+==========
+Map: 037 - Corrin Crossing
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 33-36): Weepinbell (20%), Magnemite (20%), Golduck (10%), Aerodactyl (10%), Yanma (10%), Braviary (10%), Kirlia (8%), Victreebel (5%), Yanmega (5%), Torkoal (2%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 28-36): Tentacruel (60%), Lumineon (30%), Bruxish (10%)
+Additional SOS encounters: (None)
+==========
+Map: 038 - Port Pello
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 33-36): Jigglypuff (20%), Togetic (20%), Linoone (10%), Tropius (10%), Pachirisu (10%), Ribombee (10%), Raichu (8%), Wigglytuff (5%), Cherrim (5%), Rapidash (2%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 28-36): Tentacruel (60%), Lumineon (30%), Bruxish (10%)
+Additional SOS encounters: (None)
+==========
+Map: 039 - The Nyx Trails
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 34-37): Xatu (20%), Snover (20%), Persian (10%), Breloom (10%), Gogoat (10%), Perrserker (10%), Abomasnow (5%), Lurantis (5%), Banette (4%), Dusclops (4%), Electrode (2%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 28-36): Tentacruel (60%), Lumineon (30%), Bruxish (10%)
+Additional SOS encounters: (None)
+==========
+Map: 040 - Areios Hideout
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 35-38): Ariados (20%), Houndoom (20%), Primeape (10%), Muk (10%), Salandit (10%), Boltund (10%), Obstagoon (10%), Lurantis (8%), Tyrunt (2%)
+Additional SOS encounters: (None)
+==========
+Map: 041 - Riverwalk Trail (A)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 10-12): Ponyta (20%), Aron (20%), Meditite (10%), Litleo (10%), Cutiefly (10%), Mudbray (10%), Yamper (8%), Gligar (5%), Sandile (5%), Jangmo-o (2%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 10-25): Clauncher (60%), Finneon (30%), Remoraid (10%)
+Additional SOS encounters: (None)
+==========
+Map: 042 - Riverwalk Trail (B)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 11-13): Wooper (25%), Buizel (20%), Ekans (10%), Zigzagoon (10%), Wurmple (10%), Bounsweet (10%), Silcoon (8%), Cufant (5%), Tropius (2%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 10-25): Clauncher (60%), Skrelp (30%), Barboach (10%)
+Additional SOS encounters: (None)
+==========
+Map: 043 - Kalami City
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 9-15): Wingull (20%), Buizel (20%), Lillipup (10%), Wimpod (10%), Applin (10%), Toedscool (10%), Shroodle (9%), Meowth (5%), Totodile (4%), Passimian (2%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 10-25): Clauncher (60%), Skrelp (30%), Barboach (10%)
+Additional SOS encounters: (None)
+==========
+Map: 044 - Kipos Town
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 22-25): Magnemite (20%), Eevee (20%), Igglybuff (20%), Pikachu (10%), Timburr (10%), Steenee (8%), Doduo (5%), Stantler (5%), Beautifly (2%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 10-30): Tentacool (60%), Finneon (30%), Corsola (10%)
+Additional SOS encounters: (None)
+==========
+Map: 045 - Pentepetal City
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 25-28): Grimer (20%), Beautifly (20%), Floette (20%), Linoone (10%), Kirlia (10%), Mawile (10%), Comfey (10%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 25-30): Sealeo (60%), Finizen (30%), Dratini (9%), Lapras (1%)
+Additional SOS encounters: (None)
+==========
+Map: 046 - Lastlight Road
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 30-33): Lampent (20%), Litleo (20%), Ponyta (10%), Cherrim (10%), Helioptile (10%), Mudbray (10%), Pyroar Male (8%), Breloom (5%), Cyclizar (5%), Armarouge (2%)
+Additional SOS encounters: (None)
+==========
+Map: 047 - Tower of Dioxippus
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 32-35): Swablu (20%), Applin (20%), Yanma (10%), Kecleon (10%), Goomy (10%), Steenee (10%), Altaria (5%), Gogoat (5%), Flapple (4%), Appletun (4%), Dipplin (2%)
+Additional SOS encounters: (None)
+==========
+Map: 048 - Pollen Road
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 40-44): Skiploom (20%), Floette (20%), Pikachu (10%), Pachirisu (10%), Comfey (10%), Electrode (10%), Hawlucha (8%), Dodrio (5%), Braviary (5%), Yanmega (2%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 25-40): Finizen (60%), Swanna (30%), Dragonair (5%), Dhelmise (5%)
+Additional SOS encounters: (None)
+==========
+Map: 049 - Davosi Straits
+Tables: 1
+Table 2 [surf] (All):
+Encounters (Levels 30-45): Finizen (60%), Swanna (30%), Dragonair (5%), Dhelmise (5%)
+Additional SOS encounters: (None)
+==========
+Map: 050 - Wakewater Isle
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 42-48): Gogoat (20%), Toucannon (20%), Dodrio (10%), Bewear (10%), Passimian (10%), Raichu (10%), Scyther (5%), Crabominable (5%), Crawdaunt (4%), Komala (4%), Farigiraf (2%)
+Additional SOS encounters: (None)
