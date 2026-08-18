@@ -12131,7 +12131,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-18 14:07';
+const APP_BUILD = '2026-08-18 14:10';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -17952,7 +17952,32 @@ NUZ_LIVE.on('state', (s, st) => {
         if (Array.isArray(l.ivs)) add.ivs = l.ivs.slice();
         if (Array.isArray(l.stats)) add.gameStats = l.stats.slice();
         curTeam().push(add);
+        const addedIdx = curTeam().length - 1;
         changed = true;
+        // A wild catch belongs in the route log, not just the roster — that log
+        // IS the run's record of which encounter each location spent. Skipping
+        // it left the Route log with a hole for exactly the catches the player
+        // never hand-logged, which is the only case this path runs in.
+        // Mirrors submitPoke's linkage: reuse a matching row if one exists (the
+        // encounter may already be logged as seen/failed) rather than duplicating.
+        if (origin) {
+          try {
+            const routes = curRun().routes;
+            const existing = routes.find(r =>
+              routesMatch(r.route, origin) &&
+              ((r.encounter || '').toLowerCase() === add.species.toLowerCase()
+               || (r.encounter || '').toLowerCase() === (add.nickname || '').toLowerCase()
+               || !r.encounter));
+            if (existing) {
+              existing.encounter = add.species;
+              existing.result = 'caught';
+              existing.linkedTeamIdx = addedIdx;
+            } else {
+              routes.push({ route: origin, encounter: add.species, result: 'caught',
+                            note: '', linkedTeamIdx: addedIdx, autoLogged: true });
+            }
+          } catch (e) { /* roster entry already stands on its own */ }
+        }
         if (typeof showToast === 'function') {
           showToast(`${add.nickname || add.species} joined your party — added to the roster${origin ? ` (${origin})` : ''}`, 'success');
         }
