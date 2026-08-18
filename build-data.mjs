@@ -298,9 +298,27 @@ function parseLeagues(raw) {
     for (const e of extra) {
       if (CANONICAL_NATURES.has(e.toLowerCase())) { nature = e.toLowerCase(); break; }
     }
+    // Level may carry an EV spread: "18@6,252,,,,252" is level 18 with those
+    // EVs (blank field = 0), in HP/Atk/Def/SpA/SpD/Spe order. Number() on the
+    // whole string is NaN, which fell through to null — so every boss mon with
+    // a spread rendered as level 0. 224 entries in the Unbound league file alone
+    // were affected, which is most of that game's bosses.
+    let level = null, memberEvs = null;
+    if (levelStr) {
+      const at = levelStr.indexOf('@');
+      const n = parseInt(at >= 0 ? levelStr.slice(0, at) : levelStr, 10);
+      level = Number.isFinite(n) ? n : null;
+      if (at >= 0) {
+        const spread = levelStr.slice(at + 1).split(',')
+          .map(s => { const v = parseInt(s.trim(), 10); return Number.isFinite(v) ? v : 0; });
+        while (spread.length < 6) spread.push(0);
+        if (spread.some(v => v > 0)) memberEvs = spread.slice(0, 6);
+      }
+    }
     const member = {
       species,
-      level: levelStr ? Number(levelStr) || null : null,
+      level,
+      evs: memberEvs,
       moves: movesStr ? movesStr.split(',').map(m => m.trim()).filter(Boolean) : [],
       ability: ability || null,
       item: item || null,
