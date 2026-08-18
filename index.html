@@ -16745,6 +16745,7 @@ const NUZ_LIVE = (function () {
       encounter: next.encounter !== undefined ? next.encounter : prev.encounter,
       allies:    next.allies    !== undefined ? next.allies    : prev.allies,
       alliesRaw: next.alliesRaw !== undefined ? next.alliesRaw : prev.alliesRaw,
+      timeOfDay: next.timeOfDay !== undefined ? next.timeOfDay : prev.timeOfDay,
       ts:        next.ts || Date.now(),
       route:     prev.route
     };
@@ -17365,6 +17366,14 @@ NUZ_LIVE.on('state', (s, st) => {
   // modal kept the stale stored one — field report). Raise-only (a misread
   // must never lower), memory source only, and only when exactly ONE living
   // in-party roster mon matches the species (ambiguity = skip).
+  // GAME-CLOCK day/night: the producer reads the in-game RTC (Time Turner
+  // offset pending — see handoff), so the encounter time tab follows the
+  // GAME, not the device. Applied on CHANGE only, so a manual tab tap holds
+  // until the game's time actually flips.
+  if (st.source === 'memory' && st.timeOfDay && st.timeOfDay !== _lastLiveTimeOfDay) {
+    _lastLiveTimeOfDay = st.timeOfDay;
+    if (selectedEncTime !== st.timeOfDay) { selectedEncTime = st.timeOfDay; try { renderEncounters(); } catch (e) {} }
+  }
   if (st.source === 'memory' && Array.isArray(st.party)) {
     let changed = false;
     for (const l of st.party) {
@@ -17436,6 +17445,7 @@ NUZ_LIVE.on('route-changed', ({ route }) => { if (route) { try { setEncLocation(
 let _pmViewBeforeBattle = null;
 let pmBattleFocus = 'main';   // doubles: which enemy the battle panel details
 let pmMyMon = null;           // team index of YOUR mon in the moves readout (null = auto)
+let _lastLiveTimeOfDay = null; // last game-clock day/night applied to the enc tabs
 // Same confusables fold as NuzBridge's OcrParser.ident() — keep the two maps
 // in sync so nickname matching survives the GBA pixel font (EMBER↔EM8ER,
 // and L→I because L/I/1 are one glyph family in that font).
