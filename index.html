@@ -12131,7 +12131,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-18 14:53';
+const APP_BUILD = '2026-08-18 15:12';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -17744,10 +17744,20 @@ NUZ_LIVE.on('state', (s, st) => {
       // same species — which plain species matching silently got wrong by
       // picking whichever came first. Falls back to species for mons with no
       // nickname (the game stores the species name there when unnamed).
+      // Match on ALIVE only — deliberately NOT on inParty. The frame being
+      // processed is itself the authority on who is in the party, so requiring
+      // the roster flag first created an ordering trap: membership is mirrored
+      // AFTER this pass, so on the frame a mon first appears (withdrawn from the
+      // box, or freshly caught) nothing matched and none of its fields synced.
+      // That would normally self-correct next frame, except the bridge
+      // suppresses identical frames — so with nothing else changing, the second
+      // frame never came and the mon sat half-populated indefinitely.
+      // Ambiguity is still skipped: two same-species mons with no nicknames
+      // yield 2 matches and nothing is written.
       const liveNick = _normSpeciesName(l.nickname || '');
-      const byNick = liveNick ? curTeam().filter(p => p.alive && p.inParty && p.nickname &&
+      const byNick = liveNick ? curTeam().filter(p => p.alive && p.nickname &&
         _normSpeciesName(p.nickname) === liveNick) : [];
-      const matches = byNick.length === 1 ? byNick : curTeam().filter(p => p.alive && p.inParty && p.species &&
+      const matches = byNick.length === 1 ? byNick : curTeam().filter(p => p.alive && p.species &&
         _normSpeciesName(p.species) === _normSpeciesName(l.species));
       // The game's nickname is the truth, same as its levels and moves — a
       // roster nickname that drifted from it is a typo, not a preference.
@@ -17850,6 +17860,19 @@ NUZ_LIVE.on('state', (s, st) => {
       if (matches.length === 1 && l.nature && matches[0].nature !== l.nature) {
         matches[0].nature = l.nature;
         changed = true;
+      }
+      // TYPE SYNC: the bundled type data has no entry for hack species, so
+      // anything Unbound-specific rendered untyped — which also silently broke
+      // every matchup calculation that depends on typing. The ROM knows, so the
+      // bridge sends it. Written whenever it differs, since a species' typing is
+      // a fact about the game, not a user preference.
+      if (matches.length === 1 && Array.isArray(l.types) && l.types.length) {
+        const t1 = l.types[0] || null, t2 = l.types[1] || null;
+        if (matches[0].type1 !== t1 || (matches[0].type2 || null) !== t2) {
+          matches[0].type1 = t1;
+          if (t2) matches[0].type2 = t2; else delete matches[0].type2;
+          changed = true;
+        }
       }
       if (matches.length === 1 && !matches[0].ability) {
         // Prefer the NAME the bridge resolved from the ROM's own tables — the
@@ -17963,6 +17986,10 @@ NUZ_LIVE.on('state', (s, st) => {
           moves: '', nature: l.nature || '', held: typeof l.item === 'string' ? l.item : '',
           events: [], dismissedMoves: []
         };
+        if (Array.isArray(l.types) && l.types.length) {
+          add.type1 = l.types[0];
+          if (l.types[1]) add.type2 = l.types[1];
+        }
         if (typeof l.ability === 'string' && l.ability) add.ability = l.ability;
         else if (typeof l.abilitySlot === 'number') {
           try {
