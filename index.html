@@ -12131,7 +12131,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-18 13:05';
+const APP_BUILD = '2026-08-18 13:10';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -17318,9 +17318,24 @@ function pmRender() {
         const isLive = m => m.active && m.hp !== 0;
         const alive = foeTeam.filter(m => m.hp !== 0).length;
         const onField = foeTeam.filter(isLive).length;
+        // Two-trainer doubles put each trainer in its own 3-slot range of the
+        // enemy party (0-2 and 3-5), and the range that comes FIRST is not the
+        // trainer standing on the left — so listing by party slot showed the
+        // right-hand trainer's pair on the left and vice versa. Anchor on the
+        // on-field mon the game reports as the left target and lead with its
+        // trainer, keeping party order within each trainer. Pairs carry their
+        // ORIGINAL index so focus/tap targets are unaffected by the reordering.
+        let foeOrder = foeTeam.map((m, i) => ({ m, i }));
+        const leftMon = foeTeam.find(m => m.pos === 1);
+        const splitParty = foeTeam.some(m => m.slot >= 3) && foeTeam.some(m => m.slot < 3);
+        if (leftMon && splitParty && typeof leftMon.slot === 'number') {
+          const leftGroup = leftMon.slot >= 3 ? 1 : 0;
+          const grp = x => ((x.m.slot >= 3 ? 1 : 0) === leftGroup ? 0 : 1);
+          foeOrder = foeOrder.slice().sort((a, b) => grp(a) - grp(b) || (a.m.slot - b.m.slot));
+        }
         chips = `<div class="pm-foe-team">
           <div class="pm-sec-hd pm-foe-hd">Their team <span>${onField > 1 ? `${onField} out · ` : ''}${alive} left of ${foeTeam.length}</span></div>
-          <div class="pm-battle-chips">${foeTeam.map((m, i) => {
+          <div class="pm-battle-chips">${foeOrder.map(({ m, i }) => {
             const down = m.hp === 0;
             const sel = (typeof pmBattleFocus === 'number') ? pmBattleFocus === i : isLive(m);
             // One neutral marker for "on the field" — no left/right labelling.
