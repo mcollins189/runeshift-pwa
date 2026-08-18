@@ -12131,7 +12131,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-18 16:20';
+const APP_BUILD = '2026-08-18 16:34';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -17181,9 +17181,24 @@ function pmRender() {
 
   // Header: live dot, route (tap = picker), cap, exit.
   const bs = NUZ_BRIDGE.status();
-  const dotCls = bs === 'connected' ? 'live' : (bs === 'connecting' || bs === 'retrying' ? 'wait' : 'off');
-  const dotTitle = bs === 'connected' ? `Live via ${st.source}` : `Manual (bridge: ${bs})`;
-  const pillLabel = bs === 'connected' ? (st.source === 'ocr' ? 'OCR' : 'LIVE')
+  // STALENESS. A connected socket only means the SOCKET is up — if the producer
+  // stops feeding (RetroArch stops answering, a savestate load knocks the memory
+  // reads over, the phone backgrounds the app) the panel kept rendering the last
+  // frame forever, with a green dot, indistinguishable from live. That surfaces
+  // as "it shows the wrong Pokémon / won't update HP / thinks I'm in a battle" —
+  // all one failure: frozen data presented as current. Age it explicitly.
+  const frameAge = _lastFrameAt ? (Date.now() - _lastFrameAt) : null;
+  const isStale = st.source !== 'manual' && frameAge !== null && frameAge > 8000;
+  const dotCls = isStale ? 'wait' : (bs === 'connected' ? 'live' : (bs === 'connecting' || bs === 'retrying' ? 'wait' : 'off'));
+  const dotTitle = isStale ? `No update for ${Math.round(frameAge / 1000)}s`
+    : (bs === 'connected' ? `Live via ${st.source}` : `Manual (bridge: ${bs})`);
+  const staleBanner = isStale ? `<div class="pm-stalefeed">
+      <span>⚠ Not updating — last read ${frameAge < 60000 ? Math.round(frameAge / 1000) + 's' : Math.round(frameAge / 60000) + 'm'} ago.
+      What's shown below is the last thing the game reported, not what's happening now.</span>
+      <button class="pm-chip" onclick="NUZ_BRIDGE.stop();NUZ_BRIDGE.start();pmRender();">reconnect</button>
+    </div>` : '';
+  const pillLabel = isStale ? 'STALE'
+                  : bs === 'connected' ? (st.source === 'ocr' ? 'OCR' : 'LIVE')
                   : (bs === 'connecting' || bs === 'retrying') ? '…'
                   : 'OFF';
   const head = `
@@ -17197,7 +17212,7 @@ function pmRender() {
       <button class="pm-step" onclick="pmStepRoute(1)" title="Next location">›</button>
       ${capLv ? `<span class="pm-cap" title="Level cap: ${cap}">Lv ${capLv}</span>` : ''}
       <button class="pm-exit" onclick="closePlayMode()" title="Leave Play mode">✕</button>
-    </div>`;
+    </div>${staleBanner}`;
 
   // Route picker — a full-height overlay list; the only comfortable way to jump
   // across a 60+ location game on a 3.9" screen.
@@ -17732,6 +17747,7 @@ NUZ_LIVE.on('state', (s, st) => {
     }
     if (moved) { try { pmRender(); } catch (e) {} }
   }
+  if (st.source && st.source !== 'manual') _lastFrameAt = Date.now();
   if (st.source === 'memory' && st.encounter && st.encounter.species) {
     _lastEncSeen = { species: st.encounter.species, route: st.route || '', at: Date.now() };
   }
@@ -18133,6 +18149,7 @@ let _levelLowerSeen = new Map(); // species → {level, count}: pending downward
 // battle is ending, so by the time the new mon shows up the encounter may
 // already have cleared — remembering it for a short window is what lets a wild
 // catch be told apart from a gift.
+let _lastFrameAt = 0;            // when a producer frame last arrived (staleness)
 let _lastEncSeen = null;         // { species, route, at }
 let _lastChoosing = null;        // last mon the game asked a move for (auto-focus)
 let _lastTargetSlot = null;      // last foe party slot the target cursor sat on
@@ -18189,6 +18206,18 @@ NUZ_LIVE.on('party-fainted', ({ species }) => {
   if (typeof showToast === 'function') showToast(`${species} fainted — mark it in the Team tab`, 'error');
 });
 if (typeof onBackfill === 'function') onBackfill(() => { if (pmIsOpen()) pmRender(); });
+
+// Staleness only becomes visible with the passage of time, and the panel is
+// otherwise only redrawn when a frame ARRIVES — precisely what stops happening
+// when the feed dies. This ticks the panel so a stalled bridge surfaces itself
+// instead of waiting for a frame that is never coming.
+setInterval(() => {
+  if (!pmIsOpen() || !_lastFrameAt) return;
+  const age = Date.now() - _lastFrameAt;
+  // Redraw around the threshold, then occasionally so the counter keeps moving.
+  if (age > 8000 && age < 14000) { try { pmRender(); } catch (e) {} }
+  else if (age > 14000 && Math.floor(age / 1000) % 10 === 0) { try { pmRender(); } catch (e) {} }
+}, 2000);
 
 (function initPlayMode() {
   const boot = () => {
@@ -18312,6 +18341,11 @@ if (typeof onBackfill === 'function') onBackfill(() => { if (pmIsOpen()) pmRende
   .mg-cell.good { color:var(--green); border-color:var(--green); background:var(--green-bg); }
   .mg-cell.bad { color:var(--red); border-color:var(--red); background:var(--red-bg); }
   .mg-cell i { font-style:normal; margin-left:2px; }
+  .pm-stalefeed { display:flex; align-items:center; gap:6px; flex-wrap:wrap;
+    padding:5px 7px; font-size:11px; line-height:1.35;
+    background:rgba(240,128,48,.14); color:var(--amber);
+    border-bottom:1px solid rgba(240,128,48,.35); }
+  .pm-live-pill.wait { color:var(--amber); }
   .pm-scout { display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin:4px 0;
     padding:4px 6px; border-radius:4px; font-size:11px;
     background:rgba(240,192,72,.12); color:var(--amber); }
