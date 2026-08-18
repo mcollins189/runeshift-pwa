@@ -12131,7 +12131,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-18 13:43';
+const APP_BUILD = '2026-08-18 14:07';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -17927,28 +17927,34 @@ NUZ_LIVE.on('state', (s, st) => {
         if (known) continue;
         // Where it came from. A mon that shows up in the party right after an
         // encounter with the SAME species was caught there, so it inherits that
-        // route and the encounter grid marks the location as caught. Anything
-        // else arrived some other way — gift, in-game trade, egg — and gets a
-        // label rather than a route, which deliberately matches no location.
+        // route and the encounter grid marks the location as caught.
+        //
+        // Anything else — gift, in-game trade, egg — gets NO location. An
+        // earlier version wrote a "Gift / Trade" label here, but the location
+        // field means "the encounter slot this mon used", and a gift used none:
+        // a label is a claim about provenance we cannot actually verify (we only
+        // know there was no matching encounter), whereas blank is exactly what
+        // we know. It also keeps the field honest for route comparisons.
         const recentEnc = _lastEncSeen &&
           (Date.now() - _lastEncSeen.at) < 120000 &&
           _normSpeciesName(_lastEncSeen.species) === _normSpeciesName(l.species)
             ? _lastEncSeen : null;
-        const origin = recentEnc && recentEnc.route ? recentEnc.route : 'Gift / Trade';
+        const origin = recentEnc && recentEnc.route ? recentEnc.route : '';
         const add = {
           species: l.species, nickname: l.nickname || '', level: l.level || 1,
-          alive: true, inParty: true, route: origin,
+          alive: true, inParty: true,
           moves: Array.isArray(l.moves) ? l.moves.join(', ') : '',
           nature: l.nature || '', held: typeof l.item === 'string' ? l.item : '',
           events: [], dismissedMoves: []
         };
+        if (origin) add.route = origin;   // omitted entirely when unknown
         if (Array.isArray(l.evs)) add.evs = l.evs.slice();
         if (Array.isArray(l.ivs)) add.ivs = l.ivs.slice();
         if (Array.isArray(l.stats)) add.gameStats = l.stats.slice();
         curTeam().push(add);
         changed = true;
         if (typeof showToast === 'function') {
-          showToast(`${add.nickname || add.species} joined your party — added from ${origin}`, 'success');
+          showToast(`${add.nickname || add.species} joined your party — added to the roster${origin ? ` (${origin})` : ''}`, 'success');
         }
       }
     }
