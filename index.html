@@ -12131,7 +12131,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = 'v60';
+const APP_BUILD = '2026-08-18 12:43 · 8467207';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -17565,6 +17565,7 @@ function pmRender() {
     body = `<div class="pm-bridge">
       <div class="pm-brow"><span>Status</span><strong class="pm-bstat ${dotCls}">${bs}</strong></div>
       <div class="pm-brow"><span>Source</span><strong>${st.source}</strong></div>
+      <div class="pm-brow"><span>Tracker build</span><strong>${APP_BUILD}</strong></div>
       <label class="pm-blabel">Companion URL</label>
       <input class="pm-binput" id="pm-bridge-url" value="${NUZ_BRIDGE.url()}" spellcheck="false">
       <div class="pm-brow2">

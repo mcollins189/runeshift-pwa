@@ -81,7 +81,7 @@
 // v49 — widen the ghost-click guard to 800ms + log the OPEN/CLOSE/SWALLOW lifecycle in
 // the tap debugger so we can see whether the modal/menu opens then gets closed and by
 // what (confirms if the guard is catching the handheld's phantom duplicate click).
-const SHELL_CACHE = 'nuz-shell-v60';
+const SHELL_CACHE = 'nuz-shell-v62';
 // v2 — all self-hosted artwork sprites (sprites/art*, sprites/pixel* unchanged)
 // were regenerated (trimmed/normalized). Sprites are served cache-first as
 // "immutable", so without a bump existing clients would keep the old artwork
