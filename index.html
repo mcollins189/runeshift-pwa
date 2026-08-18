@@ -12131,7 +12131,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-18 13:32';
+const APP_BUILD = '2026-08-18 13:40';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -17446,6 +17446,27 @@ function pmRender() {
         // Green = this mon has a super-effective attack into the enemy;
         // red = the enemy's STAB threatens it super-effectively AND it has no
         // SE answer. Glance-level switch advice; tap behavior unchanged.
+        // What a foe can actually hit with. Prefer its REAL moveset (bridge
+        // 0.39+) over its typing: typing is only a proxy for STAB and misses
+        // coverage entirely, so a mon carrying an off-type super-effective
+        // attack read as harmless. Falls back to typing when moves are unknown.
+        const threatTypesOf = (foe) => {
+          const raw = Array.isArray(foe.moves) ? foe.moves
+            : (typeof foe.moves === 'string' ? foe.moves.split(',').map(s => s.trim()) : []);
+          const ts = [];
+          for (const m of raw.filter(Boolean)) {
+            const t = getMoveType(m), cat = moveCategory(m);
+            if (t && (cat === 'P' || cat === 'S') && movePower(m)) ts.push(t);
+          }
+          if (ts.length) return ts;
+          const fi = pokeInfo(foe.species);
+          return (fi && fi.t) ? fi.t.filter(Boolean) : [];
+        };
+        const worstInto = (types, p) => {
+          let d = 0;
+          for (const t of types) if (t) d = Math.max(d, effectiveness(t, p.type1, p.type2 || null));
+          return d;
+        };
         const chipCls = (x) => {
           if (!ft) return '';
           const mvs = (typeof x.p.moves === 'string') ? x.p.moves.split(',').map(s => s.trim()).filter(Boolean)
@@ -17458,10 +17479,13 @@ function pmRender() {
           if (!mvs.length) {
             for (const st2 of [x.p.type1, x.p.type2]) if (st2) off = Math.max(off, effectiveness(st2, ft[0], ft[1] || null));
           }
-          let def = 0;
-          for (const et of ft) if (et) def = Math.max(def, effectiveness(et, x.p.type1, x.p.type2 || null));
-          if (off >= 2 && def < 2) return ' good';
-          if (def >= 2 && off < 2) return ' bad';
+          const def = worstInto(threatTypesOf(focus), x.p);
+          // Danger DOMINATES. Previously a mon that was both threatened and
+          // packing a super-effective attack fell through both branches and
+          // rendered neutral, which read as "fine" for the single most
+          // dangerous case there is — you win the trade only if you outspeed.
+          if (def >= 2) return ' bad';
+          if (off >= 2) return ' good';
           return '';
         };
         const outCount = bparty.filter(x => isOut(x.p)).length;
@@ -17507,12 +17531,9 @@ function pmRender() {
             }
             return best;
           };
-          const threatFrom = (types, p) => {
-            if (!types) return 0;
-            let d = 0;
-            for (const t of types) if (t) d = Math.max(d, effectiveness(t, p.type1, p.type2 || null));
-            return d;
-          };
+          // Same real-moveset threat the chips use, so the grid's warning and
+          // the chip colours can never disagree about who is in danger.
+          const threatFrom = (foe, p) => worstInto(threatTypesOf(foe), p);
           const lbl = v => v == null ? '—' : v === 0 ? '×0' : v === 0.25 ? '×¼' : v === 0.5 ? '×½' : v === 1 ? '×1' : '×' + v;
           const cellCls = v => v == null ? '' : v >= 2 ? ' good' : v <= 0.5 ? ' bad' : '';
           const head = foeOut.map(f => `<span class="mg-h">${f.species}</span>`).join('');
@@ -17520,7 +17541,7 @@ function pmRender() {
             const cells = foeOut.map(f => {
               const ftypes = (pokeInfo(f.species) || {}).t || null;
               const off = bestInto(x.p, ftypes);
-              const thr = threatFrom(ftypes, x.p);
+              const thr = threatFrom(f, x.p);
               const fi = foeTeam.indexOf(f);
               const who = (x.p.nickname || x.p.species).replace(/"/g, '&quot;');
               return `<button class="mg-cell${cellCls(off)}" onclick="pmMyMon=${x.i};pmBattleFocus=${fi};pmRender()" title="${who} → ${f.species}${thr >= 2 ? ' — it hits back super-effectively' : ''}">${lbl(off)}${thr >= 2 ? '<i>⚠</i>' : ''}</button>`;
@@ -17874,8 +17895,15 @@ NUZ_LIVE.on('state', (s, st) => {
       //    never touched here.
       for (const p of curTeam()) {
         if (!p || !p.alive || !p.species) continue;
+        // Match on EITHER nickname or species, unconditionally. Requiring the
+        // roster mon to be nickname-less before allowing a species match meant
+        // that against a producer which sends no nicknames (pre-0.40), every
+        // nicknamed mon failed both tests and got marked out-of-party — i.e.
+        // the whole party emptied. The failure modes are wildly asymmetric:
+        // wrongly keeping a boxed mon flagged in-party is a cosmetic slip,
+        // wrongly clearing the party destroys real state.
         const inGame = liveKeys.has(rosterKey(p)) ||
-          (!p.nickname && liveSpecies.has(_normSpeciesName(p.species)));
+          liveSpecies.has(_normSpeciesName(p.species));
         if (!!p.inParty !== inGame) { p.inParty = inGame; changed = true; }
       }
 
@@ -17886,9 +17914,13 @@ NUZ_LIVE.on('state', (s, st) => {
       for (const l of st.party) {
         if (!l || !l.species) continue;
         const k = liveKey(l);
+        // Species counts as "already known" even when nicknames differ. Adding
+        // a duplicate roster entry is worse than missing an auto-add: the miss
+        // is one manual tap, the duplicate corrupts the run's records and has
+        // to be hunted down.
         const known = curTeam().some(p => p && p.species && (
           rosterKey(p) === k ||
-          (!l.nickname && _normSpeciesName(p.species) === _normSpeciesName(l.species))));
+          _normSpeciesName(p.species) === _normSpeciesName(l.species)));
         if (known) continue;
         const add = {
           species: l.species, nickname: l.nickname || '', level: l.level || 1,
