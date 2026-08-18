@@ -17320,9 +17320,20 @@ function pmRender() {
       // Auto-picked from the bridge's allies report (OCR of the bottom-half
       // name boxes); chips override it; falls back to first party mon.
       const bparty = curTeam().map((p, i) => ({ p, i })).filter(x => x.p.alive && x.p.inParty);
+      // Which of YOUR mons are actually on the field. The producer sends one
+      // entry per battler on your side — TWO in a double (battlers 0 and 2) —
+      // but this list was only ever used to auto-pick whose moves to score, so
+      // nothing on screen ever said which of your own mons were out (field
+      // report). It now drives ▶ markers on the chips, mirroring the foe strip.
+      const myOnField = new Set((st.allies || []).map(a => _normSpeciesName(a)));
+      const isOut = (p) => myOnField.has(_normSpeciesName(p.species));
       let myIdx = (pmMyMon != null && bparty.some(x => x.i === pmMyMon)) ? pmMyMon : null;
       if (myIdx === null && (st.allies || []).length) {
-        const hit = bparty.find(x => st.allies.some(a => _normSpeciesName(a) === _normSpeciesName(x.p.species)));
+        // Prefer allies[0] — YOUR lead battler — over whichever on-field mon
+        // happens to sit earliest in the roster.
+        const lead = _normSpeciesName(st.allies[0]);
+        const hit = bparty.find(x => _normSpeciesName(x.p.species) === lead)
+                 || bparty.find(x => isOut(x.p));
         if (hit) myIdx = hit.i;
       }
       // Nickname match against the raw bottom-half OCR text (nuzlocke mons
@@ -17380,13 +17391,20 @@ function pmRender() {
           if (def >= 2 && off < 2) return ' bad';
           return '';
         };
+        const outCount = bparty.filter(x => isOut(x.p)).length;
         const monChips = bparty.length > 1
           ? `<div class="pm-battle-chips pm-mine-chips">${bparty.map(x =>
-              `<button class="pm-chip${x.i === myIdx ? ' active' : ''}${chipCls(x)}" onclick="pmMyMon=${x.i};pmRender()">${x.p.nickname || x.p.species}</button>`
+              `<button class="pm-chip${x.i === myIdx ? ' active' : ''}${isOut(x.p) ? ' out' : ''}${chipCls(x)}" onclick="pmMyMon=${x.i};pmRender()" title="${isOut(x.p) ? 'On the field' : 'On your bench — tap to compare'}">${isOut(x.p) ? '▶ ' : ''}${x.p.nickname || x.p.species}</button>`
             ).join('')}</div>`
           : '';
-        myMovesHtml = `<div class="pm-sec-hd">Your moves — ${mine.p.nickname || mine.p.species}${ft ? '' : ' (enemy typing still loading)'}</div>
+        // In a double "Your moves — Stinky" reads as though Stinky is the only
+        // one out, so name the count and label the pair below the chips.
+        const yourHd = outCount > 1
+          ? `Your side <span>${outCount} out</span>`
+          : `Your moves — ${mine.p.nickname || mine.p.species}`;
+        myMovesHtml = `<div class="pm-sec-hd">${yourHd}${ft ? '' : ' (enemy typing still loading)'}</div>
           ${monChips}
+          ${outCount > 1 ? `<div class="pm-mymoves-hd">${mine.p.nickname || mine.p.species}${isOut(mine.p) ? '' : ' (benched)'} vs ${focus.species}</div>` : ''}
           <div class="pm-mymoves">${rows || `<div class="pm-empty" style="padding:8px">No moves set — tap the mon in Team view to add them.</div>`}</div>`;
       }
       body = `<div class="pm-battle">
@@ -17846,6 +17864,8 @@ if (typeof onBackfill === 'function') onBackfill(() => { if (pmIsOpen()) pmRende
   .pm-foe-team { margin:4px 0 2px; }
   .pm-foe-hd { margin-bottom:3px; }
   .pm-chip.down { opacity:.45; text-decoration:line-through; }
+  .pm-chip.out { border-color:var(--accent); }
+  .pm-mymoves-hd { font-size:10px; color:var(--text3); margin:3px 0 2px; }
   .pm-scout { display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin:4px 0;
     padding:4px 6px; border-radius:4px; font-size:11px;
     background:rgba(240,192,72,.12); color:var(--amber); }
