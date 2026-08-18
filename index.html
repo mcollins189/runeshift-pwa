@@ -12131,7 +12131,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-18 14:10';
+const APP_BUILD = '2026-08-18 14:30';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -16864,6 +16864,7 @@ const NUZ_LIVE = (function () {
       // dropped — which is exactly what happened the first time 'choosing' was
       // wired up: the producer sent it and nothing downstream ever saw it.
       choosing:  next.choosing  !== undefined ? next.choosing  : prev.choosing,
+      box:       next.box       !== undefined ? next.box       : prev.box,
       ts:        next.ts || Date.now(),
       route:     prev.route
     };
@@ -17908,6 +17909,54 @@ NUZ_LIVE.on('state', (s, st) => {
         const inGame = liveKeys.has(rosterKey(p)) ||
           liveSpecies.has(_normSpeciesName(p.species));
         if (!!p.inParty !== inGame) { p.inParty = inGame; changed = true; }
+      }
+
+      // 1b. Same for the PC boxes. A catch made with a full party goes STRAIGHT
+      //     to storage and never touches the party struct, so without this it is
+      //     invisible: the run's most important event, silently unrecorded.
+      //     Boxed mons are added benched, and are matched into the same dedupe
+      //     as the party pass so withdrawing one later doesn't duplicate it.
+      const boxList = Array.isArray(st.box) ? st.box.filter(m => m && m.species) : [];
+      for (const l of boxList) {
+        const k = liveKey(l);
+        const known = curTeam().some(p => p && p.species && (
+          rosterKey(p) === k ||
+          _normSpeciesName(p.species) === _normSpeciesName(l.species)));
+        if (known) continue;
+        const recentEnc = _lastEncSeen &&
+          (Date.now() - _lastEncSeen.at) < 120000 &&
+          _normSpeciesName(_lastEncSeen.species) === _normSpeciesName(l.species)
+            ? _lastEncSeen : null;
+        const origin = recentEnc && recentEnc.route ? recentEnc.route : '';
+        const add = {
+          species: l.species, nickname: l.nickname || '', level: l.level || 1,
+          alive: true, inParty: false,
+          moves: '', nature: '', held: typeof l.item === 'string' ? l.item : '',
+          events: [], dismissedMoves: []
+        };
+        if (origin) add.route = origin;
+        curTeam().push(add);
+        const bIdx = curTeam().length - 1;
+        changed = true;
+        if (origin) {
+          try {
+            const routes = curRun().routes;
+            const existing = routes.find(r =>
+              routesMatch(r.route, origin) &&
+              ((r.encounter || '').toLowerCase() === add.species.toLowerCase()
+               || (r.encounter || '').toLowerCase() === (add.nickname || '').toLowerCase()
+               || !r.encounter));
+            if (existing) {
+              existing.encounter = add.species; existing.result = 'caught'; existing.linkedTeamIdx = bIdx;
+            } else {
+              routes.push({ route: origin, encounter: add.species, result: 'caught',
+                            note: '', linkedTeamIdx: bIdx, autoLogged: true });
+            }
+          } catch (e) {}
+        }
+        if (typeof showToast === 'function') {
+          showToast(`${add.nickname || add.species} caught — sent to the box${origin ? ` (${origin})` : ''}`, 'success');
+        }
       }
 
       // 2. Anything in the game's party with no roster entry gets added —
