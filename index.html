@@ -14338,6 +14338,14 @@ function encActionCaught(loc, species, shiny) {
     ability: info && info.a && info.a.length === 1 ? info.a[0] : '',
     isShiny: !!shiny
   };
+  // Live-data prefill: if the freshly-caught mon is already in party RAM,
+  // its exact nature and level are known — save the manual lookup.
+  try {
+    const lv = (NUZ_LIVE.get().party || []).find(m => m && m.species &&
+      _normLocName(m.species) === _normLocName(species));
+    if (lv && lv.nature) starter.nature = lv.nature;
+    if (lv && lv.level) starter.level = lv.level;
+  } catch (e) {}
   _fillModal(() => pokeForm(starter, false));
   openModal();
   // Move focus to the nickname field for fast entry
@@ -16978,6 +16986,8 @@ function pmTeamRows() {
       level: (l && l.level) || p.level || null,
       hp: l ? l.hp : null,
       maxHp: l ? l.maxHp : null,
+      expPct: (l && typeof l.expPct === 'number') ? l.expPct : null,
+      nature: (l && l.nature) || null,
       status: (l && l.status) || ''
     };
   };
@@ -17170,9 +17180,30 @@ function pmRender() {
             ${eff === null ? '' : `<span class="pm-move-eff ${effCls}">${effLbl}</span>`}
           </div>`;
         }).join('');
+        // Green = this mon has a super-effective attack into the enemy;
+        // red = the enemy's STAB threatens it super-effectively AND it has no
+        // SE answer. Glance-level switch advice; tap behavior unchanged.
+        const chipCls = (x) => {
+          if (!ft) return '';
+          const mvs = (typeof x.p.moves === 'string') ? x.p.moves.split(',').map(s => s.trim()).filter(Boolean)
+            : (Array.isArray(x.p.moves) ? x.p.moves.filter(Boolean) : []);
+          let off = 0;
+          for (const m of mvs) {
+            const mt = getMoveType(m), cat = moveCategory(m);
+            if (mt && (cat === 'P' || cat === 'S') && movePower(m)) off = Math.max(off, effectiveness(mt, ft[0], ft[1] || null));
+          }
+          if (!mvs.length) {
+            for (const st2 of [x.p.type1, x.p.type2]) if (st2) off = Math.max(off, effectiveness(st2, ft[0], ft[1] || null));
+          }
+          let def = 0;
+          for (const et of ft) if (et) def = Math.max(def, effectiveness(et, x.p.type1, x.p.type2 || null));
+          if (off >= 2 && def < 2) return ' good';
+          if (def >= 2 && off < 2) return ' bad';
+          return '';
+        };
         const monChips = bparty.length > 1
           ? `<div class="pm-battle-chips pm-mine-chips">${bparty.map(x =>
-              `<button class="pm-chip${x.i === myIdx ? ' active' : ''}" onclick="pmMyMon=${x.i};pmRender()">${x.p.nickname || x.p.species}</button>`
+              `<button class="pm-chip${x.i === myIdx ? ' active' : ''}${chipCls(x)}" onclick="pmMyMon=${x.i};pmRender()">${x.p.nickname || x.p.species}</button>`
             ).join('')}</div>`
           : '';
         myMovesHtml = `<div class="pm-sec-hd">Your moves — ${mine.p.nickname || mine.p.species}${ft ? '' : ' (enemy typing still loading)'}</div>
@@ -17210,8 +17241,9 @@ function pmRender() {
         ${spriteImg(r.p.species, { sm: true, shiny: r.p.isShiny })}
         <div class="pm-mon-main">
           <div class="pm-mon-name">${r.p.nickname || r.p.species}${r.p.isShiny ? ' ✨' : ''}</div>
-          <div class="pm-mon-sub">${r.p.species}${r.status ? ` · ${r.status}` : ''}</div>
+          <div class="pm-mon-sub">${r.p.species}${r.nature ? ` · ${r.nature}` : ''}${r.status ? ` · ${r.status}` : ''}</div>
           ${pct === null ? '' : `<div class="pm-hp"><div class="pm-hp-bar ${hpCls}" style="width:${pct}%"></div></div>`}
+          ${r.expPct === null ? '' : `<div class="pm-exp" title="EXP to next level"><div class="pm-exp-bar" style="width:${r.expPct}%"></div></div>`}
         </div>
         <div class="pm-mon-lv ${over ? 'over' : ''}" title="${over ? 'Over the level cap' : ''}">Lv ${r.level || '?'}</div>
         ${btn}
@@ -17306,7 +17338,27 @@ function togglePlayMode() { pmIsOpen() ? closePlayMode() : openPlayMode(); }
    Play mode re-renders on live state and on PokeAPI backfill (so sprites and
    types fill in), and auto-logs nothing — a faint still asks, because the
    graveyard is destructive and an OCR/memory misread must never bury a mon. */
-NUZ_LIVE.on('state', () => { if (pmIsOpen()) pmRender(); });
+NUZ_LIVE.on('state', (s, st) => {
+  // AUTO-LEVEL-SYNC: live memory levels are exact, so a level-up updates the
+  // ROSTER too (the summary row already showed the live level but the detail
+  // modal kept the stale stored one — field report). Raise-only (a misread
+  // must never lower), memory source only, and only when exactly ONE living
+  // in-party roster mon matches the species (ambiguity = skip).
+  if (st.source === 'memory' && Array.isArray(st.party)) {
+    let changed = false;
+    for (const l of st.party) {
+      if (!l || !l.species || typeof l.level !== 'number') continue;
+      const matches = curTeam().filter(p => p.alive && p.inParty && p.species &&
+        _normLocName(p.species) === _normLocName(l.species));
+      if (matches.length === 1 && (+matches[0].level || 0) < l.level && l.level <= 100) {
+        matches[0].level = l.level;
+        changed = true;
+      }
+    }
+    if (changed) { save(); render(); }
+  }
+  if (pmIsOpen()) pmRender();
+});
 // Every data mutation in the app funnels through render() — piggyback on it so
 // Play mode reflects catches, edits, party toggles, and faints made anywhere
 // (incl. from its own modals) without each call site knowing about the overlay.
@@ -17448,6 +17500,11 @@ if (typeof onBackfill === 'function') onBackfill(() => { if (pmIsOpen()) pmRende
   .pm-hp { height:4px; border-radius:2px; background:var(--bg4); margin-top:4px; overflow:hidden; }
   .pm-hp-bar { height:100%; background:var(--green); border-radius:2px; }
   .pm-hp-bar.warn { background:var(--amber); } .pm-hp-bar.crit, .pm-hp-bar.dead { background:var(--red); }
+  .pm-exp { height:3px; border-radius:2px; background:var(--bg4); margin-top:3px; overflow:hidden; }
+  .pm-exp-bar { height:100%; background:var(--accent); border-radius:2px; }
+  .pm-chip.good { color:var(--green); border-color:var(--green); background:var(--green-bg); }
+  .pm-chip.bad { color:var(--red); border-color:var(--red); background:var(--red-bg); }
+  .pm-chip.good.active, .pm-chip.bad.active { box-shadow:inset 0 0 0 1px currentColor; }
   .pm-battle-hd { display:flex; align-items:center; gap:7px; padding:8px 10px; margin-bottom:6px;
     background:var(--accent-bg); border:1px solid var(--accent); border-radius:var(--radius-sm); }
   .pm-battle-loc { margin-left:auto; font-size:10px; color:var(--text2); white-space:nowrap; }
