@@ -17397,12 +17397,67 @@ function pmRender() {
               `<button class="pm-chip${x.i === myIdx ? ' active' : ''}${isOut(x.p) ? ' out' : ''}${chipCls(x)}" onclick="pmMyMon=${x.i};pmRender()" title="${isOut(x.p) ? 'On the field' : 'On your bench — tap to compare'}">${isOut(x.p) ? '▶ ' : ''}${x.p.nickname || x.p.species}</button>`
             ).join('')}</div>`
           : '';
+        // ── Doubles matchup grid ──────────────────────────────────────────
+        // Two attackers against two targets is four questions at once, and
+        // answering them off a single-target move list means holding three of
+        // them in your head — which is what made doubles feel convoluted. The
+        // grid answers all four at a glance: rows are your on-field mons,
+        // columns theirs, each cell your BEST multiplier into that target,
+        // with ⚠ when that target threatens you back super-effectively. Tap a
+        // cell to load that exact pairing into the move list underneath.
+        const foeOut = foeTeam.filter(m => m.active);
+        const myOut = bparty.filter(x => isOut(x.p));
+        let matchupHtml = '';
+        if (foeOut.length > 1 && myOut.length > 1) {
+          const movesOf = (p) => (typeof p.moves === 'string')
+            ? p.moves.split(',').map(s => s.trim()).filter(Boolean)
+            : (Array.isArray(p.moves) ? p.moves.filter(Boolean) : []);
+          // Best damaging multiplier this mon can land on those types. With no
+          // moves recorded we fall back to its own typing, same as the chips.
+          const bestInto = (p, types) => {
+            if (!types) return null;
+            let best = null;
+            for (const m of movesOf(p)) {
+              const mt = getMoveType(m), cat = moveCategory(m);
+              if (mt && (cat === 'P' || cat === 'S') && movePower(m)) {
+                best = Math.max(best == null ? 0 : best, effectiveness(mt, types[0], types[1] || null));
+              }
+            }
+            if (best == null) {
+              for (const s2 of [p.type1, p.type2]) if (s2) best = Math.max(best == null ? 0 : best, effectiveness(s2, types[0], types[1] || null));
+            }
+            return best;
+          };
+          const threatFrom = (types, p) => {
+            if (!types) return 0;
+            let d = 0;
+            for (const t of types) if (t) d = Math.max(d, effectiveness(t, p.type1, p.type2 || null));
+            return d;
+          };
+          const lbl = v => v == null ? '—' : v === 0 ? '×0' : v === 0.25 ? '×¼' : v === 0.5 ? '×½' : v === 1 ? '×1' : '×' + v;
+          const cellCls = v => v == null ? '' : v >= 2 ? ' good' : v <= 0.5 ? ' bad' : '';
+          const head = foeOut.map(f => `<span class="mg-h">${f.species}</span>`).join('');
+          const gridRows = myOut.map(x => {
+            const cells = foeOut.map(f => {
+              const ftypes = (pokeInfo(f.species) || {}).t || null;
+              const off = bestInto(x.p, ftypes);
+              const thr = threatFrom(ftypes, x.p);
+              const fi = foeTeam.indexOf(f);
+              const who = (x.p.nickname || x.p.species).replace(/"/g, '&quot;');
+              return `<button class="mg-cell${cellCls(off)}" onclick="pmMyMon=${x.i};pmBattleFocus=${fi};pmRender()" title="${who} → ${f.species}${thr >= 2 ? ' — it hits back super-effectively' : ''}">${lbl(off)}${thr >= 2 ? '<i>⚠</i>' : ''}</button>`;
+            }).join('');
+            return `<span class="mg-r">${x.p.nickname || x.p.species}</span>${cells}`;
+          }).join('');
+          matchupHtml = `<div class="pm-sec-hd">Matchup <span>tap a cell</span></div>
+            <div class="pm-mgrid" style="grid-template-columns:auto repeat(${foeOut.length},1fr)"><span></span>${head}${gridRows}</div>`;
+        }
         // In a double "Your moves — Stinky" reads as though Stinky is the only
         // one out, so name the count and label the pair below the chips.
         const yourHd = outCount > 1
           ? `Your side <span>${outCount} out</span>`
           : `Your moves — ${mine.p.nickname || mine.p.species}`;
-        myMovesHtml = `<div class="pm-sec-hd">${yourHd}${ft ? '' : ' (enemy typing still loading)'}</div>
+        myMovesHtml = `${matchupHtml}
+          <div class="pm-sec-hd">${yourHd}${ft ? '' : ' (enemy typing still loading)'}</div>
           ${monChips}
           ${outCount > 1 ? `<div class="pm-mymoves-hd">${mine.p.nickname || mine.p.species}${isOut(mine.p) ? '' : ' (benched)'} vs ${focus.species}</div>` : ''}
           <div class="pm-mymoves">${rows || `<div class="pm-empty" style="padding:8px">No moves set — tap the mon in Team view to add them.</div>`}</div>`;
@@ -17866,6 +17921,16 @@ if (typeof onBackfill === 'function') onBackfill(() => { if (pmIsOpen()) pmRende
   .pm-chip.down { opacity:.45; text-decoration:line-through; }
   .pm-chip.out { border-color:var(--accent); }
   .pm-mymoves-hd { font-size:10px; color:var(--text3); margin:3px 0 2px; }
+  .pm-mgrid { display:grid; gap:3px; align-items:center; margin-bottom:6px; }
+  .pm-mgrid .mg-h { font-size:9px; color:var(--text3); text-align:center;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .pm-mgrid .mg-r { font-size:10px; color:var(--text2); padding-right:4px;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .mg-cell { font-size:11px; padding:5px 0; border-radius:4px; cursor:pointer;
+    border:1px solid var(--border); background:var(--bg3); color:var(--text2); }
+  .mg-cell.good { color:var(--green); border-color:var(--green); background:var(--green-bg); }
+  .mg-cell.bad { color:var(--red); border-color:var(--red); background:var(--red-bg); }
+  .mg-cell i { font-style:normal; margin-left:2px; }
   .pm-scout { display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin:4px 0;
     padding:4px 6px; border-radius:4px; font-size:11px;
     background:rgba(240,192,72,.12); color:var(--amber); }
