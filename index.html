@@ -17289,8 +17289,9 @@ function pmRender() {
       // chip is already down, and the count says how many can still come at you.
       if (foeTeam.length > 1) {
         const alive = foeTeam.filter(m => m.hp !== 0).length;
+        const onField = foeTeam.filter(m => m.active).length;
         chips = `<div class="pm-foe-team">
-          <div class="pm-sec-hd pm-foe-hd">Their team <span>${alive} left of ${foeTeam.length}</span></div>
+          <div class="pm-sec-hd pm-foe-hd">Their team <span>${onField > 1 ? `${onField} out · ` : ''}${alive} left of ${foeTeam.length}</span></div>
           <div class="pm-battle-chips">${foeTeam.map((m, i) => {
             const down = m.hp === 0;
             const sel = (typeof pmBattleFocus === 'number') ? pmBattleFocus === i : !!m.active;
