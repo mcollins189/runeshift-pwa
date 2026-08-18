@@ -17305,14 +17305,20 @@ function pmRender() {
       // Full opposing party (trainer fights): ▶ marks who's out, a struck-through
       // chip is already down, and the count says how many can still come at you.
       if (foeTeam.length > 1) {
+        // A battler slot still POINTS at a Pokémon after it faints — the RAM
+        // only re-points once the replacement is actually sent out. A snapshot
+        // caught exactly that moment (both on-field foes at 0 HP), which would
+        // otherwise render "▶ Minccino" struck through: on the field and dead
+        // at the same time. Fainted is never "fighting now".
+        const isLive = m => m.active && m.hp !== 0;
         const alive = foeTeam.filter(m => m.hp !== 0).length;
-        const onField = foeTeam.filter(m => m.active).length;
+        const onField = foeTeam.filter(isLive).length;
         chips = `<div class="pm-foe-team">
           <div class="pm-sec-hd pm-foe-hd">Their team <span>${onField > 1 ? `${onField} out · ` : ''}${alive} left of ${foeTeam.length}</span></div>
           <div class="pm-battle-chips">${foeTeam.map((m, i) => {
             const down = m.hp === 0;
-            const sel = (typeof pmBattleFocus === 'number') ? pmBattleFocus === i : !!m.active;
-            return `<button class="pm-chip${sel ? ' active' : ''}${down ? ' down' : ''}" onclick="pmBattleFocus=${i};pmRender()" title="${down ? 'Fainted' : 'Tap to scout'}">${m.active ? '▶ ' : ''}${m.species}${m.level ? ` Lv${m.level}` : ''}</button>`;
+            const sel = (typeof pmBattleFocus === 'number') ? pmBattleFocus === i : isLive(m);
+            return `<button class="pm-chip${sel ? ' active' : ''}${down ? ' down' : ''}" onclick="pmBattleFocus=${i};pmRender()" title="${down ? 'Fainted' : 'Tap to scout'}">${isLive(m) ? '▶ ' : ''}${m.species}${m.level ? ` Lv${m.level}` : ''}</button>`;
           }).join('')}</div>
         </div>`;
       }
@@ -17405,7 +17411,7 @@ function pmRender() {
         // columns theirs, each cell your BEST multiplier into that target,
         // with ⚠ when that target threatens you back super-effectively. Tap a
         // cell to load that exact pairing into the move list underneath.
-        const foeOut = foeTeam.filter(m => m.active);
+        const foeOut = foeTeam.filter(m => m.active && m.hp !== 0);
         const myOut = bparty.filter(x => isOut(x.p));
         let matchupHtml = '';
         if (foeOut.length > 1 && myOut.length > 1) {
@@ -17469,7 +17475,7 @@ function pmRender() {
           <span class="pm-battle-loc">${st.route || ''}</span>
         </div>
         ${chips}
-        ${(typeof pmBattleFocus === 'number' && foeTeam[pmBattleFocus] && !foeTeam[pmBattleFocus].active)
+        ${(typeof pmBattleFocus === 'number' && foeTeam[pmBattleFocus] && !(foeTeam[pmBattleFocus].active && foeTeam[pmBattleFocus].hp !== 0))
           ? `<div class="pm-scout">Scouting ${focus.species} — not on the field. <button class="pm-chip" onclick="pmBattleFocus='main';pmRender()">back to battle</button></div>`
           : ''}
         ${staleHint}
