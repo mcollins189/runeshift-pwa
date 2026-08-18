@@ -16736,9 +16736,28 @@ const NUZ_LIVE = (function () {
     };
     // Route: resolve against the current game's known locations. An unresolvable
     // name leaves the route untouched (a bad OCR read shouldn't blank the panel).
+    // MANUAL PIN: when the user picked a route by hand (route tap / stale-route
+    // suggestion), producer frames repeating the SAME producer-route they were
+    // sending at pin time must not stomp the choice — previously the next 1s
+    // frame reverted the tap instantly. The pin clears the moment the producer
+    // reports something NEW (a real transition) or agrees with the pin.
     if (next.route !== undefined) {
       const resolved = next.route === null ? null : resolveLocation(next.route);
-      if (resolved !== null || next.route === null) merged.route = resolved;
+      const fromProducer = next.source === 'memory' || next.source === 'ocr';
+      if (fromProducer && _manualPin) {
+        if (resolved === _manualPin.route) {
+          _manualPin = null;                       // producer agrees → unpin
+          if (resolved !== null) merged.route = resolved;
+        } else if (resolved === _manualPin.producerRouteAtPin || resolved === null) {
+          merged.route = _manualPin.route;         // stale repeat → keep the pin
+        } else {
+          _manualPin = null;                       // producer moved → trust it
+          merged.route = resolved;
+        }
+      } else if (resolved !== null || next.route === null) {
+        merged.route = resolved;
+      }
+      if (fromProducer && resolved !== null) _lastProducerRoute = resolved;
     }
     state = merged;
 
@@ -16773,8 +16792,14 @@ const NUZ_LIVE = (function () {
     return state;
   }
 
+  let _manualPin = null;          // { route, producerRouteAtPin }
+  let _lastProducerRoute = null;
+  function setManualRoute(loc) {
+    _manualPin = { route: loc, producerRouteAtPin: _lastProducerRoute };
+    return apply({ route: loc });
+  }
   return {
-    on, apply, resolveLocation,
+    on, apply, resolveLocation, setManualRoute,
     get: () => state,
     isLive: () => state.source !== 'manual'
   };
@@ -16919,7 +16944,7 @@ function playBuildEncounterPanel(loc) {
 // leaving Play mode lands you on the same location.
 function pmSetRoute(loc) {
   pmPickerOpen = false;
-  NUZ_LIVE.apply({ source: NUZ_LIVE.get().source, route: loc });
+  NUZ_LIVE.setManualRoute(loc);
   try { setEncLocation(loc); } catch (e) {}
   pmRender();
 }
