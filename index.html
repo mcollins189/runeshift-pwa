@@ -17086,6 +17086,24 @@ function pmRender() {
     }</div>`;
   }
 
+  // Learn-advice banner: visible on EVERY Play-mode view while the game
+  // waits at its "forget which move?" dialog. Tap → the mon's detail view,
+  // where the existing scored Learn/Replace/Skip prompt lives.
+  let adviceHtml = '';
+  try {
+    if (typeof _pendingLearnMoves !== 'undefined' && _pendingLearnMoves.size) {
+      for (const [ai, q] of _pendingLearnMoves) {
+        const ap = curTeam()[ai];
+        if (!ap || !ap.alive || !q || !q.length) continue;
+        adviceHtml += `<div class="pm-advice" onclick="openEdit(${ai})">
+          <span class="pm-advice-icon">⚡</span>
+          <span class="pm-advice-txt"><strong>${ap.nickname || ap.species}</strong> wants to learn <strong>${q[0].name}</strong></span>
+          <span class="pm-enc-cta">advice ›</span>
+        </div>`;
+      }
+    }
+  } catch (e) {}
+
   let body = '';
   if (pmView === 'route') {
     // Encounter announced by the bridge gets pinned above the table so the
@@ -17309,7 +17327,7 @@ function pmRender() {
   const _bodyScroll = _keepScroll ? (root.querySelector('.pm-body')?.scrollTop || 0) : 0;
   const _pickScroll = _keepScroll ? (root.querySelector('.pm-picker')?.scrollTop || 0) : 0;
   _pmScrollKey = _scrollKey;
-  root.innerHTML = head + picker + `<div class="pm-body">${body}</div>` +
+  root.innerHTML = head + picker + `<div class="pm-body">${adviceHtml}${body}</div>` +
     `<div class="pm-bar">${tab('route', 'Route')}${tab('team', 'Team')}${tab('boss', 'Boss')}${tab('log', 'Log')}</div>`;
   if (_bodyScroll) { const el = root.querySelector('.pm-body'); if (el) el.scrollTop = _bodyScroll; }
   if (_pickScroll) { const el = root.querySelector('.pm-picker'); if (el) el.scrollTop = _pickScroll; }
@@ -17351,8 +17369,20 @@ NUZ_LIVE.on('state', (s, st) => {
       const matches = curTeam().filter(p => p.alive && p.inParty && p.species &&
         _normLocName(p.species) === _normLocName(l.species));
       if (matches.length === 1 && (+matches[0].level || 0) < l.level && l.level <= 100) {
+        const oldLv = +matches[0].level || 0;
         matches[0].level = l.level;
         changed = true;
+        // Feed the EXISTING learn-advice system (queueLearnableMoves →
+        // _pendingLearnMoves → the scored Learn/Replace/Skip prompt in the
+        // mon's detail view) for every level crossed — the game is sitting
+        // on its "forget which move?" dialog right now, and the advice
+        // should be one tap away on the bottom screen.
+        if (typeof queueLearnableMoves === 'function') {
+          const idx = curTeam().indexOf(matches[0]);
+          if (idx >= 0) for (let lv2 = oldLv + 1; lv2 <= l.level; lv2++) {
+            queueLearnableMoves(idx, matches[0].species, { atLevel: lv2 });
+          }
+        }
       }
       // MOVESET SYNC: the game's actual moveset comes straight from party
       // RAM (answers "what happens with new moves on level-up?" — nothing to
@@ -17367,6 +17397,12 @@ NUZ_LIVE.on('state', (s, st) => {
           const added = next.filter(m => !cur.includes(m));
           matches[0].moves = next.join(', ');
           changed = true;
+          // The in-game choice just landed — the pending learn-advice for
+          // this mon is answered; clear it so the banner doesn't linger.
+          try {
+            const idx = curTeam().indexOf(matches[0]);
+            if (idx >= 0 && typeof _pendingLearnMoves !== 'undefined') _pendingLearnMoves.delete(idx);
+          } catch (e) {}
           if (added.length && typeof showToast === 'function' && cur.length) {
             showToast((matches[0].nickname || matches[0].species) + ' learned ' + added.join(', '), 'success');
           }
@@ -17498,6 +17534,10 @@ if (typeof onBackfill === 'function') onBackfill(() => { if (pmIsOpen()) pmRende
     font-size:12px; font-weight:700; letter-spacing:0.02em; }
   .pm-tab.active { color:var(--accent); box-shadow:inset 0 2px 0 var(--accent); }
   .pm-empty { padding:26px 16px; text-align:center; color:var(--text2); font-size:12px; }
+  .pm-advice { display:flex; align-items:center; gap:7px; margin-bottom:6px; padding:9px 10px;
+    background:var(--amber-bg); border:1px solid var(--amber); border-radius:var(--radius-sm); font-size:12px; }
+  .pm-advice-icon { flex:0 0 auto; }
+  .pm-advice-txt { flex:1 1 auto; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .pm-enc-banner { display:flex; align-items:center; gap:7px; margin-bottom:6px; padding:9px 10px;
     background:var(--accent-bg); border:1px solid var(--accent); border-radius:var(--radius-sm); }
   .pm-enc-label { font-size:9px; font-weight:800; letter-spacing:0.08em; color:var(--accent); }
