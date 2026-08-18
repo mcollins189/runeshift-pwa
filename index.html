@@ -14379,7 +14379,10 @@ function encActionDetails(species) {
 // type-effectiveness grid (4× / 2× / ½× / ¼× / 0× entries).
 function speciesView(species) {
   const info = pokeInfo(species);
-  const sprite = species && pokeId(species)
+  // Gate on spriteUrl itself — it resolves regional forms via formIdBySlug,
+  // which pokeId (POKEMON_DB/backfill only) cannot ('Sandshrew Alola' showed
+  // in encounter grids but 'no sprite available' here — field report).
+  const sprite = species && spriteUrl(species)
     ? `<img class="pv-hq" src="${spriteUrl(species,'art')}" alt="${species}" onerror="if(!this.dataset.fb){this.dataset.fb='1';this.classList.remove('pv-hq');this.src='${spriteUrl(species)}';}else{this.style.display='none';}">`
     : `<div style="color:var(--text3);font-size:11px">no sprite</div>`;
   const types = info?.t || [];
@@ -14676,7 +14679,7 @@ function pokeView(p, idx) {
     const pend = _pendingLearnMoves.get(idx);
     if (pend) for (const pm of pend) if (pm && pm.name && !moveData(pm.name)) ensureMoveBackfilled(pm.name);
   }
-  const sprite = p.species && pokeId(p.species)
+  const sprite = p.species && spriteUrl(p.species)
     ? `<img class="pv-hq" src="${spriteUrl(p.species, p.isShiny?'art-shiny':'art')}" alt="${p.species}" onerror="if(!this.dataset.fb){this.dataset.fb='1';this.classList.remove('pv-hq');this.src='${spriteUrl(p.species, p.isShiny?'shiny':undefined)}';}else{this.style.display='none';}">`
     : `<div style="color:var(--text3);font-size:11px">no sprite</div>`;
   // Stats at the actual roster level when known — uses nature + always-on
