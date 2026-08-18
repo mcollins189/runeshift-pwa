@@ -12131,7 +12131,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-18 12:55';
+const APP_BUILD = '2026-08-18 13:05';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -17481,7 +17481,7 @@ function pmRender() {
         myMovesHtml = `${matchupHtml}
           <div class="pm-sec-hd">${yourHd}${ft ? '' : ' (enemy typing still loading)'}</div>
           ${monChips}
-          ${outCount > 1 ? `<div class="pm-mymoves-hd">${mine.p.nickname || mine.p.species}${isOut(mine.p) ? '' : ' (benched)'} vs ${focus.species}</div>` : ''}
+          ${(outCount > 1 || foeOut.length > 1) ? `<div class="pm-mymoves-hd">${mine.p.nickname || mine.p.species}${isOut(mine.p) ? '' : ' (benched)'} <b>vs</b> ${focus.species}</div>` : ''}
           <div class="pm-mymoves">${rows || `<div class="pm-empty" style="padding:8px">No moves set — tap the mon in Team view to add them.</div>`}</div>`;
       }
       body = `<div class="pm-battle">
@@ -17973,7 +17973,8 @@ if (typeof onBackfill === 'function') onBackfill(() => { if (pmIsOpen()) pmRende
   .pm-foe-hd { margin-bottom:3px; }
   .pm-chip.down { opacity:.45; text-decoration:line-through; }
   .pm-chip.out { border-color:var(--accent); }
-  .pm-mymoves-hd { font-size:10px; color:var(--text3); margin:3px 0 2px; }
+  .pm-mymoves-hd { font-size:11px; color:var(--text2); margin:4px 0 2px; }
+  .pm-mymoves-hd b { color:var(--text3); font-weight:400; }
   .pm-mgrid { display:grid; gap:3px; align-items:center; margin-bottom:6px; }
   .pm-mgrid .mg-h { font-size:9px; color:var(--text3); text-align:center;
     overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
