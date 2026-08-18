@@ -12131,7 +12131,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-18 15:12';
+const APP_BUILD = '2026-08-18 15:27';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -17874,15 +17874,19 @@ NUZ_LIVE.on('state', (s, st) => {
           changed = true;
         }
       }
-      if (matches.length === 1 && !matches[0].ability) {
+      if (matches.length === 1) {
         // Prefer the NAME the bridge resolved from the ROM's own tables — the
         // bundled ability lists are empty for exactly the species a hack leans
         // on (Sandshrew-Alola, Litleo, Inkay all returned nothing), so deriving
         // the name locally failed precisely where it was needed.
+        //
+        // This OVERWRITES rather than only filling a blank. A resolved name is
+        // the game's own answer (its abilityNum bit against its own ability
+        // table), so a differing roster value is stale or was a guess — and a
+        // fill-only guard meant one bad early value could never be corrected.
         if (typeof l.ability === 'string' && l.ability) {
-          matches[0].ability = l.ability;
-          changed = true;
-        } else if (typeof l.abilitySlot === 'number') {
+          if (matches[0].ability !== l.ability) { matches[0].ability = l.ability; changed = true; }
+        } else if (!matches[0].ability && typeof l.abilitySlot === 'number') {
           try {
             const abils = (typeof pokeAbilities === 'function' ? pokeAbilities(matches[0].species) : []) || [];
             // Slot 0/1 only — a hidden ability isn't distinguishable from that
@@ -17990,6 +17994,8 @@ NUZ_LIVE.on('state', (s, st) => {
           add.type1 = l.types[0];
           if (l.types[1]) add.type2 = l.types[1];
         }
+        // Boxed mons deliberately carry NO ability (the slot bit isn't readable
+        // from the box record) — it resolves on withdrawal from the party read.
         if (typeof l.ability === 'string' && l.ability) add.ability = l.ability;
         else if (typeof l.abilitySlot === 'number') {
           try {
