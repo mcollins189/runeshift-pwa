@@ -16853,6 +16853,11 @@ const NUZ_LIVE = (function () {
       allies:    next.allies    !== undefined ? next.allies    : prev.allies,
       alliesRaw: next.alliesRaw !== undefined ? next.alliesRaw : prev.alliesRaw,
       timeOfDay: next.timeOfDay !== undefined ? next.timeOfDay : prev.timeOfDay,
+      // The mon the game is currently asking a move for (producer 0.33+). This
+      // merge is an explicit whitelist, so a field missing from it is silently
+      // dropped — which is exactly what happened the first time 'choosing' was
+      // wired up: the producer sent it and nothing downstream ever saw it.
+      choosing:  next.choosing  !== undefined ? next.choosing  : prev.choosing,
       ts:        next.ts || Date.now(),
       route:     prev.route
     };
@@ -17613,6 +17618,28 @@ NUZ_LIVE.on('state', (s, st) => {
     _lastLiveTimeOfDay = st.timeOfDay;
     if (selectedEncTime !== st.timeOfDay) { selectedEncTime = st.timeOfDay; try { renderEncounters(); } catch (e) {} }
   }
+  // ── Follow the game's own cursors ──────────────────────────────────────
+  // 'choosing' is the mon the game is currently asking for a move from, and
+  // encounter.targetSlot is the foe your cursor is aimed at. Applied on CHANGE
+  // only: the panel snaps to whatever the game just moved to, but a manual tap
+  // still sticks until the game itself moves on.
+  if (st.source === 'memory' && pmIsOpen()) {
+    let moved = false;
+    if (st.choosing && st.choosing !== _lastChoosing) {
+      _lastChoosing = st.choosing;
+      const hit = curTeam().findIndex(p => p && p.alive && p.inParty && p.species &&
+        _normSpeciesName(p.species) === _normSpeciesName(st.choosing));
+      if (hit >= 0 && pmMyMon !== hit) { pmMyMon = hit; moved = true; }
+    }
+    const tSlot = st.encounter && typeof st.encounter.targetSlot === 'number' ? st.encounter.targetSlot : null;
+    if (tSlot !== null && tSlot !== _lastTargetSlot) {
+      _lastTargetSlot = tSlot;
+      const teamArr = (st.encounter && Array.isArray(st.encounter.team)) ? st.encounter.team : [];
+      const ti = teamArr.findIndex(m => m && m.slot === tSlot);
+      if (ti >= 0 && pmBattleFocus !== ti) { pmBattleFocus = ti; moved = true; }
+    }
+    if (moved) { try { pmRender(); } catch (e) {} }
+  }
   if (st.source === 'memory' && Array.isArray(st.party)) {
     let changed = false;
     for (const l of st.party) {
@@ -17771,6 +17798,8 @@ let pmBattleFocus = 'main';   // doubles: which enemy the battle panel details
 let pmMyMon = null;           // team index of YOUR mon in the moves readout (null = auto)
 let _lastLiveTimeOfDay = null; // last game-clock day/night applied to the enc tabs
 let _levelLowerSeen = new Map(); // species → {level, count}: pending downward level sync
+let _lastChoosing = null;        // last mon the game asked a move for (auto-focus)
+let _lastTargetSlot = null;      // last foe party slot the target cursor sat on
 // Same confusables fold as NuzBridge's OcrParser.ident() — keep the two maps
 // in sync so nickname matching survives the GBA pixel font (EMBER↔EM8ER,
 // and L→I because L/I/1 are one glyph family in that font).
