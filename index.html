@@ -12244,7 +12244,10 @@ function renderRules() {
 
 /* ── Encounters page state ── */
 let selectedEncLocation = null;
-let selectedEncTime = 'day';
+// Defaults from the device clock — Unbound's day/night follows the
+// emulator RTC, which follows the device, so local time IS game time
+// (day 06:00–19:59). Tapping a tab still overrides for the session.
+let selectedEncTime = (new Date().getHours() >= 6 && new Date().getHours() < 20) ? 'day' : 'night';
 let selectedEncSeason = 'spring';  // BW/B2W2 seasons; 'all' = combined view
 let selectedEncConditionals = false; // off = baseline-only (no swarm/radar/slot2); on = include conditional pools
 let selectedEncWeather = 'Normal Weather';  // SwSh Wild Area weather tab; 'Normal Weather' = clear/default
