@@ -1152,7 +1152,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787148452870"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787149336641"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -2758,6 +2758,26 @@ const GAMES = {
   },
   'elysium': {
     // Pokémon Elysium — FireRed base, Lilya/Karyap region, Gen 5-6 species
+    //
+    // NO leagues data yet. Six of eight gyms ARE identified in the ROM and are
+    // recorded here so the work is not repeated; gyms 1 and 3 are the blockers,
+    // and shipping six with holes at the start would put wrong level caps
+    // across the whole early game.
+    //   gym 2  Zizan       bug         27   (6x Pineco/Forretress; rematch @342)
+    //   gym 4  Ellaria     electric    46   (named in the walkthrough; rematch @441)
+    //   gym 5  Croco-Roko  ground/rock 58
+    //   gym 6  Arya        fire/fight  73
+    //   gym 7  Wolfgur     ice         78   (sits exactly between Arya and Jane)
+    //   gym 8  Jane        water       85
+    // Gym 1 unknown — the ROM's only "Rama" is a single Venonat at lv16, which
+    // reads as a tutorial battle, and the walkthrough's own list is muddled
+    // there. Gym 3 (grass, Bryony Town, female per the walkthrough) has no
+    // grass-majority team anywhere in the 26-48 window and no mono-grass
+    // rematch in the 330-460 band where every other leader has one.
+    //
+    // The finale is an 8-person CHAMPIONSHIP bracket, not an Elite Four —
+    // Allen 93, Dixon 89, Stenix/Virgil/Oran 85 — and the gym leaders reappear
+    // inside it, which is why Zizan/Ellaria/Jane also show up at 85-87.
     // expanded in place (id 268 = Aegislash, 411 = Xerneas), so species resolve
     // by NAME. 165 maps — the largest of this batch.
     name: 'Elysium', short: 'Elysium', gen: 6, category: 'Other ROM hacks',
@@ -12233,7 +12253,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-19 07:13';
+const APP_BUILD = '2026-08-19 07:22';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
