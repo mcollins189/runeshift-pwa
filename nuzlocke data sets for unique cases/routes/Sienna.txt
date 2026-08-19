@@ -1,8 +1,17 @@
 # First-cut rail: ordered by min grass level (fishing-only maps last).
 # Hand-adjust to story order; re-running the emitter will NOT overwrite this file.
+# Boss markers sit at each leader's own top level against the rail's
+# wild-level ordering — an approximation of story order, not a substitute.
 Heathen Pass|kiwee,hoothoot,squirren,folain,orfly,schnauzup,isopoly,swablu
 Kent Cross|kiwee,magby,squirren,orfly,kelpony,algallion,stroente,blubbeau,magikarp,psyduck,gyarados
 Colt Path|kiwee,mudkip,squirren,folain,orfly,taillow,foalata,swablu
+--Nancy's Gym|1|gym-leader|Leader Nancy
+--Jaykob's Gym|2|gym-leader|Leader Jaykob
+--Haroun's Gym|3|gym-leader|Leader Haroun
+--Nalani's Gym|4|gym-leader|Leader Nalani
+--Rickie's Gym|5|gym-leader|Leader Rickie
+--Geoffrey's Gym|6|gym-leader|Leader Geoffrey
+--Sophie's Gym|7|gym-leader|Leader Sophie
 Three Isle Port|malamar
 Maas City|bulbasaur,charmander,squirtle,grimer,moocano,ponfant,treecko,torchic,mudkip,stroente,panpour,hoppip,magikarp,horsea,psyduck,shellder,seadra,gyarados
 Colt Forest|burmy,clefairy,murkrow,phanpy,treecko,isopoly,malamar
@@ -80,3 +89,7 @@ Rhine Village|stroente,magikarp,krabby,horsea,psyduck,shellder,seadra,gyarados
 Valencia Island|psyduck,krabby,magikarp,horsea,shellder,seadra,gyarados
 Kaveri Town|psyduck,wooper,magikarp,kelpony,blubbeau,algallion,gyarados
 Pokeplaza Entrance|stroente,magikarp,finneon,kelpony,krabby,horsea,psyduck,nacli,gyarados
+--Pokémon League|e1|elite-four|Elite Four Will
+--Pokémon League|e2|elite-four|Elite Four Koga
+--Pokémon League|e3|elite-four|Elite Four Bruno
+--Pokémon League|e4|elite-four|Elite Four Karen
