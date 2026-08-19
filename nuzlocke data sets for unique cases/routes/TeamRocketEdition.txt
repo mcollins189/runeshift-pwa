@@ -1,5 +1,8 @@
-# First-cut rail: ordered by min grass level (fishing-only maps last).
-# Hand-adjust to story order; re-running the emitter will NOT overwrite this file.
+# Team Rocket Edition rail. Locations ordered by wild level.
+# STORY bosses (Giovanni promotions, Oak, Red) carry the level caps — the
+# eight gyms are OPTIONAL in this hack and are listed after the story.
+# Hand-adjust to true story order as you play; the encounter emitter will
+# NOT overwrite this file.
 Mt. Moon|clefairy,zubat,paras,geodude
 Route 7|pidgey,oddish,meowth,growlithe
 Altering Cave|zubat,mareep,pineco,houndour,teddiursa,aipom,shuckle,stantler,smeargle
@@ -51,6 +54,7 @@ Rixy Chamber|unown
 Viapois Chamber|unown
 Bond Bridge|pidgey,pidgeotto,oddish,gloom,venonat,meowth,persian,psyduck,tentacool,tentacruel,magikarp,horsea,seadra,gyarados
 S.S. Anne|tentacool,magikarp,krabby,horsea,psyduck,shellder,gyarados,machop,machoke,geodude,graveler
+--Giovanni I|s1|champion|Giovanni I
 Victory Road|arbok,zubat,golbat,machop,machoke,geodude,onix,marowak,primeape
 Cerulean Cave|golbat,parasect,primeape,machoke,magneton,electrode,ditto,wobbuffet,psyduck,golduck,geodude,graveler,magikarp,poliwag,goldeen,poliwhirl,gyarados,kadabra,wooper
 Berry Forest|pidgey,pidgeotto,oddish,gloom,venonat,venomoth,psyduck,drowzee,hypno,exeggcute,golduck,magikarp,poliwag,goldeen,seaking,gyarados
@@ -73,3 +77,14 @@ Celadon City|psyduck,koffing,magikarp,grimer
 Fuchsia City|psyduck,magikarp,poliwag,goldeen,seaking,gyarados
 Indigo Plateau|tentacool,tentacruel,magikarp,horsea,psyduck,shellder,seadra,gyarados
 Pokemon League|tentacool,tentacruel,hoppip,magikarp,horsea,psyduck,shellder,seadra,gyarados
+--Giovanni II|s2|champion|Giovanni II
+--Giovanni III|s3|champion|Giovanni III
+--Red|s4|champion|Red
+--Oak|s5|champion|Oak
+--Brock's Gym|1|gym-leader|Leader Brock
+--Misty's Gym|2|gym-leader|Leader Misty
+--Lt. Surge's Gym|3|gym-leader|Leader Lt. Surge
+--Erika's Gym|4|gym-leader|Leader Erika
+--Sabrina's Gym|5|gym-leader|Leader Sabrina
+--Koga's Gym|6|gym-leader|Leader Koga
+--Blaine's Gym|7|gym-leader|Leader Blaine

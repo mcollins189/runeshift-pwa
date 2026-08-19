@@ -1146,7 +1146,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787110548040"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787110956378"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -2697,7 +2697,8 @@ const GAMES = {
     name: 'Team Rocket Edition', short: 'TRE', gen: 3, category: 'Other ROM hacks',
     dataSources: {
       routes: 'TeamRocketEdition',
-      encounterTables: 'TeamRocketEdition'
+      encounterTables: 'TeamRocketEdition',
+      leagues: 'TeamRocketEdition'
     }
   },
   'unbound': {
@@ -12177,7 +12178,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-18 20:36';
+const APP_BUILD = '2026-08-18 20:43';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
