@@ -2765,6 +2765,12 @@ const GAMES = {
   },
   'cawps': {
     // Pokémon CAWPS — Emerald base at vanilla offsets, Hoenn. 91 maps.
+    // NO leagues data, and none is coming: CAWPS has no gym challenge at all —
+    // you play a police officer, and the game ships no gyms, badges or League.
+    // Roxanne (renamed Rohan, Nosepass lv15), Brawly, Flannery and Norman DO
+    // exist in the trainer table as ordinary story trainers, which is a trap:
+    // they look like a partial gym roster and are not one. The 713+ block is a
+    // four-tier rematch ladder, also not a badge progression. Do not re-derive.
     name: 'CAWPS', short: 'CAWPS', gen: 3, category: 'Other ROM hacks',
     dataSources: { routes: 'CAWPS', encounterTables: 'CAWPS' }
   },
@@ -12227,7 +12233,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-19 07:07';
+const APP_BUILD = '2026-08-19 07:13';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
