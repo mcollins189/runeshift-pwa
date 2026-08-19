@@ -1152,7 +1152,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787149661013"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787151442247"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -2783,6 +2783,16 @@ const GAMES = {
     name: 'Elysium', short: 'Elysium', gen: 6, category: 'Other ROM hacks',
     dataSources: { routes: 'Elysium', encounterTables: 'Elysium' }
   },
+  'odyssey': {
+    // Pokémon Odyssey — FireRed base (FR v1.0, -0x70), the Viridis region and
+    // the Yggdrasil labyrinth. A DUNGEON CRAWLER: no gyms, no Elite Four and no
+    // evil team, so 40 locations (mostly numbered strata) is the whole game and
+    // an empty Boss tab is correct — its bosses are layer captains.
+    // 11 species are invented by this ROM; their stats, types and sprites are
+    // read off the cartridge into patches/Odyssey.txt + sprites/hack/odyssey/.
+    name: 'Odyssey', short: 'Odyssey', gen: 4, category: 'Other ROM hacks',
+    dataSources: { routes: 'Odyssey', encounterTables: 'Odyssey', patches: 'Odyssey' }
+  },
   'cawps': {
     // Pokémon CAWPS — Emerald base at vanilla offsets, Hoenn. 91 maps.
     // NO leagues data, and none is coming: CAWPS has no gym challenge at all —
@@ -4302,6 +4312,10 @@ function spriteUrl(idOrName, variant) {
   let id = idOrName;
   if (typeof idOrName === 'string') {
     const info = pokeInfo(idOrName);
+    // A ROM-extracted fakemon sprite wins outright: it IS the species' artwork,
+    // and no dex id could stand in for it. One 64x64 image serves every variant
+    // — the cartridge has no shiny or official-artwork version to pull.
+    if (info && info.spritePath) return info.spritePath;
     id = info ? info.id : null;
     // Fallback: resolve the National-Dex id straight from the bundled slug→id
     // map so sprites show for species not in POKEMON_DB and not yet backfilled
@@ -4424,6 +4438,7 @@ function pokeInfo(name) {
     const fk = patches.fakemon.get(lower);
     if (fk && !base) {
       const out = { id: fk.id, t: fk.types, s: fk.stats.length ? fk.stats : null, a: [], baseForm: fk.baseForm };
+      if (fk.spritePath) out.spritePath = fk.spritePath;
       if (fk.e) out.e = fk.e;
       return out;
     }
@@ -6060,6 +6075,11 @@ function getActivePatches() {
     if (!f.key) continue;
     // sprite source like "/base/10034" → PokeAPI numeric id we can sprite-load.
     const m = (f.spriteSource || '').match(/\/base\/(\d+)/);
+    // "/rom/<game>/<id>" points at a sprite lifted straight out of the
+    // cartridge (see _converters/extract-sprites.mjs). Fakemon exist nowhere
+    // but their own ROM, so borrowing another species' artwork via /base/ was
+    // the only option before — Insurgence's deltas all wear Unown's sprite.
+    const rs = (f.spriteSource || '').match(/^\/rom\/([a-z0-9_]+)\/(\d+)$/i);
     // baseForm has two shapes in the txt source:
     //   "delta-bulbasaur"                       → only the chain's base form
     //   "delta-bulbasaur>delta-ivysaur"         → base form + direct evolution
@@ -6083,6 +6103,7 @@ function getActivePatches() {
       name: f.displayName,
       types: (f.types || []).map(t => t.charAt(0).toUpperCase() + t.slice(1)),
       stats: f.stats || [],
+      spritePath: rs ? `sprites/hack/${rs[1].toLowerCase()}/${rs[2]}.png` : null,
       baseForm: baseFormOnly || null,
       e: evo
     });
@@ -6706,6 +6727,7 @@ const GAME_DISPLAY_ORDER = [
   'emerald_run_and_bun',
   'inclement_emerald',
   'glazed',                             // Emerald, multi-region story
+  'odyssey',                            // FR-based dungeon crawler, Viridis region
   'cawps',                              // Emerald-based, Hoenn
   'outlaw',                             // FR-based, Kanto
   'korosu',                             // FR-based, Kanto
@@ -12253,7 +12275,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-19 07:27';
+const APP_BUILD = '2026-08-19 07:57';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,

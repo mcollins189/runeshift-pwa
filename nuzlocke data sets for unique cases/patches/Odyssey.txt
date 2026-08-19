@@ -1,0 +1,17 @@
+# Odyssey — species invented by this ROM, read straight off the cartridge.
+# Stats and types come from gBaseStats, names from gSpeciesNames, and the
+# sprite from gMonFrontPic/gMonPalette via _converters/extract-sprites.mjs.
+# Regenerate with _converters/rom-fakemon-patch.mjs; do not hand-edit.
+
+--fakemon
+65,100,60,50,75,110|Ratreecate|ratreecate|normal,grass|/rom/odyssey/20|
+65,100,60,100,85,115|Gorochu|gorochu|electric,fighting|/rom/odyssey/201|
+200,100,100,150,150,90|Abyss Eye|abyss-eye|grass,ice|/rom/odyssey/275|
+200,150,140,100,80,120|Tentacle|tentacle|grass,fire|/rom/odyssey/276|
+100,130,80,60,80,75|Yggdreon|yggdreon|fairy|/rom/odyssey/350|
+105,90,90,170,165,180|Tlachtga|tlachtga|ghost,fire|/rom/odyssey/404|
+100,170,160,100,100,120|Dinogator|dinogator|water,poison|/rom/odyssey/405|
+140,110,155,110,155,80|Av. Dragon|av-dragon|grass,dragon|/rom/odyssey/406|
+100,50,80,140,120,130|DeepMaiden|deepmaiden|grass,water|/rom/odyssey/407|
+130,120,125,100,125,70|Narmer|narmer|dark,ground|/rom/odyssey/408|
+85,75,120,75,120,35|Reefsola|reefsola|grass,rock|/rom/odyssey/410|

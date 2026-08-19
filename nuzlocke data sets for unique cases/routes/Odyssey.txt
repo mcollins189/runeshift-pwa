@@ -1,0 +1,28 @@
+# First-cut rail: ordered by min grass level (fishing-only maps last).
+# Hand-adjust to story order; re-running the emitter will NOT overwrite this file.
+Coastal Road|pidgey,jigglypuff,oddish,poochyena,zigzagoon,wingull,magikarp,carvanha,staryu,wailmer,seadra,gyarados,chinchou,sharpedo
+Fibernia Prom.|rattata,venonat,grimer,koffing,wooper,gulpin
+Seaside Grotto|zubat,paras,geodude,krabby,dunsparce,corphish,makuhita,nosepass,poliwag,magikarp,feebas,poliwhirl,gyarados
+Varley Woods|natu,yanma,skitty,roselia,slakoth,ralts
+Waterfall Wood|oddish,psyduck,slowpoke,lickitung,marill,surskit,goldeen,magikarp,feebas,poliwag,poliwhirl,gyarados
+Yggdrasil|abra,drowzee,tangela,teddiursa,houndour,spoink
+Cave of Athari|onix,meditite,duskull,whismur,shuppet,aron
+Northern Atoll|mankey,krabby,exeggcute,dratini,wingull,meditite,magikarp,carvanha,horsea,mantine,seadra,gyarados
+Jagged Mountain|ponyta,doduo,sudowoodo,tyrogue,swablu,beldum,tentacool,magikarp,shellder,corsola,horsea,seadra,gyarados
+Arundel Woods|seel,sneasel,swinub,smoochum,spheal,snorunt
+Maple Island|nidorina,nidorino,scyther,pinsir,furret,spinarak,hoppip
+Second Stratum|ekans,diglett,cubone,skarmory,trapinch,lileep,anorith,phanpy,larvitar
+Sandy Caves|gastly,cubone,misdreavus,baltoy,sableye,trapinch,kabuto,omanyte,relicanth
+Des. of Golgonda|sandshrew,murkrow,baltoy,trapinch,numel,cacnea,cubone,rhyhorn,magikarp,barboach,psyduck,golduck,gyarados,whiscash
+Brigit Farm|pikachu,eevee,mareep,miltank,surskit,electrike
+Third Stratum|vulpix,golbat,machop,wobbuffet,slugma,aron
+Fourth Stratum|gloom,weepinbell,kecleon,tropius,seviper,zangoose,dratini,marill,wooper,quagsire,lombre,nuzleaf,magikarp,feebas,poliwag,barboach,golduck,poliwhirl,slowpoke,gyarados,nidorina,nidorino,venomoth,girafarig,linoone,absol,dodrio,chansey,tangela,swellow
+Auburn Thicket|butterfree,beedrill,scyther,pinsir,heracross,beautifly,dustox,castform
+Fifth Stratum|magneton,houndoom,sableye,manectric,grumpig,metang,kadabra,hypno,claydol,lunatone,solrock,electrode,marowak,mr-mime,jynx,banette,gardevoir,clefable,wigglytuff,alakazam,slowbro,muk,xatu
+Sixth Stratum|slowbro,tauros,stantler,ambipom,sealeo,absol,golduck,ponyta,sneasel,glalie,medicham,swalot
+Seventh Stratum|ratreecate,ampharos,bellossom,azumarill,breloom,claydol,arbok,marowak,scizor,pupitar,swalot,ninetales,vileplume,alakazam,tyranitar,altaria,fearow,gliscor,metagross
+Porcelain Cave|golbat,golem,haunter,probopass,exploud,dudunsparce-two-segment
+Eighth Stratum|jynx,dragonite,tangrowth,yanmega,sableye,swalot,arbok,ampharos,dusknoir,absol,gengar,mismagius,dusclops,parasect,ariados,houndoom,ursaluna
+Aqua Resort|magikarp,corsola,horsea,gyarados,mantine
+Pirate Island|tentacool,magikarp,horsea,remoraid,tentacruel,seadra,gyarados
+Gorge of Zanado|spearow,exeggcute,natu,hoppip,aipom
