@@ -1,0 +1,1212 @@
+==========
+Map: 001 - Monean Chamber
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 25-25): Unown (100%)
+Additional SOS encounters: (None)
+==========
+Map: 002 - Liptoo Chamber
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 25-25): Unown (100%)
+Additional SOS encounters: (None)
+==========
+Map: 003 - Weepth Chamber
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 25-25): Unown (100%)
+Additional SOS encounters: (None)
+==========
+Map: 004 - Dilford Chamber
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 25-25): Unown (100%)
+Additional SOS encounters: (None)
+==========
+Map: 005 - Scufib Chamber
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 25-25): Unown (100%)
+Additional SOS encounters: (None)
+==========
+Map: 006 - Rixy Chamber
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 25-25): Unown (100%)
+Additional SOS encounters: (None)
+==========
+Map: 007 - Tanoby Chamber
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 25-25): Unown (100%)
+Additional SOS encounters: (None)
+==========
+Map: 008 - Viridian Forest
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 3-6): Caterpie (40%), Weedle (40%), Kakuna (10%), Metapod (5%), Pikachu (5%)
+Additional SOS encounters: (None)
+==========
+Map: 009 - Mt. Moon (A)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 7-12): Zubat (59%), Geodude (28%), Paras (10%), Clefairy (4%)
+Additional SOS encounters: (None)
+==========
+Map: 010 - Mt. Moon (B)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 5-10): Paras (100%)
+Additional SOS encounters: (None)
+==========
+Map: 011 - Salone House
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 5-40): Tentacool (100%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Horsea (60%), Krabby (20%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Horsea (44%), Shellder (40%), Gyarados (15%), Psyduck (1%)
+Additional SOS encounters: (None)
+==========
+Map: 012 - Diglett's Cave
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 15-40): Diglett (95%), Dugtrio (5%)
+Additional SOS encounters: (None)
+==========
+Map: 013 - Outlaw Road (A)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 40-52): Onix (30%), Machop (20%), Geodude (20%), Zubat (10%), Arbok (5%), Golbat (5%), Machoke (5%), Marowak (5%)
+Additional SOS encounters: (None)
+==========
+Map: 014 - Outlaw Road (B)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 40-52): Machop (20%), Geodude (20%), Onix (20%), Zubat (10%), Primeape (10%), Arbok (5%), Golbat (5%), Machoke (5%), Marowak (5%)
+Additional SOS encounters: (None)
+==========
+Map: 015 - Outlaw Mansion
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 26-36): Raticate (30%), Koffing (30%), Rattata (15%), Growlithe (15%), Grimer (5%), Weezing (5%)
+Additional SOS encounters: (None)
+==========
+Map: 016 - Safari Zone (A)
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 22-35): Clefairy (20%), Exeggcute (20%), Rhyhorn (20%), Vulpix (10%), Cubone (10%), Scyther (9%), Growlithe (5%), Clefable (4%), Bulbasaur (1%), Chansey (1%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 20-35): Goldeen (60%), Poliwag (30%), Psyduck (5%), Shellder (4%), Dratini (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Goldeen (60%), Poliwag (20%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Goldeen (40%), Seaking (40%), Dratini (15%), Psyduck (4%), Dragonair (1%)
+Additional SOS encounters: (None)
+==========
+Map: 017 - Safari Zone (B)
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 22-35): Doduo (20%), Exeggcute (20%), Rhyhorn (20%), Grimer (15%), Growlithe (10%), Kangaskhan (8%), Scyther (6%), Squirtle (1%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 20-35): Poliwag (60%), Goldeen (30%), Psyduck (5%), Squirtle (4%), Dratini (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Goldeen (60%), Poliwag (20%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Goldeen (40%), Seaking (40%), Dratini (15%), Psyduck (4%), Dragonair (1%)
+Additional SOS encounters: (None)
+==========
+Map: 018 - Safari Zone (C)
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 23-32): Grimer (30%), Exeggcute (20%), Rhyhorn (20%), Koffing (15%), Venomoth (5%), Chansey (4%), Scyther (4%), Bulbasaur (1%), Tauros (1%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 20-35): Psyduck (64%), Goldeen (30%), Poliwag (5%), Dratini (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Goldeen (60%), Poliwag (20%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Goldeen (40%), Seaking (40%), Dratini (15%), Psyduck (4%), Dragonair (1%)
+Additional SOS encounters: (None)
+==========
+Map: 019 - Safari Zone (D)
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 22-32): Doduo (20%), Grimer (20%), Exeggcute (20%), Koffing (10%), Scyther (10%), Tauros (8%), Kangaskhan (6%), Pinsir (5%), Squirtle (1%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 20-35): Poliwag (60%), Goldeen (30%), Psyduck (5%), Shellder (4%), Dratini (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Goldeen (60%), Poliwag (20%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Goldeen (40%), Seaking (40%), Dratini (15%), Psyduck (4%), Dragonair (1%)
+Additional SOS encounters: (None)
+==========
+Map: 020 - Cerulean Cave (A)
+Tables: 6
+Table 1 [grass] (All):
+Encounters (Levels 30-40): Paras (20%), Magnemite (20%), Zubat (10%), Mankey (10%), Machop (10%), Machoke (10%), Parasect (5%), Electrode (5%), Golbat (4%), Wobbuffet (4%), Primeape (1%), Magneton (1%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 30-40): Psyduck (60%), Poliwag (30%), Goldeen (5%), Golduck (4%), Poliwhirl (1%)
+Additional SOS encounters: (None)
+Table 3 [rockSmash] (All):
+Encounters (Levels 30-55): Geodude (65%), Graveler (35%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Poliwag (60%), Goldeen (20%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Poliwag (40%), Poliwhirl (40%), Gyarados (15%), Psyduck (5%)
+Additional SOS encounters: (None)
+==========
+Map: 021 - Cerulean Cave (B)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 30-40): Zubat (20%), Machop (20%), Paras (10%), Kadabra (10%), Machoke (10%), Magnemite (10%), Golbat (5%), Wobbuffet (5%), Parasect (4%), Electrode (4%), Magneton (1%), Ditto (1%)
+Additional SOS encounters: (None)
+Table 3 [rockSmash] (All):
+Encounters (Levels 35-60): Geodude (65%), Graveler (35%)
+Additional SOS encounters: (None)
+==========
+Map: 022 - Cerulean Cave (C)
+Tables: 6
+Table 1 [grass] (All):
+Encounters (Levels 30-40): Machop (20%), Voltorb (20%), Zubat (10%), Paras (10%), Machoke (10%), Magnemite (10%), Magneton (5%), Ditto (5%), Parasect (4%), Electrode (4%), Golbat (1%), Wobbuffet (1%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 30-40): Psyduck (60%), Goldeen (30%), Poliwag (5%), Golduck (4%), Poliwhirl (1%)
+Additional SOS encounters: (None)
+Table 3 [rockSmash] (All):
+Encounters (Levels 40-65): Geodude (65%), Graveler (35%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Poliwag (60%), Goldeen (20%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Poliwag (40%), Poliwhirl (40%), Gyarados (16%), Psyduck (4%)
+Additional SOS encounters: (None)
+==========
+Map: 023 - Rock Tunnel (A)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 25-35): Geodude (35%), Zubat (30%), Mankey (15%), Machop (15%), Onix (5%)
+Additional SOS encounters: (None)
+==========
+Map: 024 - Rock Tunnel (B)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 25-35): Geodude (35%), Zubat (30%), Mankey (15%), Machop (10%), Onix (10%)
+Additional SOS encounters: (None)
+Table 3 [rockSmash] (All):
+Encounters (Levels 5-40): Geodude (95%), Graveler (5%)
+Additional SOS encounters: (None)
+==========
+Map: 025 - Seafoam Islands (A)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 25-35): Psyduck (45%), Zubat (30%), Golbat (10%), Seel (10%), Sneasel (5%)
+Additional SOS encounters: (None)
+==========
+Map: 026 - Seafoam Islands (B)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 25-35): Psyduck (40%), Zubat (25%), Seel (15%), Golbat (8%), Golduck (8%), Sneasel (5%)
+Additional SOS encounters: (None)
+==========
+Map: 027 - Seafoam Islands (C)
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 25-35): Seel (40%), Psyduck (20%), Golduck (15%), Zubat (10%), Golbat (9%), Dewgong (5%), Sneasel (1%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 25-40): Seel (60%), Horsea (30%), Krabby (5%), Psyduck (4%), Lapras (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Horsea (60%), Krabby (20%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Horsea (80%), Gyarados (16%), Psyduck (4%)
+Additional SOS encounters: (None)
+==========
+Map: 028 - Seafoam Islands (D)
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 30-36): Seel (50%), Golduck (15%), Golbat (14%), Psyduck (10%), Dewgong (10%), Sneasel (1%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 25-40): Seel (60%), Horsea (30%), Psyduck (5%), Krabby (4%), Lapras (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Horsea (60%), Krabby (20%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Horsea (80%), Gyarados (16%), Psyduck (4%)
+Additional SOS encounters: (None)
+==========
+Map: 029 - Power Plant
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 25-35): Magnemite (40%), Voltorb (40%), Elekid (9%), Magneton (5%), Electabuzz (5%), Pikachu (1%)
+Additional SOS encounters: (None)
+==========
+Map: 030 - Mt. Ember (A)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 12-20): Ponyta (35%), Vulpix (20%), Spearow (10%), Machop (10%), Geodude (10%), Slugma (5%), Growlithe (4%), Magby (4%), Houndour (1%), Torkoal (1%)
+Additional SOS encounters: (None)
+Table 3 [rockSmash] (All):
+Encounters (Levels 5-40): Geodude (95%), Graveler (5%)
+Additional SOS encounters: (None)
+==========
+Map: 031 - Mt. Ember (B)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 15-19): Machop (50%), Geodude (50%)
+Additional SOS encounters: (None)
+==========
+Map: 032 - Mt. Ember (C)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 14-19): Machop (44%), Geodude (40%), Zubat (10%), Gligar (5%), Nosepass (1%)
+Additional SOS encounters: (None)
+Table 3 [rockSmash] (All):
+Encounters (Levels 5-40): Geodude (95%), Graveler (5%)
+Additional SOS encounters: (None)
+==========
+Map: 033 - Mt. Ember (D)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 32-42): Geodude (50%), Machop (40%), Machoke (10%)
+Additional SOS encounters: (None)
+Table 3 [rockSmash] (All):
+Encounters (Levels 25-50): Geodude (65%), Graveler (35%)
+Additional SOS encounters: (None)
+==========
+Map: 034 - Mt. Ember (E)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 22-44): Geodude (55%), Slugma (45%)
+Additional SOS encounters: (None)
+Table 3 [rockSmash] (All):
+Encounters (Levels 25-50): Geodude (65%), Graveler (35%)
+Additional SOS encounters: (None)
+==========
+Map: 035 - Mt. Ember (F)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 18-36): Slugma (100%)
+Additional SOS encounters: (None)
+Table 3 [rockSmash] (All):
+Encounters (Levels 15-45): Slugma (90%), Magcargo (10%)
+Additional SOS encounters: (None)
+==========
+Map: 036 - Berry Forest
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 5-14): Caterpie (20%), Spinarak (20%), Pidgey (10%), Oddish (10%), Venonat (10%), Drowzee (10%), Psyduck (5%), Exeggcute (5%), Weedle (4%), Yanma (4%), Pinsir (1%), Pineco (1%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 5-20): Magikarp (60%), Psyduck (30%), Poliwag (5%), Goldeen (4%), Gyarados (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Goldeen (60%), Poliwag (20%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Goldeen (40%), Seaking (40%), Gyarados (15%), Psyduck (5%)
+Additional SOS encounters: (None)
+==========
+Map: 037 - Icefall Cave (A)
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 7-14): Seel (30%), Swinub (20%), Spheal (20%), Zubat (10%), Psyduck (5%), Sneasel (5%), Delibird (4%), Snorunt (4%), Slowpoke (1%), Smoochum (1%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 5-15): Seel (60%), Wooper (30%), Goldeen (5%), Psyduck (4%), Lapras (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Poliwag (60%), Goldeen (20%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Poliwag (40%), Poliwhirl (40%), Gyarados (15%), Psyduck (5%)
+Additional SOS encounters: (None)
+==========
+Map: 038 - Icefall Cave (B)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 7-14): Swinub (30%), Zubat (24%), Spheal (15%), Sneasel (14%), Seel (10%), Delibird (5%), Smoochum (1%), Snorunt (1%)
+Additional SOS encounters: (None)
+==========
+Map: 039 - Icefall Cave (C)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 7-15): Zubat (30%), Swinub (24%), Spheal (15%), Sneasel (14%), Seel (10%), Delibird (5%), Snorunt (2%)
+Additional SOS encounters: (None)
+==========
+Map: 040 - Icefall Cave (D)
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 7-15): Seel (30%), Swinub (20%), Zubat (14%), Sneasel (10%), Delibird (10%), Spheal (10%), Psyduck (5%), Marill (1%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 5-15): Poliwag (60%), Slowpoke (30%), Tentacool (5%), Horsea (4%), Lapras (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Horsea (80%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Shellder (40%), Horsea (40%), Gyarados (15%), Seadra (4%), Psyduck (1%)
+Additional SOS encounters: (None)
+==========
+Map: 041 - Pattern Bush
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 20-25): Spinarak (20%), Sunkern (20%), Snubbull (10%), Heracross (10%), Stantler (10%), Roselia (10%), Teddiursa (9%), Ralts (5%), Taillow (4%), Ledyba (1%), Larvitar (1%)
+Additional SOS encounters: (None)
+==========
+Map: 042 - Lost Cave (A)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 17-22): Zubat (40%), Whismur (20%), Geodude (10%), Haunter (10%), Murkrow (5%), Misdreavus (5%), Gligar (5%), Loudred (4%), Onix (1%)
+Additional SOS encounters: (None)
+==========
+Map: 043 - Lost Cave (B)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 17-22): Zubat (40%), Whismur (20%), Sableye (15%), Golbat (10%), Murkrow (5%), Misdreavus (5%), Mawile (4%), Onix (1%)
+Additional SOS encounters: (None)
+==========
+Map: 044 - Lost Cave (C)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 17-22): Zubat (50%), Hoothoot (10%), Sableye (10%), Whismur (10%), Murkrow (5%), Misdreavus (5%), Nosepass (5%), Onix (4%), Wynaut (1%)
+Additional SOS encounters: (None)
+==========
+Map: 045 - Lost Cave (D)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 17-22): Zubat (30%), Whismur (20%), Golbat (10%), Geodude (10%), Sableye (10%), Murkrow (5%), Misdreavus (5%), Loudred (5%), Onix (4%), Wynaut (1%)
+Additional SOS encounters: (None)
+==========
+Map: 046 - Lost Cave (E)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 17-22): Zubat (20%), Geodude (20%), Golbat (10%), Hoothoot (10%), Nosepass (10%), Whismur (10%), Onix (5%), Murkrow (5%), Misdreavus (5%), Loudred (4%), Wynaut (1%)
+Additional SOS encounters: (None)
+==========
+Map: 047 - Lost Cave (F)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 17-22): Zubat (50%), Sandshrew (10%), Hoothoot (10%), Whismur (10%), Onix (5%), Murkrow (5%), Misdreavus (5%), Sableye (5%)
+Additional SOS encounters: (None)
+==========
+Map: 048 - Lost Cave (G)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 17-22): Zubat (40%), Whismur (20%), Golbat (15%), Geodude (10%), Murkrow (5%), Sableye (5%), Misdreavus (4%), Loudred (1%)
+Additional SOS encounters: (None)
+==========
+Map: 049 - Lost Cave (H)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 15-22): Zubat (58%), Murkrow (22%), Golbat (10%), Onix (8%), Wynaut (3%)
+Additional SOS encounters: (None)
+==========
+Map: 050 - Lost Cave (I)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 17-22): Zubat (40%), Whismur (20%), Golbat (10%), Hoothoot (10%), Murkrow (6%), Misdreavus (5%), Nosepass (5%), Onix (4%)
+Additional SOS encounters: (None)
+==========
+Map: 051 - Lost Cave (J)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 15-22): Murkrow (34%), Whismur (31%), Zubat (30%), Wynaut (5%)
+Additional SOS encounters: (None)
+==========
+Map: 052 - Lost Cave (K)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 15-22): Zubat (60%), Murkrow (20%), Geodude (10%), Sableye (5%), Misdreavus (4%), Loudred (1%)
+Additional SOS encounters: (None)
+==========
+Map: 053 - Lost Cave (L)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 15-22): Zubat (66%), Murkrow (30%), Whismur (4%)
+Additional SOS encounters: (None)
+==========
+Map: 054 - Kindle Road
+Tables: 6
+Table 1 [grass] (All):
+Encounters (Levels 12-20): Spearow (20%), Ponyta (20%), Meowth (10%), Bellsprout (10%), Geodude (10%), Electrike (10%), Psyduck (5%), Natu (5%), Tyrogue (4%), Spoink (4%), Heracross (1%), Mawile (1%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 5-19): Tentacool (65%), Horsea (30%), Remoraid (4%), Mantine (1%)
+Additional SOS encounters: (None)
+Table 3 [rockSmash] (All):
+Encounters (Levels 5-40): Geodude (95%), Graveler (5%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Horsea (80%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Horsea (80%), Gyarados (15%), Seadra (4%), Psyduck (1%)
+Additional SOS encounters: (None)
+==========
+Map: 055 - Treasure Beach
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 8-20): Tangela (30%), Spearow (20%), Meowth (10%), Mareep (10%), Electrike (10%), Sandshrew (5%), Psyduck (5%), Houndour (4%), Ralts (4%), Fearow (1%), Pichu (1%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 10-17): Tentacool (65%), Staryu (30%), Remoraid (4%), Goldeen (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Horsea (80%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Horsea (80%), Gyarados (15%), Seadra (4%), Psyduck (1%)
+Additional SOS encounters: (None)
+==========
+Map: 056 - Cape Brink
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 4-7): Spearow (20%), Oddish (20%), Meowth (10%), Sentret (10%), Hoothoot (10%), Poochyena (10%), Caterpie (5%), Grimer (5%), Rattata (4%), Ledyba (4%), Eevee (1%), Mareep (1%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 5-20): Psyduck (60%), Magikarp (30%), Poliwag (5%), Goldeen (4%), Gyarados (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Poliwag (60%), Goldeen (20%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Poliwag (40%), Poliwhirl (40%), Gyarados (15%), Psyduck (5%)
+Additional SOS encounters: (None)
+==========
+Map: 057 - Bond Bridge
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 5-10): Pidgey (20%), Oddish (20%), Sandshrew (10%), Meowth (10%), Psyduck (10%), Mankey (10%), Mareep (5%), Azurill (5%), Cleffa (4%), Igglybuff (4%), Vulpix (1%), Houndour (1%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 8-20): Slowpoke (60%), Tentacool (30%), Horsea (5%), Staryu (4%), Seel (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Horsea (80%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Horsea (80%), Gyarados (15%), Seadra (4%), Psyduck (1%)
+Additional SOS encounters: (None)
+==========
+Map: 058 - Kin Isle Port
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 5-10): Dunsparce (50%), Mareep (20%), Hoothoot (10%), Poochyena (10%), Bellsprout (5%), Magby (4%), Phanpy (1%)
+Additional SOS encounters: (None)
+==========
+Map: 059 - Resort Gorgeous
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 5-25): Tentacool (60%), Hoppip (30%), Magikarp (5%), Qwilfish (4%), Gyarados (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Horsea (80%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Horsea (40%), Qwilfish (40%), Gyarados (15%), Seadra (4%), Psyduck (1%)
+Additional SOS encounters: (None)
+==========
+Map: 060 - Water Labyrinth
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 5-22): Tentacool (60%), Hoppip (30%), Qwilfish (5%), Horsea (4%), Staryu (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Horsea (80%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Horsea (40%), Qwilfish (40%), Gyarados (15%), Seadra (4%), Psyduck (1%)
+Additional SOS encounters: (None)
+==========
+Map: 061 - Rocket Meadow
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 10-25): Sentret (30%), Pidgey (20%), Meowth (10%), Natu (10%), Hoppip (10%), Psyduck (5%), Phanpy (5%), Pidgeotto (4%), Mawile (4%), Misdreavus (1%), Absol (1%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 5-25): Tentacool (60%), Hoppip (30%), Slowpoke (5%), Qwilfish (4%), Dratini (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Horsea (80%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Horsea (40%), Qwilfish (40%), Gyarados (15%), Seadra (4%), Psyduck (1%)
+Additional SOS encounters: (None)
+==========
+Map: 062 - Memorial Pillar
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 6-16): Hoppip (100%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 5-40): Tentacool (65%), Hoppip (30%), Tentacruel (5%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Horsea (80%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Horsea (40%), Qwilfish (40%), Gyarados (15%), Seadra (4%), Psyduck (1%)
+Additional SOS encounters: (None)
+==========
+Map: 063 - Outcast Island
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 22-30): Tentacool (60%), Horsea (30%), Carvanha (5%), Krabby (4%), Qwilfish (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Horsea (80%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Horsea (40%), Qwilfish (40%), Gyarados (15%), Seadra (4%), Psyduck (1%)
+Additional SOS encounters: (None)
+==========
+Map: 064 - Green Path
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 5-25): Tentacool (60%), Horsea (35%), Qwilfish (4%), Tentacruel (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Horsea (80%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Horsea (40%), Qwilfish (40%), Gyarados (15%), Seadra (4%), Psyduck (1%)
+Additional SOS encounters: (None)
+==========
+Map: 065 - Water Path
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 20-25): Spearow (20%), Sentret (20%), Oddish (10%), Meowth (10%), Sunkern (10%), Snubbull (10%), Psyduck (5%), Furret (5%), Stantler (4%), Roselia (4%), Larvitar (1%), Ralts (1%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 5-30): Tentacool (60%), Magikarp (30%), Horsea (5%), Qwilfish (4%), Tentacruel (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Horsea (80%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Horsea (40%), Qwilfish (40%), Gyarados (15%), Seadra (4%), Psyduck (1%)
+Additional SOS encounters: (None)
+==========
+Map: 066 - Ruin Valley
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 20-25): Hoothoot (20%), Natu (20%), Geodude (10%), Yanma (10%), Wingull (10%), Ralts (10%), Wooper (5%), Wobbuffet (5%), Teddiursa (4%), Roselia (4%), Stantler (1%), Larvitar (1%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 5-25): Wooper (100%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Poliwag (60%), Goldeen (20%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Poliwag (40%), Poliwhirl (40%), Gyarados (15%), Psyduck (5%)
+Additional SOS encounters: (None)
+==========
+Map: 067 - Quest North
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 25-30): Tentacool (60%), Horsea (30%), Chinchou (5%), Corsola (4%), Feebas (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Horsea (80%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Horsea (40%), Qwilfish (40%), Gyarados (15%), Seadra (4%), Psyduck (1%)
+Additional SOS encounters: (None)
+==========
+Map: 068 - Canyon Entrance
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 25-30): Sentret (20%), Swablu (20%), Ralts (14%), Roselia (11%), Phanpy (10%), Cacnea (10%), Murkrow (5%), Seedot (5%), Trapinch (4%), Seviper (1%)
+Additional SOS encounters: (None)
+==========
+Map: 069 - Sevault Canyon
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 25-30): Geodude (20%), Phanpy (20%), Cubone (10%), Seedot (10%), Roselia (10%), Ralts (10%), Onix (5%), Chansey (5%), Skarmory (5%), Larvitar (4%), Rhyhorn (1%)
+Additional SOS encounters: (None)
+Table 3 [rockSmash] (All):
+Encounters (Levels 25-50): Geodude (65%), Graveler (35%)
+Additional SOS encounters: (None)
+==========
+Map: 070 - Tanoby Town
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 25-30): Horsea (60%), Chinchou (30%), Remoraid (5%), Qwilfish (4%), Clamperl (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Horsea (80%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Horsea (40%), Qwilfish (40%), Gyarados (15%), Seadra (4%), Psyduck (1%)
+Additional SOS encounters: (None)
+==========
+Map: 071 - Route 1
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 25-35): Rattata (45%), Pidgey (35%), Oddish (14%), Raticate (4%), Pidgeotto (1%), Gloom (1%)
+Additional SOS encounters: (None)
+==========
+Map: 072 - Route 2
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 25-35): Rattata (40%), Pidgey (30%), Caterpie (14%), Weedle (9%), Pidgeotto (5%), Metapod (1%), Kakuna (1%)
+Additional SOS encounters: (None)
+==========
+Map: 073 - Route 3
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 25-35): Nidoran♂ (24%), Pidgey (20%), Spearow (20%), Pikachu (10%), Jigglypuff (10%), Mankey (10%), Nidoran♀ (6%)
+Additional SOS encounters: (None)
+==========
+Map: 074 - Route 4
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 25-35): Rattata (35%), Mankey (24%), Ekans (10%), Sandshrew (10%), Paras (10%), Spearow (5%), Arbok (4%), Raticate (1%), Clefairy (1%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 25-35): Tentacool (90%), Krabby (5%), Horsea (4%), Dratini (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Horsea (60%), Krabby (20%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Horsea (84%), Gyarados (15%), Psyduck (1%)
+Additional SOS encounters: (None)
+==========
+Map: 075 - Route 5
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 30-35): Pidgey (34%), Meowth (34%), Oddish (15%), Bellsprout (10%), Abra (5%), Pidgeotto (1%), Kadabra (1%)
+Additional SOS encounters: (None)
+==========
+Map: 076 - Route 6
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 30-35): Pidgey (34%), Oddish (20%), Meowth (20%), Bellsprout (15%), Pidgeotto (5%), Gloom (4%), Persian (1%), Weepinbell (1%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 5-35): Psyduck (60%), Slowpoke (30%), Poliwag (5%), Goldeen (4%), Magikarp (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Poliwag (60%), Goldeen (20%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Poliwag (40%), Poliwhirl (40%), Gyarados (15%), Psyduck (5%)
+Additional SOS encounters: (None)
+==========
+Map: 077 - Route 7
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 25-35): Eevee (38%), Meowth (21%), Pidgey (20%), Oddish (10%), Growlithe (10%), Vulpix (1%)
+Additional SOS encounters: (None)
+==========
+Map: 078 - Route 8
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 25-35): Meowth (25%), Pidgey (20%), Growlithe (19%), Ekans (15%), Sandshrew (10%), Vulpix (10%), Pinsir (1%)
+Additional SOS encounters: (None)
+==========
+Map: 079 - Route 9
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 25-35): Rattata (40%), Spearow (35%), Ekans (15%), Sandshrew (10%)
+Additional SOS encounters: (None)
+==========
+Map: 080 - Route 10
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 30-35): Voltorb (39%), Spearow (35%), Ekans (14%), Sandshrew (10%), Fearow (1%), Arbok (1%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 25-35): Tentacool (60%), Horsea (30%), Krabby (5%), Slowpoke (4%), Psyduck (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Horsea (60%), Krabby (20%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Horsea (84%), Gyarados (15%), Psyduck (1%)
+Additional SOS encounters: (None)
+==========
+Map: 081 - Route 11
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 30-35): Ekans (40%), Spearow (35%), Drowzee (15%), Sandshrew (10%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 5-40): Tentacool (100%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Horsea (60%), Krabby (20%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Horsea (84%), Gyarados (15%), Psyduck (1%)
+Additional SOS encounters: (None)
+==========
+Map: 082 - Route 12
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 25-35): Venonat (30%), Pidgey (29%), Oddish (25%), Bellsprout (10%), Gloom (5%), Weepinbell (1%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 5-40): Magikarp (60%), Tentacool (30%), Krabby (5%), Slowpoke (4%), Gyarados (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Horsea (60%), Krabby (20%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Horsea (84%), Gyarados (15%), Psyduck (1%)
+Additional SOS encounters: (None)
+==========
+Map: 083 - Route 13
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 25-35): Oddish (35%), Venonat (30%), Pidgey (24%), Gloom (5%), Bellsprout (5%), Pidgeotto (1%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 5-40): Tentacool (60%), Magikarp (30%), Krabby (5%), Tentacruel (4%), Gyarados (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Horsea (60%), Krabby (20%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Horsea (84%), Gyarados (15%), Psyduck (1%)
+Additional SOS encounters: (None)
+==========
+Map: 084 - Route 14
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 25-35): Oddish (35%), Venonat (30%), Bellsprout (15%), Pidgey (10%), Pidgeotto (5%), Weepinbell (4%), Ditto (1%)
+Additional SOS encounters: (None)
+==========
+Map: 085 - Route 15
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 25-35): Oddish (35%), Venonat (30%), Pidgey (20%), Gloom (5%), Ditto (5%), Bellsprout (4%), Pidgeotto (1%)
+Additional SOS encounters: (None)
+==========
+Map: 086 - Route 16
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 25-35): Doduo (35%), Spearow (30%), Rattata (25%), Raticate (5%), Dodrio (4%), Fearow (1%)
+Additional SOS encounters: (None)
+==========
+Map: 087 - Route 17
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 25-35): Doduo (35%), Spearow (30%), Rattata (25%), Raticate (5%), Fearow (5%)
+Additional SOS encounters: (None)
+==========
+Map: 088 - Route 18
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 30-35): Doduo (35%), Spearow (30%), Rattata (15%), Fearow (15%), Raticate (5%)
+Additional SOS encounters: (None)
+==========
+Map: 089 - Route 19
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 25-35): Tentacool (60%), Horsea (30%), Krabby (5%), Psyduck (4%), Tentacruel (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Horsea (60%), Krabby (20%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Horsea (80%), Gyarados (15%), Seadra (4%), Psyduck (1%)
+Additional SOS encounters: (None)
+==========
+Map: 090 - Route 20
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 25-35): Tentacool (91%), Krabby (5%), Horsea (4%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Horsea (60%), Krabby (20%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Horsea (80%), Gyarados (15%), Seadra (4%), Psyduck (1%)
+Additional SOS encounters: (None)
+==========
+Map: 091 - Route 21 (A)
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 18-35): Tangela (98%), Pidgeotto (1%), Mr. Mime (1%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 25-35): Tentacool (65%), Krabby (30%), Horsea (5%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Horsea (60%), Krabby (20%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Horsea (80%), Gyarados (15%), Seadra (4%), Psyduck (1%)
+Additional SOS encounters: (None)
+==========
+Map: 092 - Route 21 (B)
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 17-28): Tangela (100%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 25-35): Tentacool (91%), Horsea (5%), Krabby (4%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Horsea (60%), Krabby (20%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Horsea (80%), Gyarados (15%), Seadra (4%), Psyduck (1%)
+Additional SOS encounters: (None)
+==========
+Map: 093 - Route 22
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 30-35): Rattata (40%), Mankey (40%), Spearow (10%), Fearow (4%), Primeape (4%), Raticate (1%), Kangaskhan (1%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 20-40): Psyduck (100%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Poliwag (60%), Goldeen (20%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Poliwag (40%), Poliwhirl (40%), Gyarados (15%), Psyduck (5%)
+Additional SOS encounters: (None)
+==========
+Map: 094 - Route 23
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 30-44): Spearow (30%), Mankey (30%), Ekans (20%), Fearow (8%), Arbok (5%), Primeape (5%), Mr. Mime (1%), Scyther (1%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 30-40): Psyduck (64%), Poliwag (30%), Goldeen (5%), Dratini (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Poliwag (60%), Goldeen (20%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Poliwag (40%), Poliwhirl (40%), Gyarados (15%), Psyduck (5%)
+Additional SOS encounters: (None)
+==========
+Map: 095 - Route 24
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 25-35): Caterpie (20%), Weedle (20%), Pidgey (15%), Oddish (15%), Abra (15%), Bellsprout (10%), Kakuna (4%), Metapod (1%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 25-35): Tentacool (90%), Horsea (5%), Krabby (4%), Dratini (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Horsea (60%), Krabby (20%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Horsea (84%), Gyarados (15%), Psyduck (1%)
+Additional SOS encounters: (None)
+==========
+Map: 096 - Route 25
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 25-35): Oddish (25%), Caterpie (20%), Weedle (20%), Abra (14%), Pidgey (10%), Bellsprout (5%), Kakuna (4%), Metapod (1%), Kadabra (1%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 5-35): Psyduck (64%), Poliwag (35%), Magikarp (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Poliwag (60%), Goldeen (20%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Poliwag (40%), Poliwhirl (40%), Gyarados (15%), Psyduck (5%)
+Additional SOS encounters: (None)
+==========
+Map: 097 - Pallet Town
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 5-40): Tentacool (100%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-10): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Horsea (60%), Krabby (20%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Shellder (40%), Horsea (40%), Gyarados (15%), Seadra (4%), Psyduck (1%)
+Additional SOS encounters: (None)
+==========
+Map: 098 - Viridian City
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 25-35): Psyduck (65%), Poliwag (30%), Goldeen (5%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Poliwag (60%), Goldeen (20%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Poliwag (40%), Poliwhirl (40%), Gyarados (15%), Psyduck (5%)
+Additional SOS encounters: (None)
+==========
+Map: 099 - Cerulean City
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 25-35): Tentacool (90%), Krabby (5%), Horsea (4%), Dratini (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Horsea (60%), Krabby (20%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Horsea (84%), Gyarados (15%), Psyduck (1%)
+Additional SOS encounters: (None)
+==========
+Map: 100 - Vermilion City
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 5-35): Tentacool (61%), Magikarp (30%), Krabby (5%), Shellder (4%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Horsea (60%), Krabby (20%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Horsea (44%), Shellder (40%), Gyarados (15%), Psyduck (1%)
+Additional SOS encounters: (None)
+==========
+Map: 101 - Celadon City
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 5-40): Psyduck (99%), Koffing (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-40): Magikarp (99%), Grimer (1%)
+Additional SOS encounters: (None)
+==========
+Map: 102 - Fuchsia City
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 5-35): Psyduck (64%), Goldeen (30%), Poliwag (5%), Magikarp (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Goldeen (60%), Poliwag (20%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Goldeen (40%), Seaking (40%), Gyarados (15%), Psyduck (5%)
+Additional SOS encounters: (None)
+==========
+Map: 103 - Cinnabar Island
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 25-40): Tentacool (60%), Krabby (30%), Horsea (5%), Shellder (4%), Tentacruel (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Horsea (60%), Krabby (20%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Shellder (40%), Horsea (40%), Gyarados (15%), Seadra (4%), Psyduck (1%)
+Additional SOS encounters: (None)
+==========
+Map: 104 - Knot Town
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 5-20): Magikarp (60%), Tentacool (30%), Horsea (5%), Shellder (4%), Gyarados (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Horsea (80%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Shellder (40%), Horsea (40%), Gyarados (15%), Seadra (4%), Psyduck (1%)
+Additional SOS encounters: (None)
+==========
+Map: 105 - Floe Town
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 5-12): Wooper (60%), Psyduck (30%), Magikarp (5%), Goldeen (4%), Poliwag (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Poliwag (60%), Goldeen (20%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Poliwag (40%), Poliwhirl (40%), Gyarados (15%), Psyduck (5%)
+Additional SOS encounters: (None)
+==========
+Map: 106 - Chrono Town
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 5-22): Tentacool (60%), Hoppip (30%), Horsea (5%), Shellder (4%), Krabby (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-5): Magikarp (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-15): Horsea (80%), Magikarp (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 15-35): Shellder (40%), Horsea (40%), Gyarados (15%), Seadra (4%), Psyduck (1%)
+Additional SOS encounters: (None)

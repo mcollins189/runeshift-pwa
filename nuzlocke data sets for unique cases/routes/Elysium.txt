@@ -1,0 +1,74 @@
+# First-cut rail: ordered by min grass level (fishing-only maps last).
+# Hand-adjust to story order; re-running the emitter will NOT overwrite this file.
+Lima Island|rattata,spearow,mankey,staryu,carvanha,sharpedo,magikarp,shellder,goldeen,poliwhirl,starmie
+Crysta Island|pidgeotto,rattata,krabby,taillow,magikarp,poliwag,wingull,tentacool,tentacruel,caterpie,weedle,wurmple,silcoon,beautifly
+Mt. Lonelytop|zubat,geodude,graveler,onix,psyduck,finneon,magikarp,golbat,seaking,charmander,koffing,slugma,torchic,pidgeot,raticate,fearow,mankey,primeape,ponyta,rapidash,tentacool,tentacruel,poliwag,golduck,poliwhirl,poliwrath,goldeen,squirtle,wartortle,krabby,wingull,lumineon,seadra,gyarados
+Fairy Garden|clefairy,jigglypuff,wigglytuff,flabebe,floette,spritzee,snubbull,granbull,aromatisse,marill,azumarill,magikarp,poliwag,goldeen,psyduck,seaking,gyarados
+Fytopia Isle|chikorita,terrakion,florges,skarmory,wingull,pelipper,tentacruel,sharpedo
+Route 1|weedle,kakuna,pidgey,pidgeotto,ekans,nidoran-f,nidoran-m,venonat,mareep,tentacool,tentacruel,magikarp,horsea,goldeen,seadra,rattata,raticate,spearow,fearow,doduo,butterfree,beedrill,pidgeot,venomoth,heracross,dustox,krabby,psyduck,gyarados,bulbasaur,metapod,abra,zubat,geodude
+Route 2|bulbasaur,rattata,budew,petilil,nincada,taillow,poliwag,tentacool,tentacruel,seaking,magikarp,horsea,finneon,poliwhirl,goldeen,lumineon,seadra,squirtle,wartortle,poliwrath,zubat,krabby,wingull,kingler
+Route 12|caterpie,metapod,weedle,kakuna,pidgey,weavile,abra,psyduck,magikarp,poliwag,goldeen,poliwhirl,gyarados
+Riverlands|beedrill,pidgeotto,pidgeot,raticate,ariados,ursaring,zigzagoon,goldeen,seaking,lotad,lombre,ludicolo,magikarp,spearow,fearow,weavile,gloom,meowth,persian,psyduck,golduck,noctowl,teddiursa,stantler,gyarados,linoone,skarmory,tentacool,tentacruel,horsea,seadra,qwilfish,golbat,nidoking,muk,crobat,seviper
+Route 3|spearow,nidoran-f,nidorina,nidoran-m,spinarak,vulpix,abra,turtwig,grotle,wingull,tentacool,tentacruel,magikarp,poliwag,golduck,poliwhirl,poliwrath
+Eerie Town|rattata,spearow,ekans,murkrow
+Route 10|spearow,ekans,drowzee,psyduck,goldeen,seaking,magikarp,golduck,gyarados,lombre,ludicolo
+Bryony Town|golduck,tentacool,wingull,poliwag,magikarp,psyduck,poliwhirl,poliwrath,tentacruel,gyarados,clefairy,fennekin,braixen,spritzee,munna,espeon,glameow,skitty,staryu,starmie
+Ghost Island|zubat,mankey,machop,geodude,onix,duskull,golbat,haunter,gengar,murkrow,absol,graveler
+Owl Forest|hoothoot,spinarak,treecko,grovyle,seedot,nuzleaf,psyduck,goldeen,golduck,noctowl,forretress,heracross,shiftry,roselia,magikarp,horsea,shellder,seadra,gyarados
+Lost Cave|zubat,golbat,gastly,haunter,murkrow
+Karyap Monastery|primeape,machop,machoke,machamp,makuhita,hariyama,meditite,medicham,goldeen,seaking,lotad,lombre,magikarp,ludicolo,pidgeotto,grotle,noctowl,ursaring,stantler,zigzagoon,linoone,loudred,gyarados
+Lake Malta|chikorita,bayleef,flabebe,marill,petilil,lilligant,yanma,psyduck,goldeen,magikarp,seaking,azumarill
+Route 5|pidgey,meowth,snubbull,granbull,glameow,psyduck,magikarp,poliwag,goldeen,golduck,seadra
+Noxin Swamps|grimer,muk,spinarak,mudkip,marshtomp,dustox,croagunk,barboach,whiscash,qwilfish
+Northern Road|grotle,noctowl,teddiursa,ursaring,stantler,zigzagoon,linoone,goldeen,seaking,magikarp,lotad,psyduck,lombre,gyarados,turtwig,tentacool,krabby,horsea,hoothoot,ludicolo
+Sea Route A|fennekin,carvanha,sharpedo,magikarp,krabby,horsea,gyarados,lumineon,cloyster,crawdaunt
+Route 4|pidgey,pidgeotto,rattata,jigglypuff,shroomish,breloom
+Route 6|pidgey,meowth,wingull,psyduck,magikarp,poliwag,horsea,golduck,poliwhirl,seaking
+Route 8|rattata,raticate,spearow,doduo
+West Edge Bazaar|ekans,paras,doduo,dodrio,wingull,tentacool,tentacruel,shellder,magikarp,geodude,graveler,poliwhirl,cloyster,goldeen,seaking
+Kern Mines|tentacool,magikarp,krabby,horsea,psyduck,shellder,gyarados,zubat,golbat,geodude,onix,rhyperior
+National Park|rattata,pikachu,paras,joltik,nincada,electrike,manectric,arbok,zubat,golbat,machop,machoke,geodude,onix,marowak,psyduck,golduck,budew,roserade,roselia,goldeen,seaking,magikarp,krabby,horsea,seadra,tentacool,shellder,gyarados
+Route 7|fearow,mankey,primeape,seviper,zangoose,psyduck,golduck,magikarp,horsea,pikachu,joltik,nincada,electrike,manectric,raticate,grimer,muk
+Shadow Forest|golbat,abra,noctowl,musharna,umbreon,murkrow,tentacool,magikarp,krabby,horsea,psyduck,gyarados
+Old Mausoleum|gastly,haunter,duskull,shuppet,cubone,misdreavus,banette,mismagius
+Chiona Town|unown
+Castle Houndburg|unown,zubat,golbat,psyduck,seel,dewgong,monferno,magikarp,poliwag,goldeen,poliwhirl,gyarados
+Astrantia City|unown,psyduck,koffing,magikarp,grimer
+Ghost Island Core|unown,gastly,haunter,gengar,murkrow,duskull,absol
+S.G Anne|unown,wingull
+Old Factory|pikachu,magnemite,magneton,voltorb,electabuzz,jolteon,joltik
+Amira Seas|meowth,persian,psyduck,krabby,wingull,pelipper,corphish,tentacool,tentacruel,carvanha,geodude,graveler,magikarp,horsea,seadra,sharpedo,gyarados,qwilfish,kingler,crawdaunt
+Cape Brink|spearow,fearow,weavile,gloom,meowth,persian,psyduck,golduck,magikarp,poliwag,goldeen,poliwhirl,gyarados
+Underground City|raticate,zubat,grimer,muk,feraligatr,ariados
+Jungle|growlithe,arcanine,rhyhorn,tauros,aipom,girafarig,poochyena,mightyena,psyduck,magikarp,goldeen,seaking,totodile,croconaw,mankey,dodrio,tropius,hippopotas,hippowdon,poliwag,parasect,kangaskhan,golduck,dratini,dragonair,carvanha,pidgeot,primeape,graveler,nidorina,nidorino,chansey,feraligatr
+Route B|spearow,poliwrath,chansey,blissey,wingull,pelipper,tentacool,carvanha,tentacruel,goldeen,gyarados,finneon,sharpedo,magikarp,seaking,shellder,cloyster,lumineon,horsea,seadra
+Akra Desert|sandshrew,sandslash,cubone,cacnea,cacturne,heliolisk,marowak,zubat,diglett,dugtrio,geodude,graveler,doduo,dodrio,flygon,raticate,magikarp,feebas
+Mt. Grey|ponyta,rapidash,vibrava,swablu,altaria,geodude,graveler,zubat,golbat,psyduck,seel,dewgong,tentacool,tentacruel,lapras,magikarp,horsea,shellder,seadra,gyarados
+Route A|tentacool,magikarp,carvanha,sharpedo,seaking,staryu,fearow,kingler,chansey,starmie,azumarill,blissey,wingull,pelipper,horsea,seadra
+Lake Vera|mamoswine,sneasel,swinub,piloswine,stantler,snorunt,glalie,seel,dewgong,spheal,sealeo,walrein,magikarp,lapras
+Lotus Village|rattata,raticate,spearow,fearow,doduo
+Arena|raticate,zubat,golbat,geodude,graveler,onix,magcargo,golem,golduck,psyduck,lumineon
+Porta Arkasia|wingull,pelipper,carvanha,magikarp,staryu,goldeen,seaking,starmie,crawdaunt,sharpedo,primeape,dodrio,horsea,shellder,corphish,feebas
+Lima Isles|probopass,wingull,pelipper,nosepass,staryu,starmie,carvanha,sharpedo,magikarp,goldeen,lumineon
+Amira Volcano|geodude,graveler,koffing,weezing,quilava,typhlosion,slugma,magcargo,magmar,torkoal,flareon,magmortar
+Treasure Beach|krabby,kingler,wingull,corphish,crawdaunt,tentacool,tentacruel,magikarp,horsea,seadra,carvanha,sharpedo
+Pirate Woods|raticate,grimer,muk,heracross,pelipper,slaking,tropius,magikarp,carvanha,feraligatr,wingull
+Dragon Sanctuary|zubat,golbat,gible,gabite,flygon,bagon,shelgon,salamence,geodude,graveler,trapinch,magikarp,dratini,dragonair,gyarados,kingdra,garchomp,vibrava
+Frozen Dunes|weavile,gloom,murkrow,sneasel,absol,ursaring,swinub,piloswine,stantler,snorunt,golbat,jynx,mamoswine
+Durant Tunnels|golbat,durant,crobat,vulpix,ninetales,growlithe,arcanine,flareon,typhlosion,magcargo,combusken,blaziken,torkoal
+Ice Cave|golbat,mamoswine,glaceon,swinub,piloswine,snorunt,glalie,crobat,froslass,seel,dewgong,spheal,sealeo,walrein,horsea,magikarp,kingdra,jynx,seadra,seaking
+Route 11|pidgeot,arbok,ampharos,donphan,heliolisk,exploud,psyduck,golduck,goldeen,seaking,tentacool,tentacruel,finneon,lumineon,pelipper,magikarp,krabby,kingler,arcanine,rapidash,granbull,ursaring,grumpig,altaria,dragonair,wailmer,wailord,wingull,nosepass,flygon,golbat,vaporeon
+Dimini|raticate,yanmega,pinsir,lilligant,slaking,loudred,exploud,magikarp
+Smata Village|arcanine,rapidash,dodrio,heracross,ursaring,skarmory,donphan
+Crystal Sea|tentacool,tentacruel,magikarp
+Resort Gorgeous|tentacruel,wingull,pelipper,carvanha,sharpedo,horsea,seadra,staryu,carracosta
+Old Capital|grimer,muk
+Cycling Road|tentacool,magikarp,krabby,horsea,psyduck,seadra,gyarados
+Lilya Town|psyduck,magikarp,poliwag,goldeen,poliwhirl
+Alabasta City|raticate,tentacool,tentacruel,sharpedo,magikarp,krabby,horsea,shellder,crawdaunt
+Battle Museum|tentacool,magikarp,krabby,horsea,psyduck,shellder,seadra,gyarados
+Petra Isle|tentacool,tentacruel,magikarp,horsea,psyduck,shellder,seadra,gyarados
+Amira Island|magikarp,poliwag,goldeen,psyduck,poliwhirl,starmie,gyarados
+Secret Cave|feebas,milotic
+Route 9|tentacool,tentacruel,seaking,wailmer,wailord,magikarp,goldeen,golduck
+Astrantia Port|magikarp,poliwag,horsea,poliwhirl,poliwrath

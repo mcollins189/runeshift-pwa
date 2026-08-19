@@ -1152,7 +1152,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787121960140"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787122805839"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -2736,6 +2736,37 @@ const GAMES = {
       encounterTables: 'Gaia',
       leagues: 'Gaia'
     }
+  },
+  'outlaw': {
+    // Pokémon Outlaw — FireRed base (FR v1.0, -0x70 shift), Kanto, Gen 1-2 dex.
+    // ROM-extracted encounter tables (93 maps).
+    name: 'Outlaw', short: 'Outlaw', gen: 3, category: 'Other ROM hacks',
+    dataSources: { routes: 'Outlaw', encounterTables: 'Outlaw' }
+  },
+  'my_ass': {
+    // Pokémon My Ass — FireRed base (FR v1.0, -0x70), Kanto. 104 maps.
+    // The dex is vanilla but for one swap (internal id 402 Regice -> Squirtle),
+    // which no wild table references.
+    name: 'My Ass', short: 'My Ass', gen: 3, category: 'Other ROM hacks',
+    dataSources: { routes: 'MyAss', encounterTables: 'MyAss' }
+  },
+  'korosu': {
+    // Pokémon Korosu — FireRed base, Kanto. Species NAMES are relocated to
+    // 0x720620 but the map/section layout stays vanilla FR v1.0. 106 maps.
+    name: 'Korosu', short: 'Korosu', gen: 3, category: 'Other ROM hacks',
+    dataSources: { routes: 'Korosu', encounterTables: 'Korosu' }
+  },
+  'elysium': {
+    // Pokémon Elysium — FireRed base, Lilya/Karyap region, Gen 5-6 species
+    // expanded in place (id 268 = Aegislash, 411 = Xerneas), so species resolve
+    // by NAME. 165 maps — the largest of this batch.
+    name: 'Elysium', short: 'Elysium', gen: 6, category: 'Other ROM hacks',
+    dataSources: { routes: 'Elysium', encounterTables: 'Elysium' }
+  },
+  'cawps': {
+    // Pokémon CAWPS — Emerald base at vanilla offsets, Hoenn. 91 maps.
+    name: 'CAWPS', short: 'CAWPS', gen: 3, category: 'Other ROM hacks',
+    dataSources: { routes: 'CAWPS', encounterTables: 'CAWPS' }
   },
   'lazarus': {
     // Pokémon Lazarus — Emerald base (BPEE, pokeemerald-expansion decomp), the
@@ -6649,6 +6680,11 @@ const GAME_DISPLAY_ORDER = [
   'emerald_run_and_bun',
   'inclement_emerald',
   'glazed',                             // Emerald, multi-region story
+  'cawps',                              // Emerald-based, Hoenn
+  'outlaw',                             // FR-based, Kanto
+  'korosu',                             // FR-based, Kanto
+  'my_ass',                             // FR-based, Kanto
+  'elysium',                            // FR-based, Gen 5-6 expansion
   'renegade_platinum',                  // Platinum-based
   'storm_silver_sacred_gold',           // HGSS-based
   'rising_ruby_sinking_sapphire',       // ORAS-based
@@ -12191,7 +12227,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-18 23:46';
+const APP_BUILD = '2026-08-19 00:00';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
