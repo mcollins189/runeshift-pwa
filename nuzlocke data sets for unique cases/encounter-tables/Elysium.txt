@@ -692,7 +692,7 @@ Additional SOS encounters: (None)
 Map: 063 - Cape Brink
 Tables: 5
 Table 1 [grass] (All):
-Encounters (Levels 30-40): Weavile (30%), Spearow (20%), Gloom (15%), Fearow (10%), Meowth (10%), Persian (5%), Psyduck (5%), Golduck (5%)
+Encounters (Levels 30-40): Weavile (30%), Spearow (20%), Honchkrow (15%), Fearow (10%), Meowth (10%), Persian (5%), Psyduck (5%), Golduck (5%)
 Additional SOS encounters: (None)
 Table 2 [surf] (All):
 Encounters (Levels 5-40): Psyduck (95%), Golduck (5%)
@@ -866,7 +866,7 @@ Additional SOS encounters: (None)
 Map: 075 - Riverlands (B)
 Tables: 5
 Table 1 [grass] (All):
-Encounters (Levels 10-50): Fearow (45%), Spearow (20%), Weavile (10%), Meowth (10%), Gloom (5%), Persian (5%), Psyduck (5%)
+Encounters (Levels 10-50): Fearow (45%), Spearow (20%), Weavile (10%), Meowth (10%), Honchkrow (5%), Persian (5%), Psyduck (5%)
 Additional SOS encounters: (None)
 Table 2 [surf] (All):
 Encounters (Levels 15-60): Magikarp (60%), Goldeen (30%), Golduck (5%), Seaking (5%)
@@ -1811,7 +1811,7 @@ Additional SOS encounters: (None)
 Map: 146 - Frozen Dunes (A)
 Tables: 1
 Table 1 [grass] (All):
-Encounters (Levels 61-68): Murkrow (50%), Sneasel (35%), Gloom (9%), Weavile (5%), Absol (1%)
+Encounters (Levels 61-68): Murkrow (50%), Sneasel (35%), Honchkrow (9%), Weavile (5%), Absol (1%)
 Additional SOS encounters: (None)
 ==========
 Map: 147 - Frozen Dunes (B)
@@ -1829,7 +1829,7 @@ Additional SOS encounters: (None)
 Map: 149 - Frozen Dunes (D)
 Tables: 1
 Table 1 [grass] (All):
-Encounters (Levels 53-65): Murkrow (20%), Swinub (20%), Gloom (15%), Golbat (10%), Piloswine (10%), Stantler (10%), Jynx (9%), Weavile (4%), Absol (2%)
+Encounters (Levels 53-65): Murkrow (20%), Swinub (20%), Honchkrow (15%), Golbat (10%), Piloswine (10%), Stantler (10%), Jynx (9%), Weavile (4%), Absol (2%)
 Additional SOS encounters: (None)
 ==========
 Map: 150 - Frozen Dunes (E)
