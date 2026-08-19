@@ -4288,6 +4288,51 @@ const REGIONAL_FORM_EVO = {
   'darumaka-galar':  ['Galarian Darmanitan', 'Ice Stone'],
   'yamask-galar':    ['Runerigus', 'Take 49+ damage under a rock arch'],
 };
+/* ── Past-generation typing overrides (offline, synchronous) ──
+   Static mirror of PokeAPI's Pokemon.past_types, which fetchPokemonFromApi already
+   applies per-game (see "PokeAPI backfill (gen-aware)"). That data only lands after a
+   network fetch, though, and EVERY table we render typing from otherwise is
+   CURRENT-gen — curated POKEMON_DB carries 'Clefairy':t:['Fairy'], and the bundled
+   NUZ_DATA.typesBySlug map is straight from build-data.mjs (Gen 9). So a pre-Gen-6
+   game (team_rocket_edition, emerald_kaizo, emerald_run_and_bun, …) showed Fairy
+   badges for a type that doesn't exist in that ROM.
+
+   Keyed by species slug → [lastGenTheOldTypingApplied, types], matching PokeAPI's
+   semantics: the override wins when the game's gen is <= that gen. One entry per
+   species is enough today — no species has had three distinct typings. */
+const PAST_TYPES_BY_SLUG = {
+  // Gen 6 Fairy retcon — all of these had different typing through Gen 5.
+  'cleffa':[5,['Normal']], 'clefairy':[5,['Normal']], 'clefable':[5,['Normal']],
+  'igglybuff':[5,['Normal']], 'jigglypuff':[5,['Normal']], 'wigglytuff':[5,['Normal']],
+  'togepi':[5,['Normal']], 'togetic':[5,['Normal','Flying']], 'togekiss':[5,['Normal','Flying']],
+  'azurill':[5,['Normal','Water']], 'marill':[5,['Water']], 'azumarill':[5,['Water']],
+  'snubbull':[5,['Normal']], 'granbull':[5,['Normal']],
+  'mime-jr':[5,['Psychic']], 'mr-mime':[5,['Psychic']],
+  'ralts':[5,['Psychic']], 'kirlia':[5,['Psychic']], 'gardevoir':[5,['Psychic']],
+  'mawile':[5,['Steel']],
+  'cottonee':[5,['Grass']], 'whimsicott':[5,['Grass']],
+  // Gen 2 introduced Steel — these were pure Electric in RBY.
+  'magnemite':[1,['Electric']], 'magneton':[1,['Electric']],
+  // Rotom's appliance forms only took on their appliance typing in Gen 5.
+  'rotom-heat':[4,['Electric','Ghost']], 'rotom-wash':[4,['Electric','Ghost']],
+  'rotom-frost':[4,['Electric','Ghost']], 'rotom-fan':[4,['Electric','Ghost']],
+  'rotom-mow':[4,['Electric','Ghost']],
+};
+
+// Adjust a resolved type array to the ACTIVE game's generation. Display-side helper:
+// call it on whatever typing a render path ended up with (curated DB, bundled
+// typesBySlug map, or a backfill result — a backfilled entry is already gen-adjusted,
+// so re-applying is a no-op) right before painting badges. Returns `types` untouched
+// when the game's gen is unknown or the species never changed typing.
+function genAdjustTypes(name, types) {
+  if (!Array.isArray(types) || !types.length) return types;
+  const gen = (typeof getGameGen === 'function') ? getGameGen() : null;
+  if (!gen) return types;
+  const slug = (typeof speciesSlug === 'function') ? speciesSlug(name) : String(name || '').toLowerCase();
+  const past = slug && PAST_TYPES_BY_SLUG[slug];
+  return (past && gen <= past[0]) ? past[1].slice() : types;
+}
+
 // Case-insensitive lookup with light normalization (handles trailing whitespace, exact match preferred)
 function pokeInfo(name) {
   if (!name) return null;
@@ -13970,7 +14015,7 @@ function buildEncounterMain(loc, ver) {
           <div class="enc-poke-info">
             <div class="enc-poke-name">${c.nickname || c.species || '?'}${c.nickname&&c.species&&c.nickname!==c.species?` <span style="font-size:10px;color:var(--text3)">(${c.species})</span>`:''}${flag}</div>
             <div class="enc-poke-meta">
-              ${(pokeTypes(c.species)||[]).map(t=>`<span class="type-badge t-${t}">${t}</span>`).join('')}
+              ${genAdjustTypes(c.species, pokeTypes(c.species)||[]).map(t=>`<span class="type-badge t-${t}">${t}</span>`).join('')}
               ${c.level?`<span class="enc-poke-rate">L${c.level}</span>`:''}
               ${subzoneHint}
               ${c.note?`<span class="enc-poke-rate" style="font-style:italic">— ${c.note}</span>`:''}
@@ -14279,6 +14324,9 @@ function renderEncListInternal(list, teamLineSet, deadSpecies, caughtAtThisLoc, 
       // next to the type (visible on any single-type wild mon).
       encTypes = (NUZ_DATA.typesBySlug[speciesSlug(e.p)] || []).filter(Boolean);
     }
+    // Both sources above are current-gen, so a pre-Gen-6 game still needs the
+    // past-typing override (Clefairy is Normal, not Fairy, in a Gen 3 hack).
+    encTypes = genAdjustTypes(e.p, encTypes);
     return `<div class="enc-poke clickable${stateClass}" title="Click to log encounter" onclick="encActionMenu('${safeLoc}', '${safeSp}', event, ${rate||0})">
       ${spriteImg(e.p, {sm:true, faded:isDead||isDupe||isMissed||isSkipped, apiId:e.apiId})}
       <div class="enc-poke-info">
@@ -15610,7 +15658,7 @@ function sdFilter(input, kind) {
         if ((!types || !types.length) && typeof window !== 'undefined' && window.NUZ_DATA?.typesBySlug && typeof speciesSlug === 'function') {
           types = (window.NUZ_DATA.typesBySlug[speciesSlug(name)] || []).filter(Boolean);
         }
-        badgeHtml = types.map(t=>`<span class="type-badge t-${t}">${t}</span>`).join('');
+        badgeHtml = (genAdjustTypes(name, types) || []).map(t=>`<span class="type-badge t-${t}">${t}</span>`).join('');
       } else if (kind === 'route') {
         // For root routes that have sub-zones, hint at it.
         // For sub-zones, indicate they share a root.
