@@ -8,7 +8,7 @@
 65,100,60,100,85,115|Gorochu|gorochu|electric,fighting|/rom/odyssey/201|
 200,100,100,150,150,90|Abyss Eye|abyss-eye|grass,ice|/rom/odyssey/275|
 200,150,140,100,80,120|Tentacle|tentacle|grass,fire|/rom/odyssey/276|
-100,130,80,60,80,75|Yggdreon|yggdreon|fairy|/rom/odyssey/350|
+100,130,80,60,80,75|Yggdreon|yggdreon|aether|/rom/odyssey/350|
 105,90,90,170,165,180|Tlachtga|tlachtga|ghost,fire|/rom/odyssey/404|
 100,170,160,100,100,120|Dinogator|dinogator|water,poison|/rom/odyssey/405|
 140,110,155,110,155,80|Av. Dragon|av-dragon|grass,dragon|/rom/odyssey/406|

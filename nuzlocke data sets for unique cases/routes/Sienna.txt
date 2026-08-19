@@ -1,0 +1,82 @@
+# First-cut rail: ordered by min grass level (fishing-only maps last).
+# Hand-adjust to story order; re-running the emitter will NOT overwrite this file.
+Heathen Pass|kiwee,hoothoot,squirren,folain,orfly,schnauzup,isopoly,swablu
+Kent Cross|kiwee,magby,squirren,orfly,kelpony,algallion,stroente,blubbeau,magikarp,psyduck,gyarados
+Colt Path|kiwee,mudkip,squirren,folain,orfly,taillow,foalata,swablu
+Three Isle Port|malamar
+Maas City|bulbasaur,charmander,squirtle,grimer,moocano,ponfant,treecko,torchic,mudkip,stroente,panpour,hoppip,magikarp,horsea,psyduck,shellder,seadra,gyarados
+Colt Forest|burmy,clefairy,murkrow,phanpy,treecko,isopoly,malamar
+Pattern Bush|caterpie,metapod,weedle,kakuna,duglug,piplup,heracross
+Memorial Pillar|hoppip,stroente,panpour,magikarp,horsea,psyduck,seadra,gyarados,qwilfish
+Origin Well|golbat,parasect,haretic,machoke,bouldotem,crobat,paras,dugtrio,growlithe,drilldug,xatu,gligar,grumpig,stroente,clefairy,zubat,odobble,kelpony,algallion,talush,shuritox,machop,onix,marowak
+Genesis Cave|zubat,dugtrio,machop,odobble,onix,duglug,stroente,nacli,sealeo
+Cianide Cross|meowth,bellsprout,sleedle,malamar,schnauzup,foalata,polornu,ralts
+Five Isle Meadow|chartail,turtwig,meowth,persian,psyduck,sentret,hoppip,stroente,panpour,magikarp,horsea,seadra,gyarados,qwilfish
+Water Path|kiwee,delinkwi,oddish,gloom,meowth,persian,psyduck,sentret,stroente,panpour,magikarp,horsea,seadra,gyarados,qwilfish
+Canyon Entrance|kiwee,delinkwi,meowth,persian,psyduck,sentret,phanpy
+Sian Pass|meowth,sleedle,bombsect,mareep,fliquito,squirtle,wartortle,psyduck,kelpony,stroente,magikarp,blubbeau,algallion,gyarados
+Eden Path|squirtle,pikachu,meowth,tangela,slugma,tyrogue,squirren
+Atalanta Plains|rattata,kiwee,burmy,folain
+Eternity Path|kiwee,burmy,sleedle,voltorb,torchic,folain,stroente,magikarp,krabby,horsea,psyduck,gyarados
+Mekong River|kiwee,burmy,drowzee,kelpony,stroente,blubbeau,magikarp,krabby,horsea,psyduck,gyarados
+Orange Island 2|rattata,raticate,kiwee,burmy,folain,stroente,magikarp,krabby,horsea,psyduck,gyarados
+Ganges Pokemon Gym|necromans,viscamans,cubone
+Vrai Cave|zubat,diglett,dugtrio,necromans,duglug,diljan,smeargle,kelpony,stroente,blubbeau,golbat,drilldug,aron,lairon,bouldotem,bombsect,sudowoodo
+Lost Cave|zubat,golbat,necromans,viscamans,murkrow
+Ruin Valley|kiwee,delinkwi,meowth,persian,psyduck,natu,diljan,wooper,labross,magikarp,kelpony,blubbeau,algallion,gyarados
+Sevault Canyon|delinkwi,meowth,persian,odobble,onix,cubone,marowak,skarmory,phanpy,larvitar,bouldotem
+Steel Way|malamar,gligar,magby,foalata,polornu,makuhita,swablu
+Route 21|tangela,stroente,magikarp,krabby,horsea,psyduck,seadra,gyarados
+Cynic Way|charmeleon,rattata,kiwee,burmy,fluffow,squirren,folain,fauxphur,polornu,kelpony,stroente,blubbeau,magikarp,krabby,horsea,psyduck,gyarados
+Tamain Path|rattata,raticate,delinkwi,doduo,malamar
+Severn Cave|zubat,golbat,psyduck,panpour,seel,dewgong,wooper,magikarp,kelpony,blubbeau,algallion,gyarados,chimchar,pansage,insomb,pansear
+Pokemon Academy|zubat,golbat,odobble,bouldotem,onix,crobat,murkrow,lucario,panpour,hoothoot,natu,mareep,labross,pansage,tyrogue,drifloon,terasaur,buneary,lopunny,pansear,stroente,seadra,magikarp,spheal,shuckle,lairon,kelpony,nacli,horsea,narphin,blubbeau,blubbeauty,gyarados
+Route 17|rattata,raticate,kiwee,delinkwi,doduo
+Allegro Pass|kiwee,delinkwi,doduo,foalata,phione
+Severn Way|starmie,jynx,fluffow,marshtomp,dejvu,polornu,snorunt,toddra,stroente,magikarp,krabby,horsea,psyduck,seadra,gyarados
+Safari Zone|kakuna,vulpix,shuritox,magnemite,scyther,tauros,miltank,shellder,krabby,marshtomp,seel,nidoran-f,nidoran-m,nidorino,paras,parasect,doduo,exeggcute,kangaskhan,psyduck,magikarp,kelpony,blubbeau,blubbeauty,dratini,dragonair,growlithe,mr-mime,sunkern,skitty,toddra,metang,wartortle,gyarados,lapras,wooper,barboach,venonat,venomoth,hythracite
+Victory Road|zubat,golbat,strinder,machop,machoke,odobble,bouldotem,duglug,drilldug,steelix,panpour,nacli,seadra,blubbeauty,lapras,magikarp,horsea,kelpony,algallion,shellder,gyarados,onix,psyduck,narphin,seel,dewgong,snorunt,cloudra,sandslash,rhyhorn,rhydon,numel
+Seafoam Islands|zubat,golbat,psyduck,golduck,seel,dewgong,horsea,magikarp,krabby,gyarados
+Power Plant|pikachu,magnemite,magneton,voltorb,electabuzz
+Mt. Ember|machop,machoke,odobble,bouldotem,slugma
+Anard Pass|oddish,gloom,venonat,ditto,combusken,folain,polornu,stroente,magikarp,krabby,horsea,psyduck,gyarados
+Gogh Cross|delinkwi,oddish,gloom,ditto,marshtomp,fauxphur,hythracite,polornu,fortracean
+Lion Way|bulbasaur,delinkwi,oddish,gloom,venonat,snorlax,skiploom,mospite,vibrava
+Monean Chamber|unown,labross
+Liptoo Chamber|unown,labross
+Weepth Chamber|unown
+Dilford Chamber|unown
+Scufib Chamber|unown
+Rixy Chamber|unown
+Viapois Chamber|unown
+Pokemon Mansion|rattata,raticate,growlithe,sleedle,koffing,weezing,ditto
+Bond Bridge|chartail,turtwig,oddish,gloom,venonat,meowth,persian,psyduck,stroente,panpour,magikarp,horsea,seadra,gyarados
+Cynic Forest|chartail,turtwig,oddish,gloom,venonat,venomoth,psyduck,drowzee,hypno,exeggcute,golduck,magikarp,kelpony,blubbeau,blubbeauty,gyarados
+Kindle Road|kiwee,delinkwi,meowth,persian,psyduck,odobble,ponyta,rapidash,stroente,panpour,bouldotem,magikarp,horsea,seadra,gyarados
+Cape Brink|kiwee,delinkwi,oddish,gloom,meowth,persian,psyduck,golduck,magikarp,kelpony,blubbeau,algallion,gyarados
+Treasure Beach|kiwee,delinkwi,meowth,persian,psyduck,tangela,stroente,panpour,magikarp,horsea,seadra,gyarados
+Crystal Cave|golbat,machop,machoke,onix,odobble,bouldotem
+Route 23|kiwee,delinkwi,burmy,talush,strinder,shuritox,psyduck,magikarp,kelpony,blubbeau,algallion,gyarados
+Orange Route 1|beedrill,nidorina,nidorino,golduck,machoke,victreebel,farfetchd,dewgong,kingler,ditto,psyduck,magikarp,lapras,krabby,horsea,seadra,gyarados
+Ocean Well|golbat,parasect,machoke,bouldotem,dewgong,lickitung,ditto,shuckle,sealeo,odobble,psyduck,golduck,nacli,finneon,lumineon,magikarp,kelpony,blubbeau,algallion,gyarados
+Infinite Island|kiwee,delinkwi,gloom,injectrile,viscamans,marowak,lickitung,diljan,ursaring,houndoom,vibrava,odobble,bouldotem
+Valencia Park|butterfree,vileplume
+Pinkan Island|rhyhorn,primeape,dodrio,psyduck,magikarp,lapras,horsea,seadra,gyarados,qwilfish
+Orange Route 2|beedrill,nidorina,nidorino,persian,golduck,magby,machoke,victreebel,dewgong,kingler,psyduck,magikarp,lapras,krabby,horsea,gyarados
+S.S. Anne|stroente,magikarp,krabby,horsea,psyduck,shellder,gyarados
+Water Labyrinth|stroente,panpour,hoppip,magikarp,horsea,psyduck,seadra,gyarados,qwilfish
+Outcast Island|stroente,panpour,magikarp,horsea,psyduck,seadra,gyarados,qwilfish
+Green Path|stroente,panpour,magikarp,horsea,psyduck,seadra,gyarados,qwilfish
+Trainer Tower|stroente,panpour,magikarp,horsea,psyduck,seadra,gyarados,qwilfish
+Tanoby Ruins|stroente,panpour,magikarp,horsea,psyduck,seadra,gyarados,qwilfish
+Route 20|stroente,magikarp,krabby,horsea,psyduck,seadra,gyarados
+Atlantic Town|stroente,magikarp,krabby,horsea,psyduck,shellder,seadra,gyarados
+Nile City|kelpony,algallion,magikarp,blubbeau,psyduck,gyarados
+Thames Town|stroente,magikarp,krabby,horsea,psyduck,gyarados
+Yukon Town|stroente,magikarp,krabby,horsea,psyduck,shellder,gyarados
+Mekong City|kelpony,algallion,stroente,blubbeau,magikarp,sleedle
+Angara Town|psyduck,magikarp,kelpony,blubbeau,blubbeauty,gyarados
+Rhine Village|stroente,magikarp,krabby,horsea,psyduck,shellder,seadra,gyarados
+Valencia Island|psyduck,krabby,magikarp,horsea,shellder,seadra,gyarados
+Kaveri Town|psyduck,wooper,magikarp,kelpony,blubbeau,algallion,gyarados
+Pokeplaza Entrance|stroente,magikarp,finneon,kelpony,krabby,horsea,psyduck,nacli,gyarados

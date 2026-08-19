@@ -1152,7 +1152,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787151442247"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787152681516"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -2782,6 +2782,26 @@ const GAMES = {
     // by NAME. 165 maps — the largest of this batch.
     name: 'Elysium', short: 'Elysium', gen: 6, category: 'Other ROM hacks',
     dataSources: { routes: 'Elysium', encounterTables: 'Elysium' }
+  },
+  'clover': {
+    // Pokémon Clover — FireRed base (FR v1.0, -0x70) despite a BPEE header, so
+    // the game code cannot be trusted to pick the engine. The Fochun region,
+    // and an almost entirely ORIGINAL dex: 375 of its species exist nowhere
+    // else, with stats, types and sprites read off the cartridge into
+    // patches/Clover.txt + sprites/hack/clover/.
+    name: 'Clover', short: 'Clover', gen: 3, category: 'Other ROM hacks',
+    dataSources: { routes: 'Clover', encounterTables: 'Clover', patches: 'Clover' }
+  },
+  'sienna': {
+    // Pokémon Sienna — FireRed base (FR v1.0, -0x70), a river-named region
+    // (Atlantic Town, Nile City, Ganges City). Heavily FAKEMON: 102 of its
+    // species slots are renamed, 77 of them to Pokemon that exist nowhere else.
+    // Stats, types and sprites for those come off the cartridge into
+    // patches/Sienna.txt + sprites/hack/sienna/. This is the hack that made the
+    // whole verification pass necessary — before fakemon support it extracted
+    // "cleanly" while emitting Pidgey for a slot the game calls Chartail.
+    name: 'Sienna', short: 'Sienna', gen: 3, category: 'Other ROM hacks',
+    dataSources: { routes: 'Sienna', encounterTables: 'Sienna', patches: 'Sienna' }
   },
   'odyssey': {
     // Pokémon Odyssey — FireRed base (FR v1.0, -0x70), the Viridis region and
@@ -6728,6 +6748,8 @@ const GAME_DISPLAY_ORDER = [
   'inclement_emerald',
   'glazed',                             // Emerald, multi-region story
   'odyssey',                            // FR-based dungeon crawler, Viridis region
+  'sienna',                             // FR-based, fakemon-heavy
+  'clover',                             // FR-based, almost entirely original dex
   'cawps',                              // Emerald-based, Hoenn
   'outlaw',                             // FR-based, Kanto
   'korosu',                             // FR-based, Kanto
@@ -12275,7 +12297,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-19 07:57';
+const APP_BUILD = '2026-08-19 08:18';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
