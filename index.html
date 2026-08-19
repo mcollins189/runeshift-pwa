@@ -1152,7 +1152,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787156347961"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787156747519"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -2636,7 +2636,8 @@ const GAMES = {
     dataSources: {
       routes: 'Emerald',
       leagues: 'Emerald',
-      pokeapiRegion: 'hoenn'
+      pokeapiRegion: 'hoenn',
+      learnsets: 'Emerald'
     }
   },
   'firered_leafgreen': {
@@ -2646,7 +2647,8 @@ const GAMES = {
     dataSources: {
       routes: { F: 'FireRed', L: 'LeafGreen' },
       leagues: 'FireRedLeafGreen',
-      pokeapiRegion: 'kanto'
+      pokeapiRegion: 'kanto',
+      learnsets: 'FireRed'
     }
   },
   'diamond_pearl': {
@@ -2704,7 +2706,8 @@ const GAMES = {
     dataSources: {
       routes: 'TeamRocketEdition',
       encounterTables: 'TeamRocketEdition',
-      leagues: 'TeamRocketEdition'
+      leagues: 'TeamRocketEdition',
+      learnsets: 'TeamRocketEdition'
     }
   },
   'unbound': {
@@ -2741,20 +2744,20 @@ const GAMES = {
     // Pokémon Outlaw — FireRed base (FR v1.0, -0x70 shift), Kanto, Gen 1-2 dex.
     // ROM-extracted encounter tables (93 maps).
     name: 'Outlaw', short: 'Outlaw', gen: 3, category: 'Other ROM hacks',
-    dataSources: { routes: 'Outlaw', encounterTables: 'Outlaw', leagues: 'Outlaw' }
+    dataSources: { routes: 'Outlaw', encounterTables: 'Outlaw', leagues: 'Outlaw' , learnsets: 'Outlaw' }
   },
   'my_ass': {
     // Pokémon My Ass — FireRed base (FR v1.0, -0x70), Kanto. 104 maps.
     // The dex is vanilla but for one swap (internal id 402 Regice -> Squirtle),
     // which no wild table references.
     name: 'My Ass', short: 'My Ass', gen: 3, category: 'Other ROM hacks',
-    dataSources: { routes: 'MyAss', encounterTables: 'MyAss', leagues: 'MyAss' }
+    dataSources: { routes: 'MyAss', encounterTables: 'MyAss', leagues: 'MyAss' , learnsets: 'MyAss' }
   },
   'korosu': {
     // Pokémon Korosu — FireRed base, Kanto. Species NAMES are relocated to
     // 0x720620 but the map/section layout stays vanilla FR v1.0. 106 maps.
     name: 'Korosu', short: 'Korosu', gen: 3, category: 'Other ROM hacks',
-    dataSources: { routes: 'Korosu', encounterTables: 'Korosu', leagues: 'Korosu' }
+    dataSources: { routes: 'Korosu', encounterTables: 'Korosu', leagues: 'Korosu' , learnsets: 'Korosu' }
   },
   'elysium': {
     // Pokémon Elysium — FireRed base, Lilya/Karyap region, Gen 5-6 species
@@ -2790,7 +2793,7 @@ const GAMES = {
     // patches/Vega.txt + sprites/hack/vega/. Two of those have no extractable
     // sprite and are emitted without one rather than with a broken link.
     name: 'Vega', short: 'Vega', gen: 3, category: 'Other ROM hacks',
-    dataSources: { routes: 'Vega', encounterTables: 'Vega', patches: 'Vega', leagues: 'Vega' }
+    dataSources: { routes: 'Vega', encounterTables: 'Vega', patches: 'Vega', leagues: 'Vega' , learnsets: 'Vega' }
   },
   'quartz': {
     // Pokémon Quartz Minus — RUBY base (AXVE), the first Ruby-family game here.
@@ -2819,7 +2822,7 @@ const GAMES = {
     // whole verification pass necessary — before fakemon support it extracted
     // "cleanly" while emitting Pidgey for a slot the game calls Chartail.
     name: 'Sienna', short: 'Sienna', gen: 3, category: 'Other ROM hacks',
-    dataSources: { routes: 'Sienna', encounterTables: 'Sienna', patches: 'Sienna', leagues: 'Sienna' }
+    dataSources: { routes: 'Sienna', encounterTables: 'Sienna', patches: 'Sienna', leagues: 'Sienna' , learnsets: 'Sienna' }
   },
   'odyssey': {
     // Pokémon Odyssey — FireRed base (FR v1.0, -0x70), the Viridis region and
@@ -2840,7 +2843,7 @@ const GAMES = {
     // they look like a partial gym roster and are not one. The 713+ block is a
     // four-tier rematch ladder, also not a badge progression. Do not re-derive.
     name: 'CAWPS', short: 'CAWPS', gen: 3, category: 'Other ROM hacks',
-    dataSources: { routes: 'CAWPS', encounterTables: 'CAWPS' }
+    dataSources: { routes: 'CAWPS', encounterTables: 'CAWPS' , learnsets: 'CAWPS' }
   },
   'lazarus': {
     // Pokémon Lazarus — Emerald base (BPEE, pokeemerald-expansion decomp), the
@@ -2921,7 +2924,8 @@ const GAMES = {
       routes: 'Glazed',
       encounterTables: 'Glazed',
       leagues: 'Glazed',
-      patches: 'Glazed'
+      patches: 'Glazed',
+      learnsets: 'Glazed'
     }
   }
 };
@@ -12317,7 +12321,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-19 09:19';
+const APP_BUILD = '2026-08-19 09:26';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
