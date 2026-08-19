@@ -1152,7 +1152,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787147644824"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787148452870"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -2754,7 +2754,7 @@ const GAMES = {
     // Pokémon Korosu — FireRed base, Kanto. Species NAMES are relocated to
     // 0x720620 but the map/section layout stays vanilla FR v1.0. 106 maps.
     name: 'Korosu', short: 'Korosu', gen: 3, category: 'Other ROM hacks',
-    dataSources: { routes: 'Korosu', encounterTables: 'Korosu' }
+    dataSources: { routes: 'Korosu', encounterTables: 'Korosu', leagues: 'Korosu' }
   },
   'elysium': {
     // Pokémon Elysium — FireRed base, Lilya/Karyap region, Gen 5-6 species
@@ -12227,7 +12227,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-19 06:54';
+const APP_BUILD = '2026-08-19 07:07';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,

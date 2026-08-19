@@ -1,5 +1,14 @@
 # First-cut rail: ordered by min grass level (fishing-only maps last).
 # Hand-adjust to story order; re-running the emitter will NOT overwrite this file.
+# Boss markers placed at each leader's own top level against the rail's
+# wild-level ordering — an approximation of story order, not a substitute.
+--SHAWN's Gym|1|gym-leader|Leader SHAWN
+--MISTY's Gym|2|gym-leader|Leader MISTY
+--LT. SURGE's Gym|3|gym-leader|Leader LT. SURGE
+--TISHA's Gym|4|gym-leader|Leader TISHA
+--JANINE's Gym|5|gym-leader|Leader JANINE
+--SABRINA's Gym|6|gym-leader|Leader SABRINA
+--BLAINE's Gym|7|gym-leader|Leader BLAINE
 Viridian Forest|caterpie,metapod,weedle,kakuna,pikachu
 Cape Brink|caterpie,rattata,spearow,oddish,meowth,grimer,eevee,sentret,hoothoot,ledyba,mareep,poochyena,psyduck,poliwag,goldeen,magikarp,gyarados,poliwhirl
 Mt. Moon|clefairy,zubat,paras,geodude
