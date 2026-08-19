@@ -1,3 +1,15 @@
+# Gym leaders 1 and 3-8 are read from the CARTRIDGE (trainer block 543-566:
+# three consecutive entries per leader, one per difficulty, weakest first).
+# This file carries the VANILLA teams, confirmed against a live battle.
+#
+# EVERYTHING ELSE here — gym 2, the Elite Four, champion, rivals, mini-bosses,
+# shadow bosses and every _exp variant — is still the original Reddit-sourced
+# data and is NOT verified. That source had gym 1 wrong in both levels and
+# species, so treat the remainder as unconfirmed until checked against the ROM.
+#
+# Regenerate with _converters/unbound-bosses-to-txt.mjs
+# (UNBOUND_DIFFICULTY=1 or 2 for the harder teams).
+
 # https://www.reddit.com/r/PokémonUnbound/comments/m36wno/hopefully_definitive_list_of_helpful_resources/
 
 ######################
@@ -112,11 +124,10 @@ metagross|65@6,252,,,,252|meteor-mash,zen-headbutt,hammer-arm,agility|clear-body
 #### Gym Leaders ####
 #####################
 
---1|Mirskle|grass|/leaders/unbound-mirskle@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
-==double:true|effect:fog
-floette|21|fairy-wind,razor-leaf,grass-knot,echoed-voice|flower-veil|grass-gem|||hardy
-gloom|20|acid,mega-drain,sweet-scent,sleep-powder|chlorophyll||||hardy
-weedle|18@6,252,,,,252|bug-bite,electroweb,poison-sting,string-shot|shield-dust||||adamant
+--1|Mirskle|grass|
+==double:true
+flabebe|15|vine-whip,fairy-wind,lucky-chant,razor-leaf|||||
+gloom|16|acid,sweet-scent,mega-drain,poisonpowder|||||
 
 --2|Vega|dark|/leaders/unbound-vega@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
 ==info:<p><b>Negative Energy</b><br/>A negative energy fills the battlefield and makes every non-Dark, non-Ghost and non-Psychic type Pokémon take 6.25% damage at the end of every turn.</p>
@@ -124,53 +135,45 @@ liepard|26|thief,fury-swipes,pursuit,fake-out|limber||||hardy
 absol|27|thief,slash,feint,pursuit|pressure||||hardy
 sneasel|25|thief,icy-wind,metal-claw,fake-out|keen-eye|dark-gem|||hardy
 
---3|Alice|flying|/leaders/unbound-alice@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
+--3|Alice|flying|
 ==info:<p><b>Tailwind</b><br />A permanent tailwind effect for Flying-Types</p>
-dodrio|32|aerial-ace,double-hit,steel-wing,quick-attack|early-bird||||hardy
-gliscor|31|bulldoze,aerial-ace,knock-off,fire-fang|hyper-cutter|flying-gem|||hardy
-crobat|33|venoshock,aerial-ace,bite,toxic|inner-focus||||hardy
-pinsir|33@4,,252,,,252|bug-bite,brick-break,double-hit,rock-tomb|mold-breaker||||jolly
+doduo|29|fury-attack,pluck,double-hit,acupressure|||||
+gliscor|28|fury-cutter,feint-attack,bulldoze,acrobatics||sharp-beak|||
+minior-red-meteor|30|swift,ancientpower,stealth-rock,take-down|||||
 
---4|Mel|normal|/leaders/unbound-mel@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
+--4|Mel|normal|
 ==info:<p><b>Inverse Battle</b><br />Type matchups are reversed and no type is immune to any other type.</p>
-bewear|36|facade,low-sweep,brutal-swing,payback|fluffy||||hardy
-heliolisk|37|swift,parabolic-charge,bulldoze,thunder-wave|dry-skin||||hardy
-miltank|36@252,,252,,4|facade,fire-punch,zen-headbutt,milk-drink|scrappy|normal-gem|||72
-lopunny|37@252,4,,,,252|facade,double-kick,low-kick,fake-out|cute-charm||||jolly
+helioptile|33|razor-wind,volt-switch,para-charge,swift|||||
+miltank|33|headbutt,captivate,zen-headbutt,milk-drink|||||
+lopunny|34|double-kick,charm,baton-pass,headbutt|||||
 
---5|Galavan|electric|/leaders/unbound-galavan@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
-==double:true|info:<p><b>Magnet Rise</b><br />Permanent Magnet Rise effect for Steel-Type & Electric-Types making them immune to Ground type attacks.</p>
-golem-alola|46|rock-slide,thunder-punch,bulldoze,steamroller|sturdy||||hardy
-magneton|44@252,,252,,4|discharge,flash-cannon,tri-attack,volt-switch|sturdy|eviolite|||bold
-eelektross|45|discharge,crunch,giga-drain,dragon-claw|levitate|electric-gem|||hardy
-manectric|46|discharge,flamethrower,ice-fang,volt-switch|lightning-rod/intimidate|manectite|||hardy
-lanturn|45@252,,252,,4|discharge,scald,signal-beam,thunder-wave|volt-absorb||||bold
+--5|Galavan|electric|
+==double:true
+golem-alola|44|rock-slide,thunderpunch,rock-blast,steamroller|||||
+eelektross|43|volt-switch,crunch,dragon-claw,acid-spray|||||
+manectric|44|discharge,flame-burst,ice-fang,volt-switch||manectite|||
+magneton|42|discharge,mirror-shot,tri-attack,volt-switch||eviolite|||
 
---6|Big Mo|fighting|/leaders/unbound-big-mo@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178-mo
+--6|Big Mo|fighting|
 ==info:<p><b>Inverse Gravity</b><br />Permanent Trick Room effect for weight, heavier Pokémon go first.</p>
-conkeldurr|52|drain-punch,stone-edge,chip-away,bulk-up|guts|protective-pads|||hardy
-pangoro|52@252,,252,,4|crunch,drain-punch,rock-slide,bullet-punch|iron-fist|fighting-gem|||impish
-mienshao|53|drain-punch,aura-sphere,knock-off,acrobatics|regenerator||||hardy
-hariyama|52@252,,252,,4|revenge,heavy-slam,knock-off,fake-out|guts||||impish
-lucario|53|aura-sphere,metal-claw,dragon-pulse,blaze-kick|steadfast/adaptability|lucarionite|||hardy
+mienshao|51|drain-punch,aura-sphere,u-turn,fake-out|||||
+pangoro|51|drain-punch,crunch,body-slam,bullet-punch||fighting-gem|||
+hariyama|52|revenge,heavy-slam,knock-off,fake-out||protect-pads|||
+lucario|52|aura-sphere,metal-claw,dragon-pulse,bone-rush||lucarionite|||
 
---7|Tessy|water|/leaders/unbound-tessy@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
+--7|Tessy|water|
 ==info:<p><b>Camo-mons</b><br />The Pokémon's types are that of the types of their first two attacks.</p>|effect:rain
-toxapex|56@252,,252,,4|venoshock,knock-off,haze,toxic-spikes|merciless||||bold
-armaldo|57@252,,252,,4|aqua-tail,x-scissor,bulldoze,accelerock|swift-swim||||impish
-kingdra|58|snipe-shot,dragon-pulse,focus-energy,agility|swift-swim|scope-lens|||hardy
-seismitoad|57|muddy-water,earthquake,drain-punch,stealth-rock|swift-swim|water-gem|||hardy
-gyarados|58|waterfall,dragon-dance,bulldoze,ice-fang|intimidate/mold-breaker|gyaradosite|||hardy
+toxapex|54|poison-jab,bite,toxic-spikes,baneful-bunk|||||
+armaldo|55|aqua-tail,x-scissor,rock-blast,protect|||||
+seismitoad|56|muddy-water,poison-jab,drain-punch,protect||water-gem|||
+gyarados|56|waterfall,bulldoze,crunch,ice-fang||gyaradosite|||
 
---8|Benjamin|bug|/leaders/unbound-benjamin@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
+--8|Benjamin|bug|
 ==info:<p><b>Benjamin Butterfree</b><br />When a Pokémon is knocked out, instead of fainting it devolves to a previous evolution. The Pokémon finally faints when it can’t devolve anymore.</p>
-araquanid|61@252,,252,,4|liquidation,leech-fang,mirror-coat,sticky-web|water-bubble||||impish
-forretress|62|pin-missile,counter,toxic-spikes,stealth-rock|sturdy|eviolite|||hardy
-drapion|61@252,,252,,4|cross-poison,night-slash,pin-missile,agility|sniper|bug-gem|||impish
-butterfree|62@4,,252,,,252|bug-buzz,hurricane,sleep-powder,quiver-dance|compound-eyes||||timid
-scizor|62|x-scissor,bullet-punch,wing-attack,agility|technician|scizorite|||hardy
-
-########### Expert mode
+araquanid|59|entrainment,lunge,liquidation,leech-fang|||||
+drapion|61|x-scissor,acupressure,poison-jab,crunch|||||
+butterfree|60|bug-buzz,tailwind,rage-powder,quiver-dance||bug-gem|||
+scizor|60|x-scissor,iron-head,laser-focus,swords-dance||scizorite|||
 
 --1_exp|Mirskle|grass|/leaders/unbound-mirskle@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
 ==double:true|effect:fog
