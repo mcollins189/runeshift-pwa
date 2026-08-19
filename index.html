@@ -1152,7 +1152,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787110956378"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787121960140"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -12191,7 +12191,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-18 22:53';
+const APP_BUILD = '2026-08-18 23:46';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -17946,6 +17946,30 @@ function togglePlayMode() { pmIsOpen() ? closePlayMode() : openPlayMode(); }
    graveyard is destructive and an OCR/memory misread must never bury a mon. */
 // One toast, not one per frame: a wrong profile emits these at 1 Hz.
 let _wrongGameWarned = false;
+
+// The rail's starter row, whatever this game calls it. Games spell it
+// "Starter", "Starter Pokemon", "Gift (Starter)" — match loosely rather than
+// hardcode, and return null when the game has no such row so nothing is
+// invented.
+function _starterLocationName() {
+  try {
+    for (const name of playLocationList()) {
+      if (/^\s*starter\b/i.test(name)) return name;
+    }
+  } catch (e) {}
+  return null;
+}
+
+// Is this frame the moment the run's first Pokemon arrives? Deliberately
+// narrow: an empty roster AND a party of exactly one. Someone wiring the
+// tracker up mid-run has a party of several, so their next auto-add is never
+// mistaken for a starter.
+function _looksLikeStarter(st) {
+  try {
+    if (curTeam().length) return false;
+    return Array.isArray(st.party) && st.party.filter(m => m && m.species).length === 1;
+  } catch (e) { return false; }
+}
 NUZ_LIVE.on('state', (s, st) => {
   // AUTO-LEVEL-SYNC: live memory levels are exact, so a level-up updates the
   // ROSTER too (the summary row already showed the live level but the detail
@@ -18340,7 +18364,13 @@ NUZ_LIVE.on('state', (s, st) => {
           (Date.now() - _lastEncSeen.at) < 120000 &&
           _normSpeciesName(_lastEncSeen.species) === _normSpeciesName(l.species)
             ? _lastEncSeen : null;
-        const origin = recentEnc && recentEnc.route ? recentEnc.route : '';
+        // The one exception is the very first Pokemon of the run. It came from
+        // the lab, not from a route, and the rail has a "Starter" row for
+        // exactly that — but the bridge reports the town you are standing in,
+        // so without this the starter is logged against the opening town and
+        // burns that location's encounter slot.
+        const origin = (recentEnc && recentEnc.route) ? recentEnc.route
+                     : (_looksLikeStarter(st) ? _starterLocationName() : '');
         const add = {
           species: l.species, nickname: l.nickname || '', level: l.level || 1,
           alive: true, inParty: true,
