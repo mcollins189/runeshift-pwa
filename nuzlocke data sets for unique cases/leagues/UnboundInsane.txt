@@ -1,6 +1,6 @@
 # Gym leaders 1 and 3-8 are read from the CARTRIDGE (trainer block 543-566:
 # three consecutive entries per leader, one per difficulty, weakest first).
-# This file carries the VANILLA teams, confirmed against a live battle.
+# This file carries the difficulty 2 teams, confirmed against a live battle.
 #
 # EVERYTHING ELSE here — gym 2, the Elite Four, champion, rivals, mini-bosses,
 # shadow bosses and every _exp variant — is still the original Reddit-sourced
@@ -126,8 +126,10 @@ metagross|65@6,252,,,,252|meteor-mash,zen-headbutt,hammer-arm,agility|clear-body
 
 --1|Mirskle|grass|
 ==double:true
-flabebe|15|vine-whip,fairy-wind,lucky-chant,razor-leaf|||||
-gloom|16|acid,sweet-scent,mega-drain,poisonpowder|||||
+floette|19|moonblast,petal-storm,wish,grassterrain||grassy-seed|||
+gloom|21|apple-acid,moonblast,ingrain,sleep-powder||leftovers|||
+weedle|17|bug-bite,electroweb,poison-sting,string-shot||werpowder|||
+comfey|18|drain-kiss,helping-hand,flower-guard,floral-heal||leftovers|||
 
 --2|Vega|dark|/leaders/unbound-vega@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
 ==info:<p><b>Negative Energy</b><br/>A negative energy fills the battlefield and makes every non-Dark, non-Ghost and non-Psychic type Pokémon take 6.25% damage at the end of every turn.</p>
@@ -137,50 +139,62 @@ sneasel|25|thief,icy-wind,metal-claw,fake-out|keen-eye|dark-gem|||hardy
 
 --3|Alice|flying|
 ==info:<p><b>Tailwind</b><br />A permanent tailwind effect for Flying-Types</p>
-doduo|29|fury-attack,pluck,double-hit,acupressure|||||
-gliscor|28|fury-cutter,feint-attack,bulldoze,acrobatics||sharp-beak|||
-minior-red-meteor|30|swift,ancientpower,stealth-rock,take-down|||||
+skarmory|32|body-press,iron-head,stealth-rock,whirlwind||rocky-helmet|||
+gliscor|32|earthquake,rock-tomb,toxic,protect||toxic-orb|||
+dodrio|32|brave-bird,jump-kick,bad-tantrum,knock-off||choice-band|||
+pinsir|33|facade,storm-throw,earthquake,feint||pinsirite|||
+crobat|32|air-slash,sludge-bomb,heat-wave,nasty-plot||focus-sash|||
 
 --4|Mel|normal|
 ==info:<p><b>Inverse Battle</b><br />Type matchups are reversed and no type is immune to any other type.</p>
-helioptile|33|razor-wind,volt-switch,para-charge,swift|||||
-miltank|33|headbutt,captivate,zen-headbutt,milk-drink|||||
-lopunny|34|double-kick,charm,baton-pass,headbutt|||||
+porygon-z|35|uproar,uproar,tri-attack,tri-attack||choice-specs|||
+snorlax|36|body-slam,power-up-hit,seed-bomb,whirlwind||leftovers|||
+swellow|36|facade,boomburst,quick-attack,u-turn||silk-scarf|||
+kangaskhan|36|facade,power-up-hit,thunderpunch,fake-out||kangaskhite|||
+type-null|35|return,sleep-talk,rest,swords-dance||eviolite|||
 
 --5|Galavan|electric|
 ==double:true
-golem-alola|44|rock-slide,thunderpunch,rock-blast,steamroller|||||
-eelektross|43|volt-switch,crunch,dragon-claw,acid-spray|||||
-manectric|44|discharge,flame-burst,ice-fang,volt-switch||manectite|||
-magneton|42|discharge,mirror-shot,tri-attack,volt-switch||eviolite|||
+klinklang|44|iron-head,gear-grind,wild-charge,shift-gear||steel-gem|||
+raichu-alola|44|rising-volt,psyshock,grass-knot,hidden-power||focus-sash|||
+ampharos|45|rising-volt,dragon-pulse,hidden-power,protect||ampharosite|||
+metagross|43|steel-roller,thunderpunch,brick-break,grass-knot||lum-berry|||
+manectric|44|rising-volt,flamethrower,hidden-power,snarl||life-orb|||
+heatran|45|heat-wave,nature-power,hidden-power,protect||aguav-berry|||
 
 --6|Big Mo|fighting|
 ==info:<p><b>Inverse Gravity</b><br />Permanent Trick Room effect for weight, heavier Pokémon go first.</p>
-mienshao|51|drain-punch,aura-sphere,u-turn,fake-out|||||
-pangoro|51|drain-punch,crunch,body-slam,bullet-punch||fighting-gem|||
-hariyama|52|revenge,heavy-slam,knock-off,fake-out||protect-pads|||
-lucario|52|aura-sphere,metal-claw,dragon-pulse,bone-rush||lucarionite|||
+mudsdale|52|earthquake,body-press,smack-down,roar||rocky-helmet|||
+celesteela|52|air-slash,flamethrower,leech-seed,substitute||leftovers|||
+guzzlord|53|dark-pulse,core-enforce,flamethrower,sludge-wave||assault-vest|||
+buzzwole|53|leech-fang,drain-punch,dark-lariat,ice-punch||assault-vest|||
+wailord|53|water-spout,ice-beam,surf,clear-smog||heavy-boots|||
+terrakion|52|rock-slide,close-combat,sacred-sword,swords-dance||heavy-boots|||
 
 --7|Tessy|water|
 ==info:<p><b>Camo-mons</b><br />The Pokémon's types are that of the types of their first two attacks.</p>|effect:rain
-toxapex|54|poison-jab,bite,toxic-spikes,baneful-bunk|||||
-armaldo|55|aqua-tail,x-scissor,rock-blast,protect|||||
-seismitoad|56|muddy-water,poison-jab,drain-punch,protect||water-gem|||
-gyarados|56|waterfall,bulldoze,crunch,ice-fang||gyaradosite|||
+masquerain|57|scald,energy-ball,haze,sticky-web||focus-sash|||
+hydreigon|58|dark-pulse,flash-cannon,surf,earth-power||life-orb|||
+zeraora|58|plasma-fists,acrobatics,close-combat,roar||flying-gem|||
+tornadus-incarnate|58|hurricane,dark-pulse,weather-ball,nasty-plot||rocky-helmet|||
+latias|58|surf,thunder,ice-beam,calm-mind||latiasite|||
+seaking|57|fishiousrend,smart-strike,drill-run,aqua-jet||mystic-water|||
 
 --8|Benjamin|bug|
 ==info:<p><b>Benjamin Butterfree</b><br />When a Pokémon is knocked out, instead of fainting it devolves to a previous evolution. The Pokémon finally faints when it can’t devolve anymore.</p>
-araquanid|59|entrainment,lunge,liquidation,leech-fang|||||
-drapion|61|x-scissor,acupressure,poison-jab,crunch|||||
-butterfree|60|bug-buzz,tailwind,rage-powder,quiver-dance||bug-gem|||
-scizor|60|x-scissor,iron-head,laser-focus,swords-dance||scizorite|||
+araquanid|61|liquidation,leech-fang,mirror-coat,sticky-web||sitrus-berry|||
+magnezone|62|thunderbolt,flash-cannon,hidden-power,mirror-coat||eviolite|||
+rhyperior|62|earthquake,rock-blast,thunder-fang,counter||eviolite|||
+volcarona|61|bug-buzz,overheat,wild-charge,flare-blitz||eviolite|||
+scizor|62|bug-bite,bullet-punch,dualwingbeat,swords-dance||scizorite|||
+flygon|62|earthquake,clang-scales,heat-wave,crunch||life-orb|||
 
---1_exp|Mirskle|grass|
-==double:true
-floette|19|fairy-wind,grass-knot,wish,grassterrain||grass-gem|||
-gloom|21|acid,mega-drain,ingrain,sleep-powder|||||
-weedle|17|bug-bite,electroweb,poison-sting,string-shot||werpowder|||
-comfey|18|magical-leaf,helping-hand,flower-guard,floral-heal|||||
+--1_exp|Mirskle|grass|/leaders/unbound-mirskle@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
+==double:true|effect:fog
+floette|19@252,,4,,252|fairy-wind,grass-knot,wish,grassy-terrain|flower-veil/aroma-veil|grass-gem|||careful
+gloom|21@252,,4,,252|acid,mega-drain,ingrain,sleep-powder|chlorophyll||||calm
+weedle|17@6,252,,,,252|bug-bite,electroweb,poison-sting,string-shot|technician|silver-powder|||adamant
+comfey|18@252,,4,,252|magical-leaf,helping-hand,flower-shield,floral-healing|flower-veil/triage||||bold
 
 --2_exp|Vega|dark|/leaders/unbound-vega@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
 ==info:<p><b>Negative Energy</b><br/>A negative energy fills the battlefield and makes every non-Dark, non-Ghost and non-Psychic type Pokémon take 6.25% damage at the end of every turn.</p>
@@ -189,55 +203,59 @@ absol|27@252,,252,,4|knock-off,psycho-cut,feint,pursuit|pressure||||impish
 weavile|27@252,,252,,4|punishment,ice-shard,swagger,fake-out|pressure|dark-gem|||impish
 honchkrow|26@,128,,128,,252|punishment,air-cutter,night-shade,swagger|super-luck||||naughty
 
---3_exp|Alice|flying|
+--3_exp|Alice|flying|/leaders/unbound-alice@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
 ==info:<p><b>Tailwind</b><br />A permanent tailwind effect for Flying-Types</p>
-minior-red-meteor|31|ancientpower,acrobatics,stealth-rock,confuse-ray||snowball|||
-gliscor|31|bulldoze,acrobatics,knock-off,fire-fang||flying-gem|||
-dodrio|32|aerial-ace,quick-attack,steel-wing,knock-off|||||
-pinsir|33|x-scissor,double-hit,brick-break,rock-tomb||pinsirite|||
-crobat|32|venoshock,air-cutter,acrobatics,bite|||||
+minior-red|31@6,252,,,,252|ancient-power,acrobatics,stealth-rock,confuse-ray|shields-down|snowball|||adamant
+gliscor|31@252,,252,,4|bulldoze,acrobatics,knock-off,fire-fang|hyper-cutter|flying-gem|||impish
+dodrio|32@6,252,,,,252|aerial-ace,quick-attack,steel-wing,knock-off|early-bird||||jolly
+pinsir|33@4,,252,,,252|x-scissor,double-hit,brick-break,rock-tomb|hyper-cutter/aerilate|pinsirite|||jolly
+crobat|32@6,,,252,,252|venoshock,air-cutter,acrobatics,bite|infiltrator||||modest
 
---4_exp|Mel|normal|
+--4_exp|Mel|normal|/leaders/unbound-mel@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
 ==info:<p><b>Inverse Battle</b><br />Type matchups are reversed and no type is immune to any other type.</p>
-bewear|35|facade,hammer-arm,payback,ice-punch||normal-gem|||
-porygon-z|36|round,signal-beam,psybeam,recover|||||
-miltank|35|body-slam,ice-punch,power-up-hit,milk-drink||sitrus-berry|||
-lopunny|36|facade,brick-break,power-up-hit,fake-out||lopunnite|||
-heliolisk|34|swift,para-charge,grass-knot,thunder-wave|||||
+bewear|36@252,252,,,,6|facade,hammer-arm,payback,ice-punch|fluffy|normal-gem|||adamant
+porygon-z|37@6,,,252,,252|round,signal-beam,psybeam,recover|adaptability||||timid
+miltank|36@252,252,,,,6|body-slam,ice-punch,power-up-punch,milk-drink|scrappy|sitrus-berry|||adamant
+lopunny|37@6,252,,,,252|facade,brick-break,power-up-punch,fake-out|limber/scrappy|lopunnite|||jolly
+heliolisk|35@6,,,252,,252|swift,parabolic-charge,grass-knot,thunder-wave|sand-veil||||modest
 
---5_exp|Galavan|electric|
-==double:true
-bronzong|43|heavy-slam,body-press,trick-room,protect||mental-herb|||
-golem-alola|44|return,rock-slide,fire-punch,protect|||||
-lanturn|44|thunderbolt,scald,ice-beam,thunder-wave||sitrus-berry|||
-ampharos|45|thunderbolt,dragon-pulse,hidden-power,volt-switch||ampharosite|||
-escavalier|44|x-scissor,iron-head,drill-run,night-slash||assault-vest|||
+--5_exp|Galavan|electric|/leaders/unbound-galavan@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
+==double:true|info:<p><b>Magnet Rise</b><br />Permanent Magnet Rise effect for Steel-Type & Electric-Types making them immune to Ground type attacks.</p>
+bronzong|44@252,,252,,4|heavy-slam,body-press,trick-room,protect|heatproof|mental-herb|||impish
+golem-alola|45@6,252,,,252|return,rock-slide,fire-punch,protect|galvanize||||adamant
+lanturn|45@252,,252,,4|thunderbolt,scald,ice-beam,thunder-wave|water-absorb|sitrus-berry|||bold
+ampharos|46@252,,,252,,6|thunderbolt,dragon-pulse,hidden-power-grass,volt-switch|static/mold-breaker|ampharosite|||modest
+escavalier|45@252,252,,,,6|x-scissor,iron-head,drill-run,night-slash|overcoat|assault-vest|||adamant
 
---6_exp|Big Mo|fighting|
+--6_exp|Big Mo|fighting|/leaders/unbound-big-mo@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178-mo
 ==info:<p><b>Inverse Gravity</b><br />Permanent Trick Room effect for weight, heavier Pokémon go first.</p>
-mudsdale|52|earthquake,smack-down,heavy-slam,stealth-rock||heavy-boots|||
-pangoro|52|wicked-blow,drain-punch,rock-slide,bullet-punch||fighting-gem|||
-snorlax|53|body-slam,crunch,hihorsepower,heavy-slam||rawst-berry|||
-hariyama|52|storm-throw,knock-off,heavy-slam,fake-out||flame-orb|||
-wailord|53|water-spout,ice-beam,surf,clear-smog||heavy-boots|||
+mudsdale|52@252,252,,,,6|earthquake,smack-down,heavy-slam,stealth-rock|stamina|heavy-duty-boots|||adamant
+pangoro|52@252,252,,,,6|wicked-blow,drain-punch,rock-slide,bullet-punch|iron-fist|fighting-gem|||adamant
+snorlax|53@6,252,252|body-slam,crunch,high-horsepower,heavy-slam|thick-fat|rawst-berry|||adamant
+hariyama|52@252,252,,,,6|storm-throw,knock-off,heavy-slam,fake-out|guts|flame-orb|||adamant
+wailord|53@252,,,252,,6|water-spout,ice-beam,surf,clear-smog|regenerator|heavy-duty-boots|||modest
 
---7_exp|Tessy|water|
+--7_exp|Tessy|water|/leaders/unbound-tessy@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
 ==info:<p><b>Camo-mons</b><br />The Pokémon's types are that of the types of their first two attacks.</p>|effect:rain
-toxapex|56|toxic-spikes,knock-off,haze,recover||leftovers|||
-armaldo|57|aqua-tail,x-scissor,bad-tantrum,accelerock|||||
-kingdra|58|snipe-shot,dragon-pulse,ice-beam,flash-cannon||scope-lens|||
-seismitoad|57|liquidation,earthquake,drain-punch,ice-punch||life-orb|||
-gyarados|58|waterfall,dragon-dance,earthquake,ice-fang||gyaradosite|||
-seaking|57|waterfall,smart-strike,poison-jab,drill-run||expert-belt|||
+toxapex|56@252,,252,,4|toxic-spikes,knock-off,haze,recover|regenerator|leftovers|||bold
+armaldo|57@6,252,,,252|aqua-tail,x-scissor,stomping-tantrum,accelerock|swift-swim||||adamant
+kingdra|58@6,,,252,,252|snipe-shot,dragon-pulse,ice-beam,flash-cannon|swift-swim|scope-lens|||modest
+seismitoad|57@6,252,,,,252|liquidation,earthquake,drain-punch,ice-punch|swift-swim|life-orb|||adamant
+gyarados|58@6,252,,,,252|waterfall,dragon-dance,earthquake,ice-fang|intimidate/mold-breaker|gyaradosite|||jolly
+seaking|57@6,252,,,,252|waterfall,smart-strike,poison-jab,drill-run|swift-swim|expert-belt|||adamant
 
---8_exp|Benjamin|bug|
+--8_exp|Benjamin|bug|/leaders/unbound-benjamin@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
 ==info:<p><b>Benjamin Butterfree</b><br />When a Pokémon is knocked out, instead of fainting it devolves to a previous evolution. The Pokémon finally faints when it can’t devolve anymore.</p>
-araquanid|61|liquidation,leech-fang,mirror-coat,sticky-web||focus-sash|||
-forretress|61|gyro-ball,counter,reflect,light-screen||light-clay|||
-drapion|61|cross-poison,night-slash,pin-missile,earthquake||eviolite|||
-volcarona|62|bug-buzz,heat-wave,wild-charge,quiver-dance||bug-gem|||
-scizor|62|bug-bite,bullet-punch,dualwingbeat,swords-dance||scizorite|||
-flygon|62|earthquake,dragon-claw,rock-slide,crunch||eviolite|||
+araquanid|61@252,,252,,4|liquidation,leech-fang,mirror-coat,sticky-web|water-bubble|focus-sash|||impish
+forretress|61@252,,4,,252|gyro-ball,counter,reflect,light-screen|sturdy|light-clay|||careful
+drapion|61@252,,252,,4|cross-poison,night-slash,pin-missile,earthquake|super-luck|eviolite|||impish
+volcarona|62@6,,252,252|bug-buzz,heat-wave,wild-charge,quiver-dance|flame-body|bug-gem|||modest
+scizor|62@252,,4,,252|bug-bite,bullet-punch,dual-wingbeat,swords-dance|technician|scizorite|||careful
+flygon|62@6,252,,,,252|earthquake,dragon-claw,rock-slide,crunch|levitate|eviolite|||adamant
+
+####################
+#### Elite four ####
+####################
 
 --e1|Moleman|ground|/leaders/unbound-moleman@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
 ==effect:sandstorm|info:<p><b>Vicious Sandstorm</b><br />Vicious sand causes Pokémon to lose ⅛ of max HP at the end of every turn</p>|double:true
