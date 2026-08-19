@@ -1,5 +1,18 @@
 # Gym leaders 1 and 3-8 are read from the CARTRIDGE (trainer block 543-566:
 # three consecutive entries per leader, one per difficulty, weakest first).
+# Gyms are filled for all three difficulties: plain keys = Vanilla,
+ teams, confirmed against a live battle.
+#
+# EVERYTHING ELSE here — gym 2, the Elite Four, champion, rivals, mini-bosses,
+# shadow bosses and every _exp variant — is still the original Reddit-sourced
+# data and is NOT verified. That source had gym 1 wrong in both levels and
+# species, so treat the remainder as unconfirmed until checked against the ROM.
+#
+# Regenerate with _converters/unbound-bosses-to-txt.mjs
+# (UNBOUND_DIFFICULTY=1 or 2 for the harder teams).
+
+# Gym leaders 1 and 3-8 are read from the CARTRIDGE (trainer block 543-566:
+# three consecutive entries per leader, one per difficulty, weakest first).
 # This file carries the VANILLA teams, confirmed against a live battle.
 #
 # EVERYTHING ELSE here — gym 2, the Elite Four, champion, rivals, mini-bosses,
@@ -71,13 +84,32 @@ larvitar|17@6,252,,,252|bite,scary-face,rock-tomb,screech|guts||fire||adamant
 gible|17@6,252,,,,252|sand-attack,metal-claw,sandstorm,fire-fang|rough-skin||water||jolly
 beldum|17@6,252,,,,252|tackle,flash,metal-bash,metal-bash|clear-body||grass||jolly
 
+--r1_ins|Rival||/leaders/unbound-axelrod@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
+larvitar|17@6,252,,,252|bite,scary-face,rock-tomb,screech|guts||fire||adamant
+gible|17@6,252,,,,252|sand-attack,metal-claw,sandstorm,fire-fang|rough-skin||water||jolly
+beldum|17@6,252,,,,252|tackle,flash,metal-bash,metal-bash|clear-body||grass||jolly
+
 --r2_exp|Rival||/leaders/unbound-axelrod@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
 swinub|18|icy-wind,flail,powder-snow,mud-slap|oblivious||||hardy
 larvitar|19@6,252,,,252|bite,scary-face,rock-tomb,screech|guts||fire||adamant
 gible|19@6,252,,,,252|sand-attack,metal-claw,sandstorm,fire-fang|sand-veil||water||jolly
 beldum|19@6,252,,,,252|tackle,flash,metal-bash,metal-bash|clear-body||grass||jolly
 
+--r2_ins|Rival||/leaders/unbound-axelrod@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
+swinub|18|icy-wind,flail,powder-snow,mud-slap|oblivious||||hardy
+larvitar|19@6,252,,,252|bite,scary-face,rock-tomb,screech|guts||fire||adamant
+gible|19@6,252,,,,252|sand-attack,metal-claw,sandstorm,fire-fang|sand-veil||water||jolly
+beldum|19@6,252,,,,252|tackle,flash,metal-bash,metal-bash|clear-body||grass||jolly
+
 --r3_exp|Rival||/leaders/unbound-axelrod@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
+toucannon|32@6,252,,,,252|pluck,fury-attack,rock-blast,roost|skill-link||||jolly
+swinub|32@6,252,,,,252|ice-shard,mud-bomb,flail,mist|thick-fat||||adamant
+pupitar|33@6,252,,,252|rock-tomb,dark-pulse,bulldoze,screech|guts||fire||adamant
+gabite|33@6,252,,,,252|dual-chop,bulldoze,metal-claw,fire-fang|rough-skin||water||jolly
+metang|33@6,252,,,,252|bullet-punch,confusion,pursuit,magnet-rise|clear-body||grass||jolly
+
+
+--r3_ins|Rival||/leaders/unbound-axelrod@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
 toucannon|32@6,252,,,,252|pluck,fury-attack,rock-blast,roost|skill-link||||jolly
 swinub|32@6,252,,,,252|ice-shard,mud-bomb,flail,mist|thick-fat||||adamant
 pupitar|33@6,252,,,252|rock-tomb,dark-pulse,bulldoze,screech|guts||fire||adamant
@@ -98,7 +130,46 @@ pupitar|47@6,252,,,252|stone-edge,crunch,earthquake,ice-punch|shed-skin|tyranita
 gabite|47@6,252,,,,252|dragon-claw,stomping-tantrum,crunch,fire-blast|rough-skin|garchompite|water||jolly
 metagross|47@6,252,,,,252|iron-head,psychic,hammer-arm,magnet-rise|clear-body|metagrossite|grass||jolly
 
+--r4_ins|Rival||/leaders/unbound-axelrod@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
+mamoswine|46@6,252,,,,252|ice-fang,bulldoze,ice-shard,stealth-rock|thick-fat|focus-sash|||adamant
+toucannon|45@6,252,,,,252|pluck,fury-attack,rock-blast,roost|skill-link||||jolly
+vaporeon|46@252,,252,,4|water-pulse,aurora-beam,quick-attack,aqua-ring|water-absorb|sitrus-berry|||bold
+
+fraxure|46@6,252,,,,252|dual-chop,crunch,rock-tomb,dragon-dance|mold-breaker||fire||jolly
+aggron|46@6,252,,,252|iron-head,rock-slide,bulldoze,autotomize|sturdy||water||adamant
+fraxure|46@6,252,,,,252|dual-chop,crunch,rock-tomb,dragon-dance|mold-breaker||grass||jolly
+
+pupitar|47@6,252,,,252|stone-edge,crunch,earthquake,ice-punch|shed-skin|tyranitarite|fire||adamant
+gabite|47@6,252,,,,252|dragon-claw,stomping-tantrum,crunch,fire-blast|rough-skin|garchompite|water||jolly
+metagross|47@6,252,,,,252|iron-head,psychic,hammer-arm,magnet-rise|clear-body|metagrossite|grass||jolly
+
 --r5_exp|Rival||/leaders/unbound-axelrod@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
+mamoswine|63@6,252,,,,252|ice-fang,bulldoze,ice-shard,stealth-rock|thick-fat|focus-sash|||adamant
+
+rotom-fan>rotom-fan|61@6,,,252,,252|discharge,air-slash,hex,thunder-wave|motor-drive|heavy-duty-boots|fire||timid
+rotom-fan>rotom-fan|61@6,,,252,,252|discharge,air-slash,hex,thunder-wave|motor-drive|heavy-duty-boots|water||timid
+rotom-mow>rotom-mow|61@6,,,252,,252|leaf-storm,discharge,volt-switch,hex|levitate|white-herb|grass||modest
+
+vaporeon|62@252,,252,,4|hydro-pump,ice-beam,acid-armor,aqua-ring|water-absorb|leftovers|||bold
+
+haxorus|63@6,252,,,,252|dragon-claw,crunch,earthquake,dragon-dance|mold-breaker|safety-goggles|fire||jolly
+aggron|63@6,252,,,252|iron-head,rock-slide,earthquake,metal-burst|sturdy|shuca-berry|water||adamant
+haxorus|63@6,252,,,,252|dragon-claw,crunch,earthquake,dragon-dance|mold-breaker|safety-goggles|grass||jolly
+
+talonflame|63@6,252,,,,252|flare-blitz,acrobatics,steel-wing,overheat|gale-wings|flying-gem|fire||adamant
+chandelure|63@6,,,252,,252|flamethrower,shadow-ball,energy-ball,minimize|shadow-tag|bright-powder|water||timid
+talonflame|63@6,252,,,,252|flare-blitz,acrobatics,steel-wing,overheat|gale-wings|flying-gem|grass||adamant
+
+tyranitar|65@6,252,,,252|stone-edge,crunch,ice-punch,dragon-dance|sand-stream|tyranitarite|fire||adamant
+garchomp|65@6,252,,,,252|dragon-rush,earthquake,crunch,fire-blast|rough-skin/sand-force|garchompite|water||jolly
+metagross|65@6,252,,,,252|meteor-mash,zen-headbutt,hammer-arm,agility|clear-body/tough-claws|metagrossite|grass||jolly
+
+
+#####################
+#### Gym Leaders ####
+#####################
+
+--r5_ins|Rival||/leaders/unbound-axelrod@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
 mamoswine|63@6,252,,,,252|ice-fang,bulldoze,ice-shard,stealth-rock|thick-fat|focus-sash|||adamant
 
 rotom-fan>rotom-fan|61@6,,,252,,252|discharge,air-slash,hex,thunder-wave|motor-drive|heavy-duty-boots|fire||timid
@@ -182,7 +253,21 @@ gloom|21|acid,mega-drain,ingrain,sleep-powder|||||
 weedle|17|bug-bite,electroweb,poison-sting,string-shot||werpowder|||
 comfey|18|magical-leaf,helping-hand,flower-guard,floral-heal|||||
 
+--1_ins|Mirskle|grass|
+==double:true
+floette|19|moonblast,petal-storm,wish,grassterrain||grassy-seed|||
+gloom|21|apple-acid,moonblast,ingrain,sleep-powder||leftovers|||
+weedle|17|bug-bite,electroweb,poison-sting,string-shot||werpowder|||
+comfey|18|drain-kiss,helping-hand,flower-guard,floral-heal||leftovers|||
+
 --2_exp|Vega|dark|/leaders/unbound-vega@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
+==info:<p><b>Negative Energy</b><br/>A negative energy fills the battlefield and makes every non-Dark, non-Ghost and non-Psychic type Pokémon take 6.25% damage at the end of every turn.</p>
+liepard|26@6,252,,,,252|thief,play-rough,fake-out,pursuit|unburden|lum-berry|||jolly
+absol|27@252,,252,,4|knock-off,psycho-cut,feint,pursuit|pressure||||impish
+weavile|27@252,,252,,4|punishment,ice-shard,swagger,fake-out|pressure|dark-gem|||impish
+honchkrow|26@,128,,128,,252|punishment,air-cutter,night-shade,swagger|super-luck||||naughty
+
+--2_ins|Vega|dark|/leaders/unbound-vega@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
 ==info:<p><b>Negative Energy</b><br/>A negative energy fills the battlefield and makes every non-Dark, non-Ghost and non-Psychic type Pokémon take 6.25% damage at the end of every turn.</p>
 liepard|26@6,252,,,,252|thief,play-rough,fake-out,pursuit|unburden|lum-berry|||jolly
 absol|27@252,,252,,4|knock-off,psycho-cut,feint,pursuit|pressure||||impish
@@ -197,6 +282,14 @@ dodrio|32|aerial-ace,quick-attack,steel-wing,knock-off|||||
 pinsir|33|x-scissor,double-hit,brick-break,rock-tomb||pinsirite|||
 crobat|32|venoshock,air-cutter,acrobatics,bite|||||
 
+--3_ins|Alice|flying|
+==info:<p><b>Tailwind</b><br />A permanent tailwind effect for Flying-Types</p>
+skarmory|32|body-press,iron-head,stealth-rock,whirlwind||rocky-helmet|||
+gliscor|32|earthquake,rock-tomb,toxic,protect||toxic-orb|||
+dodrio|32|brave-bird,jump-kick,bad-tantrum,knock-off||choice-band|||
+pinsir|33|facade,storm-throw,earthquake,feint||pinsirite|||
+crobat|32|air-slash,sludge-bomb,heat-wave,nasty-plot||focus-sash|||
+
 --4_exp|Mel|normal|
 ==info:<p><b>Inverse Battle</b><br />Type matchups are reversed and no type is immune to any other type.</p>
 bewear|35|facade,hammer-arm,payback,ice-punch||normal-gem|||
@@ -204,6 +297,14 @@ porygon-z|36|round,signal-beam,psybeam,recover|||||
 miltank|35|body-slam,ice-punch,power-up-hit,milk-drink||sitrus-berry|||
 lopunny|36|facade,brick-break,power-up-hit,fake-out||lopunnite|||
 heliolisk|34|swift,para-charge,grass-knot,thunder-wave|||||
+
+--4_ins|Mel|normal|
+==info:<p><b>Inverse Battle</b><br />Type matchups are reversed and no type is immune to any other type.</p>
+porygon-z|35|uproar,uproar,tri-attack,tri-attack||choice-specs|||
+snorlax|36|body-slam,power-up-hit,seed-bomb,whirlwind||leftovers|||
+swellow|36|facade,boomburst,quick-attack,u-turn||silk-scarf|||
+kangaskhan|36|facade,power-up-hit,thunderpunch,fake-out||kangaskhite|||
+type-null|35|return,sleep-talk,rest,swords-dance||eviolite|||
 
 --5_exp|Galavan|electric|
 ==double:true
@@ -213,6 +314,15 @@ lanturn|44|thunderbolt,scald,ice-beam,thunder-wave||sitrus-berry|||
 ampharos|45|thunderbolt,dragon-pulse,hidden-power,volt-switch||ampharosite|||
 escavalier|44|x-scissor,iron-head,drill-run,night-slash||assault-vest|||
 
+--5_ins|Galavan|electric|
+==double:true
+klinklang|44|iron-head,gear-grind,wild-charge,shift-gear||steel-gem|||
+raichu-alola|44|rising-volt,psyshock,grass-knot,hidden-power||focus-sash|||
+ampharos|45|rising-volt,dragon-pulse,hidden-power,protect||ampharosite|||
+metagross|43|steel-roller,thunderpunch,brick-break,grass-knot||lum-berry|||
+manectric|44|rising-volt,flamethrower,hidden-power,snarl||life-orb|||
+heatran|45|heat-wave,nature-power,hidden-power,protect||aguav-berry|||
+
 --6_exp|Big Mo|fighting|
 ==info:<p><b>Inverse Gravity</b><br />Permanent Trick Room effect for weight, heavier Pokémon go first.</p>
 mudsdale|52|earthquake,smack-down,heavy-slam,stealth-rock||heavy-boots|||
@@ -220,6 +330,15 @@ pangoro|52|wicked-blow,drain-punch,rock-slide,bullet-punch||fighting-gem|||
 snorlax|53|body-slam,crunch,hihorsepower,heavy-slam||rawst-berry|||
 hariyama|52|storm-throw,knock-off,heavy-slam,fake-out||flame-orb|||
 wailord|53|water-spout,ice-beam,surf,clear-smog||heavy-boots|||
+
+--6_ins|Big Mo|fighting|
+==info:<p><b>Inverse Gravity</b><br />Permanent Trick Room effect for weight, heavier Pokémon go first.</p>
+mudsdale|52|earthquake,body-press,smack-down,roar||rocky-helmet|||
+celesteela|52|air-slash,flamethrower,leech-seed,substitute||leftovers|||
+guzzlord|53|dark-pulse,core-enforce,flamethrower,sludge-wave||assault-vest|||
+buzzwole|53|leech-fang,drain-punch,dark-lariat,ice-punch||assault-vest|||
+wailord|53|water-spout,ice-beam,surf,clear-smog||heavy-boots|||
+terrakion|52|rock-slide,close-combat,sacred-sword,swords-dance||heavy-boots|||
 
 --7_exp|Tessy|water|
 ==info:<p><b>Camo-mons</b><br />The Pokémon's types are that of the types of their first two attacks.</p>|effect:rain
@@ -230,6 +349,15 @@ seismitoad|57|liquidation,earthquake,drain-punch,ice-punch||life-orb|||
 gyarados|58|waterfall,dragon-dance,earthquake,ice-fang||gyaradosite|||
 seaking|57|waterfall,smart-strike,poison-jab,drill-run||expert-belt|||
 
+--7_ins|Tessy|water|
+==info:<p><b>Camo-mons</b><br />The Pokémon's types are that of the types of their first two attacks.</p>|effect:rain
+masquerain|57|scald,energy-ball,haze,sticky-web||focus-sash|||
+hydreigon|58|dark-pulse,flash-cannon,surf,earth-power||life-orb|||
+zeraora|58|plasma-fists,acrobatics,close-combat,roar||flying-gem|||
+tornadus-incarnate|58|hurricane,dark-pulse,weather-ball,nasty-plot||rocky-helmet|||
+latias|58|surf,thunder,ice-beam,calm-mind||latiasite|||
+seaking|57|fishiousrend,smart-strike,drill-run,aqua-jet||mystic-water|||
+
 --8_exp|Benjamin|bug|
 ==info:<p><b>Benjamin Butterfree</b><br />When a Pokémon is knocked out, instead of fainting it devolves to a previous evolution. The Pokémon finally faints when it can’t devolve anymore.</p>
 araquanid|61|liquidation,leech-fang,mirror-coat,sticky-web||focus-sash|||
@@ -238,6 +366,15 @@ drapion|61|cross-poison,night-slash,pin-missile,earthquake||eviolite|||
 volcarona|62|bug-buzz,heat-wave,wild-charge,quiver-dance||bug-gem|||
 scizor|62|bug-bite,bullet-punch,dualwingbeat,swords-dance||scizorite|||
 flygon|62|earthquake,dragon-claw,rock-slide,crunch||eviolite|||
+
+--8_ins|Benjamin|bug|
+==info:<p><b>Benjamin Butterfree</b><br />When a Pokémon is knocked out, instead of fainting it devolves to a previous evolution. The Pokémon finally faints when it can’t devolve anymore.</p>
+araquanid|61|liquidation,leech-fang,mirror-coat,sticky-web||sitrus-berry|||
+magnezone|62|thunderbolt,flash-cannon,hidden-power,mirror-coat||eviolite|||
+rhyperior|62|earthquake,rock-blast,thunder-fang,counter||eviolite|||
+volcarona|61|bug-buzz,overheat,wild-charge,flare-blitz||eviolite|||
+scizor|62|bug-bite,bullet-punch,dualwingbeat,swords-dance||scizorite|||
+flygon|62|earthquake,clang-scales,heat-wave,crunch||life-orb|||
 
 --e1|Moleman|ground|/leaders/unbound-moleman@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
 ==effect:sandstorm|info:<p><b>Vicious Sandstorm</b><br />Vicious sand causes Pokémon to lose ⅛ of max HP at the end of every turn</p>|double:true
@@ -291,7 +428,25 @@ quagsire|74@252,,4,,252|muddy-water,recover,yawn,protect|water-absorb|sitrus-ber
 gliscor|75@252,,4,,252|earthquake,rock-slide,acrobatics,swords-dance|sand-veil||||careful
 landorus-therian|76@252,,4,,252|earthquake,rock-slide,u-turn,protect|intimidate||||careful
 
+--e1_ins|Moleman|ground|/leaders/unbound-moleman@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
+==effect:sandstorm|info:<p><b>Vicious Sandstorm</b><br />Vicious sand causes Pokémon to lose ⅛ of max HP at the end of every turn</p>|double:true
+excadrill|74@252,252,,,,6|earthquake,iron-head,rock-slide,protect|sand-rush|focus-sash|||adamant
+flygon|76@6,,,252,,252|clanging-scales,earth-power,heat-wave,boomburst|levitate|throat-spray|||modest
+sandslash|76@252,252,,,,6|earthquake,rock-slide,leech-fang,protect|sand-rush|ground-gem|||adamant
+quagsire|74@252,,4,,252|muddy-water,recover,yawn,protect|water-absorb|sitrus-berry|||calm
+gliscor|75@252,,4,,252|earthquake,rock-slide,acrobatics,swords-dance|sand-veil||||careful
+landorus-therian|76@252,,4,,252|earthquake,rock-slide,u-turn,protect|intimidate||||careful
+
 --e2_exp|Elias|ghost|/leaders/unbound-elias@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
+==info:<p><b>Shadowy Veil</b><br />Every Ghost-type Pokémon take half damage on full HP. Ghost-types are immune to entry hazards at full HP. Other Types cannot use Safeguard or Substitute.</p>
+mimikyu-disguised|74@6,252,,,,252|shadow-claw,play-rough,shadow-sneak,swords-dance|disguise||||jolly
+aegislash-blade|75@252,,252,,4|shadow-ball,toxic,substitute,kings-shield|stance-change|leftovers|||bold
+trevenant|75@252,,252,,4|poltergeist,horn-leech,leech-seed,will-o-wisp|harvest|sitrus-berry|||impish
+cofagrigus|76@252,,252,,4|night-shade,body-press,iron-defense,rest|mummy|colbur-berry|||bold
+banette|76@252,,252,,4|poltergeist,sucker-punch,will-o-wisp,destiny-bond|frisk/prankster|banettite|||impish
+blacephalon|76@252,,,4,,252|flamethrower,shadow-ball,psyshock,calm-mind|beast-boost||||timid
+
+--e2_ins|Elias|ghost|/leaders/unbound-elias@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
 ==info:<p><b>Shadowy Veil</b><br />Every Ghost-type Pokémon take half damage on full HP. Ghost-types are immune to entry hazards at full HP. Other Types cannot use Safeguard or Substitute.</p>
 mimikyu-disguised|74@6,252,,,,252|shadow-claw,play-rough,shadow-sneak,swords-dance|disguise||||jolly
 aegislash-blade|75@252,,252,,4|shadow-ball,toxic,substitute,kings-shield|stance-change|leftovers|||bold
@@ -310,6 +465,16 @@ azumarill|76@252,,4,,252|aqua-tail,play-rough,superpower,aqua-jet|huge-power||||
 mawile|76@252,252,,,,6|iron-head,play-rough,sucker-punch,swords-dance|intimidate/huge-power|mawilite|||adamant
 tapu-fini|76@252,,4,,252|moonblast,surf,natures-madness,taunt|misty-surge|sitrus-berry|||calm
 
+--e3_ins|Arabella|fairy|/leaders/unbound-arrabella@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
+==effect:misty-terrain|info:<p><b>Fairy ring</b><br />All Fairy-Type Pokémon get a +1 boost to their lowest Defense stat on switch in.</p>
+
+ribombee|74@6,,,252,,252|moonblast,reflect,light-screen,sticky-web|shield-dust|focus-sash|||timid
+sylveon|75@252,,252,,4|hyper-voice,mystical-fire,wish,psyshock|pixilate|fairy-gem|||bold
+togekiss|75@252,,4,,252|air-slash,moonblast,flamethrower,wish|serene-grace||||calm
+azumarill|76@252,,4,,252|aqua-tail,play-rough,superpower,aqua-jet|huge-power||||careful
+mawile|76@252,252,,,,6|iron-head,play-rough,sucker-punch,swords-dance|intimidate/huge-power|mawilite|||adamant
+tapu-fini|76@252,,4,,252|moonblast,surf,natures-madness,taunt|misty-surge|sitrus-berry|||calm
+
 --e4_exp|Penny|dragon|/leaders/unbound-penny@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
 ==double:true|info:<p><b>Rainbow Battle</b><br />All Dragon-type Pokémon on the field have their moves' secondary effect chance doubled. This stacks Serene Grace with the exception of flinching moves.</p>
 goodra|74@252,,252,,4|flamethrower,muddy-water,thunderbolt,sludge-bomb|gooey|wide-lens|||bold
@@ -319,7 +484,29 @@ hydreigon|76@6,,,252,,252|dragon-breath,dark-pulse,charge-beam,tailwind|levitate
 sceptile|76@6,,,252,,252|dragon-pulse,giga-drain,rock-slide,protect|overgrow/technician|sceptilite|||modest
 latias|76@6,,252,252|dragon-breath,mist-ball,air-slash,roost|levitate||||modest
 
+--e4_ins|Penny|dragon|/leaders/unbound-penny@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
+==double:true|info:<p><b>Rainbow Battle</b><br />All Dragon-type Pokémon on the field have their moves' secondary effect chance doubled. This stacks Serene Grace with the exception of flinching moves.</p>
+goodra|74@252,,252,,4|flamethrower,muddy-water,thunderbolt,sludge-bomb|gooey|wide-lens|||bold
+tyrantrum|75@6,252,,,,252|dragon-claw,head-smash,high-horsepower,iron-head|rock-head|lum-berry|||jolly
+kommo-o|75@6,,,252,252|clanging-scales,aura-sphere,flash-cannon,protect|overcoat|dragon-gem|||modest
+hydreigon|76@6,,,252,,252|dragon-breath,dark-pulse,charge-beam,tailwind|levitate||||modest
+sceptile|76@6,,,252,,252|dragon-pulse,giga-drain,rock-slide,protect|overgrow/technician|sceptilite|||modest
+latias|76@6,,252,252|dragon-breath,mist-ball,air-slash,roost|levitate||||modest
+
 --c_exp|Jax||/leaders/unbound-jax@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
+==double:true
+salamence|76@6,252,,,,252|hyper-voice,double-edge,rock-slide,flamethrower|intimidate/aerilate|salamencite|||jolly
+hitmontop|74@252,,252,,4|close-combat,fake-out,helping-hand,wide-guard|intimidate|sitrus-berry|||impish
+magnezone|75@6,,252,252|thunderbolt,flash-cannon,body-press,protect|sturdy|air-balloon|||modest
+gastrodon|74@252,,252,,4|muddy-water,earth-power,icy-wind,protect|storm-drain|rindo-berry|||bold
+naganadel|76@6,,,252,,252|sludge-bomb,dragon-pulse,heat-wave,protect|beast-boost|yache-berry|||timid
+pyroar|75@6,,,252,,252|heat-wave,hyper-voice,scorching-sands,protect|royal-roar|fire-gem|||timid
+
+#######################
+#### Light of Ruin ####
+#######################
+
+--c_ins|Jax||/leaders/unbound-jax@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
 ==double:true
 salamence|76@6,252,,,,252|hyper-voice,double-edge,rock-slide,flamethrower|intimidate/aerilate|salamencite|||jolly
 hitmontop|74@252,,252,,4|close-combat,fake-out,helping-hand,wide-guard|intimidate|sitrus-berry|||impish
@@ -382,7 +569,24 @@ weavile|46@6,252,,,,252|knock-off,ice-punch,brick-break,fake-out|pressure||||ada
 spiritomb|47@252,,252,,4|hex,pain-split,will-o-wisp,protect|pressure/infiltrator|leftovers|||bold
 bisharp|47@6,252,,,,252|iron-head,sucker-punch,low-sweep,protect|defiant||||adamant
 
+--lr1_ins|Ruin Agent Vega & Grunt||/leaders/unbound-vega-grunt@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
+==tag:true
+liepard|45@6,,252,252|dark-pulse,grass-knot,burning-jealousy,fake-out|unburden|sitrus-berry|||modest
+honchkrow|47@6,,,252,,252|dark-pulse,air-cutter,heat-wave,protect|super-luck|scope-lens|||timid
+absol|47@6,252,,,,252|night-slash,psycho-cut,x-scissor,iron-tail|pressure/magic-bounce|absolite|||jolly
+weavile|46@6,252,,,,252|knock-off,ice-punch,brick-break,fake-out|pressure||||adamant
+spiritomb|47@252,,252,,4|hex,pain-split,will-o-wisp,protect|pressure/infiltrator|leftovers|||bold
+bisharp|47@6,252,,,,252|iron-head,sucker-punch,low-sweep,protect|defiant||||adamant
+
 --lr2_exp|Ruin Leader Aklove||/leaders/unbound-aklove@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
+klefki|51@252,,252,,4|play-rough,reflect,light-screen,thunder-wave|prankster|light-clay|||bold
+roserade|51@252,,252,,4|giga-drain,hidden-power-fire,leech-seed,protect|technician|big-root|||bold
+primarina|53@6,,252,252|surf,moonblast,ice-beam,aqua-jet|torrent|kebia-berry|||modest
+togekiss|52@6,,252,252|air-slash,moonblast,aura-sphere,flamethrower|serene-grace|babiri-berry|||modest
+hoopa-unbound|53@6,252,,,,252|zen-headbutt,hyperspace-fury,dual-chop,drain-punch|portal-power||||jolly
+gardevoir|53@6,,,252,,252|psyshock,dazzling-gleam,mystical-fire,shadow-sneak|trace/pixilate|gardevoirite|||timid
+
+--lr2_ins|Ruin Leader Aklove||/leaders/unbound-aklove@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
 klefki|51@252,,252,,4|play-rough,reflect,light-screen,thunder-wave|prankster|light-clay|||bold
 roserade|51@252,,252,,4|giga-drain,hidden-power-fire,leech-seed,protect|technician|big-root|||bold
 primarina|53@6,,252,252|surf,moonblast,ice-beam,aqua-jet|torrent|kebia-berry|||modest
@@ -399,6 +603,15 @@ alakazam|62@6,,,252,,252|psyshock,shadow-ball,energy-ball,nasty-plot|magic-guard
 mandibuzz|62@252,,252,,4|foul-play,attract,toxic,roost|overcoat|rocky-helmet|||bold
 eelektross|61@252,,,252,,6|volt-switch,giga-drain,flamethrower,acid-spray|levitate||||modest
 
+--lr3_ins|Ruin Admin Ivory||/leaders/unbound-ivory@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
+==tag:true
+toxicroak|61@6,252,,,,252|poison-jab,drain-punch,ice-punch,sucker-punch|poison-touch|focus-sash|||jolly
+mismagius|61@6,,,252,,252|moongeist-beam,mystical-fire,dazzling-gleam,thunderbolt|levitate||||timid
+incineroar|62@6,252,252|flare-blitz,darkest-lariat,drain-punch,thunder-punch|intimidate|assault-vest|||adamant
+alakazam|62@6,,,252,,252|psyshock,shadow-ball,energy-ball,nasty-plot|magic-guard/trace|alakazite|||timid
+mandibuzz|62@252,,252,,4|foul-play,attract,toxic,roost|overcoat|rocky-helmet|||bold
+eelektross|61@252,,,252,,6|volt-switch,giga-drain,flamethrower,acid-spray|levitate||||modest
+
 --lr4_exp|Ruin Leader Aklove||/leaders/unbound-aklove@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
 togedemaru|61@6,252,,,,252|zing-zap,iron-head,nuzzle,fake-out|sturdy|air-balloon|||jolly
 gardevoir|62@6,,,252,,252|psychic,moonblast,mystical-fire,dazzling-gleam|trace/pixilate|gardevoirite|||timid
@@ -407,7 +620,27 @@ roserade|61@6,,,252,,252|leaf-storm,dazzling-gleam,shadow-ball,sleep-powder|natu
 dragonite|62@6,252,,,,252|dragon-claw,dual-wingbeat,fire-punch,extreme-speed|multiscale||||jolly
 primarina|61@252,,,252,,6|hyper-voice,moonblast,energy-ball,protect|liquid-voice||||modest
 
+--lr4_ins|Ruin Leader Aklove||/leaders/unbound-aklove@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
+togedemaru|61@6,252,,,,252|zing-zap,iron-head,nuzzle,fake-out|sturdy|air-balloon|||jolly
+gardevoir|62@6,,,252,,252|psychic,moonblast,mystical-fire,dazzling-gleam|trace/pixilate|gardevoirite|||timid
+comfey|61@252,,252,,4|draining-kiss,giga-drain,floral-healing,helping-hand|triage|babiri-berry|||bold
+roserade|61@6,,,252,,252|leaf-storm,dazzling-gleam,shadow-ball,sleep-powder|natural-cure|wide-lens|||timid
+dragonite|62@6,252,,,,252|dragon-claw,dual-wingbeat,fire-punch,extreme-speed|multiscale||||jolly
+primarina|61@252,,,252,,6|hyper-voice,moonblast,energy-ball,protect|liquid-voice||||modest
+
 --lr5_exp|Ruin Leader Aklove||/leaders/unbound-aklove@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
+meloetta-aria|72@6,,,252,,252|expanding-force,shadow-ball,hidden-power-fighting,energy-ball|serene-grace|adrenaline-orb|||timid
+tapu-lele|74@6,,,252,,252|psychic,dazzling-gleam,thunderbolt,psychic-terrain|psychic-surge|red-card|||timid
+manaphy|74@6,,,252,,252|scald,ice-beam,energy-ball,tail-glow|soul-heart|sitrus-berry|||timid
+tapu-koko|74@6,252,,,,252|close-combat,wild-charge,acrobatics,grass-knot|electric-surge|electric-seed|||jolly
+melmetal|74@6,252,,,252|double-iron-bash,high-horsepower,ice-punch,thunder-punch|iron-fist|assault-vest|||adamant
+diancie|75@,128,,128,,252|diamond-storm,moonblast,earth-power,mystical-fire|clear-body/magic-bounce|diancite|||naive
+
+#####################
+#### Team Shadow ####
+#####################
+
+--lr5_ins|Ruin Leader Aklove||/leaders/unbound-aklove@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
 meloetta-aria|72@6,,,252,,252|expanding-force,shadow-ball,hidden-power-fighting,energy-ball|serene-grace|adrenaline-orb|||timid
 tapu-lele|74@6,,,252,,252|psychic,dazzling-gleam,thunderbolt,psychic-terrain|psychic-surge|red-card|||timid
 manaphy|74@6,,,252,,252|scald,ice-beam,energy-ball,tail-glow|soul-heart|sitrus-berry|||timid
@@ -475,7 +708,20 @@ swoobat|28@6,,,252,,252|confusion,air-cutter,charge-beam,roost|unaware||||modest
 sableye|25@252,,252,,4|night-shade,fake-out,will-o-wisp,torment|prankster||||impish
 shiftry|27@6,,,252,,252|leaf-tornado,sucker-punch,extrasensory,fake-out|pickpocket||||modest
 
+--sh1_ins|Shadow Admin Marlon & Grunt||/leaders/unbound-marlong-grunt@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
+==tag:true
+duskull|26@252,,252,,4|shadow-sneak,night-shade,payback,destiny-bond|levitate|eviolite|||impish
+cacnea|27@6,252,,,,252|needle-arm,feint-attack,thunder-punch,fell-stinger|water-absorb||||jolly
+swoobat|28@6,,,252,,252|confusion,air-cutter,charge-beam,roost|unaware||||modest
+sableye|25@252,,252,,4|night-shade,fake-out,will-o-wisp,torment|prankster||||impish
+shiftry|27@6,,,252,,252|leaf-tornado,sucker-punch,extrasensory,fake-out|pickpocket||||modest
+
 --sh2_exp|Shadow Admin Ivory||/leaders/unbound-ivory@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
+misdreavus|33@252,,252,,4|hex,will-o-wisp,mean-look,confuse-ray|levitate||||bold
+kadabra|34@252,,,4,,252|psybeam,charge-beam,tri-attack,night-shade|synchronize/inner-focus||||timid
+vullaby|32@6,252,252|punishment,pluck,rock-tomb,flatter|overcoat|eviolite|||adamant
+
+--sh2_ins|Shadow Admin Ivory||/leaders/unbound-ivory@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
 misdreavus|33@252,,252,,4|hex,will-o-wisp,mean-look,confuse-ray|levitate||||bold
 kadabra|34@252,,,4,,252|psybeam,charge-beam,tri-attack,night-shade|synchronize/inner-focus||||timid
 vullaby|32@6,252,252|punishment,pluck,rock-tomb,flatter|overcoat|eviolite|||adamant
@@ -483,7 +729,18 @@ vullaby|32@6,252,252|punishment,pluck,rock-tomb,flatter|overcoat|eviolite|||adam
 --sh3_exp|Shadow Boss Zeph||/leaders/unbound-zeph@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
 houndoom|33@6,252,,,,252|fire-fang,thunder-fang,sucker-punch,howl|flash-fire/solar-power|houndoominite|||adamant
 
+--sh3_ins|Shadow Boss Zeph||/leaders/unbound-zeph@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
+houndoom|33@6,252,,,,252|fire-fang,thunder-fang,sucker-punch,howl|flash-fire/solar-power|houndoominite|||adamant
+
 --sh4_exp|Shadow Admin Ivory & Grunt||/leaders/unbound-ivory-grunt@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
+==tag:true
+incineroar|38@252,,252,,4|fire-punch,darkest-lariat,thunder-punch,drain-punch|blaze||||impish
+mismagius|36@252,,252,,4|ominous-wind,mystical-fire,power-gem,destiny-bond|magic-bounce||||impish
+alakazam|37@6,,,252,,252|psyshock,shadow-ball,dazzling-gleam,charge-beam|synchronize/inner-focus||||modest
+meowstic-male|37@252,,252,,4|psyshock,helping-hand,reflect,psychic-terrain|prankster|terrain-extender|||bold
+oranguru|38@252,,4,,252|zen-headbutt,instruct,light-screen,psychic-terrain|inner-focus||||calm
+
+--sh4_ins|Shadow Admin Ivory & Grunt||/leaders/unbound-ivory-grunt@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
 ==tag:true
 incineroar|38@252,,252,,4|fire-punch,darkest-lariat,thunder-punch,drain-punch|blaze||||impish
 mismagius|36@252,,252,,4|ominous-wind,mystical-fire,power-gem,destiny-bond|magic-bounce||||impish
@@ -498,6 +755,13 @@ sharpedo|40@6,252,,,,252|aqua-jet,crunch,poison-fang,ice-fang|speed-boost/strong
 swoobat|39@6,,,252,,252|esper-wing,air-slash,shadow-ball,calm-mind|simple|scope-lens|||modest
 krookodile|41@6,252,252|stomping-tantrum,crunch,stone-edge,power-up-punch|intimidate||||adamant
 
+--sh5_ins|Shadow Admin Marlon||/leaders/unbound-marlon@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
+zapdos|40@6,,252,252|discharge,hurricane,ancient-power,light-screen|pressure||||modest
+dusclops|40@252,,252,,4|night-shade,ice-punch,confuse-ray,will-o-wisp|pressure|eviolite|||impish
+sharpedo|40@6,252,,,,252|aqua-jet,crunch,poison-fang,ice-fang|speed-boost/strong-jaw|sharpedonite|||jolly
+swoobat|39@6,,,252,,252|esper-wing,air-slash,shadow-ball,calm-mind|simple|scope-lens|||modest
+krookodile|41@6,252,252|stomping-tantrum,crunch,stone-edge,power-up-punch|intimidate||||adamant
+
 --sh6_exp|Shadow Boss Zeph||/leaders/unbound-zeph@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
 mightyena|45@6,252,,,,252|sucker-punch,ice-fang,psychic-fangs,swagger|strong-jaw||||jolly
 gengar|45@6,,,252,,252|shadow-ball,venoshock,dazzling-gleam,toxic|levitate/shadow-tag|gengarite|||timid
@@ -505,7 +769,26 @@ umbreon|46@252,,128,,128|foul-play,toxic,confuse-ray,moonlight|synchronize|lefto
 exploud|44@252,,,252,,6|hyper-voice,flamethrower,ice-beam,surf|bellow|throat-spray|||modest
 decidueye|46@6,252,,,,252|leaf-blade,spirit-shackle,low-sweep,acrobatics|long-reach||||jolly
 
+--sh6_ins|Shadow Boss Zeph||/leaders/unbound-zeph@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
+mightyena|45@6,252,,,,252|sucker-punch,ice-fang,psychic-fangs,swagger|strong-jaw||||jolly
+gengar|45@6,,,252,,252|shadow-ball,venoshock,dazzling-gleam,toxic|levitate/shadow-tag|gengarite|||timid
+umbreon|46@252,,128,,128|foul-play,toxic,confuse-ray,moonlight|synchronize|leftovers|||bold
+exploud|44@252,,,252,,6|hyper-voice,flamethrower,ice-beam,surf|bellow|throat-spray|||modest
+decidueye|46@6,252,,,,252|leaf-blade,spirit-shackle,low-sweep,acrobatics|long-reach||||jolly
+
 --sh7_exp|Ex-Shadow Admin Marlon||/leaders/unbound-marlon@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
+sableye|61@252,,252,,4|night-shade,will-o-wisp,quash,protect|prankster||||bold
+tentacruel|61@252,,252,,4|scald,giga-drain,haze,protect|clear-body|black-sludge|||bold
+krookodile|62@6,252,,,,252|high-horsepower,crunch,rock-slide,protect|intimidate|passho-berry|||jolly
+beedrill|61@6,252,,,,252|x-scissor,poison-jab,brick-break,protect|swarm/sniper/adaptability|beedrillite|||jolly
+dusknoir|62@252,252,,,,6|poltergeist,power-up-punch,ice-punch,thunder-punch|iron-fist||||adamant
+swoobat|61@6,,,252,,252|air-slash,energy-ball,thunder-wave,helping-hand|unaware|focus-sash|||timid
+
+###################
+### Mini Bosses ###
+###################
+
+--sh7_ins|Ex-Shadow Admin Marlon||/leaders/unbound-marlon@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
 sableye|61@252,,252,,4|night-shade,will-o-wisp,quash,protect|prankster||||bold
 tentacruel|61@252,,252,,4|scald,giga-drain,haze,protect|clear-body|black-sludge|||bold
 krookodile|62@6,252,,,,252|high-horsepower,crunch,rock-slide,protect|intimidate|passho-berry|||jolly
@@ -525,6 +808,13 @@ ninetales-alola|40|ice-beam,dazzling-gleam,dark-pulse,nasty-plot|snow-cloak||||h
 altaria|41|dragon-claw,body-slam,flamethrower,dragon-dance|natural-cure/pixilate|altarianite|||hardy
 
 --mb1_exp|Successor Maxima|fairy|/leaders/unbound-maxima@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
+wigglytuff|39@6,252,252|drain-punch,fire-punch,ice-punch,thunder-punch|huge-power|assault-vest|||adamant
+serperior|40@6,252,,,,252|leaf-blade,aqua-tail,leech-seed,protect|overgrow|big-root|||adamant
+empoleon|40@252,252,,,,6|wave-crash,bulldoze,aerial-ace,swords-dance|defiant||||adamant
+ninetales-alola|40@252,,252,,4|ice-beam,dazzling-gleam,psyshock,nasty-plot|snow-cloak||||bold
+altaria|41@252,,252,,4|dragon-pulse,hyper-voice,flamethrower,roost|cotton-cloud/pixilate|altarianite|||bold
+
+--mb1_ins|Successor Maxima|fairy|/leaders/unbound-maxima@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
 wigglytuff|39@6,252,252|drain-punch,fire-punch,ice-punch,thunder-punch|huge-power|assault-vest|||adamant
 serperior|40@6,252,,,,252|leaf-blade,aqua-tail,leech-seed,protect|overgrow|big-root|||adamant
 empoleon|40@252,252,,,,6|wave-crash,bulldoze,aerial-ace,swords-dance|defiant||||adamant
