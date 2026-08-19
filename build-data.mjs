@@ -166,7 +166,12 @@ function parseRoutes(raw) {
 
     if (line.startsWith('#')) {
       // Pull out "## Foo Region" as a region marker; ignore "# --" disabled lines.
-      const headingMatch = line.match(/^#{1,6}\s*(.+?)\s*$/);
+      // TWO hashes minimum. A single '#' is a comment, and treating it as a
+      // region turned every explanatory note at the top of a hand-written rail
+      // into a bogus region label — Gaia's showed up in the app as "Pokemon of
+      // the run has nowhere to be logged." Every real region header in the data
+      // set already uses '##'.
+      const headingMatch = line.match(/^#{2,6}\s*(.+?)\s*$/);
       if (headingMatch && !headingMatch[1].startsWith('--')) {
         currentRegion = headingMatch[1];
         if (!regions.includes(currentRegion)) regions.push(currentRegion);

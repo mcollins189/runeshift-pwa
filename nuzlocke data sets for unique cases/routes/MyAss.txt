@@ -1,5 +1,17 @@
 # First-cut rail: ordered by min grass level (fishing-only maps last).
 # Hand-adjust to story order; re-running the emitter will NOT overwrite this file.
+# Boss markers placed at each leader's own top level against the rail's
+# wild-level ordering — an approximation of story order, not a substitute.
+# Boss markers placed at each leader's own top level against the rail's
+# wild-level ordering — an approximation of story order, not a substitute.
+--BROCK's Gym|1|gym-leader|Leader BROCK
+--MISTY's Gym|2|gym-leader|Leader MISTY
+--LT. SURGE's Gym|3|gym-leader|Leader LT. SURGE
+--ERIKA's Gym|4|gym-leader|Leader ERIKA
+--KOGA's Gym|5|gym-leader|Leader KOGA
+--SABRINA's Gym|6|gym-leader|Leader SABRINA
+--BLAINE's Gym|7|gym-leader|Leader BLAINE
+--GIOVANNI's Gym|8|gym-leader|Leader GIOVANNI
 Diglett's Cave|diglett,dugtrio,trapinch
 Route 1|pidgey,rattata,mareep,taillow
 Route 2|caterpie,weedle,pidgey,sentret,zigzagoon,wurmple,taillow
@@ -79,3 +91,7 @@ Cinnabar Island|tentacool,tentacruel,wailmer,carvanha,magikarp,krabby,horsea,chi
 Chikorita Farm|tentacool,tentacruel,magikarp,horsea,psyduck,shellder,seadra,gyarados
 The Cunt|psyduck,wooper,clamperl,magikarp,poliwag,goldeen,poliwhirl,gyarados
 Whirlpool|tentacool,tentacruel,hoppip,magikarp,horsea,psyduck,shellder,seadra,gyarados
+--Pokémon League|e1|elite-four|Elite Four LORELEI
+--Pokémon League|e2|elite-four|Elite Four BRUNO
+--Pokémon League|e3|elite-four|Elite Four AGATHA
+--Pokémon League|e4|elite-four|Elite Four LANCE
