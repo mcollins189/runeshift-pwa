@@ -6886,14 +6886,18 @@ function switchRun(val) {
   }
   if (runs[val]) {
     currentRunId = val;
+    runs[val].lastUsed = Date.now();   // so auto-switch returns to where you were
     save(); render();
   }
 }
 
-function promptNewRun() {
+function promptNewRun(preferGame) {
   // Open the modal, populated with the full game list. Submit goes through
   // submitNewRun() which reads the form state and creates the run.
-  const initialGame = GAME_DISPLAY_ORDER.find(k => GAMES[k]) || Object.keys(GAMES)[0];
+  // preferGame preselects the cartridge the bridge detected, so the common case
+  // is one confirmation rather than hunting the list.
+  const initialGame = (preferGame && GAMES[preferGame]) ? preferGame
+    : (GAME_DISPLAY_ORDER.find(k => GAMES[k]) || Object.keys(GAMES)[0]);
   const gameDef = GAMES[initialGame];
   document.getElementById('modal-title').textContent = 'Start a new run';
   document.getElementById('modal-body').innerHTML = `
@@ -12178,7 +12182,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-18 20:43';
+const APP_BUILD = '2026-08-18 22:01';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -17020,7 +17024,16 @@ const NUZ_BRIDGE = (function () {
     ws.onopen = () => { backoff = 1000; setStatus('connected'); sendConfig(true); };
     ws.onmessage = ev => {
       let msg; try { msg = JSON.parse(ev.data); } catch (e) { return; }
-      if (!msg || (msg.type && msg.type !== 'state' && msg.type !== 'hello')) return;
+      if (!msg) return;
+      // The bridge reports which cartridge RetroArch actually has loaded. That
+      // beats both UIs as a source of truth — it is the one thing that cannot
+      // be mis-selected — so the tracker follows it to the matching run.
+      if (msg.type === 'detect') { onDetect(msg.game, msg.content); return; }
+      if (msg.type && msg.type !== 'state' && msg.type !== 'hello') return;
+      // Never merge data from a game we are not on. The bridge suppresses this
+      // too, but an older bridge does not, and a roster filled from the wrong
+      // cartridge cannot be undone.
+      if (_detected && typeof curGame === 'function' && _detected !== curGame()) return;
       // 'hello' announces the producer; 'state' carries data. Both set source.
       NUZ_LIVE.apply(Object.assign({ source: msg.source || 'memory' }, msg, { type: undefined }));
     };
@@ -17044,6 +17057,44 @@ const NUZ_BRIDGE = (function () {
     NUZ_LIVE.apply({ source: 'manual', encounter: null });
   }
   function setUrl(u) { localStorage.setItem(LS_URL, u); if (enabled()) { stop(); start(); } }
+
+  // ── Cartridge detection ───────────────────────────────────────────────────
+  // The bridge fingerprints the running ROM and tells us its game key. Being on
+  // the wrong game is not a cosmetic problem: every memory address is per-game,
+  // so a mismatched profile decodes real-looking Pokemon out of another
+  // cartridge and writes them into the run. Following the cartridge removes the
+  // chance to get it wrong rather than warning about it after the fact.
+  let _detected = null, _detectNotified = null;
+  function onDetect(game, content) {
+    if (!game || !GAMES[game]) return;
+    _detected = game;
+    if (typeof curGame === 'function' && curGame() === game) { _detectNotified = null; return; }
+
+    // Prefer a run already on that game. Most recently used, falling back to
+    // most recently created — switching should land where you last were.
+    const match = Object.entries(runs || {})
+      .filter(([, r]) => r && r.game === game)
+      .sort((a, b) => (b[1].lastUsed || b[1].created || 0) - (a[1].lastUsed || a[1].created || 0));
+    const label = GAMES[game].name || game;
+
+    if (match.length) {
+      const [id, run] = match[0];
+      run.lastUsed = Date.now();
+      switchRun(id);
+      if (typeof sendConfig === 'function') sendConfig(true);
+      if (typeof showToast === 'function') showToast('Switched to ' + run.name + ' — RetroArch is running ' + label, 'success');
+      return;
+    }
+    // No run for this game. Creating one silently would guess at version,
+    // variant and name, so ask — but only once per detected game, or every
+    // reconnect would nag.
+    if (_detectNotified === game) return;
+    _detectNotified = game;
+    if (typeof showToast === 'function') {
+      showToast('RetroArch is running ' + label + ', but you have no run for it — starting one', 'warn');
+    }
+    if (typeof promptNewRun === 'function') promptNewRun(game);
+  }
 
   // ── Game auto-config ──────────────────────────────────────────────────────
   // The tracker knows the selected game AND its location list, so it pushes
