@@ -12338,7 +12338,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-19 14:19';
+const APP_BUILD = '2026-08-19 16:04';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -17255,12 +17255,30 @@ const NUZ_BRIDGE = (function () {
       if (!enabled()) { setStatus('off'); return; }
       setStatus('retrying');
       timer = setTimeout(connect, backoff);
-      backoff = Math.min(backoff * 2, 30000);   // 1s → 30s ceiling
+      // 5s ceiling, not 30s. This socket is LOCALHOST — a retry costs nothing, and a
+      // 30s ceiling meant that after any bridge restart (installing a new APK takes a
+      // few seconds) the tracker could sit idle for half a minute before trying again.
+      // That is what made updates look like they needed the PWA closed and reopened:
+      // reopening calls start(), which resets the backoff.
+      backoff = Math.min(backoff * 2, 5000);
     };
     ws.onerror = () => { try { ws.close(); } catch (e) {} };
   }
 
   function start() { localStorage.setItem(LS_ON, '1'); backoff = 1000; connect(); }
+
+  // Retry NOW when the player comes back to the tab, or the device regains a network.
+  // Waiting out a backoff the app accrued while it was hidden is the other half of the
+  // "I had to close and reopen it" report — coming back to the app is the clearest
+  // possible signal that a stale reconnect timer should be abandoned.
+  const kick = () => {
+    if (!enabled()) return;
+    if (ws && (ws.readyState === 0 || ws.readyState === 1)) return;
+    backoff = 1000; clearTimeout(timer); connect();
+  };
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) kick(); });
+  window.addEventListener('online', kick);
+  window.addEventListener('focus', kick);
   function stop() {
     localStorage.setItem(LS_ON, '0');
     clearTimeout(timer);
