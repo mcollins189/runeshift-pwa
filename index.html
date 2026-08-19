@@ -12191,7 +12191,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-18 22:08';
+const APP_BUILD = '2026-08-18 22:53';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -16226,6 +16226,60 @@ function clearPrefetchDone() { savePrefetchDone({ current: null, allGames: false
 // Walk a game's encounter-tables + routes data and return the Set of species
 // names it references. Pulled out of _collectPrefetchUrlsForGame so callers
 // can also derive sprite IDs from the same set (per-game pre-cache).
+// Every species that can legitimately appear in a game: its encounter tables,
+// route rail and boss teams, closed over evolutions (a starter's final form is
+// in nobody's wild table). Cached — the walk is not free and the answer never
+// changes for a given game.
+const _gameSpeciesCache = {};
+function _gameSpeciesSet(gameKey) {
+  if (!gameKey) return null;
+  if (_gameSpeciesCache[gameKey] !== undefined) return _gameSpeciesCache[gameKey];
+  let set = null;
+  try {
+    const names = _collectGameSpeciesNames(gameKey);
+    if (names && names.size) {
+      set = new Set();
+      const evo = (typeof NUZ_DATA !== 'undefined' && NUZ_DATA.evoBySlug) || {};
+      const slugOf = n => String(n).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      const queue = [], seen = new Set();
+      for (const n of names) { set.add(_normSpeciesName(n)); const sl = slugOf(n); if (!seen.has(sl)) { seen.add(sl); queue.push(sl); } }
+      while (queue.length) {
+        const cur = queue.shift();
+        for (const step of (evo[cur] || [])) {
+          const next = Array.isArray(step) ? step[0] : step;
+          if (!next || seen.has(next)) continue;
+          seen.add(next); queue.push(next);
+          set.add(_normSpeciesName(next));
+          set.add(_normSpeciesName(String(next).replace(/-/g, ' ')));
+        }
+      }
+    }
+  } catch (e) { set = null; }
+  _gameSpeciesCache[gameKey] = set;
+  return set;
+}
+
+/**
+ * Does this live frame plausibly come from the game we are tracking?
+ *
+ * Fails OPEN in every uncertain case — an unwired game, data not yet loaded, a
+ * party of one. A guard that wrongly refuses everything is its own data loss,
+ * so it only fires when the evidence is lopsided: three or more Pokemon of
+ * which most are impossible here.
+ */
+function _liveFrameFitsGame(st) {
+  let set = null;
+  try { set = _gameSpeciesSet(typeof curGame === 'function' ? curGame() : null); } catch (e) { return true; }
+  if (!set || !set.size) return true;
+  const mons = []
+    .concat(Array.isArray(st.party) ? st.party : [])
+    .concat(Array.isArray(st.box) ? st.box : [])
+    .filter(m => m && m.species);
+  if (mons.length < 3) return true;
+  const foreign = mons.filter(m => !set.has(_normSpeciesName(m.species)));
+  return foreign.length * 2 <= mons.length;
+}
+
 function _collectGameSpeciesNames(gameKey) {
   const speciesNames = new Set();
   const game = GAMES[gameKey];
@@ -17890,6 +17944,8 @@ function togglePlayMode() { pmIsOpen() ? closePlayMode() : openPlayMode(); }
    Play mode re-renders on live state and on PokeAPI backfill (so sprites and
    types fill in), and auto-logs nothing — a faint still asks, because the
    graveyard is destructive and an OCR/memory misread must never bury a mon. */
+// One toast, not one per frame: a wrong profile emits these at 1 Hz.
+let _wrongGameWarned = false;
 NUZ_LIVE.on('state', (s, st) => {
   // AUTO-LEVEL-SYNC: live memory levels are exact, so a level-up updates the
   // ROSTER too (the summary row already showed the live level but the detail
@@ -17927,6 +17983,37 @@ NUZ_LIVE.on('state', (s, st) => {
     if (moved) { try { pmRender(); } catch (e) {} }
   }
   if (st.source && st.source !== 'manual') _lastFrameAt = Date.now();
+  // Wrong-cartridge veto. Everything below writes to the run — levels, moves,
+  // party membership, new roster entries — so the check belongs here, ahead of
+  // all of it, rather than at each individual write.
+  //
+  // First, the exact test: every frame carries the game its profile decoded it
+  // with. If that is not the run's game the numbers are meaningless, full stop.
+  // No heuristics needed and no false positives possible.
+  if (st.source === 'memory' && st.game && typeof curGame === 'function' && st.game !== curGame()) {
+    if (!_wrongGameWarned) {
+      _wrongGameWarned = true;
+      console.warn('[live] frame from', st.game, 'but run is', curGame(), '— ignoring');
+    }
+    return;
+  }
+  // Then the heuristic one, for when the bridge is confidently wrong: a party
+  // and box that mostly cannot exist in this game. Deliberately blunt, since
+  // Pokemon games share most of their dex — it catches a profile decoding a
+  // different cartridge, not a single unexpected Pokemon.
+  if (st.source === 'memory' && !_liveFrameFitsGame(st)) {
+    if (!_wrongGameWarned) {
+      _wrongGameWarned = true;
+      const bad = (st.party || []).map(m => m && m.species).filter(Boolean).slice(0, 3).join(', ');
+      try {
+        showToast('Ignoring live data — ' + (bad || 'those Pokemon') + " can't come from " +
+                  ((GAMES[curGame()] || {}).name || 'this game') + '. Check the bridge.', 'error', 7000);
+      } catch (e) {}
+      console.warn('[live] frame rejected: species not in', curGame(), st.party);
+    }
+    return;
+  }
+  _wrongGameWarned = false;
   if (st.source === 'memory' && st.encounter && st.encounter.species) {
     _lastEncSeen = { species: st.encounter.species, route: st.route || '', at: Date.now() };
   }
