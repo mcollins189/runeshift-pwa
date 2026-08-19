@@ -1152,7 +1152,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787153331753"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787154508440"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -2790,7 +2790,7 @@ const GAMES = {
     // patches/Vega.txt + sprites/hack/vega/. Two of those have no extractable
     // sprite and are emitted without one rather than with a broken link.
     name: 'Vega', short: 'Vega', gen: 3, category: 'Other ROM hacks',
-    dataSources: { routes: 'Vega', encounterTables: 'Vega', patches: 'Vega' }
+    dataSources: { routes: 'Vega', encounterTables: 'Vega', patches: 'Vega', leagues: 'Vega' }
   },
   'quartz': {
     // Pokémon Quartz Minus — RUBY base (AXVE), the first Ruby-family game here.
@@ -12317,7 +12317,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-19 08:29';
+const APP_BUILD = '2026-08-19 08:48';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,

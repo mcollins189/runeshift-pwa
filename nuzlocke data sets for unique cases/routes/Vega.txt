@@ -1,5 +1,7 @@
 # First-cut rail: ordered by min grass level (fishing-only maps last).
 # Hand-adjust to story order; re-running the emitter will NOT overwrite this file.
+# Boss markers sit at each leader's own top level against the rail's
+# wild-level ordering — an approximation of story order, not a substitute.
 Route 501|taillow,glachild,pineco
 Route 502|taillow,togepi,glachild,pineco
 Altering Cave|lunabitt
@@ -15,9 +17,16 @@ Route 520|jamberree,psycolt,velvelt,tropius,hoothoot
 Celadon Dept.|miltank,shuckle,kapwondo
 Route 507|pichu,nidoran-f,nidoran-m,jamberree,cupricorn,mintch,blakjak,buizel,cuppa,staryu,tentacool,tentacruel,dorfin
 Undersea Tunnel|diglett,buizel,rynos,rollder,cuppa,dwebble,dislichen,dunsparce,geodude,graveler,sandshrew,sandslash,pressie,stunfisk,selody,sealkie,luvdisc,guppyre,relicanth
+--Annette's Gym|1|gym-leader|Leader Annette
 Route 522|psycolt,velvelt,tropius,miltank,hoothoot,noctowl
 Route 521|psycolt,velvelt,miltank,hoothoot,noctowl
 Porcelia Forest|taillow,swellow,jamberree,pineco,exeggcute,snalo,shivermin,shroomish,shretainer,carnivine,petilil
+--Geoff's Gym|2|gym-leader|Leader Geoff
+--Brooke's Gym|3|gym-leader|Leader Brooke
+--Avery's Gym|4|gym-leader|Leader Avery
+--Fenton's Gym|6|gym-leader|Leader Fenton
+--Tara's Gym|7|gym-leader|Leader Tara
+--Mewtwo's Gym|8|gym-leader|Leader Mewtwo
 Dh Building|unown,puffume,ekans,koffing,spinarak,skorupi,toxroach
 Route 514|glachild,frozaiden,nidorina,nidorino,snover,mintch,blakjak,plasmox,taillow,pineco,forretress,hoothoot,noctowl,swellow,jamberree,strawna,chatot,murkrow,yolkid,happiny,terubim,ledyba,spinarak,ferroseed
 Route 517|taillow,swellow,togepi,glachild,frozaiden,velvelt,snover
@@ -46,3 +55,7 @@ Junopsis City|rollder,rotillo
 Shamouti Island|buizel,cuppa,shellder,tentacool,krabby,dorfin
 Shakudo Island|buizel,floatzel,cuppa,laquagon,shellder,remoraid,tentacool,luvdisc
 Gamboge City|shellder,cloyster
+--Pokémon League|e1|elite-four|Elite Four Theodore
+--Pokémon League|e2|elite-four|Elite Four Vanessa
+--Pokémon League|e3|elite-four|Elite Four Irene
+--Pokémon League|e4|elite-four|Elite Four Cole
