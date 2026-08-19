@@ -557,6 +557,12 @@
   .nr-radio{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--text);cursor:pointer}
   .nr-radio input[type=radio]{accent-color:var(--accent);cursor:pointer}
   .nr-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:6px}
+  .nuz-runpick-intro{font-size:13px;color:var(--text2);line-height:1.5}
+  .nuz-runpick-rom{color:var(--text3,var(--text2));font-size:12px}
+  .nuz-runpick-list{display:flex;flex-direction:column;gap:8px}
+  .nuz-runpick{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;text-align:left;padding:10px 12px}
+  .nuz-runpick-name{font-size:14px;font-weight:600;color:var(--text)}
+  .nuz-runpick-meta{font-size:11px;color:var(--text2)}
   .btn-primary{padding:8px 16px;font-size:13px;font-family:'Outfit',sans-serif;font-weight:600;border:1px solid var(--accent);background:var(--accent);color:#fff;border-radius:var(--radius-sm);cursor:pointer;transition:filter .15s}
   .btn-primary:hover{filter:brightness(1.1)}
   .btn-ghost{padding:8px 16px;font-size:13px;font-family:'Outfit',sans-serif;font-weight:500;border:1px solid var(--border2);background:transparent;color:var(--text2);border-radius:var(--radius-sm);cursor:pointer}
@@ -6887,6 +6893,9 @@ function switchRun(val) {
   if (runs[val]) {
     currentRunId = val;
     runs[val].lastUsed = Date.now();   // so auto-switch returns to where you were
+    // Choosing a run by hand answers "which run for this game?" as definitively
+    // as the chooser does — remember it so the bridge stops asking.
+    if (typeof _nuzRememberRunPick === 'function') _nuzRememberRunPick(runs[val].game, val);
     save(); render();
   }
 }
@@ -12182,7 +12191,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-18 22:01';
+const APP_BUILD = '2026-08-18 22:08';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -17034,6 +17043,9 @@ const NUZ_BRIDGE = (function () {
       // too, but an older bridge does not, and a roster filled from the wrong
       // cartridge cannot be undone.
       if (_detected && typeof curGame === 'function' && _detected !== curGame()) return;
+      // Several runs on this game and the player has not said which: hold the
+      // data rather than pour it into whichever one happened to be open.
+      if (_awaitingRun) return;
       // 'hello' announces the producer; 'state' carries data. Both set source.
       NUZ_LIVE.apply(Object.assign({ source: msg.source || 'memory' }, msg, { type: undefined }));
     };
@@ -17064,36 +17076,101 @@ const NUZ_BRIDGE = (function () {
   // so a mismatched profile decodes real-looking Pokemon out of another
   // cartridge and writes them into the run. Following the cartridge removes the
   // chance to get it wrong rather than warning about it after the fact.
-  let _detected = null, _detectNotified = null;
+  let _detected = null, _detectNotified = null, _awaitingRun = false;
+  const LS_RUNPICK = 'nuz-bridge-run-choice';
+  const runPicks = () => { try { return JSON.parse(localStorage.getItem(LS_RUNPICK) || '{}'); } catch (e) { return {}; } };
+  function rememberRunPick(game, id) {
+    const m = runPicks(); m[game] = id;
+    try { localStorage.setItem(LS_RUNPICK, JSON.stringify(m)); } catch (e) {}
+  }
+  // Exposed so the chooser's buttons (rendered as HTML) can call back in.
+  window._nuzPickRun = function (id) {
+    const run = runs[id];
+    if (!run) return;
+    _awaitingRun = false;
+    rememberRunPick(run.game, id);
+    run.lastUsed = Date.now();
+    switchRun(id);
+    if (typeof closeModal === 'function') closeModal();
+    if (typeof sendConfig === 'function') sendConfig(true);
+    if (typeof showToast === 'function') showToast('Now tracking ' + run.name, 'success');
+  };
+  window._nuzPickNewRun = function (game) {
+    _awaitingRun = false;
+    if (typeof promptNewRun === 'function') promptNewRun(game);
+  };
+
   function onDetect(game, content) {
     if (!game || !GAMES[game]) return;
     _detected = game;
-    if (typeof curGame === 'function' && curGame() === game) { _detectNotified = null; return; }
-
-    // Prefer a run already on that game. Most recently used, falling back to
-    // most recently created — switching should land where you last were.
-    const match = Object.entries(runs || {})
-      .filter(([, r]) => r && r.game === game)
-      .sort((a, b) => (b[1].lastUsed || b[1].created || 0) - (a[1].lastUsed || a[1].created || 0));
     const label = GAMES[game].name || game;
-
-    if (match.length) {
-      const [id, run] = match[0];
-      run.lastUsed = Date.now();
-      switchRun(id);
-      if (typeof sendConfig === 'function') sendConfig(true);
-      if (typeof showToast === 'function') showToast('Switched to ' + run.name + ' — RetroArch is running ' + label, 'success');
+    if (typeof curGame === 'function' && curGame() === game) {
+      // Already here — treat staying put as the answer and stop holding data.
+      _detectNotified = null; _awaitingRun = false;
+      rememberRunPick(game, currentRunId);
       return;
     }
-    // No run for this game. Creating one silently would guess at version,
-    // variant and name, so ask — but only once per detected game, or every
-    // reconnect would nag.
+
+    const match = Object.entries(runs || {}).filter(([, r]) => r && r.game === game);
+
+    if (match.length === 1) {
+      // Unambiguous: one run for this cartridge, just go there.
+      window._nuzPickRun(match[0][0]);
+      return;
+    }
+
+    if (match.length > 1) {
+      // A remembered choice counts as already answered — otherwise every
+      // reconnect would re-ask. Switching runs by hand updates it, because
+      // switchRun records the pick too.
+      const remembered = runPicks()[game];
+      if (remembered && runs[remembered] && runs[remembered].game === game) {
+        window._nuzPickRun(remembered);
+        return;
+      }
+      // Genuinely ambiguous. The cartridge says WHICH GAME; only the player
+      // knows WHICH RUN. Guessing here writes catches, levels and deaths into
+      // someone else's nuzlocke, so hold everything until asked and answered.
+      if (_awaitingRun) return;
+      _awaitingRun = true;
+      promptWhichRun(game, label, match, content);
+      return;
+    }
+
+    // No run for this game at all.
     if (_detectNotified === game) return;
     _detectNotified = game;
     if (typeof showToast === 'function') {
       showToast('RetroArch is running ' + label + ', but you have no run for it — starting one', 'warn');
     }
     if (typeof promptNewRun === 'function') promptNewRun(game);
+  }
+
+  // Chooser modal. Ordered most-recent first so the likely answer is on top.
+  function promptWhichRun(game, label, match, content) {
+    const esc = t => String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    const sorted = match.slice().sort((a, b) =>
+      (b[1].lastUsed || b[1].created || 0) - (a[1].lastUsed || a[1].created || 0));
+    const rows = sorted.map(([id, r]) => {
+      const bits = [];
+      if (Array.isArray(r.team)) bits.push(r.team.length + ' caught');
+      if (r.cap) bits.push('cap ' + r.cap);
+      const when = r.lastUsed || r.created;
+      if (when) bits.push('last played ' + new Date(when).toLocaleDateString());
+      return '<button class="btn-ghost nuz-runpick" onclick="_nuzPickRun(\'' + id + '\')">' +
+             '<span class="nuz-runpick-name">' + esc(r.name) + '</span>' +
+             '<span class="nuz-runpick-meta">' + esc(bits.join(' · ')) + '</span></button>';
+    }).join('');
+    document.getElementById('modal-title').textContent = 'Which run are you playing?';
+    document.getElementById('modal-body').innerHTML =
+      '<div class="nr-form">' +
+      '<div class="nuz-runpick-intro">RetroArch is running <b>' + esc(label) + '</b>' +
+      (content ? ' <span class="nuz-runpick-rom">(' + esc(content) + ')</span>' : '') +
+      ', and you have ' + sorted.length + ' runs for it. Live tracking is paused until you pick one.</div>' +
+      '<div class="nuz-runpick-list">' + rows + '</div>' +
+      '<div class="nr-actions"><button class="btn-ghost" onclick="_nuzPickNewRun(\'' + game + '\')">Start a new run</button></div>' +
+      '</div>';
+    if (typeof openModal === 'function') openModal();
   }
 
   // ── Game auto-config ──────────────────────────────────────────────────────
@@ -17115,6 +17192,7 @@ const NUZ_BRIDGE = (function () {
     } catch (e) { console.warn('[bridge] sendConfig', e); }
   }
 
+  window._nuzRememberRunPick = rememberRunPick;
   return { start, stop, setUrl, connect, url, enabled, status: () => status, syncGame: () => sendConfig(false) };
 })();
 window.NUZ_BRIDGE = NUZ_BRIDGE;
