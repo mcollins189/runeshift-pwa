@@ -1,5 +1,7 @@
-# First-cut rail: ordered by min grass level (fishing-only maps last).
-# Hand-adjust to story order; re-running the emitter will NOT overwrite this file.
+# Gaia rail. Locations ordered by wild level; gym markers placed at their
+# published level caps (each confirmed against the ROM trainer table).
+# Hand-adjust to true story order as you play — re-running the encounter
+# emitter will NOT overwrite this file.
 Archan Tunnel|zubat,spinarak,makuhita,whismur,roggenrola,woobat,barboach,relicanth,binacle,whiscash,geodude,drilbur,dwebble,scraggy,joltik,larvitar,aron,paras,numel
 Celanto Path|hoppip,zigzagoon,taillow,bidoof,budew,bunnelby
 Archan Hills|pidgey,marill,lotad,buneary,glameow,purrloin,psyduck,goldeen,magikarp,corphish,seaking,gyarados,crawdaunt
@@ -7,6 +9,7 @@ Seros Path|nidoran-f,nidoran-m,mareep,ralts,shellos,bunnelby,spritzee,flabebe
 Aerous Road|snubbull,starly,shinx,blitzle,litleo,skiddo,psyduck,marill,goldeen,magikarp,corphish,seaking,gyarados,crawdaunt
 Wisp Forest|gastly,shroomish,duskull,shuppet,burmy,litwick,phantump,avalugg,bergmite
 Valoon Reserve|caterpie,weedle,beedrill,scyther,pinsir,yanma,heracross,wurmple,beautifly,dustox,nincada,larvesta,surskit
+--Seros Village Gym|1|gym-leader|Leader Fernando
 Frostbite Cave|zubat,psyduck,spheal,mime-jr,roggenrola,woobat,slowpoke,sealeo,poliwag,poliwhirl,swinub,bergmite,delibird,snorunt,vanillite,chimecho,cryogonal,smoochum,marill,golbat,piloswine,swoobat,vanillish,avalugg
 Reliquia Ruins|natu,lunatone,solrock,swablu,chimecho,sigilyph,elgyem,tentacool,relicanth
 Nestpine Climb|spearow,abra,phanpy,meditite,munna,timburr,fletchling,psyduck,slowpoke,goldeen,barboach,corphish,seaking,whiscash,crawdaunt
@@ -14,6 +17,7 @@ Edamist Heights|spinda,staravia,munchlax,snover,timburr,cubchoo,ursaring,starapt
 Windmist Summit|hoothoot,noctowl,sneasel,teddiursa,snover,herdier,cubchoo,mienfoo
 Ignis Roost|pidgeotto,baltoy,chimecho,chingling,bronzor,sigilyph,golett
 Sabulo Cross|jigglypuff,slowpoke,wingull,skitty,electrike,swablu,tentacool,mantyke,joltik,finneon,shellder,luvdisc,cloyster,lumineon
+--Nestpine Town Gym|2|gym-leader|Leader Aria
 Rimewood Forest|noctowl,aipom,murkrow,pineco,sneasel,munchlax,snover
 Telmurk Warehouses|raticate,golbat,rotom,watchog,klink,magnemite,voltorb,ditto,trubbish,klefki,sandshrew,zubat,diglett,koffing,grimer,muk,bronzor,litwick,ferroseed
 Sharpgust Span|wingull,pelipper,swablu,rufflet,inkay,tentacool,joltik,remoraid,qwilfish,carvanha,octillery,sharpedo
@@ -22,6 +26,7 @@ Ikos Ruins|unown
 Katosurf Trench|chinchou,lanturn,clamperl,skrelp,tentacool,mantine,wingull,pelipper,horsea,shellder,cloyster,seadra,kingdra
 Nemesis River|tangela,ledyba,nuzleaf,zangoose,carnivine,cottonee,petilil,poliwhirl,lombre,buizel,feebas,carvanha,politoed,milotic,sharpedo
 Nemesis Cave|zubat,paras,parasect,volbeat,illumise,foongus,heatmor,durant,lombre,shellos,palpitoad,poliwag,krookodile,dwebble,poliwhirl
+--Windmist City Gym|3|gym-leader|Leader Nina
 Ferre Ruins|golbat,parasect,kingler,nosepass,bronzor,bronzong,honedge,clauncher,gastrodon,poliwag,poliwhirl,slowpoke,marill,relicanth,krabby,corsola,crawdaunt,clawitzer,onix,lairon
 Battle Marsh|gloom,mankey,weepinbell,stunky,croagunk,stunfisk,goomy,poliwhirl,tympole,palpitoad,barboach,feebas,whiscash,milotic
 Telmurk Swamp|oddish,gloom,bellsprout,weepinbell,swalot,karrablast,ferroseed,shelmet,goomy,poliwag,grimer,wooper,tympole,palpitoad,seismitoad
@@ -32,6 +37,7 @@ Atsail Bay|dodrio,gligar,unfezant,swanna,braviary,mandibuzz,tentacool,tentacruel
 Precimos Depths|chinchou,clamperl,huntail,relicanth,finneon,tentacruel,pelipper,joltik,horsea,shellder,cloyster,seadra,kingdra
 Cosmic Caverns|clefairy,clefable,mawile,boldore,woobat,swoobat,excadrill,elgyem,sableye,eelektrik,zubat,staryu,poliwag,poliwhirl,dratini,misdreavus,carbink,inkay
 Edashore Reach|clefairy,tangela,linoone,pelipper,absol,bibarel,tentacool,tentacruel,wingull,magikarp,shellder,cloyster,gyarados
+--Valoon Town Gym|4|gym-leader|Leader Vernon
 Loamas Fields|pikachu,ponyta,tauros,flaaffy,miltank,grumpig,pachirisu,swadloon,emolga,bouffalant,ledian,murkrow,dunsparce,dedenne
 Ikos Canyon|sandslash,dodrio,vibrava,cacturne,gabite,hippopotas,hippowdon,krokorok,crustle,vullaby
 Emerald Peak|golbat,slowpoke,slowbro,mr-mime,gothorita,duosion,beheeyem,psyduck,golduck,staryu,starmie,dratini,wobbuffet,piloswine,musharna,swoobat,gothitelle,reuniclus
@@ -48,3 +54,12 @@ Atsail City|tentacool,mantine,joltik,remoraid,chinchou,lanturn,octillery
 Loamas Town|marill,azumarill,corphish,clauncher,crawdaunt,clawitzer
 Ikos Town|luvdisc,alomomola
 Katosurf Town|psyduck,wooper,magikarp,poliwag,goldeen,poliwhirl,gyarados
+--Telmurk City Gym|5|gym-leader|Leader Sid
+--Precimos Island Gym|6|gym-leader|Leader Will
+--Atsail City Gym|7|gym-leader|Leader Marina
+--Loamas Town Gym|8|gym-leader|Leader Richter
+--Orbtus Pokémon League|e1|elite-four|Elite Four Nicola
+--Orbtus Pokémon League|e2|elite-four|Elite Four Knight
+--Orbtus Pokémon League|e3|elite-four|Elite Four Kara
+--Orbtus Pokémon League|e4|elite-four|Elite Four Leif
+--Orbtus Pokémon League|champ|champion|Champion Herschel
