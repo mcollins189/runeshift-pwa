@@ -1,0 +1,48 @@
+# First-cut rail: ordered by min grass level (fishing-only maps last).
+# Hand-adjust to story order; re-running the emitter will NOT overwrite this file.
+Route 501|taillow,glachild,pineco
+Route 502|taillow,togepi,glachild,pineco
+Altering Cave|lunabitt
+Safari Zone|skarmory,psycolt,absol,cupricorn,miltank,clotaku,ajarimus,nimbleaf,peyero,basille,patroleo,bisos,scyther,pinsir,lickitung,nincada,liquiput,cuppa,kakuna,rivird,luvdisc,buizel,lizzle,pichu,hornikel,kangaskhan,togepi,pikachu,girafarig
+Route 503|taillow,houndour,nidoran-f,nidoran-m,pineco
+Route 505|houndour,pichu,nidoran-f,nidoran-m,cupricorn,mintch
+Route 504|houndour,pichu,nidoran-f,nidoran-m,mintch
+Spirit Mansion|willisp,clotaku,baizeast,spelven,takuni,whismur,spinda,ralts
+Route 506|nidoran-f,nidoran-m,jamberree,cupricorn,mintch,hoothoot
+Route 519|taillow,jamberree,velvelt,cupricorn,hoothoot
+Route 518|taillow,togepi,jamberree,pineco,velvelt,cupricorn,hoothoot,rollder,rotillo
+Route 520|jamberree,psycolt,velvelt,tropius,hoothoot
+Celadon Dept.|miltank,shuckle,kapwondo
+Route 507|pichu,nidoran-f,nidoran-m,jamberree,cupricorn,mintch,blakjak,buizel,cuppa,staryu,tentacool,tentacruel,dorfin
+Undersea Tunnel|diglett,buizel,rynos,rollder,cuppa,dwebble,dislichen,dunsparce,geodude,graveler,sandshrew,sandslash,pressie,stunfisk,selody,sealkie,luvdisc,guppyre,relicanth
+Route 522|psycolt,velvelt,tropius,miltank,hoothoot,noctowl
+Route 521|psycolt,velvelt,miltank,hoothoot,noctowl
+Porcelia Forest|taillow,swellow,jamberree,pineco,exeggcute,snalo,shivermin,shroomish,shretainer,carnivine,petilil
+Dh Building|unown,puffume,ekans,koffing,spinarak,skorupi,toxroach
+Route 514|glachild,frozaiden,nidorina,nidorino,snover,mintch,blakjak,plasmox,taillow,pineco,forretress,hoothoot,noctowl,swellow,jamberree,strawna,chatot,murkrow,yolkid,happiny,terubim,ledyba,spinarak,ferroseed
+Route 517|taillow,swellow,togepi,glachild,frozaiden,velvelt,snover
+Chateau of Time|yucarlia,violo,phantonate,strawick,duskull,shuppet,rumpet,pianon,pumpkid,gastly,haunter,hantama
+Route 516|glachild,frozaiden,snover,mintch,blakjak,plasmox
+Mt. Snowfall|diglett,dugtrio,glachild,frozaiden,rhyhorn,shuckle,larvitar,lunatone,solrock,stellith,dvaarak,rooten,delibird,mawile
+Route 515|glachild,frozaiden,nidorina,nidorino,snover,mintch,blakjak,plasmox
+Ice Island|glachild,frozaiden,floatzel,spheal,sealeo,snover,rhyhorn,rollder,rotillo,switza,sneasel,swinub,delibird,smoochum,jynx,cryogonal
+Fire Island|magby,magmar,lilynary,grieflame,torkoal,fujinel,droudrop,houndour,willisp,mornwing,guldawn,maneko,bakeko,rhyhorn,rollder,rotillo
+Lightning Island|elekid,electabuzz,pachirisu,voltorb,klink,tynamo,joltik,pichu,pikachu,magnemite,magneton,plasmox,rhyhorn,rollder,rotillo
+Victory Road|diglett,dugtrio,velvelt,grissly,rhyhorn,rollder,rotillo,rhydon,gible,modra,rubball,wombaton,cacnea,mienfoo,geodude,graveler,ambilade
+Wiseman's Cave|rynos,punchild,geodude,combant,arincess,graveler
+Tower of Darkness|cheshile,liepus,sableye,scraggy
+Dh Hideout|lunabitt,ditto,doodloo,ralts,yulfoe,ledian,psycolt,kirlia
+Pokemon Castle|skarmory,rubball,klink,terubim,sandile,farfetchd,billserk,klang
+Sphere Ruins|tropius,pumpkid,wikkin,ditto,violo,dislichen,ledian,torkoal,galavagos,lumoss,ganerth,eelektrik,guldawn,solarisen,rumpet,mawile,jawile,scyther,scizor,yulfoe,cryogonal,rooten,kangaskhan,switza,pianon,murkrow,clouff,doodloo,sableye,sableater,pinsir,pinchor,rudebarb,tentacool,tentacruel,relicanth,relicore,smalmon,guppyre,diaduna,trojalmon,luvdisc,skarmory,girafarig,folifarig,magneton,lunabitt,liepus,ferrothorn,ferroseed,eelektross,togetic,togekiss,absol,dizasol,miltank,lunabain,liedoro,snalo,serplant,modra,komoragon,billserk,geodude,larvitar,pupitar,tyranitar,lunatone,solrock,stellith,pignite,dvaarak,joltik,galvantula,gible,gabite,garchomp,cacnea,cacturne,graveler,golem,crustle,krokorok,krookodile,machop,laquagon,dragune,nostratos,rougella,kaminary,skorupi,drapion,dorfin,selody,sealkie,valentide
+Route 508|buizel,cuppa,shellder,tentacool,tentacruel,dorfin
+Route 509|buizel,cuppa,shellder,tentacool,krabby,dorfin
+Route 510|buizel,spheal,cuppa,staryu,krabby,dorfin,smalmon
+Route 511|buizel,spheal,cuppa,staryu,krabby,dorfin,smalmon
+Route 513|floatzel,spheal,sealeo,buizel,cuppa,staryu,krabby,dorfin,smalmon
+Route 512|buizel,spheal,cuppa,staryu,krabby,dorfin,smalmon
+Route 523|buizel,floatzel,cuppa,laquagon,shellder,remoraid,tentacool,luvdisc
+Porcelia Town|buizel,cuppa,floatzel,lizzle
+Junopsis City|rollder,rotillo
+Shamouti Island|buizel,cuppa,shellder,tentacool,krabby,dorfin
+Shakudo Island|buizel,floatzel,cuppa,laquagon,shellder,remoraid,tentacool,luvdisc
+Gamboge City|shellder,cloyster

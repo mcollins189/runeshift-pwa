@@ -1,0 +1,52 @@
+# First-cut rail: ordered by min grass level (fishing-only maps last).
+# Hand-adjust to story order; re-running the emitter will NOT overwrite this file.
+Lilac Wy|larvesta,ornlil,batoka,sever,squirriti
+Purple Sh|bzby,verpillar,sever,squirriti,reabari,hamet,bagon,hovebug,piscy,thundish,etod,searoket,dolphe,ektron
+White Jng|semilleto,potac,kiwirawa,weedle,reabari,bolichano,beavy,pelichen,piscy,soie,corongori,lionegosh,dolphe
+S.S. Anne|phico,pikish,lionegosh,bolichano,pelichen,thundish,colossio,icish,whola
+Cauldron|chuk-txu,gusvolts,larvly,strawbaya,bagon,gui14ette
+Downhill Tunnel|furret,madnut,hurgoose,tigat,opail
+Mystery Island|klang,jonic,gustano,energiz,nole,minun,opail,hooley,catalon,rocorrodo,shega
+Muddy Cr|urtiga,urtigo,semilleto,moroberry,reabari,bagon,tigat,ronslept
+Star Temple|turtwig
+Tower Sea|salama,sproof,grecodale,bolichano,plug-oink,apinep,fairoot,eloru,bagon,thundish,etod,aenguile,ektron
+Grand Cr|fentee,karidari,teamon,jarximaux,coldchick,spinwing,bagon,hovebug,piscy,icish,dolphe,ektron
+Ditch Sea|nole,hormig,tikika,flachow,burnco,tarsony,coalchar
+Secret Base|punchzo,monkoodu,cornodro,hooley,minadoom,iguagon,gemmal,groudon,crogronk,musclelc,jonic,dodrio,soie,corongori,piscy,thundish,thundran,icish,dolphe
+Underwater|nole,porygon,cloyster,stargo,minun,dolphe,flygon,piscy,thundish,bubel,sespiral,beetespuk,sneetchy,amede,amedi,jackan,liofang,agoir,copykatte,eloru,aenguile,zhipo,absol,racevish,loddish,freion,thinkower,tankoo,mimikyu-disguised,hovebug,planebug,bolichano,pelichen,etod,ektron,colossio,whola,amaura,fatte,furret,gurtan,acornel,tigator,pikish,lionegosh
+Elbow Sea|medrake,deemp,deprip,fatube,catalon,onix,gritespec
+Fake Sea|ivoro,blahdalah,zeeco,bounny,armay,armstorm,bagon,hovebug,rocorrodo,gustano,piscy,soie,corongori,dolphe
+Olde Age Island|waseo,turkur,streek,ankori,cwabay,boultan,poocher,gallum,crabbix,wappy,koropul,dzocbix,darkoon,captrunke,bethin,trufkie,verpillar,crogronk,armorito,sikedonke,bankedon,plug-oink,spig,pulsul,urtigere,urtigoro,ninjice
+Sea Cavern|fungio,gappy,eyendy,magiken,catalon,phico,ivoro,vogoo,tejemeje,bludlop,vamkiri,betal
+Nature Temple|spiki,grasspark,covolts,lucivolts,spingen,arbeluc,emethe,plug-oink,armay,armstorm
+Grey Swp|nole,tikika,cactino,cacutu,dessertea,golduck,simpleon,bagon,hovebug,rocorrodo,thundish,soie,corongori,ektron
+Muddy Sea|urtigere,urtigoro,fatte,klang,morkibia,plug-oink,spig,leirao,pikish,lionegosh,bolichano,pelichen,icish,koropul,colossio
+Inside of Truck|pulsul,koropul,pikish,thundish,colossio,icish,klang,kinboxo,jonic,dodrio,sangai,garsoom,garedar,farizard,llamayama,chimneyama
+Seablu Cr|salama,coccnuto,bagon,energiz,pikish,lionegosh,bolichano,pelichen,absol,whola
+Wild Temple|mechcrab,bobcrab,vamkiri,bernardog,rescudog,colossio,absol,pikish,descomune,thundish,opail,hompalon,norion,phantan,saximaux,polbear,coldchick,freezock,spinwing,bobeguin
+Weed Sea|bagon,piscy,thundish,etod,searoket,dolphe,ektron
+Flow. Bch|pikish,lionegosh,bolichano,pelichen,thundish,mechcrab,bobcrab,colossio
+Deathland|pikish,arbatross,bolichano,pelichen,tincrab,prawby,corongori,prawking,colossio
+Grey Hl|pikish,bolichano,pelichen,thundish,colossio,whola
+Boar Hl|piscy,dolphe,thundran
+Green Wy|pikish,bolichano,pelichen,berchi,colossio,tincrab,flysh
+Olympic Catacomb|pikish,lionegosh
+White Rd|pikish,lionegosh,bolichano,pelichen,thundish,corongori,colossio,absol,whola
+Marble Lk|pikish,lionegosh,bolichano,pelichen,thundish,icish,pulsul,weedle,colossio,soie
+Marble Wy|pikish,bolichano,pelichen,thundish,pulsul,prawby,colossio
+Union Sea|pikish,bolichano,pelichen,thundish,pulsul,prawby,colossio
+North Sea|pikish,lionegosh,bolichano,pelichen,thundish,mechcrab,shellder,bobcrab,colossio,absol
+Broke Cave|pikish,arbatross,bolichano,pelichen,thundish,icish,prawby,flosea,colossio,whola
+Mt. Niveous|arbatross,bolichano,pelichen,thundish,icish,pikish,prawby,colossio,whola
+Safari Zone|pikish,lionegosh,bolichano,pelichen,thundish,icish,flosea,colossio,whola
+{fc}{1}{2}oil Platform|weedle,hovebug,absol,whola,pikish,flosea,weedalgu,colossio
+Darkness Forest|pikish,bolichano,pelichen,thundish,icish,colossio,tincrab,flysh
+Greenie Cave|pikish,lionegosh,bolichano,pelichen,colossio,thundish,icish,whola
+Generator Cv|pikish,lionegosh,bolichano,pelichen,thundish,icish,colossio,whola
+Man{2} Nests|pulsul,koropul,pikish,thundish,colossio,icish,dolphe,whola
+Castle|pulsul,koropul,bolichano,pelichen,pikish,thundish,colossio,icish,shacker,whola
+Rock Cn|bolichano,pelichen,searoket,crabbix,prawby,aenguile,dzocbix,prawking
+Gull Sea|pikish,lionegosh,bolichano,pelichen,soie,racevish,loddish,flosea,colossio,corongori,whola
+City Sewer|bellyo,trodic,tidalo,berchi,monkoor
+Descomune|shacker,bellyo,trodic,tidalo,berchi
+Forbidden Rooms|shacker,bellyo,trodic,tidalo,berchi

@@ -1,0 +1,918 @@
+==========
+Map: 001 - Weed Sea
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 5-35): Bagon (100%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-10): Thundish (70%), Piscy (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 10-30): Thundish (60%), Etod (20%), Searoket (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 20-45): Dolphe (56%), Ektron (44%)
+Additional SOS encounters: (None)
+==========
+Map: 002 - Flow. Bch
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 5-35): Pikish (60%), Bolichano (35%), Pelichen (4%), Lionegosh (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-10): Thundish (70%), Pikish (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 10-30): Thundish (60%), Mechcrab (20%), Bobcrab (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 20-45): Colossio (56%), Bobcrab (44%)
+Additional SOS encounters: (None)
+==========
+Map: 003 - Deathland
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 5-35): Pikish (60%), Bolichano (35%), Pelichen (4%), Arbatross (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-10): Tincrab (70%), Pikish (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 10-30): Prawby (60%), Pikish (20%), Corongori (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 25-45): Prawking (55%), Corongori (40%), Colossio (5%)
+Additional SOS encounters: (None)
+==========
+Map: 004 - Grey Hl
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 5-35): Pikish (60%), Bolichano (35%), Pelichen (5%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-10): Thundish (70%), Pikish (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 10-30): Thundish (60%), Pikish (20%), Colossio (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 25-45): Colossio (60%), Whola (40%)
+Additional SOS encounters: (None)
+==========
+Map: 005 - Boar Hl
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 5-35): Piscy (99%), Dolphe (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-15): Piscy (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 10-30): Piscy (100%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 5-45): Piscy (80%), Dolphe (15%), Thundran (5%)
+Additional SOS encounters: (None)
+==========
+Map: 006 - Green Wy
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 5-35): Pikish (60%), Bolichano (35%), Pelichen (5%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-10): Berchi (70%), Pikish (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 10-30): Berchi (60%), Colossio (20%), Tincrab (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 30-45): Colossio (45%), Tincrab (40%), Flysh (15%)
+Additional SOS encounters: (None)
+==========
+Map: 007 - Underwater (A)
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 21-25): Nole (40%), Minun (35%), Cloyster (10%), Stargo (10%), Porygon (5%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 15-35): Dolphe (95%), Flygon (5%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-10): Thundish (70%), Piscy (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 10-30): Thundish (60%), Piscy (20%), Flygon (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 20-45): Dolphe (56%), Flygon (44%)
+Additional SOS encounters: (None)
+==========
+Map: 008 - Underwater (B)
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 28-34): Sespiral (20%), Jackan (20%), Bubel (10%), Beetespuk (10%), Amede (10%), Amedi (10%), Liofang (10%), Sneetchy (8%), Agoir (1%), Copykatte (1%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 15-26): Jackan (60%), Eloru (30%), Zhipo (5%), Absol (4%), Aenguile (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-10): Thundish (70%), Racevish (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 10-30): Thundish (60%), Aenguile (20%), Racevish (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 20-45): Absol (44%), Loddish (41%), Aenguile (15%)
+Additional SOS encounters: (None)
+==========
+Map: 009 - Underwater (C)
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 29-31): Sespiral (20%), Freion (20%), Bubel (10%), Thinkower (10%), Tankoo (10%), Amede (10%), Amedi (10%), Agoir (8%), Sneetchy (1%), Mimikyu Disguised (1%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 10-30): Jackan (65%), Zhipo (30%), Hovebug (4%), Planebug (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-20): Thundish (70%), Racevish (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-30): Thundish (60%), Aenguile (20%), Racevish (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 20-45): Absol (44%), Loddish (41%), Aenguile (15%)
+Additional SOS encounters: (None)
+==========
+Map: 010 - Underwater (D)
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 5-35): Eloru (60%), Bolichano (35%), Pelichen (5%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-10): Thundish (70%), Etod (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 10-30): Thundish (60%), Etod (20%), Absol (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 25-45): Ektron (40%), Whola (40%), Absol (15%), Colossio (5%)
+Additional SOS encounters: (None)
+==========
+Map: 011 - Underwater (E)
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 29-32): Acornel (30%), Tigator (20%), Amaura (15%), Fatte (15%), Furret (10%), Gurtan (10%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 5-35): Pikish (60%), Bolichano (35%), Pelichen (4%), Lionegosh (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-10): Piscy (70%), Pikish (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 10-30): Piscy (60%), Pikish (20%), Colossio (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 20-45): Colossio (100%)
+Additional SOS encounters: (None)
+==========
+Map: 012 - Downhill Tunnel
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 10-13): Tigat (25%), Furret (20%), Hurgoose (20%), Opail (20%), Madnut (15%)
+Additional SOS encounters: (None)
+==========
+Map: 013 - Mystery Island (A)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 10-14): Energiz (40%), Gustano (30%), Klang (20%), Jonic (10%)
+Additional SOS encounters: (None)
+==========
+Map: 014 - Mystery Island (B)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 13-15): Jonic (25%), Nole (20%), Energiz (20%), Opail (15%), Klang (10%), Minun (10%)
+Additional SOS encounters: (None)
+==========
+Map: 015 - Mystery Island (C)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 14-16): Klang (20%), Jonic (20%), Gustano (20%), Opail (20%), Catalon (15%), Hooley (5%)
+Additional SOS encounters: (None)
+Table 3 [rockSmash] (All):
+Encounters (Levels 5-20): Gustano (91%), Rocorrodo (9%)
+Additional SOS encounters: (None)
+==========
+Map: 016 - Mystery Island (D)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 10-14): Nole (50%), Opail (44%), Shega (6%)
+Additional SOS encounters: (None)
+==========
+Map: 017 - Cauldron
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 6-8): Bagon (30%), Larvly (25%), Gusvolts (20%), Strawbaya (10%), Chuk Txu (9%), Gui14ette (6%)
+Additional SOS encounters: (None)
+==========
+Map: 018 - Sea Cavern (A)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 26-33): Fungio (40%), Catalon (25%), Gappy (20%), Magiken (10%), Eyendy (5%)
+Additional SOS encounters: (None)
+==========
+Map: 019 - Sea Cavern (B)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 26-33): Fungio (40%), Catalon (25%), Gappy (20%), Magiken (9%), Eyendy (5%), Phico (1%)
+Additional SOS encounters: (None)
+==========
+Map: 020 - Sea Cavern (C)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 29-33): Gappy (25%), Ivoro (20%), Vogoo (15%), Vamkiri (15%), Tejemeje (10%), Betal (10%), Bludlop (5%)
+Additional SOS encounters: (None)
+==========
+Map: 021 - Inside of Truck (A)
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 5-35): Pikish (60%), Pulsul (39%), Koropul (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-10): Thundish (70%), Pikish (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-30): Icish (60%), Pikish (20%), Colossio (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 20-45): Colossio (100%)
+Additional SOS encounters: (None)
+==========
+Map: 022 - Inside of Truck (B)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 28-36): Klang (25%), Jonic (25%), Dodrio (25%), Kinboxo (21%), Sangai (4%)
+Additional SOS encounters: (None)
+==========
+Map: 023 - Inside of Truck (C)
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 28-36): Klang (25%), Jonic (25%), Dodrio (25%), Kinboxo (21%), Sangai (4%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 5-35): Pikish (60%), Pulsul (40%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-10): Thundish (70%), Pikish (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-30): Icish (60%), Pikish (20%), Colossio (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 20-45): Colossio (100%)
+Additional SOS encounters: (None)
+==========
+Map: 024 - Inside of Truck (D)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 28-36): Dodrio (25%), Garedar (20%), Garsoom (15%), Farizard (15%), Llamayama (15%), Chimneyama (10%)
+Additional SOS encounters: (None)
+==========
+Map: 025 - Secret Base (A)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 40-46): Minadoom (25%), Punchzo (20%), Iguagon (15%), Gemmal (15%), Monkoodu (10%), Cornodro (10%), Hooley (5%)
+Additional SOS encounters: (None)
+==========
+Map: 026 - Secret Base (B)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 20-46): Minadoom (25%), Groudon (20%), Musclelc (20%), Monkoodu (15%), Cornodro (15%), Crogronk (5%)
+Additional SOS encounters: (None)
+Table 3 [rockSmash] (All):
+Encounters (Levels 30-40): Dodrio (70%), Jonic (30%)
+Additional SOS encounters: (None)
+==========
+Map: 027 - Secret Base (C)
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 20-46): Minadoom (25%), Groudon (20%), Musclelc (20%), Monkoodu (15%), Cornodro (15%), Crogronk (5%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 25-40): Soie (94%), Corongori (6%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-10): Thundish (70%), Piscy (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-30): Icish (60%), Piscy (20%), Thundran (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 25-45): Corongori (44%), Dolphe (41%), Thundran (15%)
+Additional SOS encounters: (None)
+==========
+Map: 028 - Wild Temple (A)
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 30-36): Colossio (30%), Bernardog (28%), Mechcrab (22%), Vamkiri (10%), Bobcrab (5%), Rescudog (5%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 5-35): Colossio (70%), Absol (30%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-10): Pikish (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 10-30): Pikish (80%), Colossio (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 20-45): Colossio (100%)
+Additional SOS encounters: (None)
+==========
+Map: 029 - Wild Temple (B)
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 30-36): Colossio (30%), Bernardog (28%), Mechcrab (22%), Vamkiri (10%), Bobcrab (5%), Rescudog (5%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 5-35): Colossio (69%), Absol (30%), Descomune (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-10): Thundish (70%), Pikish (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 10-30): Thundish (60%), Pikish (20%), Colossio (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 20-45): Colossio (100%)
+Additional SOS encounters: (None)
+==========
+Map: 030 - Wild Temple (C)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 30-36): Colossio (30%), Bernardog (28%), Mechcrab (22%), Vamkiri (10%), Bobcrab (5%), Rescudog (5%)
+Additional SOS encounters: (None)
+==========
+Map: 031 - Wild Temple (D)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 30-36): Bernardog (30%), Opail (20%), Vamkiri (15%), Colossio (15%), Bobcrab (10%), Rescudog (5%), Hompalon (5%)
+Additional SOS encounters: (None)
+==========
+Map: 032 - Wild Temple (E)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 30-36): Coldchick (20%), Spinwing (20%), Saximaux (15%), Norion (10%), Phantan (10%), Freezock (10%), Bobeguin (10%), Polbear (5%)
+Additional SOS encounters: (None)
+==========
+Map: 033 - Wild Temple (F)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 30-36): Opail (30%), Norion (20%), Bobcrab (15%), Vamkiri (15%), Hompalon (10%), Phantan (5%), Colossio (5%)
+Additional SOS encounters: (None)
+==========
+Map: 034 - Nature Temple (A)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 26-30): Spiki (50%), Grasspark (50%)
+Additional SOS encounters: (None)
+==========
+Map: 035 - Nature Temple (B)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 26-30): Spingen (30%), Spiki (20%), Plug Oink (14%), Covolts (10%), Armay (10%), Armstorm (10%), Arbeluc (4%), Lucivolts (1%), Emethe (1%)
+Additional SOS encounters: (None)
+==========
+Map: 036 - Olympic Catacomb
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 5-35): Pikish (99%), Lionegosh (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-10): Pikish (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 10-30): Pikish (100%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 20-35): Pikish (80%), Lionegosh (20%)
+Additional SOS encounters: (None)
+==========
+Map: 037 - Lilac Wy
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 2-4): Squirriti (36%), Sever (21%), Batoka (20%), Larvesta (15%), Ornlil (8%)
+Additional SOS encounters: (None)
+==========
+Map: 038 - Purple Sh
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 3-4): Sever (26%), Reabari (25%), Squirriti (20%), Verpillar (14%), Bzby (11%), Hamet (4%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 5-35): Bagon (95%), Hovebug (5%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-10): Thundish (70%), Piscy (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 10-30): Thundish (60%), Etod (20%), Searoket (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 20-45): Dolphe (56%), Ektron (44%)
+Additional SOS encounters: (None)
+==========
+Map: 039 - White Jng
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 5-8): Bolichano (30%), Weedle (20%), Beavy (20%), Kiwirawa (10%), Reabari (10%), Semilleto (9%), Potac (1%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 10-30): Bolichano (95%), Pelichen (5%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-10): Soie (70%), Piscy (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 10-30): Soie (60%), Piscy (20%), Corongori (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 20-45): Dolphe (44%), Lionegosh (41%), Corongori (15%)
+Additional SOS encounters: (None)
+==========
+Map: 040 - White Rd
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 5-35): Pikish (60%), Bolichano (35%), Pelichen (4%), Lionegosh (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-10): Thundish (70%), Pikish (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 10-30): Thundish (60%), Pikish (20%), Corongori (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 20-45): Corongori (40%), Whola (40%), Absol (15%), Colossio (5%)
+Additional SOS encounters: (None)
+==========
+Map: 041 - Marble Lk
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 5-35): Pikish (60%), Bolichano (35%), Pelichen (4%), Lionegosh (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-10): Thundish (70%), Pikish (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 10-30): Thundish (60%), Pikish (20%), Icish (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 20-45): Pulsul (40%), Soie (40%), Weedle (15%), Colossio (5%)
+Additional SOS encounters: (None)
+==========
+Map: 042 - Marble Wy
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 5-35): Pikish (60%), Bolichano (35%), Pelichen (5%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-10): Thundish (70%), Pikish (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 10-30): Thundish (60%), Pikish (20%), Bolichano (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 20-45): Prawby (80%), Pulsul (15%), Colossio (5%)
+Additional SOS encounters: (None)
+==========
+Map: 043 - Union Sea
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 5-35): Pikish (60%), Bolichano (35%), Pelichen (5%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-10): Thundish (70%), Pikish (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 10-30): Thundish (80%), Pikish (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 20-45): Pulsul (55%), Prawby (40%), Colossio (5%)
+Additional SOS encounters: (None)
+==========
+Map: 044 - North Sea
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 5-35): Pikish (60%), Bolichano (35%), Pelichen (4%), Lionegosh (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-10): Thundish (70%), Pikish (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 10-30): Thundish (60%), Mechcrab (20%), Shellder (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 20-45): Absol (44%), Colossio (41%), Bobcrab (15%)
+Additional SOS encounters: (None)
+==========
+Map: 045 - Tower Sea
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 17-18): Bolichano (25%), Salama (20%), Sproof (15%), Plug Oink (15%), Grecodale (10%), Apinep (10%), Fairoot (5%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 5-35): Eloru (60%), Bagon (35%), Bolichano (5%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-10): Thundish (70%), Etod (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 10-30): Thundish (60%), Aenguile (20%), Etod (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 20-45): Ektron (56%), Aenguile (44%)
+Additional SOS encounters: (None)
+==========
+Map: 046 - Grey Swp
+Tables: 6
+Table 1 [grass] (All):
+Encounters (Levels 26-30): Nole (35%), Cactino (20%), Simpleon (20%), Tikika (10%), Golduck (9%), Cacutu (5%), Dessertea (1%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 5-35): Bagon (99%), Hovebug (1%)
+Additional SOS encounters: (None)
+Table 3 [rockSmash] (All):
+Encounters (Levels 5-20): Rocorrodo (100%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-10): Thundish (70%), Soie (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 10-30): Thundish (60%), Soie (20%), Corongori (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 20-45): Ektron (56%), Corongori (44%)
+Additional SOS encounters: (None)
+==========
+Map: 047 - Ditch Sea
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 18-20): Nole (25%), Hormig (20%), Burnco (15%), Tarsony (15%), Tikika (10%), Flachow (10%), Coalchar (5%)
+Additional SOS encounters: (None)
+==========
+Map: 048 - Elbow Sea
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 21-23): Catalon (24%), Deemp (20%), Deprip (20%), Medrake (15%), Fatube (11%), Onix (5%), Gritespec (5%)
+Additional SOS encounters: (None)
+==========
+Map: 049 - Fake Sea
+Tables: 6
+Table 1 [grass] (All):
+Encounters (Levels 21-24): Bounny (30%), Zeeco (25%), Ivoro (20%), Armay (10%), Armstorm (10%), Blahdalah (5%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 5-35): Bagon (99%), Hovebug (1%)
+Additional SOS encounters: (None)
+Table 3 [rockSmash] (All):
+Encounters (Levels 5-20): Gustano (65%), Rocorrodo (35%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-10): Piscy (70%), Soie (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 10-30): Piscy (60%), Soie (20%), Corongori (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 20-45): Dolphe (56%), Corongori (44%)
+Additional SOS encounters: (None)
+==========
+Map: 050 - Muddy Sea
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 26-30): Klang (20%), Plug Oink (20%), Urtigere (15%), Urtigoro (15%), Morkibia (10%), Leirao (10%), Fatte (5%), Spig (5%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 5-35): Pikish (60%), Bolichano (35%), Pelichen (4%), Lionegosh (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-10): Icish (70%), Pikish (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 10-30): Icish (60%), Koropul (20%), Pikish (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 20-45): Koropul (95%), Colossio (5%)
+Additional SOS encounters: (None)
+==========
+Map: 051 - Muddy Cr
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 10-13): Urtiga (20%), Urtigo (20%), Bagon (15%), Semilleto (10%), Moroberry (10%), Reabari (10%), Tigat (10%), Ronslept (5%)
+Additional SOS encounters: (None)
+==========
+Map: 052 - Grand Cr
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 17-18): Coldchick (25%), Spinwing (25%), Jarximaux (20%), Teamon (15%), Fentee (10%), Karidari (5%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 5-35): Bagon (99%), Hovebug (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-10): Icish (70%), Piscy (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 10-30): Icish (60%), Piscy (20%), Dolphe (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 20-45): Ektron (56%), Dolphe (44%)
+Additional SOS encounters: (None)
+==========
+Map: 053 - Seablu Cr
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 28-31): Bagon (34%), Energiz (31%), Salama (30%), Coccnuto (5%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 5-35): Pikish (60%), Bolichano (35%), Pelichen (4%), Lionegosh (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-10): Pikish (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 10-30): Pikish (80%), Absol (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 20-45): Absol (60%), Whola (40%)
+Additional SOS encounters: (None)
+==========
+Map: 054 - Broke Cave
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 5-35): Pikish (60%), Bolichano (35%), Pelichen (4%), Arbatross (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-10): Thundish (70%), Icish (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-30): Prawby (60%), Pikish (20%), Flosea (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 25-45): Whola (55%), Flosea (40%), Colossio (5%)
+Additional SOS encounters: (None)
+==========
+Map: 055 - Mt. Niveous
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 5-30): Arbatross (94%), Bolichano (5%), Pelichen (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-10): Thundish (70%), Icish (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-30): Pikish (60%), Prawby (20%), Colossio (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 25-45): Colossio (60%), Whola (40%)
+Additional SOS encounters: (None)
+==========
+Map: 056 - Safari Zone
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 5-35): Pikish (60%), Bolichano (35%), Pelichen (4%), Lionegosh (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-10): Thundish (70%), Icish (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-30): Pikish (80%), Flosea (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 25-45): Whola (55%), Flosea (40%), Colossio (5%)
+Additional SOS encounters: (None)
+==========
+Map: 057 - {fc}{1}{2}oil Platform
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 5-30): Absol (64%), Weedle (30%), Hovebug (5%), Whola (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-25): Pikish (70%), Weedle (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 10-30): Pikish (60%), Weedle (20%), Absol (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 25-45): Flosea (40%), Whola (40%), Weedalgu (15%), Colossio (5%)
+Additional SOS encounters: (None)
+==========
+Map: 058 - Darkness Forest
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 5-35): Pikish (60%), Bolichano (35%), Pelichen (5%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-10): Thundish (70%), Icish (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 10-30): Thundish (60%), Colossio (20%), Tincrab (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 30-45): Colossio (45%), Tincrab (40%), Flysh (15%)
+Additional SOS encounters: (None)
+==========
+Map: 059 - Greenie Cave
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 5-40): Pikish (60%), Bolichano (30%), Pelichen (5%), Lionegosh (4%), Colossio (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-10): Thundish (70%), Pikish (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-30): Icish (60%), Pikish (20%), Colossio (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 25-45): Colossio (60%), Whola (40%)
+Additional SOS encounters: (None)
+==========
+Map: 060 - S.S. Anne
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 5-50): Phico (100%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 5-35): Pikish (60%), Bolichano (35%), Pelichen (4%), Lionegosh (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-10): Thundish (70%), Pikish (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-30): Icish (60%), Pikish (20%), Colossio (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 25-45): Colossio (60%), Whola (40%)
+Additional SOS encounters: (None)
+==========
+Map: 061 - Generator Cv
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 5-35): Pikish (60%), Bolichano (35%), Pelichen (4%), Lionegosh (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-10): Thundish (70%), Icish (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 10-30): Pikish (80%), Colossio (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 25-45): Colossio (60%), Whola (40%)
+Additional SOS encounters: (None)
+==========
+Map: 062 - Man{2} Nests
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 5-35): Pulsul (99%), Koropul (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-10): Thundish (70%), Pikish (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-30): Icish (60%), Pikish (20%), Colossio (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 25-45): Whola (44%), Dolphe (41%), Colossio (15%)
+Additional SOS encounters: (None)
+==========
+Map: 063 - Castle
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 5-35): Pulsul (90%), Bolichano (5%), Pelichen (4%), Koropul (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-10): Thundish (70%), Pikish (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 5-30): Icish (60%), Pikish (20%), Colossio (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 25-45): Whola (44%), Shacker (41%), Colossio (15%)
+Additional SOS encounters: (None)
+==========
+Map: 064 - Olde Age Island (A)
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 25-32): Waseo (25%), Turkur (25%), Streek (20%), Ankori (15%), Cwabay (10%), Boultan (5%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 20-40): Poocher (66%), Gallum (34%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-10): Crabbix (70%), Poocher (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 10-30): Crabbix (60%), Poocher (20%), Wappy (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 25-40): Koropul (44%), Dzocbix (41%), Wappy (15%)
+Additional SOS encounters: (None)
+==========
+Map: 065 - Olde Age Island (B)
+Tables: 2
+Table 1 [grass] (All):
+Encounters (Levels 23-31): Trufkie (30%), Darkoon (25%), Ankori (20%), Bethin (15%), Captrunke (10%)
+Additional SOS encounters: (None)
+Table 3 [rockSmash] (All):
+Encounters (Levels 5-25): Verpillar (95%), Crogronk (5%)
+Additional SOS encounters: (None)
+==========
+Map: 066 - Olde Age Island (C)
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 23-31): Armorito (20%), Plug Oink (20%), Turkur (15%), Darkoon (15%), Sikedonke (10%), Bankedon (10%), Spig (10%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 20-35): Poocher (65%), Gallum (34%), Pulsul (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-10): Crabbix (70%), Poocher (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 10-30): Crabbix (60%), Poocher (20%), Wappy (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 25-40): Koropul (44%), Dzocbix (41%), Wappy (15%)
+Additional SOS encounters: (None)
+==========
+Map: 067 - Olde Age Island (D)
+Tables: 1
+Table 1 [grass] (All):
+Encounters (Levels 23-31): Waseo (20%), Turkur (20%), Streek (16%), Urtigoro (14%), Armorito (14%), Urtigere (11%), Ninjice (5%)
+Additional SOS encounters: (None)
+==========
+Map: 068 - Rock Cn
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 5-35): Searoket (60%), Bolichano (35%), Pelichen (5%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-10): Prawby (70%), Crabbix (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 10-30): Prawby (60%), Crabbix (20%), Aenguile (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 20-45): Prawking (44%), Dzocbix (41%), Aenguile (15%)
+Additional SOS encounters: (None)
+==========
+Map: 069 - Gull Sea
+Tables: 4
+Table 2 [surf] (All):
+Encounters (Levels 5-35): Pikish (60%), Soie (30%), Bolichano (5%), Pelichen (4%), Lionegosh (1%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 5-10): Soie (70%), Racevish (30%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 10-30): Soie (80%), Racevish (20%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 25-45): Flosea (40%), Whola (40%), Corongori (15%), Colossio (4%), Loddish (1%)
+Additional SOS encounters: (None)
+==========
+Map: 070 - City Sewer
+Tables: 1
+Table 2 [surf] (All):
+Encounters (Levels 19-39): Berchi (60%), Trodic (30%), Bellyo (5%), Tidalo (4%), Monkoor (1%)
+Additional SOS encounters: (None)
+==========
+Map: 071 - Descomune
+Tables: 1
+Table 2 [surf] (All):
+Encounters (Levels 19-39): Berchi (60%), Trodic (30%), Bellyo (5%), Tidalo (4%), Shacker (1%)
+Additional SOS encounters: (None)
+==========
+Map: 072 - Star Temple
+Tables: 5
+Table 1 [grass] (All):
+Encounters (Levels 10-15): Turtwig (100%)
+Additional SOS encounters: (None)
+Table 2 [surf] (All):
+Encounters (Levels 10-15): Turtwig (100%)
+Additional SOS encounters: (None)
+Table 4 [oldRod] (All):
+Encounters (Levels 1-10): Turtwig (100%)
+Additional SOS encounters: (None)
+Table 5 [goodRod] (All):
+Encounters (Levels 1-20): Turtwig (100%)
+Additional SOS encounters: (None)
+Table 6 [superRod] (All):
+Encounters (Levels 5-40): Turtwig (100%)
+Additional SOS encounters: (None)
+==========
+Map: 073 - Forbidden Rooms
+Tables: 1
+Table 2 [surf] (All):
+Encounters (Levels 19-39): Berchi (60%), Trodic (30%), Bellyo (5%), Tidalo (4%), Shacker (1%)
+Additional SOS encounters: (None)
