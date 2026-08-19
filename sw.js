@@ -52,6 +52,12 @@
 // v7 — manifest.json orientation changed (natural -> any) + a phone-landscape
 // rotate-to-portrait guard added in index.html. manifest.json is a cache-first
 // shell asset, so bump to re-cache it (index.html is network-first already).
+// v105 — TRE Johto added and Unbound's league data rebuilt from the cartridge.
+// data.bundle.js is a PRECACHED shell asset, so installed clients keep serving
+// the old copy until SHELL_CACHE changes and the activate sweep evicts it. The
+// index.html ?v= cache-buster alone is not enough for them: it only helps once
+// the new index.html is itself in play. Any deploy that changes bundled DATA has
+// to bump this constant — the v5/v6 notes above are the same lesson.
 // v8 — manifest.json orientation set to "portrait" (hard lock for installed
 // Android PWAs; the JS screen.orientation.lock fallback alone was unreliable).
 // Re-cache the new manifest.
@@ -81,7 +87,7 @@
 // v49 — widen the ghost-click guard to 800ms + log the OPEN/CLOSE/SWALLOW lifecycle in
 // the tap debugger so we can see whether the modal/menu opens then gets closed and by
 // what (confirms if the guard is catching the handheld's phantom duplicate click).
-const SHELL_CACHE = 'nuz-shell-v104';
+const SHELL_CACHE = 'nuz-shell-v105';
 // v2 — all self-hosted artwork sprites (sprites/art*, sprites/pixel* unchanged)
 // were regenerated (trimmed/normalized). Sprites are served cache-first as
 // "immutable", so without a bump existing clients would keep the old artwork
