@@ -3,76 +3,76 @@
 #######################
 
 --1|Annette|bug|
-pineco|12||||||
-rollder|14||||||
-shuckle|15||||||
+pineco|12|protect,selfdestruct,double-spin,take-down|||||
+rollder|14|defense-curl,leech-life,sand-attack,rollout|||||
+shuckle|15|deep-yawn,struggle-bug,encore,wrap|||||
 
 --2|Geoff|ground|
-rhyhorn|21||||||
-hitmonchan|23||||||
-dugtrio|24||||||
+rhyhorn|21|tail-whip,stomp,fury-attack,scary-face|||||
+hitmonchan|23|fire-punch,ice-punch,thunderpunch,psycho-punch|||||
+dugtrio|24|mud-slap,magnitude,bulldoze,burrow|||||
 
 --3|Brooke|water|
-starmie|30||||||
-floatzel|29||||||
-hydrush|28||||||
-kapwondo|30||||||
+starmie|30|recover,swift,rapid-spin,confuse-ray|||||
+floatzel|29|swift,aqua-jet,crunch,whirlpool|||||
+hydrush|28|confuse-ray,whirlpool,double-team,sludge|||||
+kapwondo|30|tickle,aqua-jet,smellingsalt,rain-dance|||||
 
 --4|Avery|normal|
-folifarig|38||||||
-miltank|37||||||
-grissly|38||||||
-porygon-z|39||||||
+folifarig|38|baton-pass,gravity-wave,mirror-coat,double-hit|||||
+miltank|37|body-slam,heart-stamp,attract,spin-tail|||||
+grissly|38|crush-claw,detect,drain-punch,scary-face|||||
+porygon-z|39|recover,charge-beam,signal-beam,recycle|||||
 
 --6|Fenton|ghost|
-jarmit|49||||||
-gengar|51||||||
-hantama|51||||||
-necrosia|52||||||
+jarmit|49|life-drain,grudge,shadow-ball,shadow-clamp|||||
+gengar|51|dream-eater,shadow-clamp,shadow-ball,dark-pulse|||||
+hantama|51|shadow-punch,shadow-claw,highjumpkick,swagger|||||
+necrosia|52|night-slash,corner,vengeance,shadow-claw|||||
 
 --7|Tara|psychic|
-kinegasus|54||||||
-metagross|55||||||
-bakeko|55||||||
-starmie|54||||||
-folifarig|56||||||
+kinegasus|54|air-cutter,wing-attack,aerial-ace,air-slash|||||
+metagross|55|iron-defense,agility,hammer-arm,meteor-mash|||||
+bakeko|55|swords-dance,night-slash,agility,inferno|||||
+starmie|54|rapid-spin,confuse-ray,gravity-wave,scald|||||
+folifarig|56|psychic,zen-headbutt,hidden-power,calm-mind|||||
 
 --8|Mewtwo|psychic|
-pikachu|63||||||
-scyther|63||||||
-venusaur|63||||||
-charizard|63||||||
-blastoise|63||||||
+pikachu|63|agility,discharge,light-screen,thunder|||||
+scyther|63|double-hit,angry-swarm,air-slash,swords-dance|||||
+venusaur|63|double-edge,synthesis,rapid-growth,solar-beam|||||
+charizard|63|slash,flamethrower,fire-spin,inferno|||||
+blastoise|63|skull-bash,iron-defense,rain-dance,hydro-pump|||||
 
 #######################
 #### Elite Four ####
 #######################
 
 --e1|Theodore|mixed|
-magnezone|69||||||
-electivire|69||||||
-blitzune|68||||||
-scimitooth|70||||||
-machu|71||||||
+magnezone|69|mirror-shot,thunderbolt,magnet-force,geo-impact|||||
+electivire|69|thunderbolt,screech,giga-spark,zap-cannon|||||
+blitzune|68|light-screen,thunderbolt,crunch,giga-spark|||||
+scimitooth|70|razor-wind,diamondblast,agility,grandboulder|||||
+machu|71|detect,wild-charge,bulk-up,dynamicpunch|||||
 
 --e2|Vanessa|mixed|
-nidoqueen|71||||||
-jarmit|70||||||
-nidoking|71||||||
-gengar|72||||||
-correncid|73||||||
+nidoqueen|71|sandstorm,earth-power,earthquake,superpower|||||
+jarmit|70|shadow-ball,shadow-clamp,slack-off,possess|||||
+nidoking|71|sandstorm,earth-power,earthquake,megahorn|||||
+gengar|72|dark-pulse,destiny-bond,possess,nightmare|||||
+correncid|73|acid-armor,sludge-wave,destiny-bond,toxin-spray|||||
 
 --e3|Irene|mixed|
-feroceros|73||||||
-forretress|74||||||
-lucario|74||||||
-skarmory|72||||||
-yunesis|75||||||
+feroceros|73|iron-head,metal-sound,metal-blast,horn-drill|||||
+forretress|74|double-edge,energize,zap-cannon,metal-blast|||||
+lucario|74|aura-sphere,close-combat,dragon-pulse,extremespeed|||||
+skarmory|72|x-scissor,roost,night-slash,metal-blast|||||
+yunesis|75|stardust,iron-head,geo-impact,metal-blast|||||
 
 --e4|Cole|mixed|
-magmortar|76||||||
-bakeko|74||||||
-astignite|75||||||
-solarisen|75||||||
-wisplode|77||||||
+magmortar|76|sunny-day,raging-flame,overheat,hyper-beam|||||
+bakeko|74|agility,inferno,calm-mind,flare-blitz|||||
+astignite|75|iron-head,metal-sound,meteor-mash,geo-impact|||||
+solarisen|75|dragon-rush,overheat,dragon-beat,sky-attack|||||
+wisplode|77|will-o-wisp,heat-wave,pain-split,inferno|||||
 

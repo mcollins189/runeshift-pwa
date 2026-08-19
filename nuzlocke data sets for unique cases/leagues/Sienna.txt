@@ -3,71 +3,71 @@
 #######################
 
 --1|Nancy|normal|
-eevee|15||||||
-granbull|18||||||
+eevee|15|tackle,tail-whip,helping-hand,sand-attack|||||
+granbull|18|scary-face,tail-whip,charm,bite|||||
 
 --2|Jaykob|fighting|
-makuhita|21||||||
-strinder|24||||||
+makuhita|21|sand-attack,arm-thrust,vital-throw,fake-out|||||
+strinder|24|low-kick,karate-chop,fury-swipes,focus-energy|||||
 
 --3|Haroun|fire|
-magcargo|20||||||
-mallmag|21||||||
-ninetales|23||||||
-charmeleon|26||||||
+magcargo|20|smog,yawn,ember,rock-throw|||||
+mallmag|21|water-gun,flame-wheel,sunny-day,flamethrower|||||
+ninetales|23|ember,quick-attack,confuse-ray,safeguard|||||
+charmeleon|26|ember,ember,metal-claw,smokescreen|||||
 
 --4|Nalani|electric|
-pikachu|26||||||
-flaaffy|26||||||
-ampharos|30||||||
+pikachu|26|quick-attack,double-team,slam,thunderbolt|||||
+flaaffy|26|growl,thundershock,thundershock,thunder-wave|||||
+ampharos|30|thundershock,thunder-wave,cotton-spore,thunderpunch|||||
 
 --5|Rickie|dark|
-crawdaunt|29||||||
-honchkrow|31||||||
-umbreon|31||||||
-viscamans|36||||||
+crawdaunt|29|leer,bubblebeam,protect,knock-off|||||
+honchkrow|31|wing-attack,swagger,shadow-punch|||||
+umbreon|31|sand-attack,pursuit,quick-attack,confuse-ray|||||
+viscamans|36|night-shade,confuse-ray,shadow-punch,dream-eater|||||
 
 --6|Geoffrey|flying|
-kiwisage|35||||||
-gliscor|35||||||
-crobat|37||||||
-flygon|40||||||
+kiwisage|35|peck,drill-peck,mirror-move,wing-attack|||||
+gliscor|35|swords-dance|||||
+crobat|37|bite,wing-attack,confuse-ray,air-cutter|||||
+flygon|40|faint-attack,sand-tomb,crunch,dragonbreath|||||
 
 --7|Sophie|dragon|
-dracumulus|42||||||
-dragonair|42||||||
-charizard|44||||||
-dragonite|46||||||
+dracumulus|42|leer,aurora-beam,hydro-cannon,fake-tears|||||
+dragonair|42|twister,dragon-rage,slam,agility|||||
+charizard|44|scary-face,flamethrower,wing-attack,slash|||||
+dragonite|46|twister,dragon-rage,slam,agility|||||
 
 #######################
 #### Elite Four ####
 #######################
 
 --e1|Will|mixed|
-jynx|48||||||
-ragician|48||||||
-grumpig|49||||||
-gardevoir|49||||||
-xatu|50||||||
+jynx|48|doubleslap,ice-punch,mean-look,fake-tears|||||
+ragician|48|future-sight,calm-mind,psychic,psycho-boost|||||
+grumpig|49|magic-coat,psychic,rest,snore|||||
+gardevoir|49|calm-mind,psychic,imprison,future-sight|||||
+xatu|50|teleport,future-sight,wish,confuse-ray|||||
 
 --e2|Koga|mixed|
-weezing|50||||||
-venomoth|50||||||
-shuritox|51||||||
-crobat|51||||||
-injectrile|52||||||
+weezing|50|sludge,smokescreen,haze,explosion|||||
+venomoth|50|stun-spore,gust,psybeam,sleep-powder|||||
+shuritox|51|seismic-toss,poison-tail,cross-chop,swagger|||||
+crobat|51|confuse-ray,air-cutter,mean-look,poison-fang|||||
+injectrile|52|minimize,screech,acid-armor,sludge-bomb|||||
 
 --e3|Bruno|mixed|
-hitmontop|51||||||
-hitmonlee|51||||||
-hitmonchan|52||||||
-lucario|52||||||
-machamp|54||||||
+hitmontop|51|counter,agility,detect,endeavor|||||
+hitmonlee|51|foresight,endure,mega-kick,reversal|||||
+hitmonchan|52|sky-uppercut,mega-punch,detect,counter|||||
+lucario|52|swords-dance,cross-chop,dragonbreath,extremespeed|||||
+machamp|54|vital-throw,submission,cross-chop,scary-face|||||
 
 --e4|Karen|mixed|
-absol|52||||||
-viscamans|52||||||
-houndoom|53||||||
-honchkrow|53||||||
-umbreon|55||||||
+absol|52|double-team,slash,future-sight,perish-song|||||
+viscamans|52|hydro-cannon,shadow-ball,frenzy-plant,blast-burn|||||
+houndoom|53|bite,odor-sleuth,faint-attack,flamethrower|||||
+honchkrow|53|swagger,shadow-punch,shadow-ball,hyper-beam|||||
+umbreon|55|faint-attack,mean-look,screech,moonlight|||||
 
