@@ -13,6 +13,32 @@
 
 # Gym leaders 1 and 3-8 are read from the CARTRIDGE (trainer block 543-566:
 # three consecutive entries per leader, one per difficulty, weakest first).
+# Gyms are filled for all three difficulties: plain keys = Vanilla,
+ teams, confirmed against a live battle.
+#
+# EVERYTHING ELSE here — gym 2, the Elite Four, champion, rivals, mini-bosses,
+# shadow bosses and every _exp variant — is still the original Reddit-sourced
+# data and is NOT verified. That source had gym 1 wrong in both levels and
+# species, so treat the remainder as unconfirmed until checked against the ROM.
+#
+# Regenerate with _converters/unbound-bosses-to-txt.mjs
+# (UNBOUND_DIFFICULTY=1 or 2 for the harder teams).
+
+# Gym leaders 1 and 3-8 are read from the CARTRIDGE (trainer block 543-566:
+# three consecutive entries per leader, one per difficulty, weakest first).
+# Gyms are filled for all three difficulties: plain keys = Vanilla,
+ teams, confirmed against a live battle.
+#
+# EVERYTHING ELSE here — gym 2, the Elite Four, champion, rivals, mini-bosses,
+# shadow bosses and every _exp variant — is still the original Reddit-sourced
+# data and is NOT verified. That source had gym 1 wrong in both levels and
+# species, so treat the remainder as unconfirmed until checked against the ROM.
+#
+# Regenerate with _converters/unbound-bosses-to-txt.mjs
+# (UNBOUND_DIFFICULTY=1 or 2 for the harder teams).
+
+# Gym leaders 1 and 3-8 are read from the CARTRIDGE (trainer block 543-566:
+# three consecutive entries per leader, one per difficulty, weakest first).
 # This file carries the VANILLA teams, confirmed against a live battle.
 #
 # EVERYTHING ELSE here — gym 2, the Elite Four, champion, rivals, mini-bosses,
@@ -200,11 +226,11 @@ metagross|65@6,252,,,,252|meteor-mash,zen-headbutt,hammer-arm,agility|clear-body
 flabebe|15|vine-whip,fairy-wind,lucky-chant,razor-leaf|||||
 gloom|16|acid,sweet-scent,mega-drain,poisonpowder|||||
 
---2|Vega|dark|/leaders/unbound-vega@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
+--2|Vega|dark|
 ==info:<p><b>Negative Energy</b><br/>A negative energy fills the battlefield and makes every non-Dark, non-Ghost and non-Psychic type Pokémon take 6.25% damage at the end of every turn.</p>
-liepard|26|thief,fury-swipes,pursuit,fake-out|limber||||hardy
-absol|27|thief,slash,feint,pursuit|pressure||||hardy
-sneasel|25|thief,icy-wind,metal-claw,fake-out|keen-eye|dark-gem|||hardy
+liepard|22|fake-out,fury-swipes,pursuit,torment|||||
+absol|23|assurance,detect,knock-off,taunt|||||
+sneasel|21|taunt,quick-attack,metal-claw,icy-wind|||||
 
 --3|Alice|flying|
 ==info:<p><b>Tailwind</b><br />A permanent tailwind effect for Flying-Types</p>
@@ -260,19 +286,20 @@ gloom|21|apple-acid,moonblast,ingrain,sleep-powder||leftovers|||
 weedle|17|bug-bite,electroweb,poison-sting,string-shot||werpowder|||
 comfey|18|drain-kiss,helping-hand,flower-guard,floral-heal||leftovers|||
 
---2_exp|Vega|dark|/leaders/unbound-vega@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
+--2_exp|Vega|dark|
 ==info:<p><b>Negative Energy</b><br/>A negative energy fills the battlefield and makes every non-Dark, non-Ghost and non-Psychic type Pokémon take 6.25% damage at the end of every turn.</p>
-liepard|26@6,252,,,,252|thief,play-rough,fake-out,pursuit|unburden|lum-berry|||jolly
-absol|27@252,,252,,4|knock-off,psycho-cut,feint,pursuit|pressure||||impish
-weavile|27@252,,252,,4|punishment,ice-shard,swagger,fake-out|pressure|dark-gem|||impish
-honchkrow|26@,128,,128,,252|punishment,air-cutter,night-shade,swagger|super-luck||||naughty
+liepard|25|thief,play-rough,fake-out,pursuit||lum-berry|||
+absol|26|knock-off,psycho-cut,feint,pursuit|||||
+weavile|26|punishment,ice-shard,swagger,fake-out||dark-gem|||
+honchkrow|25|punishment,air-cutter,night-shade,swagger|||||
 
---2_ins|Vega|dark|/leaders/unbound-vega@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
+--2_ins|Vega|dark|
 ==info:<p><b>Negative Energy</b><br/>A negative energy fills the battlefield and makes every non-Dark, non-Ghost and non-Psychic type Pokémon take 6.25% damage at the end of every turn.</p>
-liepard|26@6,252,,,,252|thief,play-rough,fake-out,pursuit|unburden|lum-berry|||jolly
-absol|27@252,,252,,4|knock-off,psycho-cut,feint,pursuit|pressure||||impish
-weavile|27@252,,252,,4|punishment,ice-shard,swagger,fake-out|pressure|dark-gem|||impish
-honchkrow|26@,128,,128,,252|punishment,air-cutter,night-shade,swagger|super-luck||||naughty
+liepard|25|night-daze,jealous-burn,thunder-wave,fake-out||focus-sash|||
+absol|26|knock-off,close-combat,play-rough,swords-dance||absolite|||
+spiritomb|26|hex,will-o-wisp,calm-mind,protect||leftovers|||
+honchkrow|25|oblivionwing,heat-wave,protect,roost||big-root|||
+pawniard|25|iron-head,night-slash,swords-dance,protect||eviolite|||
 
 --3_exp|Alice|flying|
 ==info:<p><b>Tailwind</b><br />A permanent tailwind effect for Flying-Types</p>
@@ -376,148 +403,135 @@ volcarona|61|bug-buzz,overheat,wild-charge,flare-blitz||eviolite|||
 scizor|62|bug-bite,bullet-punch,dualwingbeat,swords-dance||scizorite|||
 flygon|62|earthquake,clang-scales,heat-wave,crunch||life-orb|||
 
---e1|Moleman|ground|/leaders/unbound-moleman@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
-==effect:sandstorm|info:<p><b>Vicious Sandstorm</b><br />Vicious sand causes Pokémon to lose ⅛ of max HP at the end of every turn</p>|double:true
-excadrill|74|earthquake,iron-head,rock-slide,protect|sand-rush||||hardy
-flygon|76@6,,,252,,252|dragon-pulse,earth-power,heat-wave,boomburst|levitate|ground-gem|||modest
-sandslash|76@252,,4,,252|earthquake,rock-slide,leech-fang,protect|sand-rush||||careful
-quagsire|74@252,,4,,252|muddy-water,recover,yawn,protect|water-absorb|sitrus-berry|||calm
-gliscor|75|earthquake,rock-slide,acrobatics,roost|sand-veil||||hardy
-
---e2|Elias|ghost|/leaders/unbound-elias@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
-==info:<p><b>Shadowy Veil</b><br />Every Ghost-type Pokémon take half damage on full HP. Ghost-types are immune to entry hazards at full HP. Other Types cannot use Safeguard or Substitute.</p>
-mimikyu-disguised|74|shadow-claw,play-rough,shadow-sneak,swords-dance|disguise||||hardy
-aegislash-shield|75@252,,252,,4|shadow-claw,sacred-sword,kings-shield,swords-dance|stance-change||||impish
-trevenant|75@252,,252,,4|poltergeist,horn-leech,leech-seed,will-o-wisp|harvest|sitrus-berry|||impish
-chandelure|76|shadow-ball,flamethrower,energy-ball,calm-mind|flash-fire||||hardy
-banette|76@252,,252,,4|poltergeist,sucker-punch,will-o-wisp,skitter-smack|insomnia/frisk/prankster|banettite|||impish
-
---e3|Arabella|fairy|/leaders/unbound-arrabella@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
-==effect:misty-terrain|info:<p><b>Fairy ring</b><br />All Fairy-Type Pokémon get a +1 boost to their lowest Defense stat on switch in.</p>
-ribombee|74@6,,,252,,252|moonblast,reflect,light-screen,sticky-web|shield-dust|focus-sash|||timid
-sylveon|75@252,,4,,252|moonblast,mystical-fire,psyshock,calm-mind|cute-charm||||calm
-togekiss|75|air-slash,moonblast,aura-sphere,wish|serene-grace||||hardy
-azumarill|76@252,,4,,252|aqua-tail,play-rough,superpower,aqua-jet|huge-power||||careful
-mawile|76|iron-head,play-rough,sucker-punch,swords-dance|intimidate/huge-power|mawilite|||hardy
-
---e4|Penny|dragon|/leaders/unbound-penny@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
-==double:true|info:<p><b>Rainbow Battle</b><br />All Dragon-type Pokémon on the field have their moves' secondary effect chance doubled. This stacks Serene Grace with the exception of flinching moves.</p>
-goodra|74@252,,252,,4|dragon-breath,muddy-water,thunderbolt,sludge-bomb|sap-sipper||||bold
-tyrantrum|75@252,,4,,252|dragon-claw,head-smash,crunch,fire-fang|rock-head||||careful
-kommo-o|75@6,,,252,252|clanging-scales,aura-sphere,hyper-voice,protect|bulletproof||||modest
-hydreigon|76|dragon-breath,dark-pulse,charge-beam,tailwind|levitate|roseli-berry|||hardy
-sceptile|76|dragon-pulse,giga-drain,rock-slide,protect|overgrow/technician|sceptilite|||hardy
-
---c|Jax||/leaders/unbound-jax@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
+--e1|Moleman|ground|
 ==double:true
-salamence|76|dragon-claw,hyper-voice,flamethrower,steel-wing|intimidate/aerilate|salamencite|||hardy
-hitmontop|74@252,,252,,4|close-combat,fake-out,helping-hand,wide-guard|intimidate|sitrus-berry|||impish
-magnezone|75|thunderbolt,flash-cannon,volt-switch,protect|sturdy|air-balloon|||hardy
-gastrodon|74@252,,252,,4|muddy-water,earth-power,icy-wind,protect|storm-drain|rindo-berry|||bold
-pyroar|76@6,,,252,,252|heat-wave,hyper-voice,scorching-sands,protect|unnerve|fire-gem|||modest
-staraptor|75|brave-bird,close-combat,u-turn,protect|intimidate|eject-pack|||hardy
-
-##### Expert difficulty
-
---e1_exp|Moleman|ground|/leaders/unbound-moleman@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
 ==effect:sandstorm|info:<p><b>Vicious Sandstorm</b><br />Vicious sand causes Pokémon to lose ⅛ of max HP at the end of every turn</p>|double:true
-excadrill|74@252,252,,,,6|earthquake,iron-head,rock-slide,protect|sand-rush|focus-sash|||adamant
-flygon|76@6,,,252,,252|clanging-scales,earth-power,heat-wave,boomburst|levitate|throat-spray|||modest
-sandslash|76@252,252,,,,6|earthquake,rock-slide,leech-fang,protect|sand-rush|ground-gem|||adamant
-quagsire|74@252,,4,,252|muddy-water,recover,yawn,protect|water-absorb|sitrus-berry|||calm
-gliscor|75@252,,4,,252|earthquake,rock-slide,acrobatics,swords-dance|sand-veil||||careful
-landorus-therian|76@252,,4,,252|earthquake,rock-slide,u-turn,protect|intimidate||||careful
+excadrill|63|earthquake,metal-claw,rock-slide,protect|||||
+flygon|64|dragon-claw,earth-power,bug-buzz,fire-punch||ground-gem|||
+gliscor|64|earthquake,acrobatics,sky-uppercut,night-slash|||||
+quagsire|62|muddy-water,mud-shot,yawn,protect|||||
 
---e1_ins|Moleman|ground|/leaders/unbound-moleman@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
+--e2|Elias|ghost|
+==info:<p><b>Shadowy Veil</b><br />Every Ghost-type Pokémon take half damage on full HP. Ghost-types are immune to entry hazards at full HP. Other Types cannot use Safeguard or Substitute.</p>
+mimikyu-disguised|62|shadow-claw,play-rough,shadow-sneak,swords-dance||ghost-gem|||
+aegislash-shield|63|shadow-sneak,iron-head,kings-shield,swords-dance|||||
+chandelure|63|hex,flamethrower,will-o-wisp,confuse-ray|||||
+banette|64|poltergeist,sucker-punch,will-o-wisp,destiny-bond||banettite|||
+
+--e3|Arabella|fairy|
+==effect:misty-terrain|info:<p><b>Fairy ring</b><br />All Fairy-Type Pokémon get a +1 boost to their lowest Defense stat on switch in.</p>
+ribombee|62|moonblast,psychic,energy-ball,sticky-web|||||
+sylveon|63|moonblast,psyshock,mystic-fire,reflect|||||
+azumarill|63|aqua-tail,play-rough,superpower,double-edge||fairy-gem|||
+mawile|64|iron-head,play-rough,sucker-punch,fire-fang||mawilite|||
+
+--e4|Penny|dragon|
+==double:true
+goodra|62|dragonbreath,water-pulse,acid-spray,protect|||||
+tyrantrum|63|dragon-claw,stone-edge,crunch,fire-fang|||||
+kommo-o|63|clang-scales,sky-uppercut,poison-jab,protect||dragon-gem|||
+sceptile|64|giga-drain,dual-chop,night-slash,detect||sceptilite|||
+
+--c|Jax||
+==double:true
+staraptor|65|brave-bird,close-combat,u-turn,protect|||||
+golurk|67|shadow-punch,hihorsepower,heavy-slam,protect|||||
+magnezone|66|thunderbolt,flash-cannon,tri-attack,protect||air-balloon|||
+gastrodon|65|muddy-water,earth-power,body-slam,protect|||||
+pyroar-male|65|flamethrower,hyper-voice,scorch-sands,protect||normal-gem|||
+salamence|67|dragon-claw,hyper-beam,flamethrower,protect||salamencite|||
+
+--e1_exp|Moleman|ground|
+==double:true
 ==effect:sandstorm|info:<p><b>Vicious Sandstorm</b><br />Vicious sand causes Pokémon to lose ⅛ of max HP at the end of every turn</p>|double:true
-excadrill|74@252,252,,,,6|earthquake,iron-head,rock-slide,protect|sand-rush|focus-sash|||adamant
-flygon|76@6,,,252,,252|clanging-scales,earth-power,heat-wave,boomburst|levitate|throat-spray|||modest
-sandslash|76@252,252,,,,6|earthquake,rock-slide,leech-fang,protect|sand-rush|ground-gem|||adamant
-quagsire|74@252,,4,,252|muddy-water,recover,yawn,protect|water-absorb|sitrus-berry|||calm
-gliscor|75@252,,4,,252|earthquake,rock-slide,acrobatics,swords-dance|sand-veil||||careful
-landorus-therian|76@252,,4,,252|earthquake,rock-slide,u-turn,protect|intimidate||||careful
+excadrill|64|earthquake,iron-head,rock-slide,protect||focus-sash|||
+flygon|66|clang-scales,earth-power,heat-wave,boomburst||throat-spray|||
+sandslash|66|earthquake,rock-slide,leech-fang,protect||ground-gem|||
+quagsire|64|muddy-water,recover,yawn,protect||sitrus-berry|||
+gliscor|65|earthquake,acrobatics,rock-slide,swords-dance|||||
+landorus-incarnate|66|earthquake,rock-slide,u-turn,protect|||||
 
---e2_exp|Elias|ghost|/leaders/unbound-elias@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
-==info:<p><b>Shadowy Veil</b><br />Every Ghost-type Pokémon take half damage on full HP. Ghost-types are immune to entry hazards at full HP. Other Types cannot use Safeguard or Substitute.</p>
-mimikyu-disguised|74@6,252,,,,252|shadow-claw,play-rough,shadow-sneak,swords-dance|disguise||||jolly
-aegislash-blade|75@252,,252,,4|shadow-ball,toxic,substitute,kings-shield|stance-change|leftovers|||bold
-trevenant|75@252,,252,,4|poltergeist,horn-leech,leech-seed,will-o-wisp|harvest|sitrus-berry|||impish
-cofagrigus|76@252,,252,,4|night-shade,body-press,iron-defense,rest|mummy|colbur-berry|||bold
-banette|76@252,,252,,4|poltergeist,sucker-punch,will-o-wisp,destiny-bond|frisk/prankster|banettite|||impish
-blacephalon|76@252,,,4,,252|flamethrower,shadow-ball,psyshock,calm-mind|beast-boost||||timid
-
---e2_ins|Elias|ghost|/leaders/unbound-elias@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
-==info:<p><b>Shadowy Veil</b><br />Every Ghost-type Pokémon take half damage on full HP. Ghost-types are immune to entry hazards at full HP. Other Types cannot use Safeguard or Substitute.</p>
-mimikyu-disguised|74@6,252,,,,252|shadow-claw,play-rough,shadow-sneak,swords-dance|disguise||||jolly
-aegislash-blade|75@252,,252,,4|shadow-ball,toxic,substitute,kings-shield|stance-change|leftovers|||bold
-trevenant|75@252,,252,,4|poltergeist,horn-leech,leech-seed,will-o-wisp|harvest|sitrus-berry|||impish
-cofagrigus|76@252,,252,,4|night-shade,body-press,iron-defense,rest|mummy|colbur-berry|||bold
-banette|76@252,,252,,4|poltergeist,sucker-punch,will-o-wisp,destiny-bond|frisk/prankster|banettite|||impish
-blacephalon|76@252,,,4,,252|flamethrower,shadow-ball,psyshock,calm-mind|beast-boost||||timid
-
---e3_exp|Arabella|fairy|/leaders/unbound-arrabella@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
-==effect:misty-terrain|info:<p><b>Fairy ring</b><br />All Fairy-Type Pokémon get a +1 boost to their lowest Defense stat on switch in.</p>
-
-ribombee|74@6,,,252,,252|moonblast,reflect,light-screen,sticky-web|shield-dust|focus-sash|||timid
-sylveon|75@252,,252,,4|hyper-voice,mystical-fire,wish,psyshock|pixilate|fairy-gem|||bold
-togekiss|75@252,,4,,252|air-slash,moonblast,flamethrower,wish|serene-grace||||calm
-azumarill|76@252,,4,,252|aqua-tail,play-rough,superpower,aqua-jet|huge-power||||careful
-mawile|76@252,252,,,,6|iron-head,play-rough,sucker-punch,swords-dance|intimidate/huge-power|mawilite|||adamant
-tapu-fini|76@252,,4,,252|moonblast,surf,natures-madness,taunt|misty-surge|sitrus-berry|||calm
-
---e3_ins|Arabella|fairy|/leaders/unbound-arrabella@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
-==effect:misty-terrain|info:<p><b>Fairy ring</b><br />All Fairy-Type Pokémon get a +1 boost to their lowest Defense stat on switch in.</p>
-
-ribombee|74@6,,,252,,252|moonblast,reflect,light-screen,sticky-web|shield-dust|focus-sash|||timid
-sylveon|75@252,,252,,4|hyper-voice,mystical-fire,wish,psyshock|pixilate|fairy-gem|||bold
-togekiss|75@252,,4,,252|air-slash,moonblast,flamethrower,wish|serene-grace||||calm
-azumarill|76@252,,4,,252|aqua-tail,play-rough,superpower,aqua-jet|huge-power||||careful
-mawile|76@252,252,,,,6|iron-head,play-rough,sucker-punch,swords-dance|intimidate/huge-power|mawilite|||adamant
-tapu-fini|76@252,,4,,252|moonblast,surf,natures-madness,taunt|misty-surge|sitrus-berry|||calm
-
---e4_exp|Penny|dragon|/leaders/unbound-penny@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
-==double:true|info:<p><b>Rainbow Battle</b><br />All Dragon-type Pokémon on the field have their moves' secondary effect chance doubled. This stacks Serene Grace with the exception of flinching moves.</p>
-goodra|74@252,,252,,4|flamethrower,muddy-water,thunderbolt,sludge-bomb|gooey|wide-lens|||bold
-tyrantrum|75@6,252,,,,252|dragon-claw,head-smash,high-horsepower,iron-head|rock-head|lum-berry|||jolly
-kommo-o|75@6,,,252,252|clanging-scales,aura-sphere,flash-cannon,protect|overcoat|dragon-gem|||modest
-hydreigon|76@6,,,252,,252|dragon-breath,dark-pulse,charge-beam,tailwind|levitate||||modest
-sceptile|76@6,,,252,,252|dragon-pulse,giga-drain,rock-slide,protect|overgrow/technician|sceptilite|||modest
-latias|76@6,,252,252|dragon-breath,mist-ball,air-slash,roost|levitate||||modest
-
---e4_ins|Penny|dragon|/leaders/unbound-penny@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
-==double:true|info:<p><b>Rainbow Battle</b><br />All Dragon-type Pokémon on the field have their moves' secondary effect chance doubled. This stacks Serene Grace with the exception of flinching moves.</p>
-goodra|74@252,,252,,4|flamethrower,muddy-water,thunderbolt,sludge-bomb|gooey|wide-lens|||bold
-tyrantrum|75@6,252,,,,252|dragon-claw,head-smash,high-horsepower,iron-head|rock-head|lum-berry|||jolly
-kommo-o|75@6,,,252,252|clanging-scales,aura-sphere,flash-cannon,protect|overcoat|dragon-gem|||modest
-hydreigon|76@6,,,252,,252|dragon-breath,dark-pulse,charge-beam,tailwind|levitate||||modest
-sceptile|76@6,,,252,,252|dragon-pulse,giga-drain,rock-slide,protect|overgrow/technician|sceptilite|||modest
-latias|76@6,,252,252|dragon-breath,mist-ball,air-slash,roost|levitate||||modest
-
---c_exp|Jax||/leaders/unbound-jax@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
+--e1_ins|Moleman|ground|
 ==double:true
-salamence|76@6,252,,,,252|hyper-voice,double-edge,rock-slide,flamethrower|intimidate/aerilate|salamencite|||jolly
-hitmontop|74@252,,252,,4|close-combat,fake-out,helping-hand,wide-guard|intimidate|sitrus-berry|||impish
-magnezone|75@6,,252,252|thunderbolt,flash-cannon,body-press,protect|sturdy|air-balloon|||modest
-gastrodon|74@252,,252,,4|muddy-water,earth-power,icy-wind,protect|storm-drain|rindo-berry|||bold
-naganadel|76@6,,,252,,252|sludge-bomb,dragon-pulse,heat-wave,protect|beast-boost|yache-berry|||timid
-pyroar|75@6,,,252,,252|heat-wave,hyper-voice,scorching-sands,protect|royal-roar|fire-gem|||timid
+==effect:sandstorm|info:<p><b>Vicious Sandstorm</b><br />Vicious sand causes Pokémon to lose ⅛ of max HP at the end of every turn</p>|double:true
+excadrill|66|earthquake,iron-head,rock-slide,hihorsepower||focus-sash|||
+aerodactyl|65|rock-slide,dualwingbeat,wide-guard,taunt||aerodactite|||
+groudon|66|cliff-blades,rock-slide,heat-crash,heavy-slam||choice-band|||
+gastrodon|66|earth-power,ice-beam,yawn,protect||sitrus-berry|||
+gliscor|65|earthquake,dualwingbeat,tailwind,protect||vwhtpowder|||
+landorus-incarnate|66|earthquake,rock-slide,earth-power,protect||focus-sash|||
 
-#######################
-#### Light of Ruin ####
-#######################
+--e2_exp|Elias|ghost|
+==info:<p><b>Shadowy Veil</b><br />Every Ghost-type Pokémon take half damage on full HP. Ghost-types are immune to entry hazards at full HP. Other Types cannot use Safeguard or Substitute.</p>
+mimikyu-disguised|64|shadow-claw,play-rough,shadow-sneak,swords-dance|||||
+aegislash-shield|65|shadow-ball,toxic,substitute,kings-shield||leftovers|||
+trevenant|65|poltergeist,horn-leech,leech-seed,will-o-wisp||sitrus-berry|||
+cofagrigus|66|night-shade,body-press,iron-defense,rest||colbur-berry|||
+banette|66|poltergeist,sucker-punch,will-o-wisp,destiny-bond||banettite|||
+blacephalon|66|flamethrower,shadow-ball,psyshock,calm-mind|||||
 
---c_ins|Jax||/leaders/unbound-jax@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
+--e2_ins|Elias|ghost|
+==info:<p><b>Shadowy Veil</b><br />Every Ghost-type Pokémon take half damage on full HP. Ghost-types are immune to entry hazards at full HP. Other Types cannot use Safeguard or Substitute.</p>
+marshadow|66|spect-thief,close-combat,shadow-sneak,rock-slide||marshadium-z|||
+jellicent-male|65|scald,night-shade,taunt,recover||leftovers|||
+giratina-altered|66|hex,will-o-wisp,roar,rest||leftovers|||
+cofagrigus|65|night-shade,body-press,iron-defense,haze||colbur-berry|||
+gengar|66|shadow-ball,sludge-wave,dazzle-gleam,giga-drain||gengarite|||
+blacephalon|66|flamethrower,shadow-ball,hidden-power,calm-mind||weak-policy|||
+
+--e3_exp|Arabella|fairy|
+==effect:misty-terrain|info:<p><b>Fairy ring</b><br />All Fairy-Type Pokémon get a +1 boost to their lowest Defense stat on switch in.</p>
+ribombee|64|moonblast,reflect,light-screen,sticky-web||focus-sash|||
+sylveon|65|hyper-voice,mystic-fire,psyshock,wish||fairy-gem|||
+togekiss|65|air-slash,moonblast,flamethrower,wish|||||
+azumarill|66|aqua-tail,play-rough,superpower,aqua-jet|||||
+mawile|66|iron-head,play-rough,sucker-punch,swords-dance||mawilite|||
+tapu-fini|66|moonblast,surf,natures-mad,taunt||sitrus-berry|||
+
+--e3_ins|Arabella|fairy|
+==effect:misty-terrain|info:<p><b>Fairy ring</b><br />All Fairy-Type Pokémon get a +1 boost to their lowest Defense stat on switch in.</p>
+magearna|66|fleur-cannon,hidden-power,reflect,heart-swap||light-clay|||
+clefable|65|moonblast,flamethrower,counter,soft-boiled||leftovers|||
+togekiss|65|air-slash,moonblast,aura-sphere,flamethrower||choice-scarf|||
+azumarill|66|aqua-tail,play-rough,aqua-jet,belly-drum||normalium-z|||
+mawile|66|iron-head,play-rough,sucker-punch,swords-dance||mawilite|||
+xerneas|66|terrainpulse,thunderbolt,hidden-power,geomancy||power-herb|||
+
+--e4_exp|Penny|dragon|
 ==double:true
-salamence|76@6,252,,,,252|hyper-voice,double-edge,rock-slide,flamethrower|intimidate/aerilate|salamencite|||jolly
-hitmontop|74@252,,252,,4|close-combat,fake-out,helping-hand,wide-guard|intimidate|sitrus-berry|||impish
-magnezone|75@6,,252,252|thunderbolt,flash-cannon,body-press,protect|sturdy|air-balloon|||modest
-gastrodon|74@252,,252,,4|muddy-water,earth-power,icy-wind,protect|storm-drain|rindo-berry|||bold
-naganadel|76@6,,,252,,252|sludge-bomb,dragon-pulse,heat-wave,protect|beast-boost|yache-berry|||timid
-pyroar|75@6,,,252,,252|heat-wave,hyper-voice,scorching-sands,protect|royal-roar|fire-gem|||timid
+goodra|64|flamethrower,muddy-water,thunderbolt,sludge-bomb||wide-lens|||
+tyrantrum|65|dragon-claw,head-smash,hihorsepower,iron-head||lum-berry|||
+kommo-o|65|clang-scales,aura-sphere,flash-cannon,protect||dragon-gem|||
+hydreigon|66|dragonbreath,dark-pulse,charge-beam,tailwind|||||
+sceptile|66|dragon-pulse,giga-drain,rock-slide,protect||sceptilite|||
+latias|66|dragonbreath,mist-ball,air-slash,roost|||||
 
-#######################
-#### Light of Ruin ####
-#######################
+--e4_ins|Penny|dragon|
+==double:true
+dialga|66|dragonbreath,flash-cannon,flamethrower,secret-power||assault-vest|||
+tyrantrum|65|dragon-claw,head-smash,hihorsepower,rock-slide||choice-scarf|||
+kommo-o|66|clang-scales,aura-sphere,flash-cannon,protect||kommonium-z|||
+kyurem|66|icicle-spear,fusion-bolt,rock-slide,secret-power||sitrus-berry|||
+dragonite|65|dualwingbeat,rock-slide,fire-punch,tailwind||wide-lens|||
+salamence|66|secret-power,iron-head,rock-slide,heat-wave||salamencite|||
+
+--c_exp|Jax||
+==double:true
+salamence|69|double-edge,hyper-voice,rock-slide,flamethrower||salamencite|||
+hitmontop|67|close-combat,fake-out,helping-hand,wide-guard||sitrus-berry|||
+magnezone|68|thunderbolt,flash-cannon,body-press,protect||air-balloon|||
+gastrodon|67|muddy-water,earth-power,icy-wind,protect||rindo-berry|||
+naganadel|69|sludge-bomb,dragon-pulse,heat-wave,protect||yache-berry|||
+pyroar-male|68|heat-wave,hyper-voice,scorch-sands,protect||fire-gem|||
+
+--c_ins|Jax||
+==double:true
+rayquaza|69|draco-meteor,dragonascent,v-create,iron-head||lum-berry|||
+suicune|69|scald,icy-wind,hidden-power,calm-mind||sitrus-berry|||
+magnezone|68|thunderbolt,flash-cannon,hidden-power,protect||air-balloon|||
+zygarde-50|69|1000-arrows,crunch,dragon-dance,protect||leftovers|||
+kartana|69|leaf-blade,smart-strike,sacred-sword,knock-off||assault-vest|||
+arcanine|68|heat-wave,flamethrower,close-combat,crunch||assault-vest|||
 
 --lr1|Ruin Agent Vega & Grunt||/leaders/unbound-vega-grunt@Ubound Team@https://www.pokecommunity.com/showthread.php?t=382178
 ==tag:true

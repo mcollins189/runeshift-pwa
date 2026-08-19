@@ -1152,7 +1152,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787157876312"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787173272518"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -2709,6 +2709,22 @@ const GAMES = {
       leagues: 'TeamRocketEdition',
       learnsets: 'TeamRocketEdition'
     }
+  },
+  'tre_johto': {
+    // TRE Johto (Apr 30 2025) — a SEPARATE GAME from 'team_rocket_edition' above, which
+    // is the FireRed-based Kanto Team Rocket Edition. This one reports BPEE and is
+    // Emerald-based; it shares no ROM offsets and no memory profile with the Kanto hack.
+    // Wild data is ROM-extracted (281 locations, rates + level ranges), validated against
+    // live play: the cartridge gives Five Isle Meadow sentret 31% lv2-4 and a live capture
+    // there was a level 4 Sentret.
+    // Location NAMES come from the map's own region-map section, which is also what the
+    // game shows on entry — so the Hoenn-sounding names on some maps (ROUTE 101,
+    // GRANITE CAVE) are what a player actually sees, not a mislabel. Their encounter data
+    // is edited, not leftover: 83 of 88 differ from vanilla Emerald.
+    // No leagues yet (boss classes >117 are not in the class table adjacent to gTrainers)
+    // and no learnsets (expansion build, gLevelUpLearnsets is not in the flat Gen-3 form).
+    name: 'TRE Johto', short: 'TRE Johto', gen: 3, category: 'Other ROM hacks',
+    dataSources: { routes: 'TreJohto', encounterTables: 'TreJohto' }
   },
   'unbound': {
     // Pokémon Unbound — FireRed base (BPRE expansion), Mega + Fairy era content (Gen 6+).
@@ -6761,6 +6777,7 @@ const GAME_DISPLAY_ORDER = [
   // Other ROM hacks — roughly grouped by base game / popularity.
   'radical_red',                       // FR-based
   'team_rocket_edition',               // FR-based (vanilla engine, Rocket storyline)
+  'tre_johto',                          // Emerald-based Johto Rocket hack — NOT the same game
   'gaia',                               // FR-based (Orbtus region, Gen 4-6 expansion)
   'lazarus',                            // Emerald decomp (Ilios region, Gen 9 dex)
   'unbound',                            // Emerald-based, modern era
