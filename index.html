@@ -1159,7 +1159,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787258407318"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787258689492"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -12404,7 +12404,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-20 13:40';
+const APP_BUILD = '2026-08-20 13:44';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -17644,7 +17644,18 @@ function pmTeamRows() {
     status: (l && l.status) || '',
     // What the game reported that we could not place. Shown on the row so an unmatched
     // Pokemon says WHY it has no numbers instead of drawing a blank bar that reads as 0.
-    unplaced: l ? null : spare.map(e => `${e.species} ${e.hp}/${e.maxHp}`).join(', ')
+    // Both sides of the comparison, on the row that failed. Four rounds of this bug went
+    // by with the feed provably correct and the matcher provably correct, because the one
+    // thing neither I nor the screen could see was what the ROSTER row actually holds.
+    // A row that cannot match now states its own keys and everything the game reported,
+    // so the mismatch is readable instead of inferred.
+    unplaced: l ? null : (() => {
+      const mine = `roster "${x.p.nickname || '-'}" / "${x.p.species || '-'}"`;
+      const theirs = live.length
+        ? live.map(e => `${e.nickname || '-'}/${e.species}${claimed.has(e) ? '' : ' (free)'}`).join(', ')
+        : 'nothing';
+      return `${mine} · game: ${theirs}`;
+    })()
   });
   const pick = f => rows.filter(r => f(r.x)).map(decorate);
   return {
