@@ -12351,7 +12351,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-19 17:20';
+const APP_BUILD = '2026-08-19 20:01';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -17685,7 +17685,12 @@ function pmRender() {
     let banner = '';
     if (st.encounter && st.encounter.species) {
       const e = st.encounter;
-      const names = e.partner ? `${e.species} & ${e.partner.species}` : `${e.species}${e.level ? ` Lv ${e.level}` : ''}`;
+      // Doubles: list the foes in SCREEN order, left then right. The bridge's
+      // `partner` is battler 3, which sits on the player's LEFT (the battler ids are
+      // the opponent's own left/right, so they mirror on screen), while the primary
+      // foe is battler 1 on the RIGHT. Printing primary-first therefore read
+      // backwards against the actual battle — field report.
+      const names = e.partner ? `${e.partner.species} & ${e.species}` : `${e.species}${e.level ? ` Lv ${e.level}` : ''}`;
       banner = `<div class="pm-enc-banner" onclick="pmSetView('battle')">
         <span class="pm-enc-label">WILD</span>
         <span class="pm-enc-name">${names}</span>
@@ -17734,10 +17739,13 @@ function pmRender() {
       const safeSp = String(focus.species).replace(/'/g, "\\'");
       const safeLoc = (st.route || '').replace(/'/g, "\\'");
       if (typeof ensurePokemonBackfilled === 'function' && !pokeInfo(focus.species)) ensurePokemonBackfilled(focus.species);
+      // Chips in screen order too — partner (battler 3, on your LEFT) first, then the
+      // primary foe (battler 1, on your RIGHT). Only the ORDER changes: each chip keeps
+      // its own focus key, so target highlighting still points at the right Pokemon.
       let chips = (e.partner && e.partner.species)
         ? `<div class="pm-battle-chips">
-             <button class="pm-chip${focus === e ? ' active' : ''}" onclick="pmBattleFocus='main';pmRender()">${e.species}${e.level ? ` Lv${e.level}` : ''}</button>
              <button class="pm-chip${focus === e.partner ? ' active' : ''}" onclick="pmBattleFocus='partner';pmRender()">${e.partner.species}${e.partner.level ? ` Lv${e.partner.level}` : ''}</button>
+             <button class="pm-chip${focus === e ? ' active' : ''}" onclick="pmBattleFocus='main';pmRender()">${e.species}${e.level ? ` Lv${e.level}` : ''}</button>
            </div>`
         : '';
       // Full opposing party (trainer fights): ▶ marks who's out, a struck-through
