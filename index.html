@@ -1159,7 +1159,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787257793102"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787258407318"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -12404,7 +12404,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-20 13:29';
+const APP_BUILD = '2026-08-20 13:40';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -17602,23 +17602,37 @@ function pmTeamRows() {
   const claimed = new Set();
   const rows = [];
   const take = (x, l) => { if (l) claimed.add(l); rows.push({ x, l }); };
-  // PARTY rows claim first. The live feed is the in-game party, so a benched roster entry
-  // has no business matching any of it — and if one does, it takes the entry the party
-  // member needed and that row goes blank with nothing left to explain it. A stale
-  // duplicate on the bench (same species, caught earlier, never marked dead) is enough.
-  const alive = curTeam().map((p, i) => ({ p, i })).filter(x => x.p.alive)
-    .sort((a, b) => (b.p.inParty ? 1 : 0) - (a.p.inParty ? 1 : 0));
-  for (const x of alive) {
+  const alive = curTeam().map((p, i) => ({ p, i })).filter(x => x.p.alive);
+  const inParty = alive.filter(x => x.p.inParty);
+  const benched = alive.filter(x => !x.p.inParty);
+
+  // Only PARTY rows compete for live entries, and they finish competing — including the
+  // elimination pass — before a benched row is offered anything at all.
+  //
+  // Ordering them first was not enough. A party row that matches NOTHING leaves its entry
+  // unclaimed, a bench duplicate then takes it, and elimination finds an empty leftover
+  // pool with nobody to pair. The row goes blank AND loses its explanation, because the
+  // entry it needed is no longer unplaced. That is the Kanye case exactly: his roster
+  // species and nickname both disagree with the cartridge, and an older Squirrap on the
+  // bench swallowed the live entry that would have rescued him.
+  const matchIn = (x, pool) => {
     const p = x.p;
     const byNick = (p.nickname && p.nickname !== p.species)
-      ? live.find(e => e && e.nickname && !claimed.has(e) && norm(e.nickname) === norm(p.nickname))
+      ? pool.find(e => e && e.nickname && !claimed.has(e) && norm(e.nickname) === norm(p.nickname))
       : null;
-    take(x, byNick || live.find(e => e && e.species && p.species && !claimed.has(e) &&
-                                     norm(e.species) === norm(p.species)) || null);
-  }
-  const spare = live.filter(e => e && !claimed.has(e));
-  const orphanRows = rows.filter(r => !r.l && r.x.p.inParty);
-  if (spare.length === 1 && orphanRows.length === 1) { orphanRows[0].l = spare[0]; spare.length = 0; }
+    return byNick || pool.find(e => e && e.species && p.species && !claimed.has(e) &&
+                                    norm(e.species) === norm(p.species)) || null;
+  };
+  for (const x of inParty) take(x, matchIn(x, live));
+
+  // Elimination, party-only: one row left, one entry left, they are each other.
+  let spare = live.filter(e => e && !claimed.has(e));
+  const orphans = rows.filter(r => !r.l);
+  if (spare.length === 1 && orphans.length === 1) { orphans[0].l = spare[0]; claimed.add(spare[0]); }
+  spare = live.filter(e => e && !claimed.has(e));
+
+  for (const x of benched) take(x, matchIn(x, spare));
+  spare = live.filter(e => e && !claimed.has(e));
 
   const decorate = ({ x, l }) => ({
     p: x.p, i: x.i,
