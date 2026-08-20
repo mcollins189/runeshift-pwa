@@ -690,6 +690,13 @@
   .pv-sprite{width:104px;height:104px;background:var(--bg3);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
   .pv-sprite img{width:134px;height:134px;image-rendering:pixelated;object-fit:contain;flex-shrink:0}
   .pv-sprite img.pv-hq{width:100%;height:100%;image-rendering:auto}  /* HOME artwork fills its box exactly (object-fit:contain) at any box size — desktop or mobile */
+  /* A CARTRIDGE sprite must fit the window, not overflow it. The default above draws
+     the image 134px inside a 104px box with overflow:hidden — a deliberate 15px bleed
+     on every side, which is harmless for drawn artwork because that has transparent
+     margins. A 64x64 ROM sprite has no margin: anything reaching its frame edge was
+     being sliced off (reported: sprites cut off / cropped wrong). Constrain to the box
+     so the whole sprite is visible, still pixelated. */
+  .pv-sprite img.pv-rom{width:100%;height:100%;image-rendering:pixelated}
   .pv-headline{flex:1;min-width:200px}
   .pv-nick{font-family:'Crimson Pro',serif;font-size:22px;font-weight:600;color:var(--text);line-height:1.1}
   .pv-species{font-size:13px;color:var(--text3);margin-top:2px}
@@ -12379,7 +12386,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-20 07:40';
+const APP_BUILD = '2026-08-20 07:47';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -14717,7 +14724,7 @@ function speciesView(species, opts) {
   const _pixUrl = species ? spriteUrl(species) : '';
   const _isRomSprite = _artUrl === _pixUrl;
   const sprite = species && _pixUrl
-    ? `<img class="${_isRomSprite ? '' : 'pv-hq'}" src="${_artUrl}" alt="${species}" onerror="if(!this.dataset.fb){this.dataset.fb='1';this.classList.remove('pv-hq');this.src='${_pixUrl}';}else{this.style.display='none';}">`
+    ? `<img class="${_isRomSprite ? 'pv-rom' : 'pv-hq'}" src="${_artUrl}" alt="${species}" onerror="if(!this.dataset.fb){this.dataset.fb='1';this.classList.remove('pv-hq');this.classList.add('pv-rom');this.src='${_pixUrl}';}else{this.style.display='none';}">`
     : `<div style="color:var(--text3);font-size:11px">no sprite</div>`;
   const types = info?.t || [];
   const abilities = info?.a || [];
