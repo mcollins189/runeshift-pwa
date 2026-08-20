@@ -1164,7 +1164,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787268473077"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787268970191"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -12445,7 +12445,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-20 16:27';
+const APP_BUILD = '2026-08-20 16:36';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -17371,7 +17371,16 @@ const NUZ_BRIDGE = (function () {
       // The bridge reports which cartridge RetroArch actually has loaded. That
       // beats both UIs as a source of truth — it is the one thing that cannot
       // be mis-selected — so the tracker follows it to the matching run.
-      if (msg.type === 'detect') { onDetect(msg.game, msg.content); return; }
+      if (msg.type === 'detect') {
+        // RECORD ONLY. Detection no longer switches runs by itself — that is done when the
+        // player starts tracking, and never behind their back. A cartridge announcing
+        // itself is information, not an instruction: acting on it meant the app could
+        // change runs during a lag, and whatever the feed said next went into whichever
+        // run it had landed on.
+        _detected = msg.game || null;
+        _detectedContent = msg.content || null;
+        return;
+      }
       if (msg.type && msg.type !== 'state' && msg.type !== 'hello') return;
       // Never merge data from a game we are not on. The bridge suppresses this
       // too, but an older bridge does not, and a roster filled from the wrong
@@ -17465,6 +17474,7 @@ const NUZ_BRIDGE = (function () {
     if (typeof promptNewRun === 'function') promptNewRun(game);
   };
 
+  let _detectedContent = null;
   function onDetect(game, content) {
     if (!game || !GAMES[game]) return;
     _detected = game;
@@ -17568,7 +17578,8 @@ const NUZ_BRIDGE = (function () {
   }
 
   window._nuzRememberRunPick = rememberRunPick;
-  return { start, stop, setUrl, connect, url, enabled, status: () => status, syncGame: () => sendConfig(false) };
+  return { start, stop, setUrl, connect, url, enabled, status: () => status, syncGame: () => sendConfig(false),
+           detected: () => _detected, reconcile: (g, c) => onDetect(g || _detected, c) };
 })();
 window.NUZ_BRIDGE = NUZ_BRIDGE;
 
@@ -17579,6 +17590,19 @@ window.NUZ_BRIDGE = NUZ_BRIDGE;
 let pmView = 'route';            // route | team | boss | log
 let pmPickerOpen = false;
 let _pmScrollKey = null;         // view identity at last render, for scroll preservation
+
+// Tracking is ACTIVE only while Play mode is open and the bridge's cartridge matches the
+// open run. Deliberately computed on the spot rather than stored: a stored flag would have
+// to be cleared on every path that can invalidate it — closing the panel, swapping
+// cartridges, switching runs by hand — and the one that gets missed is the one that
+// overwrites somebody's nuzlocke.
+function trackingActive() {
+  try {
+    if (!pmIsOpen()) return false;
+    const d = NUZ_BRIDGE.detected();
+    return !!d && typeof curGame === 'function' && d === curGame();
+  } catch (e) { return false; }
+}
 
 function pmIsOpen() { const el = document.getElementById('play-mode'); return !!el && el.classList.contains('open'); }
 
@@ -17812,8 +17836,19 @@ function pmRender() {
       What's shown below is the last thing the game reported, not what's happening now.</span>
       <button class="pm-chip" onclick="NUZ_BRIDGE.stop();NUZ_BRIDGE.start();pmRender();">reconnect</button>
     </div>` : '';
+  // Tracking state is its own thing, and more important than the socket's: connected but
+  // NOT tracking is the normal state when the cartridge and the run disagree, and the
+  // player has to be able to see that rather than assume catches are being recorded.
+  const tracking = trackingActive();
+  const detectedGame = (() => { try { return NUZ_BRIDGE.detected(); } catch (e) { return null; } })();
+  const trackBanner = (!tracking && bs === 'connected' && !isStale) ? `<div class="pm-stalefeed">
+      <span>⏸ Not tracking — ${detectedGame
+        ? `the bridge sees <b>${(GAMES[detectedGame] || {}).name || detectedGame}</b>, this run is <b>${(GAMES[curGame()] || {}).name || curGame()}</b>.`
+        : 'waiting for the bridge to say which cartridge is running.'} Nothing is being written to this run.</span>
+      ${detectedGame ? `<button class="pm-chip" onclick="NUZ_BRIDGE.reconcile(null, null)">switch</button>` : ''}
+    </div>` : '';
   const pillLabel = isStale ? 'STALE'
-                  : bs === 'connected' ? (st.source === 'ocr' ? 'OCR' : 'LIVE')
+                  : bs === 'connected' ? (tracking ? (st.source === 'ocr' ? 'OCR' : 'TRACKING') : 'PAUSED')
                   : (bs === 'connecting' || bs === 'retrying') ? '…'
                   : 'OFF';
   const head = `
@@ -17827,7 +17862,7 @@ function pmRender() {
       <button class="pm-step" onclick="pmStepRoute(1)" title="Next location">›</button>
       ${capLv ? `<span class="pm-cap" title="Level cap: ${cap}">Lv ${capLv}</span>` : ''}
       <button class="pm-exit" onclick="closePlayMode()" title="Leave Play mode">✕</button>
-    </div>${staleBanner}`;
+    </div>${staleBanner}${trackBanner}`;
 
   // Route picker — a full-height overlay list; the only comfortable way to jump
   // across a 60+ location game on a 3.9" screen.
@@ -18377,6 +18412,15 @@ function openPlayMode() {
   // Seed the route from whatever the Encounters tab already had selected.
   if (!NUZ_LIVE.get().route && selectedEncLocation) NUZ_LIVE.apply({ route: selectedEncLocation });
   if (NUZ_BRIDGE.enabled()) NUZ_BRIDGE.connect();
+  // Starting Play mode is the moment tracking is decided, and the only one. If the bridge
+  // has already named a cartridge and it is not this run's, reconcile now — switch to the
+  // one run for it, ask which when there are several, offer to start one when there are
+  // none. Nothing is written until that resolves, because trackingActive() stays false
+  // while the run and the cartridge disagree.
+  try {
+    const d = NUZ_BRIDGE.detected();
+    if (d && typeof curGame === 'function' && d !== curGame()) NUZ_BRIDGE.reconcile(d, null);
+  } catch (e) {}
   pmRender();
 }
 function closePlayMode() {
@@ -18516,6 +18560,24 @@ NUZ_LIVE.on('state', (s, st) => {
     return;
   }
   _wrongGameWarned = false;
+
+  // ── The one rule that decides whether ANYTHING is written to the run ──────────────
+  //
+  // Tracking is on when Play mode is open AND the cartridge the bridge reports is the one
+  // this run is for. Nothing else. No arming flags, no timers, no remembering.
+  //
+  // Everything above this line is display: the panel repaints from the newest frame either
+  // way. Below it are the writes — levels, moves, types, nicknames, new roster entries,
+  // box contents — and those now require the player to have STARTED tracking.
+  //
+  // This replaces automatic run-switching, which failed in every direction over one
+  // session: switching into the wrong run of a game and overwriting its party, holding the
+  // old run through a lag and writing the new cartridge's Pokemon into it, and loading one
+  // game's dex into a run created for another. The cost of a wrong guess here is a
+  // nuzlocke overwritten with no undo, and there is no reading of the feed confident
+  // enough to be worth that.
+  if (!trackingActive()) return;
+
   if (st.source === 'memory' && st.encounter && st.encounter.species) {
     _lastEncSeen = { species: st.encounter.species, route: st.route || '', at: Date.now() };
   }
