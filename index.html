@@ -1159,7 +1159,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787258825120"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787258859952"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -18189,7 +18189,7 @@ function pmRender() {
           <div class="pm-mon-name">${r.p.nickname || r.p.species}${r.p.isShiny ? ' ✨' : ''}</div>
           <div class="pm-mon-sub">${r.p.species}${r.nature ? ` · ${r.nature}` : ''}${r.status ? ` · ${r.status}` : ''}</div>
           ${pct === null
-            ? `<div class="pm-hp-num none">no live HP${r.unplaced ? ` · game reports ${r.unplaced}` : ''}</div>`
+            ? `<div class="pm-hp-num none">no live HP${r.unplaced ? ` · ${r.unplaced}` : ''}</div>`
             : `<div class="pm-hp"><div class="pm-hp-bar ${hpCls}" style="width:${pct}%"></div></div>
                <div class="pm-hp-num ${hpCls}">${r.hp}/${r.maxHp}</div>`}
           ${r.expPct === null ? '' : `<div class="pm-exp" title="EXP to next level"><div class="pm-exp-bar" style="width:${r.expPct}%"></div></div>`}
