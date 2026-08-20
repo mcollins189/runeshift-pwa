@@ -1152,7 +1152,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787202360841"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787236837767"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -4378,6 +4378,13 @@ function ensureEncountersFetched(locName, gameKey) {
 }
 
 
+let _hackArtCache = null;
+function _hackArtSet() {
+  if (_hackArtCache) return _hackArtCache;
+  const list = (typeof NUZ_DATA !== 'undefined' && Array.isArray(NUZ_DATA.hackArt)) ? NUZ_DATA.hackArt : [];
+  _hackArtCache = new Set(list);
+  return _hackArtCache;
+}
 function spriteUrl(idOrName, variant) {
   // Accept either a numeric id or a species name
   let id = idOrName;
@@ -4396,7 +4403,14 @@ function spriteUrl(idOrName, variant) {
       // retries spriteUrl(species), which lands back on spritePath.
       if (variant === 'art' || variant === 'art-shiny') {
         const hk = info.spritePath.match(/^sprites\/hack\/([a-z0-9_]+)\/(\d+)\.png$/);
-        if (hk) return `sprites/hack-art/${hk[1]}/${hk[2]}.webp`;
+        // ...but only where the artwork actually EXISTS. Most hacks have none, and the
+        // ones that do often cover part of their dex (Pisces: 37 of 233). Returning a
+        // path to a missing file left the detail panel blank for every Pisces fakemon —
+        // the onerror fallback did not rescue it in practice. NUZ_DATA.hackArt is built
+        // from the shipped files, so this can never point at something absent.
+        if (hk && _hackArtSet().has(hk[1] + '/' + hk[2])) {
+          return `sprites/hack-art/${hk[1]}/${hk[2]}.webp`;
+        }
       }
       return info.spritePath;
     }
@@ -12365,7 +12379,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-19 22:43';
+const APP_BUILD = '2026-08-20 07:40';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -14695,8 +14709,15 @@ function speciesView(species, opts) {
   // Gate on spriteUrl itself — it resolves regional forms via formIdBySlug,
   // which pokeId (POKEMON_DB/backfill only) cannot ('Sandshrew Alola' showed
   // in encounter grids but 'no sprite available' here — field report).
-  const sprite = species && spriteUrl(species)
-    ? `<img class="pv-hq" src="${spriteUrl(species,'art')}" alt="${species}" onerror="if(!this.dataset.fb){this.dataset.fb='1';this.classList.remove('pv-hq');this.src='${spriteUrl(species)}';}else{this.style.display='none';}">`
+  // pv-hq means "smooth this, it is real artwork". When the art variant resolves to the
+  // SAME url as the plain one there is no artwork and we are showing the 64x64 cartridge
+  // sprite, which must stay pixelated — smoothing it into a 134px box is exactly the
+  // blur the class exists to avoid on real art.
+  const _artUrl = species ? spriteUrl(species, 'art') : '';
+  const _pixUrl = species ? spriteUrl(species) : '';
+  const _isRomSprite = _artUrl === _pixUrl;
+  const sprite = species && _pixUrl
+    ? `<img class="${_isRomSprite ? '' : 'pv-hq'}" src="${_artUrl}" alt="${species}" onerror="if(!this.dataset.fb){this.dataset.fb='1';this.classList.remove('pv-hq');this.src='${_pixUrl}';}else{this.style.display='none';}">`
     : `<div style="color:var(--text3);font-size:11px">no sprite</div>`;
   const types = info?.t || [];
   const abilities = info?.a || [];
