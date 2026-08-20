@@ -1152,7 +1152,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787173272518"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787197935312"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -2709,6 +2709,19 @@ const GAMES = {
       leagues: 'TeamRocketEdition',
       learnsets: 'TeamRocketEdition'
     }
+  },
+  'pisces': {
+    // Pokémon Pisces — BPEE/Emerald base, 32 MB. Heavily FAKEMON: 236 species exist
+    // nowhere but this cartridge, 148 of them reachable in the wild, with stats, types
+    // and 233 sprites read off the ROM into patches/Pisces.txt + sprites/hack/pisces/.
+    // Its starter triangle is Tidpit (grass) / Fiefreet (fire) / Prongy (water).
+    //
+    // Both of its tables were mis-ranked by the automatic prober, the same way TRE
+    // Johto's were: the runner-up section candidate sits exactly 141 entries into the
+    // real array. Verified live instead — gMapHeader read S.S. Tidal, Pacifidlog Town
+    // and Sky Pillar across three locations.
+    name: 'Pisces', short: 'Pisces', gen: 3, category: 'Other ROM hacks',
+    dataSources: { routes: 'Pisces', encounterTables: 'Pisces', patches: 'Pisces' }
   },
   'tre_johto': {
     // TRE Johto (Apr 30 2025) — a SEPARATE GAME from 'team_rocket_edition' above, which
@@ -6791,6 +6804,7 @@ const GAME_DISPLAY_ORDER = [
   'radical_red',                       // FR-based
   'team_rocket_edition',               // FR-based (vanilla engine, Rocket storyline)
   'tre_johto',                          // Emerald-based Johto Rocket hack — NOT the same game
+  'pisces',                             // Emerald-based, 236 invented species
   'gaia',                               // FR-based (Orbtus region, Gen 4-6 expansion)
   'lazarus',                            // Emerald decomp (Ilios region, Gen 9 dex)
   'unbound',                            // Emerald-based, modern era
@@ -12351,7 +12365,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-19 20:06';
+const APP_BUILD = '2026-08-19 20:53';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
