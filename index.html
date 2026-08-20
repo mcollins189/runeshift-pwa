@@ -1164,7 +1164,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787267636862"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787267821187"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -12409,7 +12409,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-20 16:13';
+const APP_BUILD = '2026-08-20 16:17';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -17421,9 +17421,19 @@ const NUZ_BRIDGE = (function () {
     _detected = game;
     const label = GAMES[game].name || game;
     if (typeof curGame === 'function' && curGame() === game) {
-      // Already here — treat staying put as the answer and stop holding data.
+      // Already here — nothing to switch, so stop holding data.
       _detectNotified = null; _awaitingRun = false;
-      rememberRunPick(game, currentRunId);
+      // Record this as the chosen run ONLY when the cartridge has just one. Being parked
+      // on a run is not a decision, and treating it as one meant a game with SEVERAL runs
+      // silently answered its own question every time the bridge named it: the chooser
+      // then never appeared, because a pick was already on file that the player had never
+      // made. Reported as never once being asked which of two Clover runs was live.
+      //
+      // With several, the answer is left open until it actually matters — the next time
+      // the app has to switch INTO this cartridge — and the chooser asks then. Answering
+      // it, or switching by hand, still records the pick as before.
+      const mine = Object.entries(runs || {}).filter(([, r]) => r && r.game === game);
+      if (mine.length <= 1) rememberRunPick(game, currentRunId);
       return;
     }
 
