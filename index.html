@@ -520,7 +520,12 @@
   .stat-label{font-size:11px;color:var(--text3);margin-top:4px;letter-spacing:.04em}
 
   .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:10px 18px;font-size:13px;color:var(--text);z-index:9999;transition:transform .25s ease,opacity .25s ease;opacity:0;pointer-events:none;white-space:nowrap}
-  .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+  /* display:block is load-bearing. A toast carries its level as a bare class, and .warn is
+     also a global banner class that is display:none — so every warning toast in the app
+     was being removed from the layout and never seen, including "RetroArch is running X
+     but you have no run for it". .toast.show outranks .warn, so stating display here fixes
+     the collision without touching the banner. */
+  .toast.show{transform:translateX(-50%) translateY(0);opacity:1;display:block}
   .toast.success{border-color:rgba(74,222,128,.3);color:var(--green)}
   .toast.error{border-color:rgba(248,113,113,.3);color:var(--red)}
   .toast.warn{border-color:rgba(245,158,11,.4);color:#fbbf24}
@@ -1159,7 +1164,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787261041079"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787261510517"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -12404,7 +12409,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-20 14:24';
+const APP_BUILD = '2026-08-20 14:31';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -17494,7 +17499,7 @@ const NUZ_BRIDGE = (function () {
   }
 
   window._nuzRememberRunPick = rememberRunPick;
-  return { start, stop, setUrl, connect, url, enabled, status: () => status, syncGame: () => sendConfig(false) };
+  return { start, stop, setUrl, connect, url, enabled, status: () => status, syncGame: () => sendConfig(false), noticeGame: onDetect };
 })();
 window.NUZ_BRIDGE = NUZ_BRIDGE;
 
@@ -18381,6 +18386,17 @@ NUZ_LIVE.on('state', (s, st) => {
       _wrongGameWarned = true;
       console.warn('[live] frame from', st.game, 'but run is', curGame(), '— ignoring');
     }
+    // Every frame already NAMES its game, so a mismatch is a detection in its own right.
+    // Run-switching used to hang off the separate 'detect' message alone, which is sent
+    // on connect and on change — so a client that was already connected when the
+    // cartridge changed, or that missed that one packet, sat on the wrong run
+    // indefinitely while ignoring a steady stream of frames that said so. Reported as
+    // "opened Pisces and it didn't auto switch"; switching by hand worked, because the
+    // run was there all along and nothing had told the app to go to it.
+    //
+    // onDetect is idempotent and does its own gating (single match switches, several
+    // prompt once, none offers a new run), so calling it per frame is safe.
+    try { NUZ_BRIDGE.noticeGame(st.game, null); } catch (e) {}
     return;
   }
   // Then the heuristic one, for when the bridge is confidently wrong: a party
