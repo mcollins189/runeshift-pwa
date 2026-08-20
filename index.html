@@ -1159,7 +1159,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787239963493"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787240961570"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -4392,6 +4392,24 @@ function _hackArtSet() {
   _hackArtCache = new Set(list);
   return _hackArtCache;
 }
+// Hack sprites are the one asset class whose FILE SET changes between builds — a species
+// the extractor missed yesterday exists today at the same path. Sprites are fetched with
+// the default cache mode so the browser's HTTP cache can serve them, and that cache also
+// remembers the 404 from when the file was missing, which outlives the redeploy: Snotloud
+// stayed blank after its sprite shipped. Scoping them to the build makes a re-extraction
+// a new URL, so a stale miss cannot survive one. Dex sprites are genuinely immutable and
+// stay unscoped.
+// Read APP_BUILD lazily: it is a `const` declared far below this point, and a `const` in
+// its temporal dead zone throws on ACCESS — `typeof` does not shield it the way it does an
+// undeclared name. Evaluating this at load time crashed the whole script.
+let _romAssetV;
+function _romAsset(path) {
+  if (_romAssetV === undefined) {
+    try { _romAssetV = String(APP_BUILD).replace(/[^0-9]/g, ''); } catch { _romAssetV = ''; }
+  }
+  return _romAssetV ? `${path}?v=${_romAssetV}` : path;
+}
+
 function spriteUrl(idOrName, variant) {
   // Accept either a numeric id or a species name
   let id = idOrName;
@@ -4416,10 +4434,10 @@ function spriteUrl(idOrName, variant) {
         // the onerror fallback did not rescue it in practice. NUZ_DATA.hackArt is built
         // from the shipped files, so this can never point at something absent.
         if (hk && _hackArtSet().has(hk[1] + '/' + hk[2])) {
-          return `sprites/hack-art/${hk[1]}/${hk[2]}.webp`;
+          return _romAsset(`sprites/hack-art/${hk[1]}/${hk[2]}.webp`);
         }
       }
-      return info.spritePath;
+      return _romAsset(info.spritePath);
     }
     id = info ? info.id : null;
     // Fallback: resolve the National-Dex id straight from the bundled slug→id
@@ -12386,7 +12404,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-20 08:32';
+const APP_BUILD = '2026-08-20 08:49';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
