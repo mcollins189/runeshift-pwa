@@ -12351,7 +12351,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-19 20:01';
+const APP_BUILD = '2026-08-19 20:06';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -17773,6 +17773,17 @@ function pmRender() {
           const leftGroup = leftMon.slot >= 3 ? 1 : 0;
           const grp = x => ((x.m.slot >= 3 ? 1 : 0) === leftGroup ? 0 : 1);
           foeOrder = foeOrder.slice().sort((a, b) => grp(a) - grp(b) || (a.m.slot - b.m.slot));
+        }
+        // ONE trainer fielding two Pokemon skips the block above (nothing to group by),
+        // so the list fell back to party order — and party order is not screen order.
+        // A single-trainer double with its mons in slots 0 and 1 showed the RIGHT one on
+        // the left, which is what was reported. `pos` is the bridge's screen hint
+        // (1 = the player's left, 3 = their right), so put the two on-field mons in that
+        // order and leave everyone else where they were.
+        const fieldIdx = foeOrder.map((x, k) => [x, k]).filter(([x]) => isLive(x.m) && (x.m.pos === 1 || x.m.pos === 3));
+        if (fieldIdx.length === 2 && fieldIdx[0][0].m.pos === 3) {
+          const [[, a], [, b]] = fieldIdx;
+          const tmp = foeOrder[a]; foeOrder[a] = foeOrder[b]; foeOrder[b] = tmp;
         }
         chips = `<div class="pm-foe-team">
           <div class="pm-sec-hd pm-foe-hd">Their team <span>${onField > 1 ? `${onField} out · ` : ''}${alive} left of ${foeTeam.length}</span></div>
