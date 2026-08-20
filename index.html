@@ -1159,7 +1159,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787258689492"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787258825120"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -12404,7 +12404,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-20 13:44';
+const APP_BUILD = '2026-08-20 13:47';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -17598,7 +17598,12 @@ function pmTeamRows() {
   //     they are each other — there is nothing else either could be. This is what
   //     rescues a Pokemon whose roster species AND nickname both drifted from the
   //     cartridge (Kanye: game says Squirrap 6/18, roster said neither).
-  const norm = v => _normLocName(v);
+  // _normSpeciesName, not _normLocName. The app has two normalisers and they disagree:
+  // the species one strips every non-alphanumeric ("Mr. Mime" -> "mrmime") while the
+  // location one keeps spaces and punctuation. Using the location one here meant a name
+  // could match in the roster-sync path (which uses the species one) and fail here on the
+  // same frame — a difference of one space or full stop is enough.
+  const norm = v => _normSpeciesName(v);
   const claimed = new Set();
   const rows = [];
   const take = (x, l) => { if (l) claimed.add(l); rows.push({ x, l }); };
