@@ -1159,7 +1159,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787237633778"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787238255281"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -12386,7 +12386,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-20 07:54';
+const APP_BUILD = '2026-08-20 08:04';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -15020,8 +15020,17 @@ function pokeView(p, idx) {
     const pend = _pendingLearnMoves.get(idx);
     if (pend) for (const pm of pend) if (pm && pm.name && !moveData(pm.name)) ensureMoveBackfilled(pm.name);
   }
-  const sprite = p.species && spriteUrl(p.species)
-    ? `<img class="pv-hq" src="${spriteUrl(p.species, p.isShiny?'art-shiny':'art')}" alt="${p.species}" onerror="if(!this.dataset.fb){this.dataset.fb='1';this.classList.remove('pv-hq');this.src='${spriteUrl(p.species, p.isShiny?'shiny':undefined)}';}else{this.style.display='none';}">`
+  // Same pv-rom/pv-hq split as speciesView, and for the same reason: an img in
+  // .pv-sprite carrying NEITHER class falls to the bare rule, which is 134px inside a
+  // 104px overflow:hidden box. That deliberate zoom-crop suits official sprites (they
+  // carry wide transparent margins) and mutilates a 64x64 cartridge sprite, which is
+  // cropped tight already — 15px off every side. This block used to hardcode pv-hq and
+  // strip it on error without adding pv-rom, so every ROM-sprite fallback landed in
+  // exactly that state.
+  const _rArt = p.species ? spriteUrl(p.species, p.isShiny ? 'art-shiny' : 'art') : '';
+  const _rPix = p.species ? spriteUrl(p.species, p.isShiny ? 'shiny' : undefined) : '';
+  const sprite = p.species && _rPix
+    ? `<img class="${_rArt === _rPix ? 'pv-rom' : 'pv-hq'}" src="${_rArt}" alt="${p.species}" onerror="if(!this.dataset.fb){this.dataset.fb='1';this.classList.remove('pv-hq');this.classList.add('pv-rom');this.src='${_rPix}';}else{this.style.display='none';}">`
     : `<div style="color:var(--text3);font-size:11px">no sprite</div>`;
   // Stats at the actual roster level when known — uses nature + always-on
   // ability modifiers (Huge Power / Pure Power). Conditional abilities (Guts
