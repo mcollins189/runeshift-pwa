@@ -1164,7 +1164,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787268970191"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787269506972"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -12445,7 +12445,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-20 16:36';
+const APP_BUILD = '2026-08-20 16:45';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -17831,7 +17831,7 @@ function pmRender() {
   const dotCls = isStale ? 'wait' : (bs === 'connected' ? 'live' : (bs === 'connecting' || bs === 'retrying' ? 'wait' : 'off'));
   const dotTitle = isStale ? `No update for ${Math.round(frameAge / 1000)}s`
     : (bs === 'connected' ? `Live via ${st.source}` : `Manual (bridge: ${bs})`);
-  const staleBanner = isStale ? `<div class="pm-stalefeed">
+  const staleBanner = (isStale && !(bs === 'connected' && !tracking)) ? `<div class="pm-stalefeed">
       <span>⚠ Not updating — last read ${frameAge < 60000 ? Math.round(frameAge / 1000) + 's' : Math.round(frameAge / 60000) + 'm'} ago.
       What's shown below is the last thing the game reported, not what's happening now.</span>
       <button class="pm-chip" onclick="NUZ_BRIDGE.stop();NUZ_BRIDGE.start();pmRender();">reconnect</button>
@@ -17841,7 +17841,11 @@ function pmRender() {
   // player has to be able to see that rather than assume catches are being recorded.
   const tracking = trackingActive();
   const detectedGame = (() => { try { return NUZ_BRIDGE.detected(); } catch (e) { return null; } })();
-  const trackBanner = (!tracking && bs === 'connected' && !isStale) ? `<div class="pm-stalefeed">
+  // Shown even when the feed has gone quiet. A pause STOPS the frames — the bridge emits
+  // nothing rather than read a cartridge through the wrong profile — so "not updating" is
+  // the expected consequence, not the story. Leading with STALE there buries the one line
+  // that says what to do about it.
+  const trackBanner = (!tracking && bs === 'connected') ? `<div class="pm-stalefeed">
       <span>⏸ Not tracking — ${detectedGame
         ? `the bridge sees <b>${(GAMES[detectedGame] || {}).name || detectedGame}</b>, this run is <b>${(GAMES[curGame()] || {}).name || curGame()}</b>.`
         : 'waiting for the bridge to say which cartridge is running.'} Nothing is being written to this run.</span>
