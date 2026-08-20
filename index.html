@@ -1164,7 +1164,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787261820969"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787262318098"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -12409,7 +12409,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-20 14:37';
+const APP_BUILD = '2026-08-20 14:45';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -17416,7 +17416,14 @@ const NUZ_BRIDGE = (function () {
     if (typeof promptNewRun === 'function') promptNewRun(game);
   };
 
-  function onDetect(game, content) {
+  // opts.switchOnly — go to an EXISTING run for this cartridge and do nothing else.
+  // The per-frame caller uses it. That path fires continuously, so it must never reach the
+  // branches that ASK the player something: offering to create a run, or prompting to pick
+  // between several. Wiring it up without this turned "you have no run for it" into
+  // something the app could raise repeatedly on its own, against a run that already
+  // existed — reported as being asked to create a Pisces run while sitting on one.
+  function onDetect(game, content, opts) {
+    const switchOnly = !!(opts && opts.switchOnly);
     if (!game || !GAMES[game]) return;
     _detected = game;
     const label = GAMES[game].name || game;
@@ -17447,13 +17454,14 @@ const NUZ_BRIDGE = (function () {
       // Genuinely ambiguous. The cartridge says WHICH GAME; only the player
       // knows WHICH RUN. Guessing here writes catches, levels and deaths into
       // someone else's nuzlocke, so hold everything until asked and answered.
-      if (_awaitingRun) return;
+      if (switchOnly || _awaitingRun) return;
       _awaitingRun = true;
       promptWhichRun(game, label, match, content);
       return;
     }
 
     // No run for this game at all.
+    if (switchOnly) return;
     if (_detectNotified === game) return;
     _detectNotified = game;
     if (typeof showToast === 'function') {
@@ -18406,7 +18414,7 @@ NUZ_LIVE.on('state', (s, st) => {
     //
     // onDetect is idempotent and does its own gating (single match switches, several
     // prompt once, none offers a new run), so calling it per frame is safe.
-    try { NUZ_BRIDGE.noticeGame(st.game, null); } catch (e) {}
+    try { NUZ_BRIDGE.noticeGame(st.game, null, { switchOnly: true }); } catch (e) {}
     return;
   }
   // Then the heuristic one, for when the bridge is confidently wrong: a party
