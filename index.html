@@ -12365,7 +12365,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-19 22:06';
+const APP_BUILD = '2026-08-19 22:43';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -18215,7 +18215,18 @@ NUZ_LIVE.on('state', (s, st) => {
       const ti = teamArr.findIndex(m => m && m.slot === tSlot);
       if (ti >= 0 && pmBattleFocus !== ti) { pmBattleFocus = ti; moved = true; }
     }
-    if (moved) { try { pmRender(); } catch (e) {} }
+    // Repaint on EVERY live frame, not only when a cursor moved.
+    //
+    // The team page reads HP, level and EXP straight from the newest frame, so gating
+    // the repaint on cursor movement left it showing whatever happened to be on screen
+    // the last time something else forced a render. Reported as a Pokemon stuck at 0 HP
+    // that had never fainted: the bridge was sending the right value all along (verified
+    // against RAM and against the bridge's own emitted frame), and using a potion only
+    // "fixed" it because that happened to trigger another render.
+    //
+    // Cheap by construction: the producer broadcasts on CHANGE, so a frame arriving here
+    // means something actually moved. Idle play sends nothing but the slow heartbeat.
+    try { pmRender(); } catch (e) {}
   }
   if (st.source && st.source !== 'manual') _lastFrameAt = Date.now();
   // Wrong-cartridge veto. Everything below writes to the run — levels, moves,
