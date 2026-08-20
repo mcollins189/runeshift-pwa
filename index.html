@@ -1164,7 +1164,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787261510517"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787261820969"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -12409,7 +12409,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-20 14:31';
+const APP_BUILD = '2026-08-20 14:37';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -16510,7 +16510,17 @@ function _liveFrameFitsGame(st) {
     .concat(Array.isArray(st.box) ? st.box : [])
     .filter(m => m && m.species);
   if (mons.length < 3) return true;
-  const foreign = mons.filter(m => !set.has(_normSpeciesName(m.species)));
+  // A hack's own inventions count as native, obviously — and the species set above cannot
+  // see them. It is built from encounter tables, league files and boss teams, so anything
+  // that is never wild and never fought has no entry: starters first of all. Pisces has no
+  // league file either, so its STARTER was "foreign", and a party of Prongy, Prongy and
+  // Quilward scored 2-of-3 alien and the whole feed was thrown away with "can't come from
+  // Pisces" — about the species the cartridge itself invented.
+  let fake = null;
+  try { fake = (typeof getActivePatches === 'function' ? getActivePatches() : null)?.fakemon; } catch (e) {}
+  const native = m => set.has(_normSpeciesName(m.species)) ||
+                      !!(fake && fake.get(String(m.species || '').toLowerCase()));
+  const foreign = mons.filter(m => !native(m));
   return foreign.length * 2 <= mons.length;
 }
 
