@@ -1159,7 +1159,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787254286623"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787254319942"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -12404,7 +12404,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-20 12:31';
+const APP_BUILD = '2026-08-20 12:32';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -18113,13 +18113,12 @@ function pmRender() {
       // bar at 0.3% is nothing at all on screen, and "barely alive" has to be
       // distinguishable from "dead" at a glance — that is the entire job of this bar.
       const pct = raw === null ? null : (r.hp > 0 ? Math.max(6, Math.round(raw)) : 0);
-      // Green above 60, amber 30-59, red below 30 — asked for, and a deliberately EARLIER
-      // warning than the cartridge's own bar (which turns amber at 50 and red at 20).
-      // A tracker is read to decide whether to switch, so it should go amber while
-      // switching is still free. The red break sits just under 1/3, which is where
-      // Overgrow/Blaze/Torrent and the pinch berries fire, so red also means "the foe's
-      // ability may have just switched on".
-      const hpCls = !hasHp ? '' : (r.hp <= 0 ? 'dead' : raw < 30 ? 'crit' : raw < 60 ? 'warn' : '');
+      // The cartridge's own breaks: green above half, amber from half down to a fifth, red
+      // at a fifth or less. Matching the game matters more than any threshold I might
+      // prefer — the bar on the handheld and the bar in the tracker are read in the same
+      // glance, and a tracker calling something red while the game still shows amber
+      // reads as one of them being wrong.
+      const hpCls = !hasHp ? '' : (r.hp <= 0 ? 'dead' : raw <= 20 ? 'crit' : raw <= 50 ? 'warn' : '');
       const btn = inParty
         ? `<button class="pm-party-btn rm" onclick="event.stopPropagation();pmToggleParty(${r.i},false)" title="Move to bench">–</button>`
         : `<button class="pm-party-btn add" onclick="event.stopPropagation();pmToggleParty(${r.i},true)" title="Add to party">+</button>`;
