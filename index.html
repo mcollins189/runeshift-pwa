@@ -1164,7 +1164,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787266763069"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787267636862"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -12409,7 +12409,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-20 15:59';
+const APP_BUILD = '2026-08-20 16:13';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -17416,14 +17416,7 @@ const NUZ_BRIDGE = (function () {
     if (typeof promptNewRun === 'function') promptNewRun(game);
   };
 
-  // opts.switchOnly — go to an EXISTING run for this cartridge and do nothing else.
-  // The per-frame caller uses it. That path fires continuously, so it must never reach the
-  // branches that ASK the player something: offering to create a run, or prompting to pick
-  // between several. Wiring it up without this turned "you have no run for it" into
-  // something the app could raise repeatedly on its own, against a run that already
-  // existed — reported as being asked to create a Pisces run while sitting on one.
-  function onDetect(game, content, opts) {
-    const switchOnly = !!(opts && opts.switchOnly);
+  function onDetect(game, content) {
     if (!game || !GAMES[game]) return;
     _detected = game;
     const label = GAMES[game].name || game;
@@ -17454,14 +17447,13 @@ const NUZ_BRIDGE = (function () {
       // Genuinely ambiguous. The cartridge says WHICH GAME; only the player
       // knows WHICH RUN. Guessing here writes catches, levels and deaths into
       // someone else's nuzlocke, so hold everything until asked and answered.
-      if (switchOnly || _awaitingRun) return;
+      if (_awaitingRun) return;
       _awaitingRun = true;
       promptWhichRun(game, label, match, content);
       return;
     }
 
     // No run for this game at all.
-    if (switchOnly) return;
     if (_detectNotified === game) return;
     _detectNotified = game;
     if (typeof showToast === 'function') {
@@ -17517,7 +17509,7 @@ const NUZ_BRIDGE = (function () {
   }
 
   window._nuzRememberRunPick = rememberRunPick;
-  return { start, stop, setUrl, connect, url, enabled, status: () => status, syncGame: () => sendConfig(false), noticeGame: onDetect };
+  return { start, stop, setUrl, connect, url, enabled, status: () => status, syncGame: () => sendConfig(false) };
 })();
 window.NUZ_BRIDGE = NUZ_BRIDGE;
 
@@ -18436,19 +18428,16 @@ NUZ_LIVE.on('state', (s, st) => {
     //
     // onDetect is idempotent and does its own gating (single match switches, several
     // prompt once, none offers a new run), so calling it per frame is safe.
-    // Switching to an existing run happens immediately. The branches that ASK something —
-    // offer to start a run, or choose between several — wait until the reading is SETTLED:
-    // the same cartridge for a few seconds, and the saved runs actually loaded.
+    // Run-switching is driven by the 'detect' message ALONE, which is how this worked
+    // before today and worked well. Frames were briefly made to drive it too, because the
+    // detect message was not arriving — but that was a bridge fault (Pisces, TRE and TRE
+    // Johto were marked CRC-only in the fingerprint table, so an unknown dump resolved to
+    // nothing and no detect was ever sent). That is fixed at the source in bridge 0.82 and
+    // 0.86, which also emit a detect frame when the cartridge is NOT recognised.
     //
-    // Both guards earned their place. Without the runs check, a frame arriving during boot
-    // sees an empty run list, concludes there is no run for this game and offers to create
-    // one, against a run that already exists. Without the dwell, anything momentary — a
-    // savestate load, a frame mid-swap — could raise a prompt the player never asked for.
-    // Once settled it does the full job: match one run and go, several and ask which, none
-    // and offer to start one.
-    if (_frameGameSeen !== st.game) { _frameGameSeen = st.game; _frameGameSince = Date.now(); }
-    const _settled = (Date.now() - _frameGameSince) > 3000 && !!(runs && Object.keys(runs).length);
-    try { NUZ_BRIDGE.noticeGame(st.game, null, { switchOnly: !_settled }); } catch (e) {}
+    // Driving it from frames as well meant two mechanisms racing on every poll, each with
+    // its own gating, for a problem that no longer exists. A frame that disagrees with the
+    // run is ignored and logged, exactly as it was.
     return;
   }
   // Then the heuristic one, for when the bridge is confidently wrong: a party
@@ -18876,8 +18865,6 @@ let _levelLowerSeen = new Map(); // species → {level, count}: pending downward
 // already have cleared — remembering it for a short window is what lets a wild
 // catch be told apart from a gift.
 let _lastFrameAt = 0;            // when a producer frame last arrived (staleness)
-let _frameGameSeen = null;       // which game the frames have been reporting
-let _frameGameSince = 0;         // since when — a prompt needs a settled reading
 let _lastEncSeen = null;         // { species, route, at }
 let _lastChoosing = null;        // last mon the game asked a move for (auto-focus)
 let _lastTargetSlot = null;      // last foe party slot the target cursor sat on
