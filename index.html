@@ -1164,7 +1164,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787262419788"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787264266501"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -12409,7 +12409,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-20 14:46';
+const APP_BUILD = '2026-08-20 15:17';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -17991,7 +17991,29 @@ function pmRender() {
       // ── "Your moves" — the mon YOU have out, scored against this enemy ──
       // Auto-picked from the bridge's allies report (OCR of the bottom-half
       // name boxes); chips override it; falls back to first party mon.
-      const bparty = curTeam().map((p, i) => ({ p, i })).filter(x => x.p.alive && x.p.inParty);
+      // Ordered the way the SCREEN is, not the way the roster is. The producer sends
+      // `allies` in battler order — your left mon first, then your right — and the foes
+      // opposite are already ordered by their battle position. Leaving your own side in
+      // roster order put the two chips in whatever sequence the team list happened to
+      // have, so in a double they read back to front against the game about half the time.
+      // Reported as the pills being on opposite sides from the screen, foes correct.
+      //
+      // On-field mons lead, in battler order; the bench keeps roster order behind them.
+      // Matching claims each ally once so two of the same species cannot collapse onto one.
+      const bparty = (() => {
+        const rows = curTeam().map((p, i) => ({ p, i })).filter(x => x.p.alive && x.p.inParty);
+        const allies = (st.allies || []).map(a => _normSpeciesName(a));
+        if (allies.length < 2) return rows;
+        const taken = new Set();
+        const rank = x => {
+          const sp = _normSpeciesName(x.p.species);
+          for (let k = 0; k < allies.length; k++) {
+            if (!taken.has(k) && allies[k] === sp) { taken.add(k); return k; }
+          }
+          return allies.length + x.i;
+        };
+        return rows.map(x => ({ x, r: rank(x) })).sort((a, b) => a.r - b.r).map(e => e.x);
+      })();
       // Which of YOUR mons are actually on the field. The producer sends one
       // entry per battler on your side — TWO in a double (battlers 0 and 2) —
       // but this list was only ever used to auto-pick whose moves to score, so
