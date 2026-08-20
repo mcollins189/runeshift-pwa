@@ -1159,7 +1159,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787253980808"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787254108576"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -12404,7 +12404,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-20 12:26';
+const APP_BUILD = '2026-08-20 12:28';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -18103,8 +18103,17 @@ function pmRender() {
     const { party, bench } = pmTeamRows();
     const monRow = (r, inParty) => {
       const over = capLv && r.level && +r.level > +capLv;
-      const pct = (typeof r.hp === 'number' && r.maxHp) ? Math.max(0, Math.min(100, Math.round(r.hp / r.maxHp * 100))) : null;
-      const hpCls = pct === null ? '' : (pct === 0 ? 'dead' : pct <= 20 ? 'crit' : pct <= 50 ? 'warn' : '');
+      // FAINTED is decided by the HP, never by the rounded percentage. Math.round puts
+      // anything under half a percent at 0 — a Pokemon on 1 of 300 HP — and the old code
+      // read that 0 as death: red bar, zero width, identical to a corpse while it is
+      // still standing. Reported as "it shows 0 when it isn't 0".
+      const hasHp = typeof r.hp === 'number' && !!r.maxHp;
+      const raw = hasHp ? Math.max(0, Math.min(100, r.hp / r.maxHp * 100)) : null;
+      // Floor the WIDTH (not the value) so any surviving sliver stays visible. A 4px-tall
+      // bar at 0.3% is nothing at all on screen, and "barely alive" has to be
+      // distinguishable from "dead" at a glance — that is the entire job of this bar.
+      const pct = raw === null ? null : (r.hp > 0 ? Math.max(6, Math.round(raw)) : 0);
+      const hpCls = !hasHp ? '' : (r.hp <= 0 ? 'dead' : raw <= 20 ? 'crit' : raw <= 50 ? 'warn' : '');
       const btn = inParty
         ? `<button class="pm-party-btn rm" onclick="event.stopPropagation();pmToggleParty(${r.i},false)" title="Move to bench">–</button>`
         : `<button class="pm-party-btn add" onclick="event.stopPropagation();pmToggleParty(${r.i},true)" title="Add to party">+</button>`;
