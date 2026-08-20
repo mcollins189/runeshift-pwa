@@ -1159,7 +1159,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787258859952"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787259520791"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -12404,7 +12404,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-20 13:47';
+const APP_BUILD = '2026-08-20 13:58';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -18179,7 +18179,14 @@ function pmRender() {
       // prefer — the bar on the handheld and the bar in the tracker are read in the same
       // glance, and a tracker calling something red while the game still shows amber
       // reads as one of them being wrong.
-      const hpCls = !hasHp ? '' : (r.hp <= 0 ? 'dead' : raw <= 20 ? 'crit' : raw <= 50 ? 'warn' : '');
+      // NAMESPACED. "warn" is already a global class in this app — a warning banner that
+      // is display:none until it is needed (line ~144) — so every HP bar and number that
+      // went amber inherited display:none and vanished outright. Above 50% there is no
+      // class and the row looks fine; at or below it the bar AND the figures disappear,
+      // and healing to full brings them back. That is the whole "it shows 0 when it isn't
+      // 0" report, from the first time it was raised: the bar was never drawn at zero, it
+      // was hidden. Class names on shared elements need a prefix, not a common word.
+      const hpCls = !hasHp ? '' : (r.hp <= 0 ? 'pm-dead' : raw <= 20 ? 'pm-crit' : raw <= 50 ? 'pm-warn' : '');
       const btn = inParty
         ? `<button class="pm-party-btn rm" onclick="event.stopPropagation();pmToggleParty(${r.i},false)" title="Move to bench">–</button>`
         : `<button class="pm-party-btn add" onclick="event.stopPropagation();pmToggleParty(${r.i},true)" title="Add to party">+</button>`;
@@ -18974,9 +18981,9 @@ setInterval(() => {
      matched look the same at a glance, and both get read as "it says zero" — which is
      exactly how a live-HP complaint arrived with the feed working perfectly. */
   .pm-hp-num { font-size:10px; color:var(--text3); margin-top:1px; font-variant-numeric:tabular-nums; }
-  .pm-hp-num.warn { color:var(--amber); } .pm-hp-num.crit, .pm-hp-num.dead { color:var(--red); }
+  .pm-hp-num.pm-warn { color:var(--amber); } .pm-hp-num.pm-crit, .pm-hp-num.pm-dead { color:var(--red); }
   .pm-hp-num.none { font-style:italic; opacity:.7; }
-  .pm-hp-bar.warn { background:var(--amber); } .pm-hp-bar.crit, .pm-hp-bar.dead { background:var(--red); }
+  .pm-hp-bar.pm-warn { background:var(--amber); } .pm-hp-bar.pm-crit, .pm-hp-bar.pm-dead { background:var(--red); }
   .pm-exp { height:3px; border-radius:2px; background:var(--bg4); margin-top:3px; overflow:hidden; }
   .pm-exp-bar { height:100%; background:var(--accent); border-radius:2px; }
   .pm-foe-team { margin:4px 0 2px; }
