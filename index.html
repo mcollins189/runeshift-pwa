@@ -1164,7 +1164,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787262318098"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787262419788"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -12409,7 +12409,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-20 14:45';
+const APP_BUILD = '2026-08-20 14:46';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -18414,7 +18414,19 @@ NUZ_LIVE.on('state', (s, st) => {
     //
     // onDetect is idempotent and does its own gating (single match switches, several
     // prompt once, none offers a new run), so calling it per frame is safe.
-    try { NUZ_BRIDGE.noticeGame(st.game, null, { switchOnly: true }); } catch (e) {}
+    // Switching to an existing run happens immediately. The branches that ASK something —
+    // offer to start a run, or choose between several — wait until the reading is SETTLED:
+    // the same cartridge for a few seconds, and the saved runs actually loaded.
+    //
+    // Both guards earned their place. Without the runs check, a frame arriving during boot
+    // sees an empty run list, concludes there is no run for this game and offers to create
+    // one, against a run that already exists. Without the dwell, anything momentary — a
+    // savestate load, a frame mid-swap — could raise a prompt the player never asked for.
+    // Once settled it does the full job: match one run and go, several and ask which, none
+    // and offer to start one.
+    if (_frameGameSeen !== st.game) { _frameGameSeen = st.game; _frameGameSince = Date.now(); }
+    const _settled = (Date.now() - _frameGameSince) > 3000 && !!(runs && Object.keys(runs).length);
+    try { NUZ_BRIDGE.noticeGame(st.game, null, { switchOnly: !_settled }); } catch (e) {}
     return;
   }
   // Then the heuristic one, for when the bridge is confidently wrong: a party
@@ -18842,6 +18854,8 @@ let _levelLowerSeen = new Map(); // species → {level, count}: pending downward
 // already have cleared — remembering it for a short window is what lets a wild
 // catch be told apart from a gift.
 let _lastFrameAt = 0;            // when a producer frame last arrived (staleness)
+let _frameGameSeen = null;       // which game the frames have been reporting
+let _frameGameSince = 0;         // since when — a prompt needs a settled reading
 let _lastEncSeen = null;         // { species, route, at }
 let _lastChoosing = null;        // last mon the game asked a move for (auto-focus)
 let _lastTargetSlot = null;      // last foe party slot the target cursor sat on
