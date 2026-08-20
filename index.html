@@ -4372,8 +4372,21 @@ function spriteUrl(idOrName, variant) {
     const info = pokeInfo(idOrName);
     // A ROM-extracted fakemon sprite wins outright: it IS the species' artwork,
     // and no dex id could stand in for it. One 64x64 image serves every variant
-    // — the cartridge has no shiny or official-artwork version to pull.
-    if (info && info.spritePath) return info.spritePath;
+    // — the cartridge has no shiny version to pull.
+    if (info && info.spritePath) {
+      // ...with one exception. The cartridge tops out at 64x64 (the game renders the
+      // sprite as a 64x64 OBJ; there is genuinely nothing larger in the ROM), which is
+      // thin for the detail panel. Where the hack's wiki has drawn artwork we mirror it
+      // to sprites/hack-art/<game>/<id>.webp and use it for the 'art' variant only.
+      // Roster/list views keep the ROM sprite, which stays the source of truth.
+      // Missing art needs no check here: speciesView's onerror already drops pv-hq and
+      // retries spriteUrl(species), which lands back on spritePath.
+      if (variant === 'art' || variant === 'art-shiny') {
+        const hk = info.spritePath.match(/^sprites\/hack\/([a-z0-9_]+)\/(\d+)\.png$/);
+        if (hk) return `sprites/hack-art/${hk[1]}/${hk[2]}.webp`;
+      }
+      return info.spritePath;
+    }
     id = info ? info.id : null;
     // Fallback: resolve the National-Dex id straight from the bundled slug→id
     // map so sprites show for species not in POKEMON_DB and not yet backfilled
@@ -12338,7 +12351,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-19 16:45';
+const APP_BUILD = '2026-08-19 17:20';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
