@@ -1164,7 +1164,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787267821187"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787268357143"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -7092,12 +7092,48 @@ function doLogout() {
 }
 
 /* ── Run switching ── */
+// Rolling local snapshots of EVERY run, taken just before a run switch.
+//
+// A switch is the moment before the live feed starts writing levels, moves and catches into
+// whatever run it landed on, and today it landed on the wrong Clover and overwrote a party.
+// Nothing could undo that: the per-key mirror of the cloud payload is refreshed on every
+// save, so by the time anyone notices, the good copy is already gone from it too.
+//
+// Three snapshots, oldest dropped. Cheap, silent, and enough to put a run back by hand.
+// nuzRestoreSnapshot() in the console lists them and restores one.
+function takeRunSnapshot(reason) {
+  try {
+    const key = 'nuz-autosnap';
+    const list = JSON.parse(localStorage.getItem(key) || '[]');
+    list.push({ at: Date.now(), reason: reason || '', runs: JSON.parse(JSON.stringify(runs || {})), currentRunId });
+    while (list.length > 3) list.shift();
+    localStorage.setItem(key, JSON.stringify(list));
+  } catch (e) { /* quota — a snapshot is a nicety, never a blocker */ }
+}
+window.nuzRestoreSnapshot = function (index) {
+  let list = [];
+  try { list = JSON.parse(localStorage.getItem('nuz-autosnap') || '[]'); } catch (e) {}
+  if (!list.length) { console.log('[nuz] no snapshots'); return; }
+  if (index == null) {
+    list.forEach((s, i) => console.log(`[nuz] ${i}: ${new Date(s.at).toLocaleString()} — ${Object.keys(s.runs).length} runs (${s.reason})`));
+    console.log('[nuz] nuzRestoreSnapshot(<index>) to restore one');
+    return;
+  }
+  const snap = list[index];
+  if (!snap) { console.log('[nuz] no such snapshot'); return; }
+  takeRunSnapshot('before restore');
+  runs = snap.runs; currentRunId = snap.currentRunId;
+  save(); render(); populateRunSelect();
+  console.log('[nuz] restored snapshot from ' + new Date(snap.at).toLocaleString());
+};
+
 function switchRun(val) {
   if (val === '__new__') {
     promptNewRun();
     populateRunSelect(); // reset dropdown
     return;
   }
+  takeRunSnapshot('switchRun ' + val);
   if (val === '__rename__') {
     promptRenameRun();
     populateRunSelect();
@@ -12409,7 +12445,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-20 16:17';
+const APP_BUILD = '2026-08-20 16:25';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -17394,6 +17430,19 @@ const NUZ_BRIDGE = (function () {
   // chance to get it wrong rather than warning about it after the fact.
   let _detected = null, _detectNotified = null, _awaitingRun = false;
   const LS_RUNPICK = 'nuz-bridge-run-choice';
+  // One-time purge of picks written before the app stopped answering for the player.
+  // Merely HAVING a run open used to record it as the chosen one, so the store is full of
+  // answers nobody gave — and those still auto-select, which is why the chooser stayed
+  // silent even after that was fixed, and why a Clover run was switched into and written
+  // over without a word. Anything genuinely chosen gets recorded again the moment it is
+  // chosen, so dropping the lot costs one prompt per cartridge and nothing else.
+  const LS_RUNPICK_MIGRATED = 'nuz-bridge-run-choice-migrated-v2';
+  try {
+    if (!localStorage.getItem(LS_RUNPICK_MIGRATED)) {
+      localStorage.removeItem(LS_RUNPICK);
+      localStorage.setItem(LS_RUNPICK_MIGRATED, '1');
+    }
+  } catch (e) {}
   const runPicks = () => { try { return JSON.parse(localStorage.getItem(LS_RUNPICK) || '{}'); } catch (e) { return {}; } };
   function rememberRunPick(game, id) {
     const m = runPicks(); m[game] = id;
