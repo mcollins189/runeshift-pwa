@@ -1159,7 +1159,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787253395170"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787253980808"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -12404,7 +12404,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-20 12:16';
+const APP_BUILD = '2026-08-20 12:26';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -18113,7 +18113,10 @@ function pmRender() {
         <div class="pm-mon-main">
           <div class="pm-mon-name">${r.p.nickname || r.p.species}${r.p.isShiny ? ' ✨' : ''}</div>
           <div class="pm-mon-sub">${r.p.species}${r.nature ? ` · ${r.nature}` : ''}${r.status ? ` · ${r.status}` : ''}</div>
-          ${pct === null ? '' : `<div class="pm-hp"><div class="pm-hp-bar ${hpCls}" style="width:${pct}%"></div></div>`}
+          ${pct === null
+            ? `<div class="pm-hp-num none" title="No live reading for this Pokemon — the roster species does not match anything the game reported">no live HP</div>`
+            : `<div class="pm-hp"><div class="pm-hp-bar ${hpCls}" style="width:${pct}%"></div></div>
+               <div class="pm-hp-num ${hpCls}">${r.hp}/${r.maxHp}</div>`}
           ${r.expPct === null ? '' : `<div class="pm-exp" title="EXP to next level"><div class="pm-exp-bar" style="width:${r.expPct}%"></div></div>`}
         </div>
         <div class="pm-mon-lv ${over ? 'over' : ''}" title="${over ? 'Over the level cap' : ''}">Lv ${r.level || '?'}</div>
@@ -18892,6 +18895,12 @@ setInterval(() => {
   .pm-mon-lv.over { color:var(--red); }
   .pm-hp { height:4px; border-radius:2px; background:var(--bg4); margin-top:4px; overflow:hidden; }
   .pm-hp-bar { height:100%; background:var(--green); border-radius:2px; }
+  /* The number, not just the bar. A bar at 24% and a bar that is ABSENT because nothing
+     matched look the same at a glance, and both get read as "it says zero" — which is
+     exactly how a live-HP complaint arrived with the feed working perfectly. */
+  .pm-hp-num { font-size:10px; color:var(--text3); margin-top:1px; font-variant-numeric:tabular-nums; }
+  .pm-hp-num.warn { color:var(--amber); } .pm-hp-num.crit, .pm-hp-num.dead { color:var(--red); }
+  .pm-hp-num.none { font-style:italic; opacity:.7; }
   .pm-hp-bar.warn { background:var(--amber); } .pm-hp-bar.crit, .pm-hp-bar.dead { background:var(--red); }
   .pm-exp { height:3px; border-radius:2px; background:var(--bg4); margin-top:3px; overflow:hidden; }
   .pm-exp-bar { height:100%; background:var(--accent); border-radius:2px; }
