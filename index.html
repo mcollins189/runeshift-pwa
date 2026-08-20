@@ -1159,7 +1159,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787255588725"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787255894420"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -12404,7 +12404,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-20 12:53';
+const APP_BUILD = '2026-08-20 12:58';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -17588,9 +17588,18 @@ function pmTogglePicker() { pmPickerOpen = !pmPickerOpen; pmRender(); }
 // won't match the tracker's ordering.
 function pmTeamRows() {
   const live = NUZ_LIVE.get().party || [];
+  // Match on NICKNAME first, species second. Species is not stable: it changes the moment
+  // something evolves, and the roster keeps the name it was caught under until you edit
+  // it — so a species-only match drops the live link for every evolved Pokemon and shows
+  // it with no HP at all. A nickname survives evolution, and the producer already sends
+  // it. Species remains the fallback for anything unnicknamed.
+  const norm = v => _normLocName(v);
   const decorate = ({ p, i }) => {
-    const l = live.find(e => e && e.species && p.species &&
-                            _normLocName(e.species) === _normLocName(p.species));
+    const byNick = (p.nickname && p.nickname !== p.species)
+      ? live.find(e => e && e.nickname && norm(e.nickname) === norm(p.nickname))
+      : null;
+    const l = byNick || live.find(e => e && e.species && p.species &&
+                            norm(e.species) === norm(p.species));
     return {
       p, i,
       level: (l && l.level) || p.level || null,
