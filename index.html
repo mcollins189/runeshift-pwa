@@ -1159,7 +1159,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787255894420"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787257457389"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -12404,7 +12404,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-20 12:58';
+const APP_BUILD = '2026-08-20 13:24';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -17588,32 +17588,49 @@ function pmTogglePicker() { pmPickerOpen = !pmPickerOpen; pmRender(); }
 // won't match the tracker's ordering.
 function pmTeamRows() {
   const live = NUZ_LIVE.get().party || [];
-  // Match on NICKNAME first, species second. Species is not stable: it changes the moment
-  // something evolves, and the roster keeps the name it was caught under until you edit
-  // it — so a species-only match drops the live link for every evolved Pokemon and shows
-  // it with no HP at all. A nickname survives evolution, and the producer already sends
-  // it. Species remains the fallback for anything unnicknamed.
+  // Three passes, because neither key is reliable on its own.
+  //
+  //  1. NICKNAME. Species changes the moment something evolves while the roster keeps
+  //     whatever it was caught as, so a species match drops the live link for every
+  //     evolved Pokemon. A nickname survives evolution and the producer sends it.
+  //  2. SPECIES, for anything unnicknamed.
+  //  3. ELIMINATION. If exactly one roster row and exactly one live entry are left over,
+  //     they are each other — there is nothing else either could be. This is what
+  //     rescues a Pokemon whose roster species AND nickname both drifted from the
+  //     cartridge (Kanye: game says Squirrap 6/18, roster said neither).
   const norm = v => _normLocName(v);
-  const decorate = ({ p, i }) => {
-    const byNick = (p.nickname && p.nickname !== p.species)
-      ? live.find(e => e && e.nickname && norm(e.nickname) === norm(p.nickname))
-      : null;
-    const l = byNick || live.find(e => e && e.species && p.species &&
-                            norm(e.species) === norm(p.species));
-    return {
-      p, i,
-      level: (l && l.level) || p.level || null,
-      hp: l ? l.hp : null,
-      maxHp: l ? l.maxHp : null,
-      expPct: (l && typeof l.expPct === 'number') ? l.expPct : null,
-      nature: (l && l.nature) || null,
-      status: (l && l.status) || ''
-    };
-  };
+  const claimed = new Set();
+  const rows = [];
+  const take = (x, l) => { if (l) claimed.add(l); rows.push({ x, l }); };
   const alive = curTeam().map((p, i) => ({ p, i })).filter(x => x.p.alive);
+  for (const x of alive) {
+    const p = x.p;
+    const byNick = (p.nickname && p.nickname !== p.species)
+      ? live.find(e => e && e.nickname && !claimed.has(e) && norm(e.nickname) === norm(p.nickname))
+      : null;
+    take(x, byNick || live.find(e => e && e.species && p.species && !claimed.has(e) &&
+                                     norm(e.species) === norm(p.species)) || null);
+  }
+  const spare = live.filter(e => e && !claimed.has(e));
+  const orphanRows = rows.filter(r => !r.l && r.x.p.inParty);
+  if (spare.length === 1 && orphanRows.length === 1) { orphanRows[0].l = spare[0]; spare.length = 0; }
+
+  const decorate = ({ x, l }) => ({
+    p: x.p, i: x.i,
+    level: (l && l.level) || x.p.level || null,
+    hp: l ? l.hp : null,
+    maxHp: l ? l.maxHp : null,
+    expPct: (l && typeof l.expPct === 'number') ? l.expPct : null,
+    nature: (l && l.nature) || null,
+    status: (l && l.status) || '',
+    // What the game reported that we could not place. Shown on the row so an unmatched
+    // Pokemon says WHY it has no numbers instead of drawing a blank bar that reads as 0.
+    unplaced: l ? null : spare.map(e => `${e.species} ${e.hp}/${e.maxHp}`).join(', ')
+  });
+  const pick = f => rows.filter(r => f(r.x)).map(decorate);
   return {
-    party: alive.filter(x => x.p.inParty).map(decorate),
-    bench: alive.filter(x => !x.p.inParty).map(decorate)
+    party: pick(x => x.p.inParty),
+    bench: pick(x => !x.p.inParty)
   };
 }
 
@@ -18137,7 +18154,7 @@ function pmRender() {
           <div class="pm-mon-name">${r.p.nickname || r.p.species}${r.p.isShiny ? ' ✨' : ''}</div>
           <div class="pm-mon-sub">${r.p.species}${r.nature ? ` · ${r.nature}` : ''}${r.status ? ` · ${r.status}` : ''}</div>
           ${pct === null
-            ? `<div class="pm-hp-num none" title="No live reading for this Pokemon — the roster species does not match anything the game reported">no live HP</div>`
+            ? `<div class="pm-hp-num none">no live HP${r.unplaced ? ` · game reports ${r.unplaced}` : ''}</div>`
             : `<div class="pm-hp"><div class="pm-hp-bar ${hpCls}" style="width:${pct}%"></div></div>
                <div class="pm-hp-num ${hpCls}">${r.hp}/${r.maxHp}</div>`}
           ${r.expPct === null ? '' : `<div class="pm-exp" title="EXP to next level"><div class="pm-exp-bar" style="width:${r.expPct}%"></div></div>`}
