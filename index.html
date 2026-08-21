@@ -526,6 +526,7 @@
      but you have no run for it". .toast.show outranks .warn, so stating display here fixes
      the collision without touching the banner. */
   .toast.show{transform:translateX(-50%) translateY(0);opacity:1;display:block}
+  .nuz-runpick-party { display:block; font-size:11px; color:var(--text2); margin-top:2px; }
   .toast.success{border-color:rgba(74,222,128,.3);color:var(--green)}
   .toast.error{border-color:rgba(248,113,113,.3);color:var(--red)}
   .toast.warn{border-color:rgba(245,158,11,.4);color:#fbbf24}
@@ -1164,7 +1165,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787273039465"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787275100739"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -12445,7 +12446,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-20 17:43';
+const APP_BUILD = '2026-08-20 18:18';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -17536,15 +17537,37 @@ const NUZ_BRIDGE = (function () {
     const esc = t => String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
     const sorted = match.slice().sort((a, b) =>
       (b[1].lastUsed || b[1].created || 0) - (a[1].lastUsed || a[1].created || 0));
+    // Date ONLY was near-useless for the case this chooser exists for: two runs of one
+    // game, both played this week, both printing the same day. The time separates them, and
+    // "today 14:32" reads faster than a full timestamp.
+    const whenLabel = (ms) => {
+      const d = new Date(ms), now = new Date();
+      const hhmm = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const sameDay = (x, y) => x.toDateString() === y.toDateString();
+      const yest = new Date(now); yest.setDate(now.getDate() - 1);
+      if (sameDay(d, now)) return 'today ' + hhmm;
+      if (sameDay(d, yest)) return 'yesterday ' + hhmm;
+      return d.toLocaleDateString() + ' ' + hhmm;
+    };
     const rows = sorted.map(([id, r]) => {
       const bits = [];
       if (Array.isArray(r.team)) bits.push(r.team.length + ' caught');
       if (r.cap) bits.push('cap ' + r.cap);
       const when = r.lastUsed || r.created;
-      if (when) bits.push('last played ' + new Date(when).toLocaleDateString());
+      if (when) bits.push('last played ' + whenLabel(when));
+      // The party itself, which identifies a run faster than any counter. Alive and
+      // in-party only, three at most, with levels — the difference between two Clover runs
+      // is legible at a glance, and picking wrong here overwrites somebody's nuzlocke.
+      const party = (Array.isArray(r.team) ? r.team : [])
+        .filter(p => p && p.alive && p.inParty)
+        .slice(0, 3)
+        .map(p => (p.nickname || p.species) + (p.level ? ' L' + p.level : ''))
+        .join(', ');
       return '<button class="btn-ghost nuz-runpick" onclick="_nuzPickRun(\'' + id + '\')">' +
              '<span class="nuz-runpick-name">' + esc(r.name) + '</span>' +
-             '<span class="nuz-runpick-meta">' + esc(bits.join(' · ')) + '</span></button>';
+             '<span class="nuz-runpick-meta">' + esc(bits.join(' · ')) + '</span>' +
+             (party ? '<span class="nuz-runpick-party">' + esc(party) + '</span>' : '') +
+             '</button>';
     }).join('');
     document.getElementById('modal-title').textContent = 'Which run are you playing?';
     document.getElementById('modal-body').innerHTML =
