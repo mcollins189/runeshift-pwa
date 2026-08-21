@@ -1,5 +1,6 @@
 # First-cut rail: ordered by min grass level (fishing-only maps last).
 # Hand-adjust to story order; re-running the emitter will NOT overwrite this file.
+Starter
 Pa'ia Preserve|blobbos,bulbapedo,confirmabi,pitayen,iplora,fuermiga,lankong,seamapan,flipbird,troubait,tulure,walruse
 St. Rosa Range|corooster,humpunny,bunnorgy,flipbird,cakupple,pollefin,florigrace,troubait,tulure,seamapan,caroline,masdawg,stufful,catikillar,fresrye,socckat,haremit,ricosheep,ricosuave,emolga,fedorawk,lizascoop
 Route 1|squirrap,kecleon,tulure,praeteur,praunch,troubait,praestish,karawn

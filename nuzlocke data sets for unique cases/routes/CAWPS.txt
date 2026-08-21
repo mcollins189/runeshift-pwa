@@ -1,5 +1,6 @@
 # First-cut rail: ordered by min grass level (fishing-only maps last).
 # Hand-adjust to story order; re-running the emitter will NOT overwrite this file.
+Starter
 Route 101|poochyena,zigzagoon,wurmple,taillow,meditite
 Route 103|poochyena,zigzagoon,taillow,wingull,roselia,tentacool,magikarp,pelipper,wailmer,sharpedo
 Route 102|poochyena,zigzagoon,wurmple,lotad,seedot,surskit,meditite,roselia,ralts,goldeen,magikarp,dratini,marill,corphish

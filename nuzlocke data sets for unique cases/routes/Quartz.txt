@@ -1,5 +1,6 @@
 # First-cut rail: ordered by min grass level (fishing-only maps last).
 # Hand-adjust to story order; re-running the emitter will NOT overwrite this file.
+Starter
 Lilac Wy|larvesta,ornlil,batoka,sever,squirriti
 Purple Sh|bzby,verpillar,sever,squirriti,reabari,hamet,bagon,hovebug,piscy,thundish,etod,searoket,dolphe,ektron
 White Jng|semilleto,potac,kiwirawa,weedle,reabari,bolichano,beavy,pelichen,piscy,soie,corongori,lionegosh,dolphe

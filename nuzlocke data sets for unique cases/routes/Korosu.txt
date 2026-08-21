@@ -2,6 +2,7 @@
 # Hand-adjust to story order; re-running the emitter will NOT overwrite this file.
 # Boss markers placed at each leader's own top level against the rail's
 # wild-level ordering — an approximation of story order, not a substitute.
+Starter
 --SHAWN's Gym|1|gym-leader|Leader SHAWN
 --MISTY's Gym|2|gym-leader|Leader MISTY
 --LT. SURGE's Gym|3|gym-leader|Leader LT. SURGE

@@ -1,3 +1,4 @@
+Starter
 ﻿Starter|piplup,chimchar,turtwig
 Twinleaf Town|psyduck,golduck,goldeen,seaking,magikarp,gyarados
 Route 201|nidoran-f,nidoran-m,doduo,starly,bidoof

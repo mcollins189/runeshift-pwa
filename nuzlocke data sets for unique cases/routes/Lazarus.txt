@@ -1,5 +1,6 @@
 # First-cut rail: ordered by min grass level (fishing-only maps last).
 # Hand-adjust to story order; re-running the emitter will NOT overwrite this file.
+Starter
 Bronze Fields|bellsprout,cubone,hoppip,phanpy,nincada,lillipup,ducklett,pikipek,grubbin,mareep,cutiefly,mudbray,fomantis,comfey
 Acrisia City|sandshrew,poliwag,grimer,phanpy,shroomish,pansage,pansear,panpour,ducklett,pikipek,remoraid,finneon,wimpod,hoothoot,munna
 Jusmail Town|growlithe,eevee,wurmple,skiddo,pikipek,oricorio-baile,cutiefly,bounsweet,ralts,voltorb,vulpix,woobat

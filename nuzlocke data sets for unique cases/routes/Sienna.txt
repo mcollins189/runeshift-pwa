@@ -6,6 +6,7 @@
 # wild-level ordering — an approximation of story order, not a substitute.
 # Boss markers sit at each leader's own top level against the rail's
 # wild-level ordering — an approximation of story order, not a substitute.
+Starter
 Heathen Pass|kiwee,hoothoot,squirren,folain,orfly,schnauzup,isopoly,swablu
 Kent Cross|kiwee,magby,squirren,orfly,kelpony,algallion,stroente,blubbeau,magikarp,psyduck,gyarados
 Colt Path|kiwee,mudkip,squirren,folain,orfly,taillow,foalata,swablu

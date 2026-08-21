@@ -3,6 +3,7 @@
 # eight gyms are OPTIONAL in this hack and are listed after the story.
 # Hand-adjust to true story order as you play; the encounter emitter will
 # NOT overwrite this file.
+Starter
 Mt. Moon|clefairy,zubat,paras,geodude
 Route 7|pidgey,oddish,meowth,growlithe
 Altering Cave|zubat,mareep,pineco,houndour,teddiursa,aipom,shuckle,stantler,smeargle

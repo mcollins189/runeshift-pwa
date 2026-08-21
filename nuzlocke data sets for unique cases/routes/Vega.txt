@@ -8,6 +8,7 @@
 # wild-level ordering — an approximation of story order, not a substitute.
 # Boss markers sit at each leader's own top level against the rail's
 # wild-level ordering — an approximation of story order, not a substitute.
+Starter
 Route 501|taillow,glachild,pineco
 Route 502|taillow,togepi,glachild,pineco
 Altering Cave|lunabitt

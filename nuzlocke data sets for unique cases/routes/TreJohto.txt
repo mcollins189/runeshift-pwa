@@ -1,5 +1,6 @@
 # First-cut rail: ordered by min grass level (fishing-only maps last).
 # Hand-adjust to story order; re-running the emitter will NOT overwrite this file.
+Starter
 Route 1|pidgey,rattata
 Route 2|caterpie,weedle,pidgey,rattata
 Route 22|rattata,spearow,mankey,poliwag,poliwhirl,tentacool

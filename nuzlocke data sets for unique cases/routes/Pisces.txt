@@ -1,5 +1,6 @@
 # First-cut rail: ordered by min grass level (fishing-only maps last).
 # Hand-adjust to story order; re-running the emitter will NOT overwrite this file.
+Starter
 The Cold Mines|dunsparce,pawniard,icksqueek,lumelmo,coffiddle,fuzky,cream,umbrat,chiroberra,retroroach,mandimyte,snurrowl
 Sky Pillar|golbat,sableye,claydol,banette,altaria,mankey,quilward,burmy,icksqueek,snelfrend,gupspar,ebibi,sharguy,luvdisc,vangar
 Flotshore Trail|tentacool,wingull,pelipper,magikarp,wailmer,sharpedo,vangar,marinaroc,raitaic,snelfrend,ebibi,makibi,sharguy,scallywarg,retroroach

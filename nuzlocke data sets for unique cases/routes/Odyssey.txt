@@ -1,5 +1,6 @@
 # First-cut rail: ordered by min grass level (fishing-only maps last).
 # Hand-adjust to story order; re-running the emitter will NOT overwrite this file.
+Starter
 Coastal Road|pidgey,jigglypuff,oddish,poochyena,zigzagoon,wingull,magikarp,carvanha,staryu,wailmer,seadra,gyarados,chinchou,sharpedo
 Fibernia Prom.|rattata,venonat,grimer,koffing,wooper,gulpin
 Seaside Grotto|zubat,paras,geodude,krabby,dunsparce,corphish,makuhita,nosepass,poliwag,magikarp,feebas,poliwhirl,gyarados

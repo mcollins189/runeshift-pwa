@@ -1,5 +1,6 @@
 # First-cut rail: ordered by min grass level (fishing-only maps last).
 # Hand-adjust to story order; re-running the emitter will NOT overwrite this file.
+Starter
 Lima Island|rattata,spearow,mankey,staryu,carvanha,sharpedo,magikarp,shellder,goldeen,poliwhirl,starmie
 Crysta Island|pidgeotto,rattata,krabby,taillow,magikarp,poliwag,wingull,tentacool,tentacruel,caterpie,weedle,wurmple,silcoon,beautifly
 Mt. Lonelytop|zubat,geodude,graveler,onix,psyduck,finneon,magikarp,golbat,seaking,charmander,koffing,slugma,torchic,pidgeot,raticate,fearow,mankey,primeape,ponyta,rapidash,tentacool,tentacruel,poliwag,golduck,poliwhirl,poliwrath,goldeen,squirtle,wartortle,krabby,wingull,lumineon,seadra,gyarados
