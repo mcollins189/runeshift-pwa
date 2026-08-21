@@ -1165,7 +1165,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787337539458"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787339063233"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -4968,10 +4968,21 @@ function gameHasMethod(gameKey, method) {
 // "fishing with one rod at a time"; you only see encounters from the rod
 // you actually have selected.
 const ROD_METHOD_FOR = { oldRod:'old', goodRod:'good', superRod:'super' };
+// The bridge can SEE the player on the water, and that is proof the tool is owned -
+// you cannot surf without Surf. So live state overrides the manual pill instead of the
+// user having to tell the tracker something the game already knows. Gated on
+// trackingActive() so a stale frame from another cartridge can never unlock a pool in
+// the run you are actually looking at.
+function liveSurfing() {
+  try {
+    if (typeof trackingActive === 'function' && !trackingActive()) return false;
+    return NUZ_LIVE.get().surfing === true;
+  } catch (e) { return false; }
+}
 function isMethodLocked(method) {
   if (!method) return false;
   const tools = curTools();
-  if (method === 'surf') return !tools.surf;
+  if (method === 'surf') return !tools.surf && !liveSurfing();
   if (method === 'rockSmash') return !tools.rockSmash;
   if (method === 'honey') return !tools.honey;
   if (method === 'pokeradar') return !tools.pokeradar;
@@ -4999,8 +5010,10 @@ function buildToolsPillHtml(gameKey) {
 
   let parts = [];
   if (hasSurf) {
-    parts.push(pill('surf','Surf','🌊', tools.surf, `setTool('surf', ${!tools.surf})`,
-      tools.surf ? 'Surf unlocked — surf pools are active' : 'Surf locked — surf pools are dimmed and skip recommendations'));
+    const liveSurf = liveSurfing();
+    parts.push(pill('surf','Surf','🌊', tools.surf || liveSurf, `setTool('surf', ${!tools.surf})`,
+      liveSurf ? 'Surf active — the bridge can see you on the water, so surf pools are live whatever this toggle says'
+      : tools.surf ? 'Surf unlocked — surf pools are active' : 'Surf locked — surf pools are dimmed and skip recommendations'));
   }
   if (hasAnyRod) {
     // Strict exclusivity — only the selected rod is active. Click an active
@@ -12452,7 +12465,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-21 11:38';
+const APP_BUILD = '2026-08-21 12:04';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -17269,6 +17282,11 @@ const NUZ_LIVE = (function () {
       // wired up: the producer sent it and nothing downstream ever saw it.
       choosing:  next.choosing  !== undefined ? next.choosing  : prev.choosing,
       box:       next.box       !== undefined ? next.box       : prev.box,
+      // Whether the player is on the water (gPlayerAvatar bit 3). Which encounter POOL you
+      // are in is not derivable from the map: a route with water has a walking table AND a
+      // surf table. Listed here deliberately - this merge is a whitelist, which is exactly
+      // how 'choosing' got silently dropped the first time it was wired up.
+      surfing:   next.surfing   !== undefined ? next.surfing   : prev.surfing,
       ts:        next.ts || Date.now(),
       route:     prev.route
     };
