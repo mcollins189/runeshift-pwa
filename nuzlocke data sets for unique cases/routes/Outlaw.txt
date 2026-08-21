@@ -4,6 +4,8 @@
 # wild-level ordering — an approximation of story order, not a substitute.
 # Boss markers placed at each leader's own top level against the rail's
 # wild-level ordering — an approximation of story order, not a substitute.
+# Boss markers placed at each leader's own top level against the rail's
+# wild-level ordering — an approximation of story order, not a substitute.
 --BROCK's Gym|1|gym-leader|Leader BROCK
 --MISTY's Gym|2|gym-leader|Leader MISTY
 --LT. SURGE's Gym|3|gym-leader|Leader LT. SURGE

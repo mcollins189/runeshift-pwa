@@ -1,70 +1,64 @@
 # First-cut rail: ordered by min grass level (fishing-only maps last).
 # Hand-adjust to story order; re-running the emitter will NOT overwrite this file.
-The Cold Mines|tentacool,wingull,pelipper,magikarp,wailmer,horsea,sharpedo,dunsparce,pawniard,icksqueek,lumelmo,coffiddle,fuzky,cream,umbrat,chiroberra,retroroach,mandimyte,snurrowl
+The Cold Mines|dunsparce,pawniard,icksqueek,lumelmo,coffiddle,fuzky,cream,umbrat,chiroberra,retroroach,mandimyte,snurrowl
 Sky Pillar|golbat,sableye,claydol,banette,altaria,mankey,quilward,burmy,icksqueek,snelfrend,gupspar,ebibi,sharguy,luvdisc,vangar
-Flotshore Trail|dedeco,poochyena,wurmple,tentacool,wingull,pelipper,magikarp,wailmer,sharpedo,vangar,marinaroc,raitaic,snelfrend,ebibi,makibi,sharguy,scallywarg,retroroach
-Mangrotto Tunnel|dedeco,poochyena,wingull,tentacool,pelipper,magikarp,wailmer,sharpedo,seedot,nincada,icksqueek,kitikiti,snotloud,spryte,maggorde,umbrat,luvdisc,bivague,dakkapod,mamypus,mandimyte,snelfrend,sadsod,sycoplod,moskopo,minote,tunap,squeeshy
-Novice's Walk|wynaut,tentacool,wingull,pelipper,magikarp,wailmer,sharpedo,mankey,ledyba,zigzagoon,burmy,icksqueek,fluffsir,saintisow,nyarly,drakulark,retroroach
-Basalin Coast|dedeco,poochyena,wurmple,lotad,ralts,goldeen,marill,magikarp,corphish,tentacool,wingull,pelipper,wailord,wailmer,sharpedo,mankey,icksqueek,kitikiti,kyudi,fluffsir,saintisow,toxexot,vangar,raitaic,sharprey,colfin,dakkapod,snelfrend,gupspar,ebibi,minote,luvdisc,ghaerial,makibi,tunap,squeeshy
-Cosmoss Bridge|dedeco,marill,poochyena,wurmple,wingull,pelipper,magikarp,fluffsir,saintisow,lumelmo,stomaway,cryplin,hemoko,levlade,harace,retroroach,raitaic,sharprey,colfin,dakkapod,snelfrend,sadsod,sharguy,makibi,crawlaxy,tunap,squeeshy
-Petalburg Woods|dedeco,poochyena,wurmple,silcoon,cascoon,shroomish,slakoth,komorode,boozard,promiscbus,gumborree,drakulark,ajokujoku,yandemic,retroroach,infairno,purgatival,vaiking
-Undura Tunnels|dedeco,whismur,muk,transera,cattuclid,montort,bolterock,capybara,jaramera,scallywarg,retroroach,unberrable,vangar,raitaic,sharprey,colfin,dakkapod,snelfrend,sycoplod,minote,luvdisc,ghaerial,makibi,tunap,squeeshy,sudcub,blabbu,turryturry
-The Ashlands|growlid,spinda,pawniard,bonfeu,cattuclid,combee,harace,retroroach,infairno,dedeco,abra,poochyena,whismur,skitty
-Granipline Quarry|dedeco,zubat,abra,geodude,makuhita,sableye,aron,nosepass,lumelmo,magnalure,petripa,cattowyrm,montort,meralcore,excatator,cindrillon,armagatton,retroroach,minior-red-meteor
-Altering Cave|zubat
-Zotpyre Village|oddish,poochyena,wingull,electrike,plusle,minun,gulpin,tentacool,pelipper,magikarp,wailmer,sharpedo
-Crimney Climb|dedeco,oddish,marill,poochyena,volbeat,illumise,goldeen,magikarp,corphish,growlid,dunsparce,gligar,bonfeu,toxexot,chaffaw,fearow,harace,levialago,retroroach,infairno
-Scuttill Huts|dedeco,marill,numel,mankey,seedot,nincada,kitikiti,moskopo,spryte,maynimo,butterfree,petripa,bramboozle,retroroach,mandimyte
-Etheor Falls|dedeco,golbat,bagon,goldeen,magikarp,barboach,whiscash,zubat,lunatone,solrock,crawlaxy,uhefoe,lyoresa,torstevic,aethereal,retroroach,gaoterra,vangar,raitaic,sharprey,colfin,dakkapod,minior-red-meteor,snelfrend,sycoplod,minote,oroflow,orrocast
-Perplume Maze|dedeco,lotad,lombre,swablu,seviper,goldeen,marill,geodude,magikarp,barboach,nuzleaf,croagunk,pawniard,flague,chiroberra,bramboozle,pitagon,goltigator,blotta,sylvreign,retroroach
-Precipike Bluff|tentacool,wingull,pelipper,magikarp,wailmer,mankey,ledyba,ledian,zigzagoon,linoone,spoink,quilward,bonfeu,burmy,mooda,retroroach,vangar,raitaic,sharprey,colfin,dakkapod,mandimyte,terminyte,snotloud,gupspar,sadsod,minote,sharguy,luvdisc,ghaerial,makibi,tunap,squeeshy
-Sunbeach Strait|dunsparce,zigzagoon,kitikiti,moskopo,kyudi,saintisow,sanctisow,kodough,slickslice,coffiddle,retroroach,tentacool,wingull,pelipper,snelfrend,gupspar,vangar,ebibi,sharguy,sharpedo,wailmer,magikarp,raitaic,sharprey,colfin,dakkapod,luvdisc,ghaerial,makibi,tunap,squeeshy
-Scuttill Way|sandshrew,trapinch,cacnea,baltoy,goldeen,marill,geodude,magikarp,barboach,ledyba,zigzagoon,seedot,nuzleaf,nincada,burmy,moskopo,happea,pomelonian,bramboozle,retroroach,mankey,spryte,coffiddle,lepucyte,spinda
-Jaggro Pass|dedeco,machop,numel,growlid,gligar,pawniard,bonfeu,toxexot,chaffaw,fearow,cobbtle,vaporeon,harace,retroroach,vangar,raitaic,sharprey,colfin,dakkapod,snelfrend,ebibi,makibi,sharguy,oroflow,orrocast,luvdisc,ghaerial,tunap,squeeshy
-Arctaiga Road|tentacool,wingull,pelipper,magikarp,wailmer,linoone,quilward,bonfeu,stomaway,fuzky,cream,snurrowl,pomelonian,retroroach,lottabats,bivague,fogglehind,raitaic,colfin,dakkapod,sycoplod,sadsod,minote,luvdisc,ghaerial,makibi,tunap,squeeshy,spinda
-Mirage Tower|sandshrew,trapinch
-Brumist Cliffs|tentacool,wingull,pelipper,magikarp,wailmer,misdreavus,snorunt,cream,snurrowl,pomelonian,fogglehind,matchlit,pidium,liepard,retroroach,lottabats,bivague,raitaic,colfin,dakkapod,sycoplod,sadsod,minote,luvdisc,ghaerial,makibi,tunap,squeeshy
-Zotpyre Shrine|misdreavus,snorunt,transera,matchlit,pidium,eeriko,sackytwack,liepard,ooh-baaba,golderock,retroroach,shuppet,duskull,vulpix,wingull,chimecho
-Masonried Hike|dedeco,jigglypuff,wingull,swablu,tentacool,pelipper,magikarp,wailmer,dunsparce,spoink,pawniard,quilward,bonfeu,kyudi,toxexot,cattuclid,harace,retroroach,mandimyte
-Sweltorn Desert|dedeco,wingull,electrike,manectric,kecleon,tentacool,pelipper,magikarp,carvanha,sharpedo,kyudi,stomaway,uhefoe,coffiddle,toxitide,pebbler,capybara,retroroach,bishoucha,mandimyte,minior-red-meteor,quilward,snotloud,spryte,cobbtle,spinda
-Sweltorn Palace|dedeco,oddish,kecleon,tropius,tentacool,wingull,pelipper,magikarp,carvanha,misdreavus,matchlit,manniko,golderock,pebbler,jaramera,blinguin,biyako,retroroach,bishoucha
+Flotshore Trail|tentacool,wingull,pelipper,magikarp,wailmer,sharpedo,vangar,marinaroc,raitaic,snelfrend,ebibi,makibi,sharguy,scallywarg,retroroach
+Mangrotto Tunnel|seedot,nincada,icksqueek,kitikiti,snotloud,spryte,maggorde,umbrat,luvdisc,bivague,dakkapod,mamypus,mandimyte,snelfrend,sadsod,sycoplod,moskopo,minote,tunap,squeeshy
+Novice's Walk|mankey,ledyba,zigzagoon,burmy,icksqueek,fluffsir,saintisow,nyarly,drakulark,retroroach
+Basalin Coast|magikarp,tentacool,wingull,pelipper,wailord,wailmer,sharpedo,mankey,icksqueek,kitikiti,kyudi,fluffsir,saintisow,toxexot,vangar,raitaic,sharprey,colfin,dakkapod,snelfrend,gupspar,ebibi,minote,luvdisc,ghaerial,makibi,tunap,squeeshy
+Cosmoss Bridge|
+Petalburg Woods|komorode,boozard,promiscbus,gumborree,drakulark,ajokujoku,yandemic,retroroach,infairno,purgatival,vaiking
+Undura Tunnels|muk,transera,cattuclid,montort,bolterock,capybara,jaramera,scallywarg,retroroach,unberrable,vangar,raitaic,sharprey,colfin,dakkapod,snelfrend,sycoplod,minote,luvdisc,ghaerial,makibi,tunap,squeeshy,sudcub,blabbu,turryturry
+The Ashlands|growlid,spinda,pawniard,bonfeu,cattuclid,combee,harace,retroroach,infairno
+Granipline Quarry|lumelmo,magnalure,petripa,cattowyrm,montort,meralcore,excatator,cindrillon,armagatton,retroroach,minior-red-meteor
+Zotpyre Village|wingull,tentacool,pelipper,magikarp,wailmer,sharpedo
+Crimney Climb|growlid,dunsparce,gligar,bonfeu,toxexot,chaffaw,fearow,harace,levialago,retroroach,infairno
+Scuttill Huts|mankey,seedot,nincada,kitikiti,moskopo,spryte,maynimo,butterfree,petripa,bramboozle,retroroach,mandimyte
+Etheor Falls|lunatone,solrock,crawlaxy,uhefoe,lyoresa,torstevic,aethereal,retroroach,gaoterra,vangar,raitaic,sharprey,colfin,dakkapod,minior-red-meteor,snelfrend,sycoplod,minote,oroflow,orrocast
+Perplume Maze|nuzleaf,croagunk,pawniard,flague,chiroberra,bramboozle,pitagon,goltigator,blotta,sylvreign,retroroach
+Precipike Bluff|mankey,ledyba,ledian,zigzagoon,linoone,spoink,quilward,bonfeu,burmy,mooda,retroroach,vangar,raitaic,sharprey,colfin,dakkapod,mandimyte,terminyte,snotloud,gupspar,sadsod,minote,sharguy,luvdisc,ghaerial,makibi,tunap,squeeshy
+Sunbeach Strait|dunsparce,zigzagoon,kitikiti,moskopo,kyudi,saintisow,sanctisow,kodough,slickslice,coffiddle,retroroach,tentacool,wingull,pelipper,snelfrend,gupspar,vangar,ebibi,sharguy,sharpedo,wailmer,raitaic,sharprey,colfin,dakkapod,luvdisc,ghaerial,makibi,tunap,squeeshy
+Scuttill Way|goldeen,marill,magikarp,barboach,ledyba,zigzagoon,seedot,nuzleaf,nincada,burmy,moskopo,happea,pomelonian,bramboozle,retroroach,mankey,spryte,coffiddle,lepucyte,spinda
+Jaggro Pass|growlid,gligar,pawniard,bonfeu,toxexot,chaffaw,fearow,cobbtle,vaporeon,harace,retroroach,vangar,raitaic,sharprey,colfin,dakkapod,snelfrend,ebibi,makibi,sharguy,oroflow,orrocast,luvdisc,ghaerial,tunap,squeeshy
+Arctaiga Road|linoone,quilward,bonfeu,stomaway,fuzky,cream,snurrowl,pomelonian,retroroach,lottabats,bivague,fogglehind,raitaic,colfin,dakkapod,sycoplod,sadsod,minote,luvdisc,ghaerial,makibi,tunap,squeeshy,spinda
+Brumist Cliffs|misdreavus,snorunt,cream,snurrowl,pomelonian,fogglehind,matchlit,pidium,liepard,retroroach,lottabats,bivague,raitaic,colfin,dakkapod,sycoplod,sadsod,minote,luvdisc,ghaerial,makibi,tunap,squeeshy
+Zotpyre Shrine|misdreavus,snorunt,transera,matchlit,pidium,eeriko,sackytwack,liepard,ooh-baaba,golderock,retroroach
+Masonried Hike|dunsparce,spoink,pawniard,quilward,bonfeu,kyudi,toxexot,cattuclid,harace,retroroach,mandimyte
+Sweltorn Desert|kyudi,stomaway,uhefoe,coffiddle,toxitide,pebbler,capybara,retroroach,bishoucha,mandimyte,minior-red-meteor,quilward,snotloud,spryte,cobbtle,spinda
+Sweltorn Palace|misdreavus,matchlit,manniko,golderock,pebbler,jaramera,blinguin,biyako,retroroach,bishoucha
 Canopour Wilds|seedot,nuzleaf,croagunk,moskopo,flague,chiroberra,bramboozle,pitagon,goltigator,retroroach
-Safari Zone|pikachu,oddish,gloom,doduo,natu,wobbuffet,girafarig,psyduck,goldeen,magikarp,seaking,xatu,heracross,phanpy,geodude,dodrio,rhyhorn,pinsir,golduck,dedeco,hoothoot,spinarak,mareep,aipom,sunkern,snubbull,stantler,marill,wooper,quagsire,remoraid,octillery,pineco,teddiursa,houndour,miltank,shuckle
-Icipike Cave|zubat,golbat,spheal,tentacool,magikarp,wailmer,dedeco,snorunt,spryte,snurrowl,liepard,axelfin,moragan,shiversnap,retroroach,lottabats,terminyte
-Magma Hideout|geodude,graveler,torkoal
-Etheor Nadir|zubat,golbat,tentacool,magikarp,wailmer,oroflow,orrocast
-Cave of Origin|zubat,golbat,sableye,luvdisc,sadsod,agomago,maeracholy,deteriotl
+Icipike Cave|snorunt,spryte,snurrowl,liepard,axelfin,moragan,shiversnap,retroroach,lottabats,terminyte
+Etheor Nadir|oroflow,orrocast
+Cave of Origin|luvdisc,sadsod,agomago,maeracholy,deteriotl
 Fortree City|retroroach,spitfax
 Crimney Catacomb|bonfeu,snotloud,spryte,matchlit,golderock,cattuclid,cobbtle,bolterock,corisp,retroroach,mandimyte
 Whisper Cliff|growlid,gligar,bonfeu,kodough,fogglehind,pidium,ooh-baaba,cobbtle,retroroach,vangar,raitaic,sharprey,colfin,dakkapod,snelfrend,ebibi,makibi,oroflow,orrocast
 Sootopolis City|magikarp,tentacool,gyarados,vangar,raitaic,sharprey,colfin,dakkapod,snelfrend,sycoplod,minote,luvdisc,ghaerial,makibi,tunap,squeeshy,misdreavus,pawniard,spryte,bivague,magnalure,manniko,chiroberra,sackytwack,sylvreign,retroroach
 Mossdeep City|vangar,raitaic,sharprey,colfin,dakkapod,snelfrend,sadsod,minote,sharguy,luvdisc,ghaerial,makibi,tunap,squeeshy,retroroach,papypus,sycoplod
-Desert Underpass|ditto,whismur,loudred
 Crimney Caldera|retroroach,vivisu,solasu
-Ever Grande Road|zubat,golbat,whismur,loudred,makuhita,hariyama,aron,lairon,mawile,geodude,graveler,sableye,goldeen,magikarp,barboach,whiscash,lyoresa,golderock,aethereal,mothramity,glareyale,levialago,retroroach,solasu,gaoterra,bishoucha,nimbozoa,mystician,orrocast,dakkapod,agomago,oroflow,deteriotl
+Ever Grande Road|lyoresa,golderock,aethereal,mothramity,glareyale,levialago,retroroach,solasu,gaoterra,bishoucha,nimbozoa,mystician,orrocast,dakkapod,agomago,oroflow,deteriotl
 Hatchloam Field|mooda,sanctisow,slickslice,combee,lepucyte,welproot,draekarot,coforchee,wannegg,retroroach,luvdisc,bivague,dakkapod,mamypus,snelfrend,sadsod,sycoplod,moskopo,minote,tunap,squeeshy
-Trick House|tentacool,wingull,pelipper,magikarp,wailmer,horsea,sharpedo,snotloud,sickbeat,slickslice,sackytwack,maynimo,butterfree,chaffaw,biyako,wannegg,lunaster,retroroach,spryte,transera,promiscbus
+Trick House|snotloud,sickbeat,slickslice,sackytwack,maynimo,butterfree,chaffaw,biyako,wannegg,lunaster,retroroach,spryte,transera,promiscbus
 Cycling Road|linoone,lumelmo,magnalure,sylvreign,levlade,shockore,plasmantis,harace,chika,retroroach
 Pending Dev|icksqueek,komorode,fluffsir,sanctisow,chika,pantney,garjira,jackabox,fooltage,retroroach
 Maintenance|grimer,komorode,lumelmo,stomaway,magnalure,cryplin,retroroach
-Artisan Cave|smeargle
 Slateport Shore|linoone,grumpig,fluffsir,coffiddle,vaporeon,blinguin,chika,retroroach,vangar,raitaic,sharprey,colfin,dakkapod,snelfrend,sycoplod,minote,luvdisc,ghaerial,makibi,tunap,squeeshy
-Sailor's Pause|tentacool,tentacruel,magikarp,bivague,chiroberra,walrust,scallywarg,casowary,boozard,retroroach,waargh,snelfrend,sycoplod,minote,luvdisc,ghaerial,makibi,tunap,squeeshy,raitaic,dakkapod
+Sailor's Pause|bivague,chiroberra,walrust,scallywarg,casowary,boozard,retroroach,waargh,snelfrend,sycoplod,minote,luvdisc,ghaerial,makibi,tunap,squeeshy,raitaic,dakkapod
 Southern Island|fluffrear,happea,maynimo,koremai,koresato,retroroach,luvdisc,bivague,dakkapod,mamypus,snelfrend,sadsod,sycoplod,moskopo,minote,tunap,squeeshy
 Granipline Beach|primeape,croagunk,toxicroak,bivague,coffiddle,sylvreign,toxiturf,excatator,marsoyart,retroroach,papypus,vangar,raitaic,sharprey,colfin,dakkapod,snelfrend,sycoplod,minote,luvdisc,ghaerial,makibi,tunap,squeeshy
-Wishwell Ocean|tentacool,wingull,pelipper,magikarp,wailmer,sharpedo,ledyba,dunsparce,combee,mustybane,chika,casowary,promiscbus,retroroach,papypus,vangar,raitaic,sharprey,colfin,dakkapod,snelfrend,sycoplod,minote,alomomola,ghaerial,makibi,tunap,squeeshy
-Rustburg Wharf|tentacool,wingull,pelipper,magikarp,dedeco,wailmer,corsola,linoone,biyako,mustybane,chika,fakysnaky,pantney,nyarly,retroroach,bishoucha,unberrable,vangar,raitaic,sharprey,colfin,dakkapod,snelfrend,sycoplod,minote,luvdisc,ghaerial,makibi,tunap,squeeshy
+Wishwell Ocean|ledyba,dunsparce,combee,mustybane,chika,casowary,promiscbus,retroroach,papypus,vangar,raitaic,sharprey,colfin,dakkapod,snelfrend,sycoplod,minote,alomomola,ghaerial,makibi,tunap,squeeshy
+Rustburg Wharf|linoone,biyako,mustybane,chika,fakysnaky,pantney,nyarly,retroroach,bishoucha,unberrable,vangar,raitaic,sharprey,colfin,dakkapod,snelfrend,sycoplod,minote,luvdisc,ghaerial,makibi,tunap,squeeshy
 Rustboro City|linoone,biyako,chika,pantney,nyarly,garjira,jackabox,fooltage,retroroach,bishoucha,vangar,raitaic,sharprey,colfin,dakkapod,snelfrend,sycoplod,minote,luvdisc,ghaerial,makibi,tunap,squeeshy
 Pacifidlog Town|vangar,marinaroc,raitaic,snelfrend,gupspar,ebibi,sharguy,luvdisc
-Golden Plains|tentacool,wingull,pelipper,magikarp,wailmer,luvdisc,corsola,nimbozoa,mystician,orrocast,dakkapod,agomago,oroflow,deteriotl
-Ozone Institute|tentacool,wingull,pelipper,magikarp,wailmer,luvdisc,bivague,dakkapod,mamypus,snelfrend,sadsod,sycoplod,moskopo,minote,tunap,squeeshy
-Fossil Shore|tentacool,wingull,pelipper,magikarp,wailmer,horsea,sharpedo
-Dewford Town|tentacool,wingull,pelipper,magikarp,wailmer,vangar,raitaic,sharprey,colfin,dakkapod,snelfrend,sycoplod,minote,luvdisc,ghaerial,makibi,tunap,squeeshy,sharguy
-Sea Mauville|tentacool,wingull,pelipper,magikarp,wailmer,vangar,raitaic,sharprey,colfin,dakkapod,snelfrend,sycoplod,minote,luvdisc,ghaerial,makibi,tunap,squeeshy
-Petalburg City|marill,goldeen,magikarp,corphish,vangar,raitaic,sharprey,colfin,dakkapod,snelfrend,sycoplod,minote,luvdisc,ghaerial,makibi,tunap,squeeshy
+Golden Plains|nimbozoa,mystician,orrocast,dakkapod,agomago,oroflow,deteriotl
+Ozone Institute|luvdisc,bivague,dakkapod,mamypus,snelfrend,sadsod,sycoplod,moskopo,minote,tunap,squeeshy
+Fossil Shore|
+Dewford Town|vangar,raitaic,sharprey,colfin,dakkapod,snelfrend,sycoplod,minote,luvdisc,ghaerial,makibi,tunap,squeeshy,sharguy
+Sea Mauville|vangar,raitaic,sharprey,colfin,dakkapod,snelfrend,sycoplod,minote,luvdisc,ghaerial,makibi,tunap,squeeshy
+Petalburg City|vangar,raitaic,sharprey,colfin,dakkapod,snelfrend,sycoplod,minote,luvdisc,ghaerial,makibi,tunap,squeeshy
 Navigulf Waves|vangar,raitaic,sharprey,colfin,dakkapod,snelfrend,sycoplod,minote,luvdisc,ghaerial,makibi,tunap,squeeshy
 Strae Seapath|vangar,raitaic,sharprey,colfin,dakkapod,snelfrend,sycoplod,minote,luvdisc,ghaerial,makibi,tunap,squeeshy
 Lilycove City|vangar,raitaic,sharprey,colfin,dakkapod,snelfrend,ebibi,makibi,sharguy,luvdisc,ghaerial,tunap,squeeshy
-Underwater|chinchou,clamperl,relicanth,squeeshy,sudcub,blabbu,turryturry
+Underwater|squeeshy,sudcub,blabbu,turryturry
 Oldale Town|luvdisc,bivague,dakkapod,mamypus,snelfrend,sadsod,sycoplod,moskopo,minote,tunap,squeeshy
 Scorched Slab|lunatone,solrock,minior-red-meteor

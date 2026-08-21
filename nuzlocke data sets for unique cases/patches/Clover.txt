@@ -1,4 +1,5 @@
 # Clover — species invented by this ROM, read straight off the cartridge.
+# args: clover Clover "W:/Downloads/rom collect/GBA/Pokemon Clover.gba" 0x245ee0 0x254784 28
 # Stats and types come from gBaseStats, names from gSpeciesNames, and the
 # sprite from gMonFrontPic/gMonPalette via _converters/extract-sprites.mjs.
 # Regenerate with _converters/rom-fakemon-patch.mjs; do not hand-edit.
@@ -28,7 +29,7 @@
 55,55,55,55,55,55|Nauseon|nauseon|poison|/rom/clover/22|
 95,120,90,55,70,70|Hazmate|hazmate|poison,fighting|/rom/clover/23|
 70,55,70,120,90,95|Ebolable|ebolable|poison,dark|/rom/clover/24|
-55,40,85,90,75,75|Pikotton|pikotton|electric,fairy|/rom/clover/25|
+55,40,85,90,75,75|Pikotton|pikotton|electric|/rom/clover/25|
 70,77,105,50,105,70|Birdhouse|birdhouse|normal,flying|/rom/clover/26|
 48,50,75,40,62,50|Lanshil|lanshil|rock|/rom/clover/27|
 65,75,87,45,75,60|Middril|middril|rock|/rom/clover/28|
@@ -47,8 +48,8 @@
 45,50,50,40,60,45|Troubait|troubait|water|/rom/clover/41|
 65,70,70,58,62,70|Tulure|tulure|water|/rom/clover/42|
 115,105,85,69,83,70|Monstrap|monstrap|water,dark|/rom/clover/43|
-55,55,50,45,65,55|Pixila|pixila|bug,fairy|/rom/clover/44|
-110,65,65,95,130,60|Fairileon|fairileon|bug,fairy|/rom/clover/45|
+55,55,50,45,65,55|Pixila|pixila|bug|/rom/clover/44|
+110,65,65,95,130,60|Fairileon|fairileon|bug|/rom/clover/45|
 50,80,60,10,50,75|Wedgard|wedgard|ground|/rom/clover/46|
 110,112,95,20,50,98|Knokedge|knokedge|ground|/rom/clover/47|
 66,50,57,112,73,102|Ribbizap|ribbizap|electric|/rom/clover/48|
@@ -62,15 +63,15 @@
 100,112,90,20,50,111|Anaconduke|anaconduke|grass,fighting|/rom/clover/56|
 60,55,75,40,80,85|Fishnism|fishnism|water,psychic|/rom/clover/57|
 115,65,95,50,100,90|Sjwhale|sjwhale|water,psychic|/rom/clover/58|
-60,40,70,69,70,30|Chezetta|chezetta|fairy,fire|/rom/clover/59|
-105,69,105,95,105,40|Mozzamazel|mozzamazel|fairy,fire|/rom/clover/60|
+60,40,70,69,70,30|Chezetta|chezetta|undefined,fire|/rom/clover/59|
+105,69,105,95,105,40|Mozzamazel|mozzamazel|undefined,fire|/rom/clover/60|
 70,90,60,35,35,30|Krokling|krokling|ground,grass|/rom/clover/61|
 110,130,100,65,65,50|Krokizon|krokizon|ground,grass|/rom/clover/62|
 65,45,80,40,60,45|Conchilla|conchilla|normal|/rom/clover/63|
 105,85,110,60,90,75|Haremit|haremit|normal,rock|/rom/clover/64|
 50,30,64,58,67,20|Coolcube|coolcube|ice|/rom/clover/65|
 80,50,94,110,106,58|Tankube|tankube|ice|/rom/clover/66|
-85,40,79,125,96,105|Fabkube|fabkube|ice,fairy|/rom/clover/67|
+85,40,79,125,96,105|Fabkube|fabkube|ice|/rom/clover/67|
 68,65,41,48,43,86|Smogaroben|smogaroben|poison,flying|/rom/clover/68|
 78,85,71,78,73,116|Smoxilon|smoxilon|poison,flying|/rom/clover/69|
 80,120,80,60,80,100|Machmona|machmona|fighting,ghost|/rom/clover/70|
@@ -81,9 +82,9 @@
 70,62,85,105,50,65|Pretzely|pretzely|rock,ghost|/rom/clover/75|
 50,75,40,85,60,50|Deemdow|deemdow|ghost,psychic|/rom/clover/76|
 80,125,50,135,90,70|Dowster|dowster|ghost,psychic|/rom/clover/77|
-45,55,40,35,50,60|Cheerly|cheerly|fairy|/rom/clover/78|
-60,72,68,52,88,95|Cheerific|cheerific|fairy|/rom/clover/79|
-100,124,76,62,92,70|Mennopaws|mennopaws|fairy,ground|/rom/clover/80|
+45,55,40,35,50,60|Cheerly|cheerly|normal|/rom/clover/78|
+60,72,68,52,88,95|Cheerific|cheerific|normal|/rom/clover/79|
+100,124,76,62,92,70|Mennopaws|mennopaws|undefined,ground|/rom/clover/80|
 35,20,30,75,40,80|Caracold|caracold|ice,electric|/rom/clover/81|
 60,55,50,110,70,101|Glacialynx|glacialynx|ice,electric|/rom/clover/82|
 111,50,76,95,76,92|Pengas|pengas|ice,fire|/rom/clover/83|
@@ -96,8 +97,8 @@
 110,115,75,65,70,100|Somboludo|somboludo|ground,steel|/rom/clover/90|
 50,75,40,50,40,70|Puppacti|puppacti|grass|/rom/clover/91|
 80,110,60,100,60,110|Marionettl|marionettl|grass,water|/rom/clover/92|
-40,20,54,77,64,33|Tittai|tittai|water,fairy|/rom/clover/93|
-80,40,85,107,95,43|Octai|octai|water,fairy|/rom/clover/94|
+40,20,54,77,64,33|Tittai|tittai|water|/rom/clover/93|
+80,40,85,107,95,43|Octai|octai|water|/rom/clover/94|
 50,61,62,41,40,71|Charagon|charagon|steel,fire|/rom/clover/95|
 80,90,90,70,70,125|Hyletrack|hyletrack|steel,fire|/rom/clover/96|
 55,70,70,40,60,76|Euphoreal|euphoreal|dark|/rom/clover/97|
@@ -110,6 +111,7 @@
 50,72,35,63,40,85|Poizookie|poizookie|rock,poison|/rom/clover/104|
 65,113,65,103,50,125|Toxiraptor|toxiraptor|rock,poison|/rom/clover/105|
 60,85,45,33,47,75|Sabreck|sabreck|rock,normal|/rom/clover/106|
+80,118,70,62,66,125|Huntabre|huntabre|rock,normal|/rom/clover/107|
 100,111,93,106,68,52|Pyralink|pyralink|dragon,fire|/rom/clover/108|
 50,50,50,50,50,51|Singlets|singlets|psychic,electric|/rom/clover/109|
 69,69,69,69,69,66|Dubus|dubus|psychic,electric|/rom/clover/110|
@@ -122,12 +124,13 @@
 255,10,10,75,135,55|Unjoy|unjoy|ghost|/rom/clover/117|
 50,60,20,73,30,95|Frosowl|frosowl|ice,flying|/rom/clover/118|
 75,80,40,103,60,115|Whizzard|whizzard|ice,flying|/rom/clover/119|
+60,80,50,30,45,45|Drapillar|drapillar|bug,dragon|/rom/clover/120|
 90,81,100,31,95,15|Caparagon|caparagon|bug,dragon|/rom/clover/121|
 110,140,85,50,80,75|Mantrake|mantrake|bug,dragon|/rom/clover/122|
 100,130,80,65,81,70|Ogrelord|ogrelord|dark|/rom/clover/123|
 100,61,94,106,95,70|Chantruth|chantruth|dark|/rom/clover/124|
-50,55,55,65,60,70|Inbitween|inbitween|fairy|/rom/clover/125|
-69,80,70,110,75,115|Geigh|geigh|fairy,flying|/rom/clover/126|
+50,55,55,65,60,70|Inbitween|inbitween|normal|/rom/clover/125|
+69,80,70,110,75,115|Geigh|geigh|undefined,flying|/rom/clover/126|
 70,30,85,40,85,10|Jarape|jarape|electric,rock|/rom/clover/127|
 70,45,45,125,125,125|Spilefree|spilefree|electric,ghost|/rom/clover/128|
 55,40,45,60,45,10|Bongecko|bongecko|grass,fire|/rom/clover/129|
@@ -139,6 +142,7 @@
 110,110,95,45,62,67|Chasumo|chasumo|fighting|/rom/clover/135|
 80,80,50,40,50,25|Oilslam|oilslam|poison,dark|/rom/clover/136|
 105,105,75,105,95,50|Isissin|isissin|poison,dark|/rom/clover/137|
+62,65,55,55,48,65|Stuffowl|stuffowl|normal,flying|/rom/clover/138|
 72,85,73,72,68,85|Durkey|durkey|normal,flying|/rom/clover/139|
 87,105,81,102,81,103|Upchucken|upchucken|normal,flying|/rom/clover/140|
 45,25,65,100,45,20|Dragun|dragun|dragon,steel|/rom/clover/141|
@@ -150,14 +154,14 @@
 73,136,148,121,112,50|Baddon|baddon|dragon|/rom/clover/147|
 100,150,100,100,105,95|Endranther|endranther|poison|/rom/clover/148|
 90,120,97,105,95,115|Notridley|notridley|dragon,flying|/rom/clover/149|
-112,87,104,131,131,115|Demiwaifu|demiwaifu|fairy|/rom/clover/150|
+112,87,104,131,131,115|Demiwaifu|demiwaifu|normal|/rom/clover/150|
 120,125,100,125,100,150|Clovenix|clovenix|grass,fire|/rom/clover/151|
 63,80,60,30,40,45|Reptyke|reptyke|fighting|/rom/clover/152|
 75,95,80,40,60,55|Rasclobber|rasclobber|fighting,dragon|/rom/clover/153|
 90,125,100,60,70,80|Batterex|batterex|fighting,dragon|/rom/clover/154|
 53,50,65,50,80,20|Faeriock|faeriock|rock|/rom/clover/155|
-60,60,80,70,95,40|Sylvuin|sylvuin|rock,fairy|/rom/clover/156|
-80,70,100,90,125,60|Oburonyxo|oburonyxo|rock,fairy|/rom/clover/157|
+60,60,80,70,95,40|Sylvuin|sylvuin|rock|/rom/clover/156|
+80,70,100,90,125,60|Oburonyxo|oburonyxo|rock|/rom/clover/157|
 40,64,35,64,35,80|Cloucat|cloucat|flying|/rom/clover/158|
 50,80,50,80,50,95|Felimbus|felimbus|flying,dark|/rom/clover/159|
 75,95,70,90,70,125|Deathorus|deathorus|flying,dark|/rom/clover/160|
@@ -172,17 +176,18 @@
 80,125,90,50,70,65|Mudslacks|mudslacks|ground,fighting|/rom/clover/169|
 50,30,95,20,90,20|Bukitlee|bukitlee|steel|/rom/clover/170|
 50,60,200,60,140,30|Lossolith|lossolith|steel,psychic|/rom/clover/171|
+75,70,80,115,85,90|Mimimie|mimimie|water,dark|/rom/clover/172|
 89,108,122,49,75,50|Sprucifix|sprucifix|grass,ghost|/rom/clover/173|
 110,150,100,20,90,50|Hulkan|hulkan|fighting|/rom/clover/174|
-60,40,45,55,50,55|Nonite|nonite|fairy|/rom/clover/175|
-80,40,45,95,80,85|Nonegative|nonegative|fairy|/rom/clover/176|
-100,105,90,95,80,75|Nomaestro|nomaestro|fairy,flying|/rom/clover/177|
+60,40,45,55,50,55|Nonite|nonite|normal|/rom/clover/175|
+80,40,45,95,80,85|Nonegative|nonegative|normal|/rom/clover/176|
+100,105,90,95,80,75|Nomaestro|nomaestro|undefined,flying|/rom/clover/177|
 55,45,45,45,50,60|Dunkypea|dunkypea|poison,flying|/rom/clover/178|
 70,60,60,65,65,95|Burdmen|burdmen|poison,flying|/rom/clover/179|
 105,70,80,85,95,80|Nutzboltz|nutzboltz|poison,flying|/rom/clover/180|
 40,45,50,60,50,55|Kuklux|kuklux|fire|/rom/clover/181|
 60,60,60,115,115,105|Kuklan|kuklan|fire|/rom/clover/182|
-85,62,78,92,118,25|Flameboyan|flameboyan|fire,fairy|/rom/clover/183|
+85,62,78,92,118,25|Flameboyan|flameboyan|fire|/rom/clover/183|
 95,50,75,95,115,80|Piicee|piicee|psychic,poison|/rom/clover/184|
 105,115,105,60,60,70|Sonnanos|sonnanos|steel,fighting|/rom/clover/185|
 60,80,160,50,70,70|Plebbles|plebbles|rock|/rom/clover/186|
@@ -197,7 +202,7 @@
 90,110,115,50,70,80|Rekroach|rekroach|dark,bug|/rom/clover/195|
 80,55,50,38,50,70|Ricosheep|ricosheep|normal|/rom/clover/196|
 130,70,80,60,70,115|Ricosuave|ricosuave|normal|/rom/clover/197|
-120,60,100,100,85,35|Spaghefant|spaghefant|ground,fairy|/rom/clover/198|
+120,60,100,100,85,35|Spaghefant|spaghefant|ground|/rom/clover/198|
 65,70,75,67,50,60|Crystaquil|crystaquil|ice,poison|/rom/clover/199|
 90,120,96,75,85,80|Crystaking|crystaking|ice,poison|/rom/clover/200|
 75,80,91,80,91,75|Fontaba|fontaba|psychic|/rom/clover/201|
@@ -213,10 +218,11 @@
 130,65,100,110,90,60|Draconius|draconius|normal,dragon|/rom/clover/211|
 65,55,75,50,65,45|Ticktac|ticktac|bug,steel|/rom/clover/212|
 70,80,65,55,60,75|Eareticle|eareticle|bug,steel|/rom/clover/213|
+85,135,85,60,70,115|Scythear|scythear|bug,steel|/rom/clover/214|
 60,65,75,40,50,55|Cozload|cozload|electric,bug|/rom/clover/215|
 100,105,110,75,80,75|Snugware|snugware|electric,bug|/rom/clover/216|
 100,75,75,105,80,110|Fleespecs|fleespecs|electric,bug|/rom/clover/217|
-80,130,70,45,75,90|Honrade|honrade|fairy,fighting|/rom/clover/218|
+80,130,70,45,75,90|Honrade|honrade|undefined,fighting|/rom/clover/218|
 50,45,90,50,105,55|Embortion|embortion|dark,ghost|/rom/clover/219|
 80,75,110,85,120,85|Premantom|premantom|dark,ghost|/rom/clover/220|
 65,40,70,40,65,35|Galavik|galavik|steel|/rom/clover/221|
@@ -230,9 +236,9 @@
 85,60,115,110,95,75|Venowatt|venowatt|electric,poison|/rom/clover/229|
 80,140,105,50,110,40|Vaultevour|vaultevour|steel,dark|/rom/clover/230|
 130,90,85,90,100,60|Semdemen|semdemen|water,ground|/rom/clover/231|
-69,110,75,80,70,115|Dragking|dragking|fairy|/rom/clover/232|
+69,110,75,80,70,115|Dragking|dragking|normal|/rom/clover/232|
 90,105,90,80,90,75|Kuuroba|kuuroba|grass,fighting|/rom/clover/233|
-85,69,70,105,83,115|Baitmaster|baitmaster|water,fairy|/rom/clover/234|
+85,69,70,105,83,115|Baitmaster|baitmaster|water|/rom/clover/234|
 30,80,50,30,40,70|Spookster|spookster|ghost|/rom/clover/235|
 55,105,70,40,55,95|Spookeer|spookeer|ghost|/rom/clover/236|
 90,137,105,73,85,110|Spookzilla|spookzilla|ghost|/rom/clover/237|
@@ -241,8 +247,9 @@
 110,145,116,80,79,70|Potarded|potarded|ground|/rom/clover/240|
 115,60,75,70,75,40|Sadfish|sadfish|water|/rom/clover/241|
 90,90,75,90,90,80|Deloris|deloris|grass,ghost|/rom/clover/242|
-95,60,65,130,65,110|Oreon|oreon|fairy,dark|/rom/clover/243|
+95,60,65,130,65,110|Oreon|oreon|undefined,dark|/rom/clover/243|
 80,127,73,107,63,102|Farfigtron|farfigtron|fire,fighting|/rom/clover/244|
+80,50,75,125,150,100|Regirode|regirode|rock,ghost|/rom/clover/245|
 80,125,150,50,75,100|Regimelt|regimelt|ice,ghost|/rom/clover/246|
 80,85,115,85,115,100|Regirust|regirust|steel,ghost|/rom/clover/247|
 105,90,150,90,150,95|Jewipede|jewipede|bug,normal|/rom/clover/248|
@@ -253,6 +260,7 @@
 44,55,75,40,69,35|Sadrog|sadrog|grass|/rom/clover/277|
 75,70,90,50,75,45|Smugrok|smugrok|grass|/rom/clover/278|
 100,90,120,55,95,65|Peperee|peperee|grass,rock|/rom/clover/279|
+45,55,43,60,50,65|Hodtog|hodtog|fire|/rom/clover/280|
 60,65,55,85,60,80|Wienebark|wienebark|fire|/rom/clover/281|
 80,80,65,120,80,100|Saudoge|saudoge|fire,flying|/rom/clover/282|
 49,70,50,45,49,55|Gnarrk|gnarrk|water|/rom/clover/283|
@@ -272,14 +280,14 @@
 82,50,72,92,117,57|Upbeddit|upbeddit|psychic|/rom/clover/297|
 32,40,33,30,30,72|Flipbird|flipbird|normal,flying|/rom/clover/298|
 82,125,77,45,65,93|Wheygle|wheygle|fighting,flying|/rom/clover/299|
-120,50,115,55,125,40|Gangnome|gangnome|fairy|/rom/clover/300|
+120,50,115,55,125,40|Gangnome|gangnome|normal|/rom/clover/300|
 70,50,80,145,90,90|Ruselamp|ruselamp|psychic,electric|/rom/clover/301|
 80,60,65,25,65,50|Mehndior|mehndior|fire,rock|/rom/clover/302|
 80,48,80,111,85,121|Tunakking|tunakking|fire,psychic|/rom/clover/303|
 70,135,60,115,45,80|Pyongnome|pyongnome|steel|/rom/clover/304|
 70,60,75,40,60,35|Bruhkid|bruhkid|ground,fighting|/rom/clover/305|
-59,75,60,45,70,31|Cakupple|cakupple|grass,fairy|/rom/clover/306|
-89,115,90,50,110,51|Fondupple|fondupple|grass,fairy|/rom/clover/307|
+59,75,60,45,70,31|Cakupple|cakupple|grass|/rom/clover/306|
+89,115,90,50,110,51|Fondupple|fondupple|grass|/rom/clover/307|
 101,76,101,56,92,50|Shroofle|shroofle|dark|/rom/clover/308|
 110,100,120,55,80,50|Ubruh|ubruh|ground,fighting|/rom/clover/309|
 60,65,43,50,40,50|Walruse|walruse|water|/rom/clover/310|
@@ -287,8 +295,8 @@
 67,80,113,48,85,112|Donutsteel|donutsteel|steel|/rom/clover/312|
 145,75,90,70,90,40|Bulbapedo|bulbapedo|grass,poison|/rom/clover/313|
 70,80,50,20,80,20|Wastenaut|wastenaut|steel,poison|/rom/clover/314|
-51,51,61,71,51,81|Cirpent|cirpent|poison,fairy|/rom/clover/315|
-71,71,91,101,81,111|Traumobra|traumobra|poison,fairy|/rom/clover/316|
+51,51,61,71,51,81|Cirpent|cirpent|poison|/rom/clover/315|
+71,71,91,101,81,111|Traumobra|traumobra|poison|/rom/clover/316|
 20,155,15,10,15,130|Militant|militant|bug,poison|/rom/clover/317|
 50,40,95,90,110,115|Hofucno|hofucno|water,flying|/rom/clover/318|
 50,65,75,30,50,65|Hornigiri|hornigiri|ice|/rom/clover/319|
@@ -315,7 +323,9 @@
 135,80,90,65,90,35|Cansumor|cansumor|poison|/rom/clover/340|
 85,80,60,95,60,145|Chromox|chromox|fire,steel|/rom/clover/341|
 50,60,50,40,50,30|Pitayen|pitayen|grass,dragon|/rom/clover/342|
+70,80,70,60,70,50|Dragaya|dragaya|grass,dragon|/rom/clover/343|
 100,135,70,80,70,75|Avianjoin|avianjoin|steel,flying|/rom/clover/344|
+62,30,65,93,70,58|Illuminowl|illuminowl|psychic,flying|/rom/clover/345|
 110,10,200,5,200,5|Tarditank|tarditank|bug,water|/rom/clover/346|
 60,45,45,55,45,5|Iplora|iplora|bug,steel|/rom/clover/347|
 110,101,90,95,70,55|Cthullord|cthullord|rock,water|/rom/clover/348|
@@ -323,12 +333,13 @@
 100,100,100,55,100,55|Senketula|senketula|bug,dark|/rom/clover/350|
 105,110,75,115,80,45|Cokemmoth|cokemmoth|ice|/rom/clover/351|
 70,115,70,110,70,90|Grimdak|grimdak|dark,steel|/rom/clover/352|
-75,60,85,30,75,20|Nutjobber|nutjobber|ghost,fairy|/rom/clover/353|
-80,90,110,90,90,40|Deisnutz|deisnutz|ghost,fairy|/rom/clover/354|
+75,60,85,30,75,20|Nutjobber|nutjobber|ghost|/rom/clover/353|
+80,90,110,90,90,40|Deisnutz|deisnutz|ghost|/rom/clover/354|
 85,120,105,50,80,50|Reptrill|reptrill|ground,steel|/rom/clover/355|
 80,120,90,30,90,69|Faptime|faptime|rock,psychic|/rom/clover/356|
-109,88,87,86,85,64|Shiriman|shiriman|psychic,fairy|/rom/clover/357|
+109,88,87,86,85,64|Shiriman|shiriman|psychic|/rom/clover/357|
 90,43,90,133,95,104|Illumatrix|illumatrix|psychic,flying|/rom/clover/358|
+50,81,74,40,40,60|Typobop|typobop|rock,dark|/rom/clover/359|
 111,91,79,66,81,102|Pearchie|pearchie|grass,normal|/rom/clover/360|
 100,70,110,80,90,45|Reagain|reagain|ground,dark|/rom/clover/361|
 70,35,45,85,70,20|Ormite|ormite|rock,electric|/rom/clover/362|
@@ -341,10 +352,11 @@
 100,50,75,136,100,40|Viristal|viristal|rock,electric|/rom/clover/369|
 41,10,40,85,50,71|Missletoe|missletoe|ice|/rom/clover/370|
 81,40,71,126,81,91|Hohohoming|hohohoming|ice|/rom/clover/371|
+40,55,70,35,60,85|Flaa|flaa|bug|/rom/clover/372|
 80,120,80,100,80,90|Frutagon|frutagon|grass,dragon|/rom/clover/373|
 70,30,60,125,125,100|Biteki|biteki|ice,psychic|/rom/clover/374|
 95,90,105,55,95,70|Sesquatch|sesquatch|normal,ghost|/rom/clover/375|
-102,85,90,90,100,32|Dreameme|dreameme|dragon,fairy|/rom/clover/376|
+102,85,90,90,100,32|Dreameme|dreameme|dragon|/rom/clover/376|
 95,95,130,50,85,60|Shiggydig|shiggydig|normal,ground|/rom/clover/377|
 65,35,80,40,60,25|Signot|signot|ground,dark|/rom/clover/378|
 51,52,95,64,58,25|Randomix|randomix|rock,water|/rom/clover/379|
@@ -354,7 +366,8 @@
 80,75,100,125,80,70|Feferun|feferun|bug,ground|/rom/clover/383|
 94,30,90,130,70,65|Jerkle|jerkle|rock,psychic|/rom/clover/384|
 100,50,85,110,95,70|Acufront|acufront|normal|/rom/clover/385|
-60,55,50,50,50,60|Spargle|spargle|fairy|/rom/clover/386|
+60,55,50,50,50,60|Spargle|spargle|normal|/rom/clover/386|
+105,100,70,95,70,80|Spedo|spedo|normal|/rom/clover/387|
 70,90,100,40,75,60|Hornicier|hornicier|ice|/rom/clover/388|
 90,115,130,45,100,55|Hornititan|hornititan|ice,ground|/rom/clover/389|
 65,50,55,50,60,47|Preasu|preasu|electric|/rom/clover/390|
@@ -375,7 +388,703 @@
 130,85,95,160,125,105|Griffawork|griffawork|psychic,flying|/rom/clover/405|
 130,160,125,85,95,105|Boarnograf|boarnograf|dark,ground|/rom/clover/406|
 100,130,90,70,90,120|Funnedong|funnedong|normal,fighting|/rom/clover/407|
-101,70,121,86,121,121|Narwhiz|narwhiz|water,fairy|/rom/clover/408|
-100,100,100,100,100,100|Admoot|admoot|fairy|/rom/clover/409|
+101,70,121,86,121,121|Narwhiz|narwhiz|water|/rom/clover/408|
+100,100,100,100,100,100|Admoot|admoot|normal|/rom/clover/409|
 100,100,100,100,100,100|Tentaquil|tentaquil|bug,psychic|/rom/clover/410|
-72,35,72,40,60,18|Rolango|rolango|dragon,fairy|/rom/clover/411|
+72,35,72,40,60,18|Rolango|rolango|dragon|/rom/clover/411|
+
+--move
+pound|normal|40||physical|Pound
+karate-chop|fighting|50||physical|Karate Chop
+doubleslap|normal|15||physical|Doubleslap
+comet-punch|normal|18||physical|Comet Punch
+mega-punch|normal|80||physical|Mega Punch
+pay-day|normal|40||physical|Pay Day
+fire-punch|fire|75||special|Fire Punch
+ice-punch|ice|75||special|Ice Punch
+thunderpunch|electric|75||special|Thunderpunch
+scratch|normal|40||physical|Scratch
+vise-grip|normal|55||physical|Vise Grip
+guillotine|normal|1||physical|Guillotine
+razor-wind|flying|140||physical|Razor Wind
+swords-dance|normal|0||status|Swords Dance
+cut|steel|60||physical|Cut
+gust|flying|40||physical|Gust
+wing-attack|flying|60||physical|Wing Attack
+whirlwind|normal|0||status|Whirlwind
+fly|flying|95||physical|Fly
+bind|normal|15||physical|Bind
+slam|normal|80||physical|Slam
+vine-whip|grass|45||special|Vine Whip
+stomp|normal|65||physical|Stomp
+double-kick|fighting|30||physical|Double Kick
+mega-kick|normal|120||physical|Mega Kick
+jump-kick|fighting|100||physical|Jump Kick
+rolling-kick|fighting|60||physical|Rolling Kick
+sand-attack|ground|0||status|Sand Attack
+headbutt|normal|70||physical|Headbutt
+horn-attack|normal|65||physical|Horn Attack
+fury-attack|normal|15||physical|Fury Attack
+horn-drill|normal|1||physical|Horn Drill
+tackle|normal|40||physical|Tackle
+body-slam|normal|85||physical|Body Slam
+wrap|normal|15||physical|Wrap
+take-down|normal|90||physical|Take Down
+thrash|normal|120||physical|Thrash
+double-edge|normal|120||physical|Double-Edge
+tail-whip|normal|0||status|Tail Whip
+poison-sting|poison|15||physical|Poison Sting
+twineedle|bug|25||physical|Twineedle
+pin-missile|bug|25||physical|Pin Missile
+leer|normal|0||status|Leer
+bite|dark|60||special|Bite
+growl|normal|0||status|Growl
+roar|normal|0||status|Roar
+sing|normal|0||status|Sing
+supersonic|normal|0||status|Supersonic
+sonic-boom|normal|1||physical|Sonic Boom
+disable|normal|0||status|Disable
+acid|poison|50||physical|Acid
+ember|fire|40||special|Ember
+flamethrower|fire|90||special|Flamethrower
+mist|ice|0||status|Mist
+water-gun|water|40||special|Water Gun
+hydro-pump|water|110||special|Hydro Pump
+surf|water|90||special|Surf
+ice-beam|ice|90||special|Ice Beam
+blizzard|ice|110||special|Blizzard
+psybeam|psychic|65||special|Psybeam
+bubblebeam|water|65||special|Bubblebeam
+aurora-beam|ice|65||special|Aurora Beam
+hyper-beam|normal|150||physical|Hyper Beam
+peck|flying|35||physical|Peck
+drill-peck|flying|80||physical|Drill Peck
+submission|fighting|90||physical|Submission
+low-kick|fighting|1||physical|Low Kick
+counter|fighting|1||physical|Counter
+seismic-toss|fighting|1||physical|Seismic Toss
+strength|fighting|80||physical|Strength
+absorb|grass|20||special|Absorb
+mega-drain|grass|40||special|Mega Drain
+leech-seed|grass|0||status|Leech Seed
+growth|normal|0||status|Growth
+razor-leaf|grass|55||special|Razor Leaf
+solar-beam|grass|120||special|Solar Beam
+poisonpowder|poison|0||status|Poisonpowder
+stun-spore|grass|0||status|Stun Spore
+sleep-powder|grass|0||status|Sleep Powder
+petal-dance|grass|120||special|Petal Dance
+string-shot|bug|0||status|String Shot
+dragon-rage|dragon|1||special|Dragon Rage
+fire-spin|fire|35||special|Fire Spin
+thundershock|electric|40||special|Thundershock
+thunderbolt|electric|90||special|Thunderbolt
+thunder-wave|electric|0||status|Thunder Wave
+thunder|electric|110||special|Thunder
+rock-throw|rock|50||physical|Rock Throw
+earthquake|ground|100||physical|Earthquake
+fissure|ground|1||physical|Fissure
+dig|ground|80||physical|Dig
+toxic|poison|0||status|Toxic
+confusion|psychic|50||special|Confusion
+psychic|psychic|90||special|Psychic
+hypnosis|psychic|0||status|Hypnosis
+meditate|psychic|0||status|Meditate
+agility|psychic|0||status|Agility
+quick-attack|normal|40||physical|Quick Attack
+rage|normal|20||physical|Rage
+teleport|psychic|0||status|Teleport
+night-shade|ghost|1||physical|Night Shade
+mimic|normal|0||status|Mimic
+screech|normal|0||status|Screech
+double-team|normal|0||status|Double Team
+recover|normal|0||status|Recover
+harden|normal|0||status|Harden
+minimize|normal|0||status|Minimize
+smokescreen|normal|0||status|Smokescreen
+confuse-ray|ghost|0||status|Confuse Ray
+withdraw|water|0||status|Withdraw
+defense-curl|normal|0||status|Defense Curl
+barrier|psychic|0||status|Barrier
+light-screen|psychic|0||status|Light Screen
+haze|ice|0||status|Haze
+reflect|psychic|0||status|Reflect
+focus-energy|normal|0||status|Focus Energy
+bide|normal|1||physical|Bide
+metronome|normal|0||status|Metronome
+mirror-move|flying|0||status|Mirror Move
+selfdestruct|normal|200||physical|Selfdestruct
+egg-bomb|normal|110||physical|Egg Bomb
+lick|ghost|30||physical|Lick
+smog|poison|30||physical|Smog
+sludge|poison|65||physical|Sludge
+bone-club|ground|65||physical|Bone Club
+fire-blast|fire|110||special|Fire Blast
+waterfall|water|80||special|Waterfall
+clamp|water|35||special|Clamp
+swift|normal|60||physical|Swift
+skull-bash|normal|130||physical|Skull Bash
+spike-cannon|ground|25||physical|Spike Cannon
+constrict|normal|20||physical|Constrict
+amnesia|psychic|0||status|Amnesia
+kinesis|psychic|0||status|Kinesis
+soft-boiled|normal|0||status|Soft-Boiled
+hi-jump-kick|fighting|130||physical|Hi Jump Kick
+glare|normal|0||status|Glare
+dream-eater|psychic|120||special|Dream Eater
+poison-gas|poison|0||status|Poison Gas
+barrage|steel|25||physical|Barrage
+leech-life|bug|80||physical|Leech Life
+lovely-kiss|normal|0||status|Lovely Kiss
+sky-attack|flying|140||physical|Sky Attack
+transform|normal|0||status|Transform
+bubble|water|30||special|Bubble
+dizzy-punch|normal|70||physical|Dizzy Punch
+spore|grass|0||status|Spore
+flash|electric|20||special|Flash
+psywave|psychic|1||special|Psywave
+splash|normal|0||status|Splash
+acid-armor|poison|0||status|Acid Armor
+crabhammer|water|100||special|Crabhammer
+explosion|normal|250||physical|Explosion
+fury-swipes|normal|20||physical|Fury Swipes
+bonemerang|ground|50||physical|Bonemerang
+rest|psychic|0||status|Rest
+rock-slide|rock|75||physical|Rock Slide
+hyper-fang|normal|80||physical|Hyper Fang
+sharpen|normal|0||status|Sharpen
+conversion|normal|0||status|Conversion
+tri-attack|normal|80||physical|Tri Attack
+super-fang|normal|1||physical|Super Fang
+slash|normal|70||physical|Slash
+substitute|normal|0||status|Substitute
+struggle|normal|50||physical|Struggle
+sketch|normal|0||status|Sketch
+triple-kick|fighting|10||physical|Triple Kick
+thief|dark|60||special|Thief
+spider-web|bug|0||status|Spider Web
+mind-reader|normal|0||status|Mind Reader
+nightmare|ghost|0||status|Nightmare
+flame-wheel|fire|60||special|Flame Wheel
+snore|normal|50||physical|Snore
+curse|ghost|0||status|Curse
+flail|normal|1||physical|Flail
+conversion-2|normal|0||status|Conversion 2
+aeroblast|flying|100||physical|Aeroblast
+cotton-spore|grass|0||status|Cotton Spore
+reversal|fighting|1||physical|Reversal
+spite|ghost|0||status|Spite
+powder-snow|ice|40||special|Powder Snow
+protect|normal|0||status|Protect
+mach-punch|fighting|40||physical|Mach Punch
+scary-face|normal|0||status|Scary Face
+feint-attack|dark|60||special|Feint Attack
+belly-drum|normal|0||status|Belly Drum
+sludge-bomb|poison|90||physical|Sludge Bomb
+mud-slap|ground|20||physical|Mud-Slap
+octazooka|water|65||special|Octazooka
+spikes|ground|0||status|Spikes
+zap-cannon|electric|120||special|Zap Cannon
+foresight|normal|0||status|Foresight
+destiny-bond|ghost|0||status|Destiny Bond
+perish-song|normal|0||status|Perish Song
+icy-wind|ice|55||special|Icy Wind
+detect|fighting|0||status|Detect
+bone-rush|ground|25||physical|Bone Rush
+lock-on|normal|0||status|Lock-On
+outrage|dragon|120||special|Outrage
+sandstorm|rock|0||status|Sandstorm
+giga-drain|grass|75||special|Giga Drain
+endure|normal|0||status|Endure
+rollout|rock|30||physical|Rollout
+false-swipe|normal|40||physical|False Swipe
+swagger|normal|0||status|Swagger
+milk-drink|normal|0||status|Milk Drink
+spark|electric|65||special|Spark
+fury-cutter|bug|40||physical|Fury Cutter
+steel-wing|steel|70||physical|Steel Wing
+mean-look|normal|0||status|Mean Look
+attract|normal|0||status|Attract
+sleep-talk|normal|0||status|Sleep Talk
+heal-bell|normal|0||status|Heal Bell
+return|normal|1||physical|Return
+present|normal|1||physical|Present
+frustration|normal|1||physical|Frustration
+safeguard|normal|0||status|Safeguard
+pain-split|normal|0||status|Pain Split
+sacred-fire|fire|100||special|Sacred Fire
+magnitude|ground|1||physical|Magnitude
+dynamicpunch|fighting|100||physical|Dynamicpunch
+megahorn|bug|120||physical|Megahorn
+dragonbreath|dragon|60||special|Dragonbreath
+baton-pass|normal|0||status|Baton Pass
+encore|normal|0||status|Encore
+pursuit|dark|40||special|Pursuit
+rapid-spin|normal|50||physical|Rapid Spin
+sweet-scent|normal|0||status|Sweet Scent
+iron-tail|steel|100||physical|Iron Tail
+metal-claw|steel|50||physical|Metal Claw
+vital-throw|fighting|70||physical|Vital Throw
+morning-sun|normal|0||status|Morning Sun
+synthesis|grass|0||status|Synthesis
+hidden-power|normal|60||physical|Hidden Power
+cross-chop|fighting|100||physical|Cross Chop
+twister|dragon|40||special|Twister
+rain-dance|water|0||status|Rain Dance
+sunny-day|fire|0||status|Sunny Day
+crunch|dark|80||special|Crunch
+mirror-coat|psychic|1||special|Mirror Coat
+psych-up|normal|0||status|Psych Up
+extremespeed|normal|80||physical|Extremespeed
+ancientpower|rock|60||physical|Ancientpower
+shadow-ball|ghost|80||physical|Shadow Ball
+future-sight|psychic|120||special|Future Sight
+rock-smash|fighting|60||physical|Rock Smash
+whirlpool|water|35||special|Whirlpool
+beat-up|dark|25||special|Beat Up
+fake-out|normal|40||physical|Fake Out
+uproar|normal|90||physical|Uproar
+stockpile|normal|0||status|Stockpile
+spit-up|normal|1||physical|Spit Up
+swallow|normal|0||status|Swallow
+heat-wave|fire|95||special|Heat Wave
+hail|ice|0||status|Hail
+torment|dark|0||status|Torment
+flatter|dark|0||status|Flatter
+will-o-wisp|fire|0||status|Will-O-Wisp
+memento|dark|0||status|Memento
+facade|normal|70||physical|Facade
+focus-punch|fighting|150||physical|Focus Punch
+smellingsalt|normal|70||physical|Smellingsalt
+follow-me|normal|0||status|Follow Me
+nature-power|normal|0||status|Nature Power
+charge|electric|0||status|Charge
+taunt|dark|0||status|Taunt
+helping-hand|normal|0||status|Helping Hand
+trick|psychic|0||status|Trick
+role-play|psychic|0||status|Role Play
+wish|normal|0||status|Wish
+assist|normal|0||status|Assist
+ingrain|grass|0||status|Ingrain
+superpower|fighting|120||physical|Superpower
+magic-coat|psychic|0||status|Magic Coat
+recycle|normal|0||status|Recycle
+revenge|fighting|60||physical|Revenge
+brick-break|fighting|75||physical|Brick Break
+yawn|normal|0||status|Yawn
+knock-off|dark|65||special|Knock Off
+endeavor|normal|1||physical|Endeavor
+eruption|fire|150||special|Eruption
+skill-swap|psychic|0||status|Skill Swap
+imprison|psychic|0||status|Imprison
+refresh|normal|0||status|Refresh
+grudge|ghost|0||status|Grudge
+snatch|dark|0||status|Snatch
+secret-power|normal|70||physical|Secret Power
+dive|water|100||special|Dive
+arm-thrust|fighting|20||physical|Arm Thrust
+camouflage|normal|0||status|Camouflage
+tail-glow|bug|0||status|Tail Glow
+luster-purge|psychic|70||special|Luster Purge
+mist-ball|psychic|70||special|Mist Ball
+featherdance|flying|0||status|Featherdance
+teeter-dance|normal|0||status|Teeter Dance
+blaze-kick|fire|85||special|Blaze Kick
+mud-sport|ground|0||status|Mud Sport
+ice-ball|ice|30||special|Ice Ball
+needle-arm|grass|60||special|Needle Arm
+slack-off|normal|0||status|Slack Off
+hyper-voice|normal|90||physical|Hyper Voice
+poison-fang|poison|50||physical|Poison Fang
+crush-claw|normal|75||physical|Crush Claw
+blast-burn|fire|150||special|Blast Burn
+hydro-cannon|water|150||special|Hydro Cannon
+meteor-mash|steel|90||physical|Meteor Mash
+astonish|ghost|30||physical|Astonish
+weather-ball|normal|50||physical|Weather Ball
+aromatherapy|grass|0||status|Aromatherapy
+fake-tears|dark|0||status|Fake Tears
+air-cutter|flying|60||physical|Air Cutter
+overheat|fire|130||special|Overheat
+odor-sleuth|normal|0||status|Odor Sleuth
+rock-tomb|rock|60||physical|Rock Tomb
+silver-wind|bug|60||physical|Silver Wind
+metal-sound|steel|0||status|Metal Sound
+grasswhistle|grass|0||status|Grasswhistle
+tickle|normal|0||status|Tickle
+cosmic-power|psychic|0||status|Cosmic Power
+water-spout|water|150||special|Water Spout
+signal-beam|bug|75||physical|Signal Beam
+shadow-punch|ghost|60||physical|Shadow Punch
+extrasensory|psychic|80||special|Extrasensory
+sky-uppercut|fighting|85||physical|Sky Uppercut
+sand-tomb|ground|35||physical|Sand Tomb
+sheer-cold|ice|1||special|Sheer Cold
+muddy-water|water|90||special|Muddy Water
+bullet-seed|grass|25||special|Bullet Seed
+aerial-ace|flying|60||physical|Aerial Ace
+icicle-spear|ice|25||special|Icicle Spear
+iron-defense|steel|0||status|Iron Defense
+block|normal|0||status|Block
+howl|normal|0||status|Howl
+dragon-claw|dragon|80||special|Dragon Claw
+frenzy-plant|grass|150||special|Frenzy Plant
+bulk-up|fighting|0||status|Bulk Up
+bounce|flying|85||physical|Bounce
+mud-shot|ground|55||physical|Mud Shot
+poison-tail|poison|50||physical|Poison Tail
+covet|normal|60||physical|Covet
+volt-tackle|electric|120||special|Volt Tackle
+magical-leaf|grass|60||special|Magical Leaf
+water-sport|water|0||status|Water Sport
+calm-mind|psychic|0||status|Calm Mind
+leaf-blade|grass|90||special|Leaf Blade
+dragon-dance|dragon|0||status|Dragon Dance
+rock-blast|rock|25||physical|Rock Blast
+shock-wave|electric|60||special|Shock Wave
+water-pulse|water|60||special|Water Pulse
+doom-desire|steel|140||physical|Doom Desire
+psycho-boost|psychic|140||special|Psycho Boost
+ow-the-edge|dark|120||special|Ow The Edge
+air-slash|flying|75||physical|Air Slash
+aqua-jet|water|40||special|Aqua Jet
+aqua-tail|water|90||special|Aqua Tail
+aura-sphere|fighting|80||physical|Aura Sphere
+avalanche|ice|60||special|Avalanche
+brave-bird|flying|120||physical|Brave Bird
+bug-buzz|bug|90||physical|Bug Buzz
+bullet-punch|steel|40||physical|Bullet Punch
+charge-beam|electric|50||special|Charge Beam
+close-combat|fighting|120||physical|Close Combat
+cross-poison|poison|70||physical|Cross Poison
+dark-pulse|dark|80||special|Dark Pulse
+discharge|electric|80||special|Discharge
+draco-meteor|dragon|130||special|Draco Meteor
+dragon-pulse|dragon|85||special|Dragon Pulse
+drain-punch|fighting|75||physical|Drain Punch
+earth-power|ground|90||physical|Earth Power
+energy-ball|grass|90||special|Energy Ball
+focus-blast|fighting|120||physical|Focus Blast
+force-palm|fighting|60||physical|Force Palm
+giga-impact|normal|150||physical|Giga Impact
+grass-knot|grass|1||special|Grass Knot
+gunk-shot|poison|120||physical|Gunk Shot
+hammer-arm|fighting|100||physical|Hammer Arm
+head-smash|rock|150||physical|Head Smash
+ice-shard|ice|40||special|Ice Shard
+iron-head|steel|80||physical|Iron Head
+lava-plume|fire|80||special|Lava Plume
+magnet-bomb|steel|60||physical|Magnet Bomb
+mud-bomb|ground|65||physical|Mud Bomb
+nasty-plot|dark|0||status|Nasty Plot
+night-slash|dark|70||special|Night Slash
+ominous-wind|ghost|60||physical|Ominous Wind
+power-gem|rock|80||physical|Power Gem
+power-whip|grass|120||special|Power Whip
+psycho-cut|psychic|70||special|Psycho Cut
+rock-climb|rock|90||physical|Rock Climb
+rock-polish|rock|0||status|Rock Polish
+rock-wrecker|rock|150||physical|Rock Wrecker
+roost|flying|0||status|Roost
+seed-bomb|grass|80||special|Seed Bomb
+shadow-claw|ghost|70||physical|Shadow Claw
+shadow-sneak|ghost|40||physical|Shadow Sneak
+vacuum-wave|fighting|40||physical|Vacuum Wave
+x-scissor|bug|80||physical|X-Scissor
+zen-headbutt|psychic|80||special|Zen Headbutt
+switcheroo|dark|0||status|Switcheroo
+drill-run|ground|80||physical|Drill Run
+bulldoze|ground|60||physical|Bulldoze
+electroweb|electric|55||special|Electroweb
+flame-charge|fire|50||special|Flame Charge
+frost-breath|ice|60||special|Frost Breath
+heart-stamp|psychic|60||special|Heart Stamp
+hone-claws|dark|0||status|Hone Claws
+horn-leech|grass|75||special|Horn Leech
+coil|poison|0||status|Coil
+hurricane|flying|110||physical|Hurricane
+icicle-crash|ice|85||special|Icicle Crash
+work-up|normal|0||status|Work Up
+quiver-dance|bug|0||status|Quiver Dance
+ice-hammer|ice|100||special|Ice Hammer
+low-sweep|fighting|65||physical|Low Sweep
+snarl|dark|55||special|Snarl
+struggle-bug|bug|50||physical|Struggle Bug
+steamroller|bug|65||physical|Steamroller
+storm-throw|fighting|60||physical|Storm Throw
+venoshock|poison|65||physical|Venoshock
+wild-charge|electric|90||special|Wild Charge
+poison-jab|poison|80||physical|Poison Jab
+acid-spray|poison|40||physical|Acid Spray
+fiery-dance|fire|80||special|Fiery Dance
+clear-smog|poison|50||physical|Clear Smog
+leaf-storm|grass|130||special|Leaf Storm
+stone-edge|rock|100||physical|Stone Edge
+payback|dark|50||special|Payback
+fire-fang|fire|65||special|Fire Fang
+ice-fang|ice|65||special|Ice Fang
+thunder-fang|electric|65||special|Thunder Fang
+flare-blitz|fire|120||special|Flare Blitz
+inferno|fire|120||special|Inferno
+hex|ghost|65||physical|Hex
+dual-chop|dragon|40||special|Dual Chop
+double-hit|normal|35||physical|Double Hit
+cotton-guard|grass|0||status|Cotton Guard
+acrobatics|flying|55||physical|Acrobatics
+flame-burst|fire|70||special|Flame Burst
+u-turn|bug|70||physical|U-turn
+volt-switch|electric|70||special|Volt Switch
+dragon-tail|dragon|60||special|Dragon Tail
+circle-throw|fighting|60||physical|Circle Throw
+mirror-shot|steel|65||physical|Mirror Shot
+wood-hammer|grass|120||special|Wood Hammer
+heal-pulse|psychic|0||status|Heal Pulse
+flash-cannon|steel|80||physical|Flash Cannon
+bug-bite|bug|60||physical|Bug Bite
+pluck|flying|60||physical|Pluck
+shell-smash|normal|0||status|Shell Smash
+rage-powder|bug|0||status|Rage Powder
+wake-up-slap|fighting|70||physical|Wake-Up Slap
+razor-shell|water|75||special|Razor Shell
+copycat|normal|0||status|Copycat
+defog|flying|0||status|Defog
+sucker-punch|dark|70||special|Sucker Punch
+scald|water|80||special|Scald
+brine|water|65||special|Brine
+stealth-rock|rock|0||status|Stealth Rock
+toxic-spikes|poison|0||status|Toxic Spikes
+falcon-punch|flying|100||physical|Falcon Punch
+riot-shield|fighting|80||physical|Riot Shield
+swindle|dark|100||special|Swindle
+boomburst|normal|140||physical|Boomburst
+incinerate|fire|60||special|Incinerate
+power-punch|fighting|40||physical|Power Punch
+gastro-acid|poison|0||status|Gastro Acid
+v-create|fire|180||special|V-Create
+accelerock|rock|40||physical|Accelerock
+shadow-bone|ghost|85||physical|Shadow Bone
+shift-gear|steel|0||status|Shift Gear
+sticky-web|bug|0||status|Sticky Web
+stored-power|psychic|20||special|Stored Power
+acupressure|normal|0||status|Acupressure
+punishment|dark|60||special|Punishment
+foul-play|dark|95||special|Foul Play
+enema|grass|90||special|Enema
+holy-duty|fire|250||special|Holy Duty
+punch-out|fighting|70||physical|Punch Out
+erosion-wave|rock|95||physical|Erosion Wave
+strato-blade|flying|90||physical|Strato Blade
+super-snore|ice|250||special|Super Snore
+toxiravage|poison|80||physical|Toxiravage
+meme|???|65||special|Meme
+for-you|fighting|100||physical|For You
+spook-out|ghost|60||physical|Spook Out
+decay-drain|poison|100||physical|Decay Drain
+dildo-cannon|dragon|25||special|Dildo Cannon
+regenerate|grass|0||status|Regenerate
+futaba-break|grass|90||special|Futaba Break
+puke-blood|bug|130||physical|Puke Blood
+chaos-dunk|rock|110||physical|Chaos Dunk
+daily-dose|poison|90||physical|Daily Dose
+fizzbitch|grass|150||special|Fizzbitch
+fire-bomb|fire|100||special|Fire Bomb
+overenergize|electric|150||special|Overenergize
+an-attack|???|120||special|An Attack
+trigger|psychic|40||special|Trigger
+toke|fire|0||status|Toke
+shitpost|ground|120||physical|Shitpost
+attack-order|bug|90||physical|Attack Order
+defend-order|bug|0||status|Defend Order
+heal-order|bug|0||status|Heal Order
+captivate|normal|0||status|Captivate
+round|normal|60||physical|Round
+origin-pulse|water|120||special|Origin Pulse
+cliff-blades|ground|120||physical|Cliff Blades
+guard-swap|psychic|0||status|Guard Swap
+steam-erupt|water|120||special|Steam Erupt
+metal-burst|steel|1||physical|Metal Burst
+me-first|normal|1||physical|Me First
+power-swap|psychic|0||status|Power Swap
+power-trick|psychic|0||status|Power Trick
+psycho-shift|psychic|0||status|Psycho Shift
+wring-out|normal|1||physical|Wring Out
+kings-shield|steel|0||status|Kings Shield
+psystrike|psychic|100||special|Psystrike
+autotomize|steel|0||status|Autotomize
+diamondstorm|rock|100||physical|Diamondstorm
+sludge-wave|poison|95||physical|Sludge Wave
+heavy-slam|steel|1||physical|Heavy Slam
+synchronoise|psychic|120||special|Synchronoise
+electro-ball|electric|1||special|Electro Ball
+tail-slap|normal|25||physical|Tail Slap
+entrainment|normal|0||status|Entrainment
+night-daze|dark|85||special|Night Daze
+echoed-voice|normal|40||physical|Echoed Voice
+oblivionwing|flying|80||physical|Oblivionwing
+heart-swap|psychic|0||status|Heart Swap
+crush-grip|normal|1||physical|Crush Grip
+sacred-sword|fighting|90||physical|Sacred Sword
+heat-crash|fire|1||special|Heat Crash
+head-charge|normal|120||physical|Head Charge
+techno-blast|normal|120||physical|Techno Blast
+relic-song|normal|75||physical|Relic Song
+secret-sword|fighting|85||physical|Secret Sword
+glaciate|ice|65||special|Glaciate
+bolt-strike|electric|130||special|Bolt Strike
+blue-flare|fire|130||special|Blue Flare
+freeze-shock|ice|140||special|Freeze Shock
+ice-burn|ice|140||special|Ice Burn
+gear-grind|steel|50||physical|Gear Grind
+fusion-flare|fire|100||special|Fusion Flare
+fusion-bolt|electric|100||special|Fusion Bolt
+fell-stinger|bug|50||physical|Fell Stinger
+noble-roar|normal|0||status|Noble Roar
+draco-ascent|flying|120||physical|Draco Ascent
+parting-shot|dark|0||status|Parting Shot
+topsy-turvy|dark|0||status|Topsy-Turvy
+core-enforce|dragon|100||special|Core Enforce
+chatter|flying|65||physical|Chatter
+confide|normal|0||status|Confide
+water-star|water|15||special|Water Star
+mystic-fire|fire|75||special|Mystic Fire
+spiky-shield|grass|0||status|Spiky Shield
+eerieimpulse|electric|0||status|EerieImpulse
+hold-back|normal|40||physical|Hold Back
+infestation|bug|20||physical|Infestation
+magma-storm|fire|100||special|Magma Storm
+1000-arrows|ground|90||physical|1000 Arrows
+1000-waves|ground|90||physical|1000 Waves
+para-charge|electric|65||special|Para Charge
+searing-shot|fire|100||special|Searing Shot
+seed-flare|grass|120||special|Seed Flare
+play-nice|normal|0||status|Play Nice
+anchor-shot|steel|80||physical|Anchor Shot
+aurora-veil|ice|0||status|Aurora Veil
+baneful-bunk|poison|0||status|Baneful Bunk
+beak-blast|flying|100||physical|Beak Blast
+brutal-swing|dark|60||special|Brutal Swing
+burn-up|fire|140||special|Burn Up
+clang-scales|dragon|110||special|Clang Scales
+dark-lariat|dark|85||special|Dark Lariat
+draco-hammer|dragon|90||special|Draco Hammer
+fire-lash|fire|80||special|Fire Lash
+first-press|bug|90||physical|First Press
+gear-up|steel|0||status|Gear Up
+horsepower|ground|95||physical|Horsepower
+dragon-rush|dragon|100||special|Dragon Rush
+laser-focus|normal|0||status|Laser Focus
+leafage|grass|40||special|Leafage
+liquidation|water|85||special|Liquidation
+lunge|bug|80||physical|Lunge
+geist-beam|ghost|100||physical|Geist Beam
+sleazy-spore|grass|0||status|Sleazy Spore
+pollen-puff|bug|90||physical|Pollen Puff
+power-trip|dark|20||special|Power Trip
+prism-laser|psychic|160||special|Prism Laser
+psychic-fang|psychic|85||special|Psychic Fang
+purify|poison|0||status|Purify
+revel-dance|normal|90||physical|Revel Dance
+leaf-tornado|grass|65||special|Leaf Tornado
+shell-trap|fire|75||special|Shell Trap
+shore-up|ground|0||status|Shore Up
+smart-strike|steel|70||physical|Smart Strike
+solar-blade|grass|125||special|Solar Blade
+sparkle-aria|water|90||special|Sparkle Aria
+spect-thief|ghost|90||physical|Spect Thief
+speed-swap|psychic|0||status|Speed Swap
+soul-shackle|ghost|80||physical|Soul Shackle
+slime-gulp|poison|80||physical|Slime Gulp
+stomptantrum|ground|75||physical|StompTantrum
+strength-sap|grass|0||status|Strength Sap
+sunsteel-ram|steel|100||physical|Sunsteel Ram
+tearful-look|normal|0||status|Tearful Look
+throat-chop|dark|80||special|Throat Chop
+toxic-thread|poison|0||status|Toxic Thread
+trop-kick|grass|70||special|Trop Kick
+zing-zap|electric|80||special|Zing Zap
+elec-field|electric|0||status|Elec Field
+grassy-field|grass|0||status|Grassy Field
+psych-field|psychic|0||status|Psych Field
+inverse-room|psychic|0||status|Inverse Room
+last-resort|normal|140||physical|Last Resort
+trick-room|psychic|0||status|Trick Room
+magic-room|psychic|0||status|Magic Room
+wonder-room|psychic|0||status|Wonder Room
+mat-block|fighting|0||status|Mat Block
+quick-guard|fighting|0||status|Quick Guard
+wide-guard|fighting|0||status|Wide Guard
+aqua-ring|water|0||status|Aqua Ring
+dragon-fist|dragon|90||special|Dragon Fist
+belch|poison|120||physical|Belch
+lick-clean|water|50||special|Lick Clean
+speed-weed|grass|40||special|Speed Weed
+flying-press|fighting|100||physical|Flying Press
+gravity|psychic|0||status|Gravity
+guard-split|psychic|0||status|Guard Split
+heal-block|psychic|0||status|Heal Block
+ion-deluge|electric|0||status|Ion Deluge
+lucky-chant|normal|0||status|Lucky Chant
+magnet-rise|electric|0||status|Magnet Rise
+overbite|dark|150||special|Overbite
+powder|bug|0||status|Powder
+power-split|psychic|0||status|Power Split
+reflect-type|normal|0||status|Reflect Type
+simple-beam|normal|0||status|Simple Beam
+soak|water|0||status|Soak
+telekinesis|psychic|0||status|Telekinesis
+trickotreat|ghost|0||status|TrickoTreat
+venom-drench|poison|0||status|Venom Drench
+forest-curse|grass|0||status|Forest Curse
+mind-blown|fire|150||special|Mind Blown
+photongeyser|psychic|100||special|Photongeyser
+plasma-fists|electric|100||special|Plasma Fists
+electrify|electric|0||status|Electrify
+1000-folds|steel|90||physical|1000 Folds
+body-press|fighting|80||physical|Body Press
+warhead|steel|110||physical|Warhead
+baddy-bad|dark|90||special|Baddy Bad
+weird-flex|fighting|0||status|Weird Flex
+scorch-earth|ground|20||physical|Scorch Earth
+miracle-eye|psychic|0||status|Miracle Eye
+healing-wish|psychic|0||status|Healing Wish
+lunar-dance|psychic|0||status|Lunar Dance
+tailwind|flying|0||status|Tailwind
+worry-seed|grass|0||status|Worry Seed
+rototiller|ground|0||status|Rototiller
+assurance|dark|60||special|Assurance
+dark-void|dark|0||status|Dark Void
+feint|normal|30||physical|Feint
+phantomforce|ghost|90||physical|PhantomForce
+shadow-force|ghost|120||physical|Shadow Force
+roar-of-time|dragon|150||special|Roar of Time
+spacial-rend|dragon|100||special|Spacial Rend
+final-gambit|fighting|1||physical|Final Gambit
+petal-storm|grass|90||special|Petal Storm
+nuzzle|electric|20||special|Nuzzle
+retaliate|normal|70||physical|Retaliate
+slip-turn|ice|70||special|Slip Turn
+hulk-up|fighting|0||status|Hulk Up
+freeze-dry|ice|70||special|Freeze-Dry
+psyshock|psychic|80||special|Psyshock
+natural-gift|normal|1||physical|Natural Gift
+chip-away|normal|70||physical|Chip Away
+smack-down|rock|50||physical|Smack Down
+gyro-ball|steel|1||physical|Gyro Ball
+space-fury|dark|100||special|Space Fury
+space-hole|psychic|80||special|Space Hole
+focus-munch|fighting|0||status|Focus Munch
+quick-sand|ground|40||physical|Quick Sand
+think-fast|psychic|40||special|Think Fast
+boltbeam|electric|55||special|Boltbeam
+checkem|psychic|25||special|Checkem
+iron-bash|steel|60||physical|Iron Bash
+spooperpower|ghost|100||physical|Spooperpower
+great-rage|grass|140||special|Great Rage
+wow-wiener|fire|30||special|Wow Wiener
+plunder|water|100||special|Plunder
+blobby-bop|ice|70||special|Blobby Bop
+ban-hammer|normal|100||physical|Ban Hammer
+homerun-bat|normal|90||physical|Homerun Bat
+sudoku|normal|0||status|Sudoku
+elbow-drop|ghost|100||physical|Elbow Drop
+
