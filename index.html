@@ -1165,7 +1165,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787288294099"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787337539458"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -2748,9 +2748,15 @@ const GAMES = {
     // GRANITE CAVE) are what a player actually sees, not a mislabel. Their encounter data
     // is edited, not leftover: 83 of 88 differ from vanilla Emerald.
     // No leagues yet (boss classes >117 are not in the class table adjacent to gTrainers)
-    // and no learnsets (expansion build, gLevelUpLearnsets is not in the flat Gen-3 form).
+    // Learnsets ARE ROM-extracted (1008 species): gLevelUpLearnsets sits at 0x60DA64 in
+    // flat {u16 move, u16 level} form after all. The earlier "not in flat Gen-3 form"
+    // reading came from a validator that capped levels at 100, and this build appends
+    // moves above it (Sentret gets Belly Drum at 125), so every real list was rejected.
+    // Confirmed live twice: a level-7 Sentret learning Quick Attack matches entry 161's
+    // {move 98, level 7}, and entry 41 independently predicts a level-9 Zubat's whole
+    // moveset - Absorb, Bite, Supersonic, Quick Attack, in order.
     name: 'TRE Johto', short: 'TRE Johto', gen: 3, category: 'Other ROM hacks',
-    dataSources: { routes: 'TreJohto', encounterTables: 'TreJohto' }
+    dataSources: { routes: 'TreJohto', encounterTables: 'TreJohto', learnsets: 'TreJohto' }
   },
   'unbound': {
     // Pokémon Unbound — FireRed base (BPRE expansion), Mega + Fairy era content (Gen 6+).
@@ -12446,7 +12452,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-20 21:58';
+const APP_BUILD = '2026-08-21 11:38';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
