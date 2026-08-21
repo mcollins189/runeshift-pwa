@@ -1,11 +1,11 @@
 # First-cut rail: ordered by min grass level (fishing-only maps last).
 # Hand-adjust to story order; re-running the emitter will NOT overwrite this file.
 Bronze Fields|bellsprout,cubone,hoppip,phanpy,nincada,lillipup,ducklett,pikipek,grubbin,mareep,cutiefly,mudbray,fomantis,comfey
-Acrisia City|sandshrew,poliwag,grimer,phanpy,shroomish,pansage,pansear,panpour,ducklett,pikipek,remoraid,finneon,wimpod
-Jusmail Town|growlithe,eevee,wurmple,skiddo,pikipek,oricorio-baile,cutiefly,bounsweet
+Acrisia City|sandshrew,poliwag,grimer,phanpy,shroomish,pansage,pansear,panpour,ducklett,pikipek,remoraid,finneon,wimpod,hoothoot,munna
+Jusmail Town|growlithe,eevee,wurmple,skiddo,pikipek,oricorio-baile,cutiefly,bounsweet,ralts,voltorb,vulpix,woobat
 Acrisia Mountains|sandshrew,mankey,nosepass,mawile,aron,woobat,timburr,vullaby,rockruff,klawf,remoraid,finneon,wimpod,unown,pichu,snover,flabebe,flittle
-Altering Cave|zubat
-Kalami City|meowth,totodile,wingull,buizel,lillipup,passimian,wimpod,applin,shroodle,toedscool,barboach,skrelp,clauncher
+Altering Cave|zubat,smeargle
+Kalami City|meowth,totodile,wingull,buizel,lillipup,passimian,wimpod,applin,shroodle,toedscool,barboach,skrelp,clauncher,murkrow,oranguru
 Riverwalk Trail|ponyta,gligar,aron,meditite,sandile,litleo,cutiefly,mudbray,jangmo-o,yamper,remoraid,finneon,clauncher,ekans,wooper,zigzagoon,wurmple,silcoon,tropius,buizel,bounsweet,cufant,barboach,skrelp
 Wanderer's Woods|poliwag,chikorita,pichu,aipom,wooper,heracross,shroomish,blitzle,pumpkaboo-average,applin,toedscool,psyduck,ducklett,wimpod,paras,scyther,natu,ralts,lileep,munna,goomy
 Pythios Town|meowth,doduo,drowzee,wingull,dwebble,mienfoo,rufflet,honedge,flittle,seel,shellder,spheal,paras,bellsprout,cyndaquil,natu,trapinch,shuppet,scraggy,goomy,sizzlipede,wattrel,remoraid,clauncher,wimpod
@@ -13,25 +13,25 @@ Erinys Path|omanyte,togepi,zigzagoon,baltoy,sandile,zorua,solosis,komala,minior-
 Froslass Cavern|seel,sneasel,swinub,snorunt,spheal,amaura,onix,bronzor,vulpix,cubchoo,snom,shellder,lapras,sealeo
 Mirage Tower|sandshrew,trapinch
 Sea of Vulcai|tentacool,remoraid,octillery,wailmer,scyther,kecleon,sizzlipede,voltorb,sprigatito,fuecoco,quaxly,charcadet,kilowattrel,tinkatuff,chinchou,clamperl,relicanth,finneon,skrelp,corsola
-Asfal Hills|tauros,pachirisu,buizel,chatot,hawlucha,yamper,meowth,pawmi
-Sofos City|ponyta,girafarig,wingull,nosepass,swablu,corphish,honedge,helioptile,crabrawler,comfey,tentacool,corsola,wailmer
+Asfal Hills|tauros,pachirisu,buizel,chatot,hawlucha,yamper,meowth,pawmi,dedenne,shroodle,stunky
+Sofos City|ponyta,girafarig,wingull,nosepass,swablu,corphish,honedge,helioptile,crabrawler,comfey,tentacool,corsola,wailmer,baltoy,kirlia,natu,noctowl
 Sea of Asteri|bellsprout,scyther,chatot,crabrawler,fomantis,stufful,dreepy,wattrel,tentacool,wingull,wailmer,ninjask,rufflet,trumbeak,charjabug,jangmo-o,cufant,charcadet,skrelp,magikarp,gyarados,chinchou,corsola,finneon,clauncher,remoraid,corphish,clamperl,floatzel,finizen
-Marmaro Island|growlithe,meditite,swablu,lileep,anorith,dwebble,dedenne,sizzlipede,tinkatink,chinchou,corsola,finizen
-Kipos Town|pikachu,magnemite,doduo,eevee,igglybuff,stantler,beautifly,timburr,steenee,tentacool,corsola,finneon
-Myrrini Island|jigglypuff,meditite,cherubi,pancham,hawlucha,oricorio-baile,steenee,basculin-red-striped,finizen
-Pentepetal City|grimer,linoone,beautifly,kirlia,mawile,floette,comfey,lapras,dratini,sealeo,finizen
+Marmaro Island|growlithe,meditite,swablu,lileep,anorith,dwebble,dedenne,sizzlipede,tinkatink,chinchou,corsola,finizen,aron,togedemaru
+Kipos Town|pikachu,magnemite,doduo,eevee,igglybuff,stantler,beautifly,timburr,steenee,tentacool,corsola,finneon,dustox,pumpkaboo-average,stunky
+Myrrini Island|jigglypuff,meditite,cherubi,pancham,hawlucha,oricorio-baile,steenee,basculin-red-striped,finizen,drowzee,floette,goomy
+Pentepetal City|grimer,linoone,beautifly,kirlia,mawile,floette,comfey,lapras,dratini,sealeo,finizen,dustox,pawmo
 Magma Hideout|geodude,graveler,torkoal
-Fresco Isles|doduo,gligar,larvitar,numel,trapinch,skorupi,krokorok,scraggy,helioptile,tinkatuff,cyclizar,tentacool,dratini,remoraid,wailmer
-Palati City|quagsire,girafarig,baltoy,timburr,gurdurr,archen,lycanroc-midday,pawmo,toedscool,klawf,tentacool,wailmer,tirtouga
-Lastlight Road|ponyta,breloom,cherrim,lampent,litleo,pyroar-male,helioptile,mudbray,armarouge,cyclizar
+Fresco Isles|doduo,gligar,larvitar,numel,trapinch,skorupi,krokorok,scraggy,helioptile,tinkatuff,cyclizar,tentacool,dratini,remoraid,wailmer,dreepy,salandit,wooper
+Palati City|quagsire,girafarig,baltoy,timburr,gurdurr,archen,lycanroc-midday,pawmo,toedscool,klawf,tentacool,wailmer,tirtouga,clodsire,grafaiai,munna,toedscruel
+Lastlight Road|ponyta,breloom,cherrim,lampent,litleo,pyroar-male,helioptile,mudbray,armarouge,cyclizar,applin,ceruledge,flaaffy
 Kaptara Island|yanma,altaria,duosion,reuniclus,trumbeak,fomantis,lurantis,oranguru,passimian,morgrem,weepinbell,tauros,skiploom,cherrim,doublade,dedenne,goomy,sliggoo,charjabug,perrserker
-Tower of Dioxippus|yanma,swablu,altaria,kecleon,gogoat,goomy,steenee,applin,flapple,appletun,dipplin
-Corrin Crossing|golduck,weepinbell,victreebel,magnemite,aerodactyl,yanma,kirlia,torkoal,yanmega,braviary,tentacruel,lumineon,bruxish
-Port Pello|jigglypuff,wigglytuff,rapidash,togetic,linoone,tropius,pachirisu,cherrim,ribombee,raichu,tentacruel,lumineon,bruxish
-The Nyx Trails|persian,xatu,breloom,banette,dusclops,snover,abomasnow,gogoat,lurantis,perrserker,electrode,tentacruel,lumineon,bruxish
+Tower of Dioxippus|yanma,swablu,altaria,kecleon,gogoat,goomy,steenee,applin,flapple,appletun,dipplin,drakloak,dreepy,mawile
+Corrin Crossing|golduck,weepinbell,victreebel,magnemite,aerodactyl,yanma,kirlia,torkoal,yanmega,braviary,tentacruel,lumineon,bruxish,farigiraf,girafarig,munna,musharna
+Port Pello|jigglypuff,wigglytuff,rapidash,togetic,linoone,tropius,pachirisu,cherrim,ribombee,raichu,tentacruel,lumineon,bruxish,floette,florges,grimmsnarl,mimikyu-disguised,morgrem
+The Nyx Trails|persian,xatu,breloom,banette,dusclops,snover,abomasnow,gogoat,lurantis,perrserker,electrode,tentacruel,lumineon,bruxish,duskull,gourgeist-average,pumpkaboo-average,shuppet
 Desert Underpass|ditto,whismur,loudred
-Areios Hideout|primeape,muk,ariados,houndoom,tyrunt,lurantis,salandit,boltund,obstagoon
+Areios Hideout|primeape,muk,ariados,houndoom,tyrunt,lurantis,salandit,boltund,obstagoon,drapion,scrafty
 Artisan Cave|smeargle
-Pollen Road|pikachu,dodrio,skiploom,pachirisu,yanmega,braviary,floette,hawlucha,comfey,electrode,dragonair,swanna,dhelmise,finizen
-Wakewater Isle|dodrio,scyther,crawdaunt,gogoat,toucannon,crabominable,bewear,passimian,komala,raichu,farigiraf
+Pollen Road|pikachu,dodrio,skiploom,pachirisu,yanmega,braviary,floette,hawlucha,comfey,electrode,dragonair,swanna,dhelmise,finizen,charjabug,dedenne,espathra,togedemaru
+Wakewater Isle|dodrio,scyther,crawdaunt,gogoat,toucannon,crabominable,bewear,passimian,komala,raichu,farigiraf,annihilape,oranguru,pelipper,victreebel
 Davosi Straits|dragonair,swanna,dhelmise,finizen
