@@ -1164,7 +1164,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787271244614"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787273039465"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -12445,7 +12445,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-20 17:14';
+const APP_BUILD = '2026-08-20 17:43';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -17845,11 +17845,16 @@ function pmRender() {
   // nothing rather than read a cartridge through the wrong profile — so "not updating" is
   // the expected consequence, not the story. Leading with STALE there buries the one line
   // that says what to do about it.
+  // Never render a blank name. GAMES may not have an entry for what the bridge reports, and
+  // curGame() can be empty between runs — both produced "the bridge sees , this run is ."
+  const gname = k => (k && ((GAMES[k] || {}).name || k)) || '(unknown)';
   const trackBanner = (!tracking && bs === 'connected') ? `<div class="pm-stalefeed">
-      <span>⏸ Not tracking — ${detectedGame
-        ? `the bridge sees <b>${(GAMES[detectedGame] || {}).name || detectedGame}</b>, this run is <b>${(GAMES[curGame()] || {}).name || curGame()}</b>.`
-        : 'waiting for the bridge to say which cartridge is running.'} Nothing is being written to this run.</span>
-      ${detectedGame ? `<button class="pm-chip" onclick="NUZ_BRIDGE.reconcile(null, null)">switch</button>` : ''}
+      <span class="pm-sf-text">⏸ Not tracking — ${detectedGame
+        ? `the bridge sees <b>${gname(detectedGame)}</b>, this run is <b>${gname(typeof curGame === 'function' ? curGame() : null)}</b>.`
+        : 'the bridge has not said which cartridge is running.'} Nothing is being written to this run.</span>
+      ${detectedGame
+        ? `<button class="pm-chip" onclick="NUZ_BRIDGE.reconcile(null, null)">switch to ${gname(detectedGame)}</button>`
+        : `<button class="pm-chip" onclick="NUZ_BRIDGE.stop();NUZ_BRIDGE.start();pmRender()">ask the bridge again</button>`}
     </div>` : '';
   const pillLabel = isStale ? 'STALE'
                   : bs === 'connected' ? (tracking ? (st.source === 'ocr' ? 'OCR' : 'TRACKING') : 'PAUSED')
@@ -19193,6 +19198,11 @@ setInterval(() => {
   .mg-cell.good { color:var(--green); border-color:var(--green); background:var(--green-bg); }
   .mg-cell.bad { color:var(--red); border-color:var(--red); background:var(--red-bg); }
   .mg-cell i { font-style:normal; margin-left:2px; }
+  /* The text takes a whole row, so the button always lands on its own line. flex-wrap alone
+     was not enough: with both children on one row the button just shrank, leaving a sliver
+     of itself at the screen edge. */
+  .pm-stalefeed .pm-sf-text { flex:1 1 100%; }
+  .pm-stalefeed .pm-chip { flex:0 0 auto; white-space:nowrap; }
   .pm-stalefeed { display:flex; align-items:center; gap:6px; flex-wrap:wrap;
     padding:5px 7px; font-size:11px; line-height:1.35;
     background:rgba(240,128,48,.14); color:var(--amber);
