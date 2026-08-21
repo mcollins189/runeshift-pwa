@@ -1164,7 +1164,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787269506972"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787271244614"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -12445,7 +12445,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-20 16:45';
+const APP_BUILD = '2026-08-20 17:14';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -18407,7 +18407,11 @@ function pmRender() {
   if (_pickScroll) { const el = root.querySelector('.pm-picker'); if (el) el.scrollTop = _pickScroll; }
 }
 
-function openPlayMode() {
+// userInitiated — TRUE only when the player tapped Play. Restoring the panel at launch
+// because it was open last time is not a decision, and reconciling there is the automatic
+// switching this was meant to end: relaunch with Play remembered and the app would change
+// runs on its own, on whatever the bridge happened to be reporting at that instant.
+function openPlayMode(userInitiated) {
   let root = document.getElementById('play-mode');
   if (!root) { root = document.createElement('div'); root.id = 'play-mode'; document.body.appendChild(root); }
   root.classList.add('open');
@@ -18421,10 +18425,12 @@ function openPlayMode() {
   // one run for it, ask which when there are several, offer to start one when there are
   // none. Nothing is written until that resolves, because trackingActive() stays false
   // while the run and the cartridge disagree.
-  try {
-    const d = NUZ_BRIDGE.detected();
-    if (d && typeof curGame === 'function' && d !== curGame()) NUZ_BRIDGE.reconcile(d, null);
-  } catch (e) {}
+  if (userInitiated) {
+    try {
+      const d = NUZ_BRIDGE.detected();
+      if (d && typeof curGame === 'function' && d !== curGame()) NUZ_BRIDGE.reconcile(d, null);
+    } catch (e) {}
+  }
   pmRender();
 }
 function closePlayMode() {
@@ -18433,7 +18439,7 @@ function closePlayMode() {
   document.body.classList.remove('pm-active');
   localStorage.setItem('nuz-play-mode', '0');
 }
-function togglePlayMode() { pmIsOpen() ? closePlayMode() : openPlayMode(); }
+function togglePlayMode() { pmIsOpen() ? closePlayMode() : openPlayMode(true); }
 
 /* ── Wiring ─────────────────────────────────────────────────────────────────
    Play mode re-renders on live state and on PokeAPI backfill (so sprites and
