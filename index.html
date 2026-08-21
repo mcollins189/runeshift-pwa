@@ -1165,7 +1165,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787350488351"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787353609344"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -12482,7 +12482,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-21 15:14';
+const APP_BUILD = '2026-08-21 16:06';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -18736,7 +18736,16 @@ NUZ_LIVE.on('state', (s, st) => {
               setTimeout(() => { try { if (editIdx === idx && typeof closeModal === 'function') closeModal(); } catch (e) {} }, 80);
             }
           } catch (e) {}
-          if (added.length && typeof showToast === 'function' && cur.length) {
+          // Only announce a plausible LEARN. Levelling up teaches one move (rarely two
+          // on the same level); it never replaces the whole set. When every move looks new
+          // and none of the old ones survive, this is not a learn at all - it is the live
+          // mon having been matched to a DIFFERENT roster entry, so we are diffing one
+          // Pokemon's moves against another's. Syncing is still right, announcing is not:
+          // the player was told they had "learned" four moves they already knew, which
+          // teaches them to ignore the toast that matters.
+          const retained = cur.filter(m => next.includes(m)).length;
+          const plausibleLearn = added.length <= 2 && (retained > 0 || !cur.length);
+          if (added.length && typeof showToast === 'function' && cur.length && plausibleLearn) {
             showToast((matches[0].nickname || matches[0].species) + ' learned ' + added.join(', '), 'success');
           }
         }
