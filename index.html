@@ -1165,7 +1165,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787275100739"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787288294099"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -12446,7 +12446,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-20 18:18';
+const APP_BUILD = '2026-08-20 21:58';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -17619,11 +17619,23 @@ let _pmScrollKey = null;         // view identity at last render, for scroll pre
 // to be cleared on every path that can invalidate it — closing the panel, swapping
 // cartridges, switching runs by hand — and the one that gets missed is the one that
 // overwrites somebody's nuzlocke.
+let _trackArmedRun = null;      // the run tracking was started for
 function trackingActive() {
   try {
-    if (!pmIsOpen()) return false;
     const d = NUZ_BRIDGE.detected();
-    return !!d && typeof curGame === 'function' && d === curGame();
+    if (!d || typeof curGame !== 'function' || d !== curGame()) return false;
+    // Being in Play mode with the right cartridge STARTS tracking...
+    if (pmIsOpen()) { _trackArmedRun = (typeof currentRunId !== 'undefined') ? currentRunId : null; return true; }
+    // ...and it stays on after leaving the panel, for that run only.
+    //
+    // Requiring Play to be OPEN dropped everything that happened while it was not, and a
+    // catch made with a full party is exactly that: it goes straight to the PC, the box
+    // sweep sees it, and the write was thrown away because the panel had been closed. The
+    // run's most important event, silently unrecorded.
+    //
+    // Still deliberate, still narrow: it only counts if tracking was started from Play for
+    // THIS run, and it stops by itself when the cartridge changes or the run does.
+    return _trackArmedRun != null && _trackArmedRun === currentRunId;
   } catch (e) { return false; }
 }
 
@@ -17775,7 +17787,10 @@ function pmTeamRows() {
     // thing neither I nor the screen could see was what the ROSTER row actually holds.
     // A row that cannot match now states its own keys and everything the game reported,
     // so the mismatch is readable instead of inferred.
-    unplaced: l ? null : (() => {
+    // Party rows only. A benched Pokemon is not in the game's party, so having no live
+    // entry is its NORMAL state — printing "no live HP · roster ... · game: ..." against
+    // every bench row turned a diagnostic into wall-to-wall noise.
+    unplaced: (l || !x.p.inParty) ? null : (() => {
       const mine = `roster "${x.p.nickname || '-'}" / "${x.p.species || '-'}"`;
       const theirs = live.length
         ? live.map(e => `${e.nickname || '-'}/${e.species}${claimed.has(e) ? '' : ' (free)'}`).join(', ')
@@ -18359,7 +18374,7 @@ function pmRender() {
           <div class="pm-mon-name">${r.p.nickname || r.p.species}${r.p.isShiny ? ' ✨' : ''}</div>
           <div class="pm-mon-sub">${r.p.species}${r.nature ? ` · ${r.nature}` : ''}${r.status ? ` · ${r.status}` : ''}</div>
           ${pct === null
-            ? `<div class="pm-hp-num none">no live HP${r.unplaced ? ` · ${r.unplaced}` : ''}</div>`
+            ? (inParty ? `<div class="pm-hp-num none">no live HP${r.unplaced ? ` · ${r.unplaced}` : ''}</div>` : '')
             : `<div class="pm-hp"><div class="pm-hp-bar ${hpCls}" style="width:${pct}%"></div></div>
                <div class="pm-hp-num ${hpCls}">${r.hp}/${r.maxHp}</div>`}
           ${r.expPct === null ? '' : `<div class="pm-exp" title="EXP to next level"><div class="pm-exp-bar" style="width:${r.expPct}%"></div></div>`}
