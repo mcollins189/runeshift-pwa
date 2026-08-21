@@ -1165,7 +1165,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787354682456"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787355273188"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -12482,7 +12482,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-21 16:24';
+const APP_BUILD = '2026-08-21 16:34';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -18677,6 +18677,12 @@ NUZ_LIVE.on('state', (s, st) => {
   }
   if (st.source === 'memory' && Array.isArray(st.party)) {
     let changed = false;
+    // One roster entry may be written by at most ONE live Pokemon per pass. Two live
+    // mons of the same species with a single roster entry between them both matched it,
+    // and the second silently overwrote the first's level and moves. Skipping the second
+    // is right: an entry that cannot be attributed unambiguously should not be written
+    // at all, the same principle the matches.length===1 checks already apply.
+    const claimedRoster = new Set();
     for (const l of st.party) {
       if (!l || !l.species || typeof l.level !== 'number') continue;
       // Nickname first, species second. The nickname is what the player
@@ -18695,10 +18701,26 @@ NUZ_LIVE.on('state', (s, st) => {
       // Ambiguity is still skipped: two same-species mons with no nicknames
       // yield 2 matches and nothing is written.
       const liveNick = _normSpeciesName(l.nickname || '');
+      // A nickname match must ALSO agree on species. Without that check a single
+      // nickname collision is treated as a confident match, and this pass then writes
+      // that mon's nickname, level and MOVES onto the wrong roster entry - which makes
+      // the next frame match the now-corrupted nickname even more confidently. It is
+      // also how a Pokemon got told it had "learned" four moves it already knew: its
+      // live moveset was being diffed against a different mon's stored one.
+      //
+      // Species is the one field the game and the roster can never legitimately disagree
+      // on for the same creature, so it is the right tiebreak. A roster entry with no
+      // species recorded is still allowed through, since that is a half-populated new
+      // entry rather than a contradiction.
       const byNick = liveNick ? curTeam().filter(p => p.alive && p.nickname &&
-        _normSpeciesName(p.nickname) === liveNick) : [];
+        _normSpeciesName(p.nickname) === liveNick &&
+        (!p.species || _normSpeciesName(p.species) === _normSpeciesName(l.species))) : [];
       const matches = byNick.length === 1 ? byNick : curTeam().filter(p => p.alive && p.species &&
         _normSpeciesName(p.species) === _normSpeciesName(l.species));
+      if (matches.length === 1) {
+        if (claimedRoster.has(matches[0])) continue;
+        claimedRoster.add(matches[0]);
+      }
       // The game's nickname is the truth, same as its levels and moves — a
       // roster nickname that drifted from it is a typo, not a preference.
       if (matches.length === 1 && l.nickname && (matches[0].nickname || '') !== l.nickname) {
