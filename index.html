@@ -1165,7 +1165,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787417852452"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787421296401"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -7214,6 +7214,8 @@ function switchRun(val) {
     // The manual route pin belongs to the run it was made in, so it goes too.
     try { _trackArmedRun = null; } catch (e) {}
     try { NUZ_LIVE.clearManualPin(); } catch (e) {}
+    // An unknown-mon count accrued in one run must not carry into another.
+    try { _liveAddSeen = {}; } catch (e) {}
     save(); render();
   }
 }
@@ -7434,8 +7436,13 @@ if (typeof document !== 'undefined') {
             // replayed frame can write (and set saveTimer) while cloudLoad is in
             // flight — the wholesale runs swap below then discarded that write
             // and reported "saved". Local pending edits win; the next save
-            // uploads them.
-            if (saveTimer) return;
+            // uploads them. But cloudLoad already mirrored unconditionally, so
+            // an aborted resync had silently regressed the crash-safety mirror
+            // to the older cloud snapshot — if Android killed the PWA inside
+            // the 30s save window the live write was lost from both memory and
+            // disk. Restore the mirror from current in-memory state on the way
+            // out.
+            if (saveTimer) { try { saveLocalSaveCache(saveKey, buildPayload()); } catch (e) {} return; }
             const cloudTs = (typeof cloud?.lastModified === 'number') ? cloud.lastModified : 0;
             if (cloudTs > loadedAt && cloud.runs && cloud.currentRunId) {
               migrateLegacyGameKeys(cloud);
@@ -12516,7 +12523,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-22 09:57';
+const APP_BUILD = '2026-08-22 10:54';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -17481,6 +17488,10 @@ const NUZ_BRIDGE = (function () {
     sock.onmessage = ev => {
       if (ws !== sock) { try { sock.close(); } catch (e) {} return; }
       let msg; try { msg = JSON.parse(ev.data); } catch (e) { return; }
+      // Stamped for EVERY parsed message on the current socket (hello, detect,
+      // state — before any gating): it means "bytes are arriving on this
+      // socket", not "we accepted a frame".
+      _lastSockAt = Date.now();
       if (!msg) return;
       // The bridge reports which cartridge RetroArch actually has loaded. That
       // beats both UIs as a source of truth — it is the one thing that cannot
@@ -17508,17 +17519,22 @@ const NUZ_BRIDGE = (function () {
         // game by hand, cartridge and run agree and there is nothing left to
         // hold against — keeping it made "Stay on this run" a one-way trapdoor
         // that killed the feed for the whole session, with reload the only cure.
-        if (_detected && typeof curGame === 'function' && _detected === curGame()) _awaitingRun = false;
+        // Detection gone NULL clears it too: the bridge deliberately reports
+        // game:null for an unrecognised cartridge, and with _detected null
+        // there is nothing to hold against — the hold used to become permanent
+        // because the reconcile banner only renders for a truthy detected game.
+        if (!_detected || (typeof curGame === 'function' && _detected === curGame())) _awaitingRun = false;
         else return;
       }
       // Replay guard: the bridge hands its cached last state to every NEW
       // connection, and reconnects fire on every tab return — so a minutes-old
-      // snapshot could apply as current. Compare bridge timestamps against each
-      // other only (never against this device's clock — skew would eat live
-      // frames); a >10min backward jump reads as a bridge clock reset and is
-      // let through.
+      // snapshot could apply as current. An EQUAL ts is a replay of a frame
+      // already applied (the cached-state replay carries the ORIGINAL ts), so
+      // <= drops it too. Compare bridge timestamps against each other only
+      // (never against this device's clock — skew would eat live frames); a
+      // >10min backward jump reads as a bridge clock reset and is let through.
       if (msg.type === 'state' && typeof msg.ts === 'number') {
-        if (_lastBridgeTs && msg.ts < _lastBridgeTs && _lastBridgeTs - msg.ts < 600000) return;
+        if (_lastBridgeTs && msg.ts <= _lastBridgeTs && _lastBridgeTs - msg.ts < 600000) return;
         _lastBridgeTs = msg.ts;
       }
       // 'hello' announces the SERVER, not the producer, and the bridge hardcodes
@@ -17530,6 +17546,12 @@ const NUZ_BRIDGE = (function () {
       const patch = Object.assign({}, msg, { type: undefined });
       if (msg.type === 'hello') delete patch.source;
       else patch.source = msg.source || 'memory';
+      // _lastFrameAt must mean "a real producer state frame was accepted" —
+      // stamped here, past every gate, and only for 'state'. The old subscriber
+      // stamp also fired for hello frames (whose merged source inherits
+      // 'memory') and for replayed snapshots, so a dead feed could read as
+      // live forever.
+      if (msg.type === 'state') _lastFrameAt = Date.now();
       NUZ_LIVE.apply(patch);
     };
     sock.onclose = () => {
@@ -17563,10 +17585,14 @@ const NUZ_BRIDGE = (function () {
       // readyState OPEN forever — kick() then early-returned on every
       // visibilitychange/focus and the reconnect logic could never fire; the
       // only offered remedy was the reconnect button. If the socket claims OPEN
-      // but no frame has arrived in 20s, force-close it (instance-bound onclose
-      // then schedules a clean reconnect).
-      if (ws.readyState === 1 && typeof _lastFrameAt !== 'undefined' && _lastFrameAt &&
-          Date.now() - _lastFrameAt > 20000) {
+      // but no message has arrived in 20s, force-close it (instance-bound
+      // onclose then schedules a clean reconnect). Keyed on _lastSockAt, not
+      // _lastFrameAt: the latter means "last ACCEPTED frame", which goes stale
+      // during deliberate holds (wrong-cartridge veto, _awaitingRun) and so
+      // tore down healthy sockets — and reconnect chatter refreshed it, which
+      // suppressed the staleness banner. _lastSockAt means "socket is alive",
+      // which is the only thing kick should care about.
+      if (ws.readyState === 1 && _lastSockAt && Date.now() - _lastSockAt > 20000) {
         try { ws.close(); } catch (e) {}
       }
       return;
@@ -17596,7 +17622,25 @@ const NUZ_BRIDGE = (function () {
     // that no longer exists.
     try { NUZ_LIVE.clearManualPin(); } catch (e) {}
     try { _trackArmedRun = null; } catch (e) {}
+    _awaitingRun = false;
+    // An unknown-mon count accrued in one run must not carry into another.
+    try { _liveAddSeen = {}; } catch (e) {}
     NUZ_LIVE.apply({ source: 'manual', encounter: null });
+  }
+  // Reconnect WITHOUT stop()'s side effects: no LS_ON change, no
+  // clearManualPin, no _trackArmedRun/_awaitingRun changes, no source:'manual'
+  // apply. The reconnect buttons went through stop();start(), and stop()
+  // discards the manual route pin — a statement about the player, not the
+  // socket — just to cycle a connection.
+  function restart() {
+    clearTimeout(timer);
+    if (ws) {
+      const dying = ws;
+      ws = null;
+      dying.onopen = dying.onmessage = dying.onclose = dying.onerror = null;
+      try { dying.close(); } catch (e) {}
+    }
+    start();
   }
   function setUrl(u) { localStorage.setItem(LS_URL, u); if (enabled()) { stop(); start(); } }
 
@@ -17653,6 +17697,7 @@ const NUZ_BRIDGE = (function () {
 
   let _detectedContent = null;
   let _lastBridgeTs = 0;   // last applied bridge-frame ts, for the replay guard
+  let _lastSockAt = 0;     // last time ANY parsed message arrived on the current socket
   function onDetect(game, content) {
     if (!game || !GAMES[game]) return;
     _detected = game;
@@ -17796,7 +17841,7 @@ const NUZ_BRIDGE = (function () {
   }
 
   window._nuzRememberRunPick = rememberRunPick;
-  return { start, stop, setUrl, connect, url, enabled, status: () => status, syncGame: () => sendConfig(false),
+  return { start, stop, restart, setUrl, connect, url, enabled, status: () => status, syncGame: () => sendConfig(false),
            // reconcile is USER-INITIATED (the "switch to X" banner button, or
            // opening Play on a mismatch) — a request to be asked again, so it
            // clears the hold that "Stay on this run" leaves up. Without this the
@@ -18077,7 +18122,7 @@ function pmRender() {
   const staleBanner = (isStale && !(bs === 'connected' && !tracking)) ? `<div class="pm-stalefeed">
       <span>⚠ Not updating — last read ${frameAge < 60000 ? Math.round(frameAge / 1000) + 's' : Math.round(frameAge / 60000) + 'm'} ago.
       What's shown below is the last thing the game reported, not what's happening now.</span>
-      <button class="pm-chip" onclick="NUZ_BRIDGE.stop();NUZ_BRIDGE.start();pmRender();">reconnect</button>
+      <button class="pm-chip" onclick="NUZ_BRIDGE.restart();pmRender();">reconnect</button>
     </div>` : '';
   // Tracking state is its own thing, and more important than the socket's: connected but
   // NOT tracking is the normal state when the cartridge and the run disagree, and the
@@ -18096,7 +18141,7 @@ function pmRender() {
         : 'the bridge has not said which cartridge is running.'} Nothing is being written to this run.</span>
       ${detectedGame
         ? `<button class="pm-chip" onclick="NUZ_BRIDGE.reconcile(null, null)">switch to ${gname(detectedGame)}</button>`
-        : `<button class="pm-chip" onclick="NUZ_BRIDGE.stop();NUZ_BRIDGE.start();pmRender()">ask the bridge again</button>`}
+        : `<button class="pm-chip" onclick="NUZ_BRIDGE.restart();pmRender()">ask the bridge again</button>`}
     </div>` : '';
   const pillLabel = isStale ? 'STALE'
                   : bs === 'connected' ? (tracking ? (st.source === 'ocr' ? 'OCR' : 'TRACKING') : 'PAUSED')
@@ -18773,7 +18818,6 @@ NUZ_LIVE.on('state', (s, st) => {
     // means something actually moved. Idle play sends nothing but the slow heartbeat.
     try { pmRender(); } catch (e) {}
   }
-  if (st.source && st.source !== 'manual') _lastFrameAt = Date.now();
   // Wrong-cartridge veto. Everything below writes to the run — levels, moves,
   // party membership, new roster entries — so the check belongs here, ahead of
   // all of it, rather than at each individual write.
@@ -19108,7 +19152,11 @@ NUZ_LIVE.on('state', (s, st) => {
     // up on its own, and party-vs-box membership stops being hand-maintained.
     // Guarded on a plausible party read — a garbled or empty frame must never
     // be read as "the player has no Pokémon".
-    if (st.party.length) {
+    // Also require a real run with a real team array: curTeam() falls back to a
+    // fresh [] when the run or team is missing, so auto-adds pushed into it
+    // vanished while the route log still recorded a caught entry with
+    // linkedTeamIdx -1.
+    if (st.party.length && typeof curRun === 'function' && curRun() && Array.isArray(curRun().team)) {
       // ── Auto-add debounce ────────────────────────────────────────────────
       // Adding a roster entry (and burning an encounter slot as 'caught') is
       // the one live write with no undo, and it used to happen on a SINGLE
