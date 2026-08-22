@@ -1165,7 +1165,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787431487834"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787434645104"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -2755,6 +2755,31 @@ const GAMES = {
     // No leagues data yet.
     name: 'Tourmaline', short: 'Tourmaline', gen: 8, category: 'Other ROM hacks',
     dataSources: { routes: 'Tourmaline', encounterTables: 'Tourmaline', learnsets: 'Tourmaline' }
+  },
+  'amethyst': {
+    // Pokémon Amethyst — BPRE 32MB, CFRU-family (Unbound's cousin). 1267 species
+    // through Gen 8 (Urshifu forms at the top), custom region (Anthra Town, Olenic
+    // Town, Rhodanzi City…) on the FR v1.0 −0x70 base. Wild data is fragmented
+    // stride-20 runs (Gaia-shaped), extracted 2026-08-22: 80 locations, 23 maps
+    // with REAL day/night table pairs (grassNight). One junk row pruned by hand
+    // from the rail merge (Rubarr Desert (E) surf charizard L5-0, a scattered-scan
+    // artifact). No leagues or learnsets yet; starter trio unknown — bare Starter
+    // rail entry until the ROM or a run supplies it.
+    name: 'Amethyst', short: 'Amethyst', gen: 8, category: 'Other ROM hacks',
+    dataSources: { routes: 'Amethyst', encounterTables: 'Amethyst' }
+  },
+  'dreamstone': {
+    // Pokémon Dreamstone Mysteries — BPEE 32MB, pokeemerald-expansion decomp,
+    // DUAL-REGION: vanilla Hoenn sections 0-212 plus the custom Carabrue region
+    // at 213-251 (Carabrue Town, Fennilahl, Ceram, Mirroh, Routes 1-8…). 1537
+    // species with natdex parity through Gen 8 and Gen 9 + forms above (id 1300
+    // = Oinkologne). Wild table extracted 2026-08-22: ONE contiguous stride-24
+    // table (expansion inserts an unused pool pointer; fishing at +20), 165
+    // records, 132 locations. Every map coord verified through gMapGroups
+    // (6-16 → ROUTE 101 with the matching Wurmple/Poochyena pool). No leagues
+    // or learnsets yet; starter trio unknown — bare Starter rail entry.
+    name: 'Dreamstone Mysteries', short: 'Dreamstone', gen: 9, category: 'Other ROM hacks',
+    dataSources: { routes: 'Dreamstone', encounterTables: 'Dreamstone' }
   },
   'tre_johto': {
     // TRE Johto (Apr 30 2025) — a SEPARATE GAME from 'team_rocket_edition' above, which
@@ -12540,7 +12565,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-22 13:44';
+const APP_BUILD = '2026-08-22 14:37';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
