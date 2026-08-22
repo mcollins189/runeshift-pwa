@@ -1165,7 +1165,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787431079408"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787431487834"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -12540,7 +12540,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-22 13:38';
+const APP_BUILD = '2026-08-22 13:44';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -19018,6 +19018,17 @@ NUZ_LIVE.on('state', (s, st) => {
         matches[0].pid = l.pid;
         changed = true;
       }
+      // Backfill the LOCATION too: entries added before the metLocation wiring
+      // (v177) have no route, and the add-time origin logic never revisits
+      // them — so "locations for all pokemon" only covered future catches.
+      // Fills only a BLANK route; a hand-entered or encounter-derived route is
+      // never overwritten.
+      if (matches.length === 1 && !matches[0].route && l.metLocation) {
+        try {
+          matches[0].route = NUZ_LIVE.resolveLocation(l.metLocation, true) || l.metLocation;
+          changed = true;
+        } catch (e) {}
+      }
       // The game's nickname is the truth, same as its levels and moves — a
       // roster nickname that drifted from it is a typo, not a preference.
       if (matches.length === 1 && l.nickname && (matches[0].nickname || '') !== l.nickname) {
@@ -19313,12 +19324,30 @@ NUZ_LIVE.on('state', (s, st) => {
         // The name/species heuristics remain the fallback for pid-less entries
         // (pre-1.27 producer, or legacy roster rows awaiting backfill), where
         // skipping is still the safer direction.
-        const known = curTeam().some(p => {
+        const knownEntry = curTeam().find(p => {
           if (!p || !p.species) return false;
           if (l.pid && p.pid) return p.pid === l.pid;
           return rosterKey(p) === k || _normSpeciesName(p.species) === _normSpeciesName(l.species);
         });
-        if (known) continue;
+        if (knownEntry) {
+          // Known boxed mons never reach the sync pass (it iterates the PARTY),
+          // so backfill identity and a BLANK location here — same rules as the
+          // party backfill: pid only on an unambiguous match, route only when
+          // empty, hand-entered values never overwritten.
+          const sameSpecies = curTeam().filter(p => p && p.species &&
+            _normSpeciesName(p.species) === _normSpeciesName(l.species));
+          const unambiguous = (l.pid && knownEntry.pid === l.pid) || sameSpecies.length === 1;
+          if (unambiguous) {
+            if (l.pid && knownEntry.pid !== l.pid) { knownEntry.pid = l.pid; changed = true; }
+            if (!knownEntry.route && l.metLocation) {
+              try {
+                knownEntry.route = NUZ_LIVE.resolveLocation(l.metLocation, true) || l.metLocation;
+                changed = true;
+              } catch (e) {}
+            }
+          }
+          continue;
+        }
         if (!_addReady('b|' + k + '|' + _normSpeciesName(l.species) + '|' + (l.pid || ''))) continue;
         if (_boxAddsThisFrame >= 5) continue;   // per-frame cap — see above
         const recentEnc = _lastEncSeen &&
