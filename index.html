@@ -1165,7 +1165,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787379149106"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787417852452"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -7207,6 +7207,13 @@ function switchRun(val) {
     // Choosing a run by hand answers "which run for this game?" as definitively
     // as the chooser does — remember it so the bridge stops asking.
     if (typeof _nuzRememberRunPick === 'function') _nuzRememberRunPick(runs[val].game, val);
+    // Switching runs DISARMS post-Play tracking. The armed-run latch survived a
+    // switch away and back, so a run Play mode was ever opened on re-armed
+    // itself silently whenever it became current again — live writes with the
+    // panel closed and no user action. Reopening Play re-arms deliberately.
+    // The manual route pin belongs to the run it was made in, so it goes too.
+    try { _trackArmedRun = null; } catch (e) {}
+    try { NUZ_LIVE.clearManualPin(); } catch (e) {}
     save(); render();
   }
 }
@@ -7422,6 +7429,13 @@ if (typeof document !== 'undefined') {
         (async () => {
           try {
             const cloud = await cloudLoad(saveKey);
+            // Re-check dirtiness AFTER the round trip: the same visibilitychange
+            // that starts this resync also kicks the bridge reconnect, whose
+            // replayed frame can write (and set saveTimer) while cloudLoad is in
+            // flight — the wholesale runs swap below then discarded that write
+            // and reported "saved". Local pending edits win; the next save
+            // uploads them.
+            if (saveTimer) return;
             const cloudTs = (typeof cloud?.lastModified === 'number') ? cloud.lastModified : 0;
             if (cloudTs > loadedAt && cloud.runs && cloud.currentRunId) {
               migrateLegacyGameKeys(cloud);
@@ -12502,7 +12516,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-21 23:12';
+const APP_BUILD = '2026-08-22 09:57';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -14777,8 +14791,12 @@ function encActionCaught(loc, species, shiny) {
   // Live-data prefill: if the freshly-caught mon is already in party RAM,
   // its exact nature and level are known — save the manual lookup.
   try {
+    // _normSpeciesName, not _normLocName: the location normaliser keeps
+    // hyphens/spaces distinct, so "Sandshrew Alola" (producer) never matched
+    // "Sandshrew-Alola" (roster) and the prefill silently skipped regional
+    // forms — the same class of miss already fixed across the live path.
     const lv = (NUZ_LIVE.get().party || []).find(m => m && m.species &&
-      _normLocName(m.species) === _normLocName(species));
+      _normSpeciesName(m.species) === _normSpeciesName(species));
     if (lv && lv.nature) starter.nature = lv.nature;
     if (lv && lv.level) starter.level = lv.level;
   } catch (e) {}
@@ -16582,7 +16600,11 @@ function _gameSpeciesSet(gameKey) {
       }
     }
   } catch (e) { set = null; }
-  _gameSpeciesCache[gameKey] = set;
+  // Memoize only a REAL set. NUZ_DATA loads after first paint (deferred 14MB
+  // bundle), so the first live frame can land while the tables are absent —
+  // caching that null permanently disabled the wrong-cartridge species check
+  // for the whole session, silently. A null result retries on the next frame.
+  if (set && set.size) _gameSpeciesCache[gameKey] = set;
   return set;
 }
 
@@ -17411,8 +17433,14 @@ const NUZ_LIVE = (function () {
     _manualPin = { route: loc, producerRouteAtPin: _lastProducerRoute };
     return apply({ route: loc });
   }
+  // The pin is only discarded when the producer reports something NEW, so it
+  // outlived disconnects and run switches: pin Icirrus while the producer said
+  // Route 5, disconnect, walk back to Route 5, reconnect — the first frame
+  // matches producerRouteAtPin and the panel snaps to Icirrus while the player
+  // stands on Route 5. Bridge stop and run switches clear it via this.
+  function clearManualPin() { _manualPin = null; _lastProducerRoute = null; }
   return {
-    on, apply, resolveLocation, setManualRoute,
+    on, apply, resolveLocation, setManualRoute, clearManualPin,
     get: () => state,
     isLive: () => state.source !== 'manual'
   };
@@ -17436,11 +17464,22 @@ const NUZ_BRIDGE = (function () {
   function connect() {
     if (!enabled() || (ws && (ws.readyState === 0 || ws.readyState === 1))) return;
     clearTimeout(timer);
-    try { ws = new WebSocket(url()); }
+    // Every handler below closes over THIS socket instance (`sock`) and checks
+    // it is still the current one before touching shared state. Handlers that
+    // read the mutable `ws` variable were the orphan-socket bug: stop();start()
+    // closed socket A and created B, then A's late onclose fired, saw `ws` (now
+    // B), nulled it, and scheduled a reconnect that created C — leaving B open,
+    // unreachable, and feeding DUPLICATE frames forever. Every frame-count
+    // safeguard (the 4-frame savestate debounce, the 3-frame level-down vote)
+    // was silently halved, and Disconnect could only ever close C.
+    let sock;
+    try { sock = new WebSocket(url()); }
     catch (e) { console.warn('[bridge] bad url', e); setStatus('error'); return; }
+    ws = sock;
     setStatus('connecting');
-    ws.onopen = () => { backoff = 1000; setStatus('connected'); sendConfig(true); };
-    ws.onmessage = ev => {
+    sock.onopen = () => { if (ws !== sock) return; backoff = 1000; setStatus('connected'); sendConfig(true); };
+    sock.onmessage = ev => {
+      if (ws !== sock) { try { sock.close(); } catch (e) {} return; }
       let msg; try { msg = JSON.parse(ev.data); } catch (e) { return; }
       if (!msg) return;
       // The bridge reports which cartridge RetroArch actually has loaded. That
@@ -17463,7 +17502,25 @@ const NUZ_BRIDGE = (function () {
       if (_detected && typeof curGame === 'function' && _detected !== curGame()) return;
       // Several runs on this game and the player has not said which: hold the
       // data rather than pour it into whichever one happened to be open.
-      if (_awaitingRun) return;
+      if (_awaitingRun) {
+        // Self-heal: the hold exists to keep a MISMATCHED cartridge's frames out
+        // of the open run. If the player has since switched onto the detected
+        // game by hand, cartridge and run agree and there is nothing left to
+        // hold against — keeping it made "Stay on this run" a one-way trapdoor
+        // that killed the feed for the whole session, with reload the only cure.
+        if (_detected && typeof curGame === 'function' && _detected === curGame()) _awaitingRun = false;
+        else return;
+      }
+      // Replay guard: the bridge hands its cached last state to every NEW
+      // connection, and reconnects fire on every tab return — so a minutes-old
+      // snapshot could apply as current. Compare bridge timestamps against each
+      // other only (never against this device's clock — skew would eat live
+      // frames); a >10min backward jump reads as a bridge clock reset and is
+      // let through.
+      if (msg.type === 'state' && typeof msg.ts === 'number') {
+        if (_lastBridgeTs && msg.ts < _lastBridgeTs && _lastBridgeTs - msg.ts < 600000) return;
+        _lastBridgeTs = msg.ts;
+      }
       // 'hello' announces the SERVER, not the producer, and the bridge hardcodes
       // source:"ocr" in it (WsServer.kt). Letting it set source meant every connection
       // opened labelled OCR and only corrected once a memory frame arrived -- and if
@@ -17475,7 +17532,8 @@ const NUZ_BRIDGE = (function () {
       else patch.source = msg.source || 'memory';
       NUZ_LIVE.apply(patch);
     };
-    ws.onclose = () => {
+    sock.onclose = () => {
+      if (ws !== sock) return;   // an older socket's close must not touch the current one
       ws = null;
       if (!enabled()) { setStatus('off'); return; }
       setStatus('retrying');
@@ -17487,7 +17545,9 @@ const NUZ_BRIDGE = (function () {
       // reopening calls start(), which resets the backoff.
       backoff = Math.min(backoff * 2, 5000);
     };
-    ws.onerror = () => { try { ws.close(); } catch (e) {} };
+    // Close THIS socket, never `ws` — on the setUrl path the old socket errors
+    // right when a new one exists, and closing `ws` killed the healthy one.
+    sock.onerror = () => { try { sock.close(); } catch (e) {} };
   }
 
   function start() { localStorage.setItem(LS_ON, '1'); backoff = 1000; connect(); }
@@ -17498,7 +17558,19 @@ const NUZ_BRIDGE = (function () {
   // possible signal that a stale reconnect timer should be abandoned.
   const kick = () => {
     if (!enabled()) return;
-    if (ws && (ws.readyState === 0 || ws.readyState === 1)) return;
+    if (ws && (ws.readyState === 0 || ws.readyState === 1)) {
+      // Half-open guard: Android can suspend the bridge without a FIN, leaving
+      // readyState OPEN forever — kick() then early-returned on every
+      // visibilitychange/focus and the reconnect logic could never fire; the
+      // only offered remedy was the reconnect button. If the socket claims OPEN
+      // but no frame has arrived in 20s, force-close it (instance-bound onclose
+      // then schedules a clean reconnect).
+      if (ws.readyState === 1 && typeof _lastFrameAt !== 'undefined' && _lastFrameAt &&
+          Date.now() - _lastFrameAt > 20000) {
+        try { ws.close(); } catch (e) {}
+      }
+      return;
+    }
     backoff = 1000; clearTimeout(timer); connect();
   };
   document.addEventListener('visibilitychange', () => { if (!document.hidden) kick(); });
@@ -17507,9 +17579,23 @@ const NUZ_BRIDGE = (function () {
   function stop() {
     localStorage.setItem(LS_ON, '0');
     clearTimeout(timer);
-    if (ws) { try { ws.close(); } catch (e) {} ws = null; }
+    // Detach handlers BEFORE closing: close events are async, and a still-
+    // attached onclose from this socket used to fire after start() had already
+    // created a replacement — nulling the new socket's reference and spawning
+    // a third. The instance checks in connect() also guard this; both layers
+    // are cheap.
+    if (ws) {
+      const dying = ws;
+      ws = null;
+      dying.onopen = dying.onmessage = dying.onclose = dying.onerror = null;
+      try { dying.close(); } catch (e) {}
+    }
     setStatus('off');
-    // Hand control back to manual so the UI stops claiming it's live.
+    // Hand control back to manual so the UI stops claiming it's live, and drop
+    // the route pin + armed-run latch — both are statements about a live feed
+    // that no longer exists.
+    try { NUZ_LIVE.clearManualPin(); } catch (e) {}
+    try { _trackArmedRun = null; } catch (e) {}
     NUZ_LIVE.apply({ source: 'manual', encounter: null });
   }
   function setUrl(u) { localStorage.setItem(LS_URL, u); if (enabled()) { stop(); start(); } }
@@ -17566,6 +17652,7 @@ const NUZ_BRIDGE = (function () {
   };
 
   let _detectedContent = null;
+  let _lastBridgeTs = 0;   // last applied bridge-frame ts, for the replay guard
   function onDetect(game, content) {
     if (!game || !GAMES[game]) return;
     _detected = game;
@@ -17710,7 +17797,11 @@ const NUZ_BRIDGE = (function () {
 
   window._nuzRememberRunPick = rememberRunPick;
   return { start, stop, setUrl, connect, url, enabled, status: () => status, syncGame: () => sendConfig(false),
-           detected: () => _detected, reconcile: (g, c) => onDetect(g || _detected, c) };
+           // reconcile is USER-INITIATED (the "switch to X" banner button, or
+           // opening Play on a mismatch) — a request to be asked again, so it
+           // clears the hold that "Stay on this run" leaves up. Without this the
+           // banner button was inert: onDetect early-returns while _awaitingRun.
+           detected: () => _detected, reconcile: (g, c) => { _awaitingRun = false; onDetect(g || _detected, c); } };
 })();
 window.NUZ_BRIDGE = NUZ_BRIDGE;
 
@@ -18440,7 +18531,7 @@ function pmRender() {
           ? `<div class="pm-scout">Scouting ${focus.species} — not on the field. <button class="pm-chip" onclick="pmBattleFocus='main';pmRender()">back to battle</button></div>`
           : ''}
         ${staleHint}
-        ${isTrainer ? '' : `<div class="pm-battle-actions">
+        ${isTrainer ? '' : !safeLoc ? `<div class="pm-battle-actions"><span class="pm-battle-loc">location not resolved yet — log from the Encounters tab</span></div>` : `<div class="pm-battle-actions">
           <button class="pm-act ok" onclick="encActionCaught('${safeLoc}', '${safeSp}')">✓ Caught</button>
           <button class="pm-act" onclick="encActionCaught('${safeLoc}', '${safeSp}', true)">✨</button>
           <button class="pm-act" onclick="encActionLog('${safeLoc}', '${safeSp}', 'skipped')">⊘ Skip</button>
@@ -19018,6 +19109,23 @@ NUZ_LIVE.on('state', (s, st) => {
     // Guarded on a plausible party read — a garbled or empty frame must never
     // be read as "the player has no Pokémon".
     if (st.party.length) {
+      // ── Auto-add debounce ────────────────────────────────────────────────
+      // Adding a roster entry (and burning an encounter slot as 'caught') is
+      // the one live write with no undo, and it used to happen on a SINGLE
+      // frame — _liveFrameFitsGame deliberately fails open below three mons, so
+      // one savestate-garbage poll decoding 1-2 plausible species was enough.
+      // An unknown mon must now appear on three CONSECUTIVE applied frames
+      // before it is written. A real gift/catch clears that in a few seconds;
+      // savestate garbage never survives the RAM walk.
+      _liveAddFrameNo++;
+      if (Object.keys(_liveAddSeen).length > 50) _liveAddSeen = {};
+      const _addReady = key => {
+        const rec = _liveAddSeen[key];
+        if (rec && rec.frame === _liveAddFrameNo - 1) { rec.n++; rec.frame = _liveAddFrameNo; }
+        else if (rec && rec.frame === _liveAddFrameNo) { /* same frame, already counted */ }
+        else _liveAddSeen[key] = { n: 1, frame: _liveAddFrameNo };
+        return _liveAddSeen[key].n >= 3;
+      };
       const liveKey = m => _normSpeciesName(m.nickname || '') || _normSpeciesName(m.species || '');
       const rosterKey = p => _normSpeciesName(p.nickname || '') || _normSpeciesName(p.species || '');
       const liveKeys = new Set(st.party.map(liveKey).filter(Boolean));
@@ -19052,6 +19160,7 @@ NUZ_LIVE.on('state', (s, st) => {
           rosterKey(p) === k ||
           _normSpeciesName(p.species) === _normSpeciesName(l.species)));
         if (known) continue;
+        if (!_addReady('b|' + k + '|' + _normSpeciesName(l.species))) continue;
         const recentEnc = _lastEncSeen &&
           (Date.now() - _lastEncSeen.at) < 120000 &&
           _normSpeciesName(_lastEncSeen.species) === _normSpeciesName(l.species)
@@ -19117,6 +19226,7 @@ NUZ_LIVE.on('state', (s, st) => {
           rosterKey(p) === k ||
           _normSpeciesName(p.species) === _normSpeciesName(l.species)));
         if (known) continue;
+        if (!_addReady('p|' + k + '|' + _normSpeciesName(l.species))) continue;
         // Where it came from. A mon that shows up in the party right after an
         // encounter with the SAME species was caught there, so it inherits that
         // route and the encounter grid marks the location as caught.
@@ -19214,6 +19324,10 @@ let _levelLowerSeen = new Map(); // species → {level, count}: pending downward
 // catch be told apart from a gift.
 let _lastFrameAt = 0;            // when a producer frame last arrived (staleness)
 let _lastEncSeen = null;         // { species, route, at }
+// Auto-add debounce state: unknown mons must survive N consecutive applied
+// frames before the roster write happens (see the mirroring subscriber).
+let _liveAddSeen = {};           // key → { n, frame }
+let _liveAddFrameNo = 0;
 let _lastChoosing = null;        // last mon the game asked a move for (auto-focus)
 let _lastTargetSlot = null;      // last foe party slot the target cursor sat on
 // Same confusables fold as NuzBridge's OcrParser.ident() — keep the two maps
