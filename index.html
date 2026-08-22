@@ -1165,7 +1165,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787424586003"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787431079408"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -12540,7 +12540,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-22 11:49';
+const APP_BUILD = '2026-08-22 13:38';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -18997,14 +18997,26 @@ NUZ_LIVE.on('state', (s, st) => {
       // on for the same creature, so it is the right tiebreak. A roster entry with no
       // species recorded is still allowed through, since that is a half-populated new
       // entry rather than a contradiction.
+      // IDENTITY FIRST: the personality value (pid) is unique per individual,
+      // so when both sides carry it, it outranks every name heuristic — it is
+      // what lets two same-species mons (a caught duplicate) stay distinct.
+      const byPid = (l.pid && curTeam().some(p => p && p.pid)) ?
+        curTeam().filter(p => p.alive && p.pid === l.pid) : [];
       const byNick = liveNick ? curTeam().filter(p => p.alive && p.nickname &&
         _normSpeciesName(p.nickname) === liveNick &&
         (!p.species || _normSpeciesName(p.species) === _normSpeciesName(l.species))) : [];
-      const matches = byNick.length === 1 ? byNick : curTeam().filter(p => p.alive && p.species &&
+      const matches = byPid.length === 1 ? byPid
+        : byNick.length === 1 ? byNick : curTeam().filter(p => p.alive && p.species &&
         _normSpeciesName(p.species) === _normSpeciesName(l.species));
       if (matches.length === 1) {
         if (claimedRoster.has(matches[0])) continue;
         claimedRoster.add(matches[0]);
+      }
+      // Backfill the identity once a match is confident, so every future frame
+      // (and the duplicate-catch dedupe below) can use it instead of guessing.
+      if (matches.length === 1 && l.pid && matches[0].pid !== l.pid) {
+        matches[0].pid = l.pid;
+        changed = true;
       }
       // The game's nickname is the truth, same as its levels and moves — a
       // roster nickname that drifted from it is a typo, not a preference.
@@ -19257,6 +19269,8 @@ NUZ_LIVE.on('state', (s, st) => {
       };
       const liveKey = m => _normSpeciesName(m.nickname || '') || _normSpeciesName(m.species || '');
       const rosterKey = p => _normSpeciesName(p.nickname || '') || _normSpeciesName(p.species || '');
+      // Unique per-individual identity (personality value), producer 1.27+.
+      const livePids = new Set(st.party.map(m => m && m.pid).filter(Boolean));
       const liveKeys = new Set(st.party.map(liveKey).filter(Boolean));
       const liveSpecies = new Set(st.party.map(m => _normSpeciesName(m.species || '')).filter(Boolean));
 
@@ -19272,8 +19286,12 @@ NUZ_LIVE.on('state', (s, st) => {
         // the whole party emptied. The failure modes are wildly asymmetric:
         // wrongly keeping a boxed mon flagged in-party is a cosmetic slip,
         // wrongly clearing the party destroys real state.
-        const inGame = liveKeys.has(rosterKey(p)) ||
-          liveSpecies.has(_normSpeciesName(p.species));
+        // pid outranks the name heuristics when both sides carry it — with two
+        // same-species mons (one in party, one benched) the species-set match
+        // wrongly flagged both as in-party.
+        const inGame = (p.pid && livePids.size) ? livePids.has(p.pid)
+          : (liveKeys.has(rosterKey(p)) ||
+             liveSpecies.has(_normSpeciesName(p.species)));
         if (!!p.inParty !== inGame) { p.inParty = inGame; changed = true; }
       }
 
@@ -19289,23 +19307,40 @@ NUZ_LIVE.on('state', (s, st) => {
       const boxList = (NUZ_LIVE.boxFresh() && Array.isArray(st.box)) ? st.box.filter(m => m && m.species) : [];
       for (const l of boxList) {
         const k = liveKey(l);
-        const known = curTeam().some(p => p && p.species && (
-          rosterKey(p) === k ||
-          _normSpeciesName(p.species) === _normSpeciesName(l.species)));
+        // Identity-aware dedupe: when BOTH sides carry a pid, only a pid match
+        // means "already known" — a caught DUPLICATE of a species already on
+        // the roster is a different individual and must be logged, not skipped.
+        // The name/species heuristics remain the fallback for pid-less entries
+        // (pre-1.27 producer, or legacy roster rows awaiting backfill), where
+        // skipping is still the safer direction.
+        const known = curTeam().some(p => {
+          if (!p || !p.species) return false;
+          if (l.pid && p.pid) return p.pid === l.pid;
+          return rosterKey(p) === k || _normSpeciesName(p.species) === _normSpeciesName(l.species);
+        });
         if (known) continue;
-        if (!_addReady('b|' + k + '|' + _normSpeciesName(l.species))) continue;
+        if (!_addReady('b|' + k + '|' + _normSpeciesName(l.species) + '|' + (l.pid || ''))) continue;
         if (_boxAddsThisFrame >= 5) continue;   // per-frame cap — see above
         const recentEnc = _lastEncSeen &&
           (Date.now() - _lastEncSeen.at) < 120000 &&
           _normSpeciesName(_lastEncSeen.species) === _normSpeciesName(l.species)
             ? _lastEncSeen : null;
-        const origin = recentEnc && recentEnc.route ? recentEnc.route : '';
+        // Origin: an observed encounter is the precise answer; the cartridge's
+        // own metLocation covers everything else (the roster entry always gets
+        // a location). Only the OBSERVED encounter burns the route's encounter
+        // slot below — a met location alone can't prove a wild encounter was
+        // used (gifts and trades carry one too).
+        const encOrigin = recentEnc && recentEnc.route ? recentEnc.route : '';
+        const metOrigin = l.metLocation
+          ? (NUZ_LIVE.resolveLocation(l.metLocation, true) || l.metLocation) : '';
+        const origin = encOrigin || metOrigin;
         const add = {
           species: l.species, nickname: l.nickname || '', level: l.level || 1,
           alive: true, inParty: false,
           moves: '', nature: l.nature || '', held: typeof l.item === 'string' ? l.item : '',
           events: [], dismissedMoves: []
         };
+        if (l.pid) add.pid = l.pid;
         if (Array.isArray(l.types) && l.types.length) {
           add.type1 = l.types[0];
           if (l.types[1]) add.type2 = l.types[1];
@@ -19325,7 +19360,7 @@ NUZ_LIVE.on('state', (s, st) => {
         _boxAddsThisFrame++;
         const bIdx = curTeam().length - 1;
         changed = true;
-        if (origin) {
+        if (encOrigin) {
           try {
             const routes = curRun().routes;
             const existing = routes.find(r =>
@@ -19357,11 +19392,17 @@ NUZ_LIVE.on('state', (s, st) => {
         // a duplicate roster entry is worse than missing an auto-add: the miss
         // is one manual tap, the duplicate corrupts the run's records and has
         // to be hunted down.
-        const known = curTeam().some(p => p && p.species && (
-          rosterKey(p) === k ||
-          _normSpeciesName(p.species) === _normSpeciesName(l.species)));
+        // Identity-aware (see the box loop): a pid on both sides is the only
+        // "already known" that counts — a caught DUPLICATE species is a new
+        // individual and gets logged. Name/species heuristics remain the
+        // fallback for pid-less rows, where skipping is the safer direction.
+        const known = curTeam().some(p => {
+          if (!p || !p.species) return false;
+          if (l.pid && p.pid) return p.pid === l.pid;
+          return rosterKey(p) === k || _normSpeciesName(p.species) === _normSpeciesName(l.species);
+        });
         if (known) continue;
-        if (!_addReady('p|' + k + '|' + _normSpeciesName(l.species))) continue;
+        if (!_addReady('p|' + k + '|' + _normSpeciesName(l.species) + '|' + (l.pid || ''))) continue;
         if (_partyAddsThisFrame >= 5) continue;   // per-frame cap — see above
         // Where it came from. A mon that shows up in the party right after an
         // encounter with the SAME species was caught there, so it inherits that
@@ -19382,8 +19423,16 @@ NUZ_LIVE.on('state', (s, st) => {
         // exactly that — but the bridge reports the town you are standing in,
         // so without this the starter is logged against the opening town and
         // burns that location's encounter slot.
-        const origin = (recentEnc && recentEnc.route) ? recentEnc.route
-                     : (_looksLikeStarter(st) ? _starterLocationName() : '');
+        const encOrigin = (recentEnc && recentEnc.route) ? recentEnc.route : '';
+        const starterOrigin = (!encOrigin && _looksLikeStarter(st)) ? _starterLocationName() : '';
+        // The cartridge's own met location covers everything else, so the
+        // roster entry always gets a location — but only an OBSERVED encounter
+        // (or the Starter row) burns a route's encounter slot below: a met
+        // location alone can't prove a wild slot was used (gifts/trades/eggs
+        // carry one too).
+        const metOrigin = l.metLocation
+          ? (NUZ_LIVE.resolveLocation(l.metLocation, true) || l.metLocation) : '';
+        const origin = encOrigin || starterOrigin || metOrigin;
         const add = {
           species: l.species, nickname: l.nickname || '', level: l.level || 1,
           alive: true, inParty: true,
@@ -19391,6 +19440,7 @@ NUZ_LIVE.on('state', (s, st) => {
           nature: l.nature || '', held: typeof l.item === 'string' ? l.item : '',
           events: [], dismissedMoves: []
         };
+        if (l.pid) add.pid = l.pid;
         if (origin) add.route = origin;   // omitted entirely when unknown
         if (Array.isArray(l.evs)) add.evs = l.evs.slice();
         if (Array.isArray(l.ivs)) add.ivs = l.ivs.slice();
@@ -19405,7 +19455,9 @@ NUZ_LIVE.on('state', (s, st) => {
         // never hand-logged, which is the only case this path runs in.
         // Mirrors submitPoke's linkage: reuse a matching row if one exists (the
         // encounter may already be logged as seen/failed) rather than duplicating.
-        if (origin) {
+        // Gated on the OBSERVED origins only — a met-location origin labels the
+        // roster entry but never spends an encounter slot.
+        if (encOrigin || starterOrigin) {
           try {
             const routes = curRun().routes;
             const existing = routes.find(r =>
