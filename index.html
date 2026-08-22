@@ -1165,7 +1165,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787436911242"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787437527596"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -12633,7 +12633,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-22 15:15';
+const APP_BUILD = '2026-08-22 15:25';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -15437,6 +15437,21 @@ function pokeView(p, idx) {
       _utils[0].adjScore += 8;
       _utils[0].reason = 'only status move';
     }
+    // STATUS-SYNERGY: Hex-class moves ('vs-status' tag) double against a
+    // statused target, so they and the status move that enables them are worth
+    // more TOGETHER than either scores alone — Will-O-Wisp at 85% is not a
+    // drop candidate on a Hex user, it is the enabler (field case: Phantump).
+    // Only non-volatile status counts; confusion does not trigger Hex.
+    const _eff = nm => moveEffect(resolveMove(nm) || nm) || '';
+    const _ENABLER = /^(sleep|paralysis|burn|badpoison)/;
+    const setHasEnabler = adj.some(c => c.name && _ENABLER.test(_eff(c.name)));
+    const vsStatusMove = adj.find(c => c.name && _eff(c.name).includes('vs-status'));
+    for (const c of adj) {
+      if (!c.name) continue;
+      const e = _eff(c.name);
+      if (e.includes('vs-status') && setHasEnabler) { c.adjScore += 15; if (!c.reason) c.reason = 'doubles on status'; }
+      else if (_ENABLER.test(e) && vsStatusMove) { c.adjScore += 10; if (!c.reason) c.reason = 'enables ' + vsStatusMove.name; }
+    }
     // The NEW move is judged against the set too: if it duplicates coverage the
     // set already has at least as well, its effective value drops the same way.
     let upAdj = upScore.score;
@@ -15447,6 +15462,12 @@ function pokeView(p, idx) {
         const C = _atkTypeCat(c.name);
         if (U.t && U.t === C.t && U.c === C.c && c.score >= upScore.score) { upAdj = Math.round(upScore.score * 0.65); break; }
       }
+    }
+    // Incoming move joins the same synergy math as the slots it competes with.
+    {
+      const upEff = _eff(m.name);
+      if (upEff.includes('vs-status') && setHasEnabler) upAdj += 15;
+      else if (_ENABLER.test(upEff) && vsStatusMove) upAdj += 10;
     }
     let firstEmpty = -1;
     for (let i = 0; i < 4; i++) { if (!moveList[i]) { firstEmpty = i; break; } }
