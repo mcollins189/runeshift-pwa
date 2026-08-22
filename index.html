@@ -1165,7 +1165,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787375740074"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787376324783"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -12502,7 +12502,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-21 22:15';
+const APP_BUILD = '2026-08-21 22:25';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -17451,8 +17451,16 @@ const NUZ_BRIDGE = (function () {
       // Several runs on this game and the player has not said which: hold the
       // data rather than pour it into whichever one happened to be open.
       if (_awaitingRun) return;
-      // 'hello' announces the producer; 'state' carries data. Both set source.
-      NUZ_LIVE.apply(Object.assign({ source: msg.source || 'memory' }, msg, { type: undefined }));
+      // 'hello' announces the SERVER, not the producer, and the bridge hardcodes
+      // source:"ocr" in it (WsServer.kt). Letting it set source meant every connection
+      // opened labelled OCR and only corrected once a memory frame arrived -- and if
+      // frames never started (paused, wrong cartridge, no run picked) the pill sat on OCR
+      // forever while the player was plainly connected to the memory reader. Reported as
+      // "the label says ocr even though i'm connected". Only 'state' carries a producer.
+      const patch = Object.assign({}, msg, { type: undefined });
+      if (msg.type === 'hello') delete patch.source;
+      else patch.source = msg.source || 'memory';
+      NUZ_LIVE.apply(patch);
     };
     ws.onclose = () => {
       ws = null;
@@ -17531,6 +17539,14 @@ const NUZ_BRIDGE = (function () {
     if (typeof sendConfig === 'function') sendConfig(true);
     if (typeof showToast === 'function') showToast('Now tracking ' + run.name, 'success');
   };
+  // Declining leaves the run alone. _awaitingRun stays TRUE so held frames stay held: the
+  // player said "not this run", which is a reason to keep ignoring the feed, not to start
+  // pouring it somewhere. trackingActive() is false while cartridge and run disagree, so
+  // nothing is written either way -- and the Play-mode banner keeps offering the switch.
+  window._nuzStayOnRun = function () {
+    if (typeof closeModal === 'function') closeModal();
+    try { pmRender(); } catch (e) {}
+  };
   window._nuzPickNewRun = function (game) {
     _awaitingRun = false;
     if (typeof promptNewRun === 'function') promptNewRun(game);
@@ -17561,8 +17577,16 @@ const NUZ_BRIDGE = (function () {
     const match = Object.entries(runs || {}).filter(([, r]) => r && r.game === game);
 
     if (match.length === 1) {
-      // Unambiguous: one run for this cartridge, just go there.
-      window._nuzPickRun(match[0][0]);
+      // ASK, even though the answer is obvious. "Unambiguous" describes the RUN, not the
+      // intent: hitting Play is a request to start tracking, not permission to move this
+      // session onto a different nuzlocke. Switching silently meant the player pressed
+      // Play on one run and landed in another with no statement that anything had changed
+      // -- reported as "it auto switched when I hit play, instead of saying the mismatch
+      // and asking for confirmation". The confirm costs one tap and makes the switch a
+      // decision. Multi-run already asks; this is the same rule with one option.
+      if (_awaitingRun) return;
+      _awaitingRun = true;
+      promptWhichRun(game, label, match, content);
       return;
     }
 
@@ -17630,14 +17654,24 @@ const NUZ_BRIDGE = (function () {
              (party ? '<span class="nuz-runpick-party">' + esc(party) + '</span>' : '') +
              '</button>';
     }).join('');
-    document.getElementById('modal-title').textContent = 'Which run are you playing?';
+    // One run is a CONFIRMATION, several is a CHOICE. Same modal, different question --
+    // asking "which run are you playing?" above a single button reads as a formality and
+    // invites a reflex tap, which is the opposite of what the confirm exists for.
+    const one = sorted.length === 1;
+    const hereRun = (runs || {})[currentRunId];
+    const hereName = (hereRun && hereRun.name) || 'this run';
+    document.getElementById('modal-title').textContent = one ? 'Switch run?' : 'Which run are you playing?';
     document.getElementById('modal-body').innerHTML =
       '<div class="nr-form">' +
       '<div class="nuz-runpick-intro">RetroArch is running <b>' + esc(label) + '</b>' +
       (content ? ' <span class="nuz-runpick-rom">(' + esc(content) + ')</span>' : '') +
-      ', and you have ' + sorted.length + ' runs for it. Live tracking is paused until you pick one.</div>' +
+      (one
+        ? ', but you are on <b>' + esc(hereName) + '</b>. Switching moves this session to the run below. Nothing is written to either until you choose.'
+        : ', and you have ' + sorted.length + ' runs for it. Live tracking is paused until you pick one.') + '</div>' +
       '<div class="nuz-runpick-list">' + rows + '</div>' +
-      '<div class="nr-actions"><button class="btn-ghost" onclick="_nuzPickNewRun(\'' + game + '\')">Start a new run</button></div>' +
+      '<div class="nr-actions">' +
+      (one ? '<button class="btn-ghost" onclick="_nuzStayOnRun()">Stay on ' + esc(hereName) + '</button>' : '') +
+      '<button class="btn-ghost" onclick="_nuzPickNewRun(\'' + game + '\')">Start a new run</button></div>' +
       '</div>';
     if (typeof openModal === 'function') openModal();
   }
@@ -17930,6 +17964,12 @@ function pmRender() {
   const dotCls = isStale ? 'wait' : (bs === 'connected' ? 'live' : (bs === 'connecting' || bs === 'retrying' ? 'wait' : 'off'));
   const dotTitle = isStale ? `No update for ${Math.round(frameAge / 1000)}s`
     : (bs === 'connected' ? `Live via ${st.source}` : `Manual (bridge: ${bs})`);
+  // Declared BEFORE staleBanner, which reads it. It used to be declared after, and
+  // because `const` is hoisted-but-uninitialised that read threw a ReferenceError the
+  // instant the feed went stale -- taking the whole Play-mode render down with it, so the
+  // overlay froze on its last paint exactly when it most needed to say "not updating".
+  // The && short-circuit hid it: isStale false never evaluates the operand.
+  const tracking = trackingActive();
   const staleBanner = (isStale && !(bs === 'connected' && !tracking)) ? `<div class="pm-stalefeed">
       <span>⚠ Not updating — last read ${frameAge < 60000 ? Math.round(frameAge / 1000) + 's' : Math.round(frameAge / 60000) + 'm'} ago.
       What's shown below is the last thing the game reported, not what's happening now.</span>
@@ -17938,7 +17978,6 @@ function pmRender() {
   // Tracking state is its own thing, and more important than the socket's: connected but
   // NOT tracking is the normal state when the cartridge and the run disagree, and the
   // player has to be able to see that rather than assume catches are being recorded.
-  const tracking = trackingActive();
   const detectedGame = (() => { try { return NUZ_BRIDGE.detected(); } catch (e) { return null; } })();
   // Shown even when the feed has gone quiet. A pause STOPS the frames — the bridge emits
   // nothing rather than read a cartridge through the wrong profile — so "not updating" is
