@@ -8,7 +8,7 @@ Route 82|rattata,spearow,goldeen,seaking,magikarp,corphish,crawdaunt,spinarak,kr
 Shuckle Spring|paras,woobat,swoobat,shuckle,magikarp,barboach,whiscash
 Quartz Cave|geodude,wynaut,woobat,nosepass
 Route 102|poochyena,zigzagoon,wurmple,lotad,seedot,ralts,goldeen,marill,magikarp,corphish
-Route 104|marill,poochyena,wurmple,taillow,wingull,pelipper,magikarp
+Route 104|marill,poochyena,wurmple,taillow,wingull,pelipper,magikarp,bulbasaur,pidgey,ge
 Altering Cave|zubat,mareep,pineco,houndour,teddiursa,aipom,shuckle,stantler,smeargle
 Route 83|caterpie,weedle,rattata,spearow,spinarak,kricketot,stunky,ledyba
 Reseda Woods|caterpie,metapod,weedle,kakuna,rattata,goldeen,seaking,magikarp,corphish,crawdaunt,hoothoot
@@ -23,7 +23,7 @@ Route 85|spearow,ekans,sandshrew,nidoran-f,nidoran-m,machop
 Power Station|magnemite,grimer,voltorb,elekid
 Route 86|spearow,ekans,nidoran-f,nidoran-m,wooper,goldeen,seaking,magikarp,corphish,crawdaunt,hippopotas
 Route 110|oddish,poochyena,wingull,electrike,plusle,minun,gulpin,tentacool,pelipper,magikarp,wailmer
-Route 87|sandshrew,geodude,onix,numel,gligar,hippopotas
+Route 87|sandshrew,geodude,onix,numel,gligar,hippopotas,steelix,silicobra
 Route 88|spearow,ekans,sandshrew,nidoran-f,nidoran-m,spoink,goldeen,seaking,magikarp,corphish,crawdaunt
 Route 117|oddish,marill,poochyena,seedot,volbeat,illumise,goldeen,magikarp,corphish
 Route 112|marill,numel
@@ -53,7 +53,7 @@ Seafloor Cavern|zubat,golbat,tentacool,magikarp,wailmer
 Cave of Origin|zubat,golbat,sableye
 Sky Pillar|golbat,sableye,claydol,banette,altaria
 Desert Underpass|ditto,whismur,loudred
-Victory Road|golbat,hariyama,mawile,lairon,geodude,graveler,sableye,goldeen,magikarp,barboach,whiscash
+Victory Road|golbat,hariyama,mawile,lairon,geodude,graveler,sableye,goldeen,magikarp,barboach,whiscash,sealeo,swoobat,relicanth,volkritter,skrelp,dragalge
 Umber Town|goldeen,seaking,magikarp,corphish,crawdaunt
 Cobalt City|tentacool,tentacruel,wingull,pelipper,magikarp,carvanha,skrelp,dragalge
 Xanthos City|tentacool,tentacruel,wingull,pelipper,magikarp,krabby,carvanha,kingler
@@ -83,3 +83,24 @@ Evergrand City|tentacool,wingull,pelipper,magikarp,wailmer,luvdisc,corsola
 Petalburg City|marill,goldeen,magikarp,corphish
 Sootopolis City|magikarp,tentacool,gyarados
 Underwater|chinchou,clamperl,relicanth
+Fortree City|charmander,charmeleon,charizard,squirtle
+Meridia Temple|sandshrew,baltoy,chingling
+Aurora Temple|jigglypuff,chingling,woobat
+Dream Resort|shuppet,duskull
+Route 91|spearow,growlithe,swablu,bronzor,volbeat,morelull,aipom,pineco,starly
+Vesper Temple|chingling,bronzor,morelull
+Mt Shiro|swinub,makuhita,spheal,vanillite,sealeo,magikarp,barboach,whiscash
+Route 96|spearow,bellsprout,farfetchd,eevee,wingull,munna
+Route 92|growlithe,aipom,pineco,swablu,starly,volbeat,morelull
+Route 97|swinub,makuhita,snover,shiftry,vanillite
+Route 70|geodude,graveler,magmar,miasmite,woobat,swoobat
+Klopt Chamber|unown
+Steel Mill|magnemite,magneton,grimer,muk,bronzor,bronzong,cufant
+Wisteria City|fearow,ekans,arbok,machoke,graveler,koffing,weezing,bronzor,shiinotic,goldeen,seaking,magikarp,corphish,crawdaunt
+Mirage Palace|misdreavus,baltoy,claydol,chimecho,chingling,deino
+Dusk Mountain|geodude,graveler,onix,steelix,makuhita,hariyama,woobat,swoobat
+Route 98|tentacool,tentacruel,wingull,pelipper,magikarp,carvanha,luvdisc
+Route 73|tentacool,tentacruel,wingull,pelipper,magikarp,shellder,carvanha,cloyster
+Route 77|tentacool,tentacruel,wingull,pelipper,magikarp,carvanha,skrelp,dragalge
+Sunken Isle|tentacool,tentacruel,wingull,pelipper,magikarp,shellder,carvanha,cloyster,skrelp,dragalge
+Underground City|grimer,muk,dreepy
