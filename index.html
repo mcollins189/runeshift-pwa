@@ -1165,7 +1165,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787437527596"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787437771951"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -1545,7 +1545,11 @@ function scoreMove(name, ownerTypes, ownerStats) {
       'sub':60, 'protect':40, 'phazer':35,
       'confuse':35, 'trap':25, 'screen':45, 'statup':30,
       'rain':40, 'sun':40,
-      'hazard':50, 'atkdown':35, 'defdown':35, 'spddown':40, 'accdown':25
+      'hazard':50, 'atkdown':35, 'defdown':35, 'spddown':40, 'accdown':25,
+      // Set-combination tags: solo base values — the prompt's SYNERGY_RULES
+      // add the pairing math (Leech Seed chips + enables stall cores;
+      // Nightmare/Sleep Talk are dependency moves discounted alone there).
+      'leech':60, 'needs-sleep':45, 'needs-rest':45
     };
     let base = utilScores[eff];
     if (base === undefined) {
@@ -12633,7 +12637,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-22 15:25';
+const APP_BUILD = '2026-08-22 15:29';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -15437,20 +15441,53 @@ function pokeView(p, idx) {
       _utils[0].adjScore += 8;
       _utils[0].reason = 'only status move';
     }
-    // STATUS-SYNERGY: Hex-class moves ('vs-status' tag) double against a
-    // statused target, so they and the status move that enables them are worth
-    // more TOGETHER than either scores alone — Will-O-Wisp at 85% is not a
-    // drop candidate on a Hex user, it is the enabler (field case: Phantump).
-    // Only non-volatile status counts; confusion does not trigger Hex.
+    // ── Set-combination rules ────────────────────────────────────────────
+    // Declarative: each rule names a tag, a partner predicate over the SET's
+    // effect tags, and the adjustments both sides earn together (or the
+    // discount a dependency move takes alone). New pairings go HERE, not as
+    // one-offs. Field case that started this: Will-O-Wisp at 85% is not a
+    // drop candidate on a Hex user — it is the enabler. Confusion is volatile
+    // and deliberately not an enabler.
     const _eff = nm => moveEffect(resolveMove(nm) || nm) || '';
-    const _ENABLER = /^(sleep|paralysis|burn|badpoison)/;
-    const setHasEnabler = adj.some(c => c.name && _ENABLER.test(_eff(c.name)));
-    const vsStatusMove = adj.find(c => c.name && _eff(c.name).includes('vs-status'));
-    for (const c of adj) {
-      if (!c.name) continue;
-      const e = _eff(c.name);
-      if (e.includes('vs-status') && setHasEnabler) { c.adjScore += 15; if (!c.reason) c.reason = 'doubles on status'; }
-      else if (_ENABLER.test(e) && vsStatusMove) { c.adjScore += 10; if (!c.reason) c.reason = 'enables ' + vsStatusMove.name; }
+    const SYNERGY_RULES = [
+      // dependency moves: near-worthless without the partner
+      { tag: 'needs-sleep', partner: e => /^sleep/.test(e), alone: { mult: 0.35, why: 'needs a sleep move' }, paired: { add: 10, why: 'pairs with sleep' }, partnerGets: { add: 6, why: 'enables Dream Eater' } },
+      { tag: 'needs-rest', partner: e => e.includes('heal100'), alone: { mult: 0.35, why: 'needs Rest' }, paired: { add: 10, why: 'pairs with Rest' }, partnerGets: { add: 6, why: 'enables Sleep Talk' } },
+      // amplified alongside the partner
+      { tag: 'vs-status', partner: e => /^(sleep|paralysis|burn|badpoison)/.test(e), paired: { add: 15, why: 'doubles on status' }, partnerGets: { add: 10, why: 'enables it' } },
+      { tag: 'rain-boosted', partner: e => e === 'rain', paired: { add: 12, why: 'perfect accuracy in rain' }, partnerGets: { add: 8, why: 'powers rain moves' } },
+      { tag: 'sun-boosted', partner: e => e === 'sun', paired: { add: 12, why: 'no charge turn in sun' }, partnerGets: { add: 8, why: 'powers sun moves' } },
+      { tag: 'weather-boosted', partner: e => e === 'rain' || e === 'sun', paired: { add: 10, why: 'weather-boosted' } },
+      // stall core: chip damage makes defensive turns profitable
+      { tag: 'protect', partner: e => /^(badpoison|burn|leech)/.test(e), paired: { add: 10, why: 'stalls with chip damage' } },
+      { tag: 'sub', partner: e => /^(badpoison|burn|leech)/.test(e), paired: { add: 8, why: 'stalls behind chip damage' } },
+    ];
+    const slotEffs = adj.map(c => c.name ? _eff(c.name) : '');
+    for (const rule of SYNERGY_RULES) {
+      const partnerIdx = slotEffs.findIndex((e, k) => adj[k].name && rule.partner(e));
+      for (let k = 0; k < adj.length; k++) {
+        const c = adj[k];
+        if (!c.name || !slotEffs[k].includes(rule.tag)) continue;
+        if (partnerIdx >= 0) {
+          if (rule.paired) { c.adjScore += rule.paired.add; if (!c.reason) c.reason = rule.paired.why; }
+          if (rule.partnerGets) { const p = adj[partnerIdx]; p.adjScore += rule.partnerGets.add; if (!p.reason) p.reason = rule.partnerGets.why === 'enables it' ? 'enables ' + c.name : rule.partnerGets.why; }
+        } else if (rule.alone) {
+          c.adjScore = Math.round(c.adjScore * rule.alone.mult);
+          if (!c.reason) c.reason = rule.alone.why;
+        }
+      }
+    }
+    // Boost-category alignment: a physical boost on a set with no physical
+    // attack (or special boost with no special attack) is dead weight.
+    {
+      const cats = adj.map((c, k) => (c.name && (c.role === 'attack' || c.role === 'pivot')) ? _atkTypeCat(c.name).c : null);
+      const hasPhys = cats.includes('P'), hasSpec = cats.includes('S');
+      for (let k = 0; k < adj.length; k++) {
+        const c = adj[k]; if (!c.name) continue;
+        const e = slotEffs[k];
+        if (/^atkup/.test(e) && !hasPhys) { c.adjScore = Math.round(c.adjScore * 0.5); if (!c.reason) c.reason = 'no physical attacks to boost'; }
+        else if (/^spaup/.test(e) && !hasSpec) { c.adjScore = Math.round(c.adjScore * 0.5); if (!c.reason) c.reason = 'no special attacks to boost'; }
+      }
     }
     // The NEW move is judged against the set too: if it duplicates coverage the
     // set already has at least as well, its effective value drops the same way.
@@ -15463,11 +15500,24 @@ function pokeView(p, idx) {
         if (U.t && U.t === C.t && U.c === C.c && c.score >= upScore.score) { upAdj = Math.round(upScore.score * 0.65); break; }
       }
     }
-    // Incoming move joins the same synergy math as the slots it competes with.
+    // Incoming move joins the same combination math as the slots it competes
+    // with: existing partners amplify it (or its dependency discounts it), and
+    // it earns partner credit when a slot's tag needs what IT brings.
     {
       const upEff = _eff(m.name);
-      if (upEff.includes('vs-status') && setHasEnabler) upAdj += 15;
-      else if (_ENABLER.test(upEff) && vsStatusMove) upAdj += 10;
+      for (const rule of SYNERGY_RULES) {
+        if (upEff.includes(rule.tag)) {
+          const partnerIdx = slotEffs.findIndex((e, k) => adj[k].name && rule.partner(e));
+          if (partnerIdx >= 0) { if (rule.paired) upAdj += rule.paired.add; }
+          else if (rule.alone) upAdj = Math.round(upAdj * rule.alone.mult);
+        }
+        if (rule.partnerGets && rule.partner(upEff) &&
+            slotEffs.some((e, k) => adj[k].name && e.includes(rule.tag))) {
+          upAdj += rule.partnerGets.add;
+        }
+      }
+      if (/^atkup/.test(upEff) && !adj.some((c, k) => c.name && (c.role === 'attack' || c.role === 'pivot') && _atkTypeCat(c.name).c === 'P')) upAdj = Math.round(upAdj * 0.5);
+      else if (/^spaup/.test(upEff) && !adj.some((c, k) => c.name && (c.role === 'attack' || c.role === 'pivot') && _atkTypeCat(c.name).c === 'S')) upAdj = Math.round(upAdj * 0.5);
     }
     let firstEmpty = -1;
     for (let i = 0; i < 4; i++) { if (!moveList[i]) { firstEmpty = i; break; } }
