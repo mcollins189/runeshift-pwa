@@ -1165,7 +1165,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787437995405"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787438507871"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -1480,10 +1480,13 @@ function moveData(name) {
   // mutating so we never corrupt the shared curated MOVE_DATA array.
   const patches = (typeof getActivePatches === 'function') ? getActivePatches() : null;
   const pm = patches ? patches.moves.get((name || '').toLowerCase().replace(/\s+/g, '-')) : null;
-  if (pm && (pm.power != null || pm.category)) {
+  if (pm && (pm.power != null || pm.category || pm.eff)) {
     base = base ? base.slice() : [0, null, ''];
     if (pm.power != null) base[0] = pm.power;
     if (pm.category) base[1] = pm.category;
+    // Per-game mechanics tag: the hack changed what the move DOES, so its
+    // patch row is the truth — outranks curated MOVE_DATA and the bundle.
+    if (pm.eff) base[2] = pm.eff;
   }
   return base;
 }
@@ -6330,7 +6333,13 @@ function getActivePatches() {
       type: m.type ? m.type.charAt(0).toUpperCase() + m.type.slice(1) : null,
       power: m.power || null,
       category: m.category === 'physical' ? 'P' : m.category === 'special' ? 'S' : m.category === 'status' ? 'U' : null,
-      displayName: m.displayName || null
+      displayName: m.displayName || null,
+      // Per-game mechanics overrides (patch columns 7/8): the hack's real
+      // accuracy and a scoreMove-vocabulary effect tag, for hacks that change
+      // what a move DOES (Clover-class custom mechanics). Highest priority in
+      // moveData/moveAccuracy — the cartridge's truth beats every generic table.
+      accuracy: m.accuracy != null ? m.accuracy : null,
+      eff: m.eff || null
     });
   }
   for (const p of (raw.pokemon || [])) {
@@ -8548,6 +8557,13 @@ const MOVE_ACCURACY = {
   'Stone Edge':80,'Rock Slide':90,'Focus Blast':70,'Fire Blast':85,'Hydro Pump':80,'Blizzard':70,'Thunder':70,'Hurricane':70,'Megahorn':85,'Play Rough':90,'Iron Tail':75,'Cross Chop':80,'Dynamic Punch':50,'Zap Cannon':50,'Inferno':50,'Gunk Shot':80,'Power Whip':85,'Sky Attack':90,'High Jump Kick':90,'Jump Kick':95,'Bounce':85,'Air Slash':95,'Overheat':90,'Leaf Storm':90,'Draco Meteor':90,'Mud Bomb':85,'Muddy Water':85,'Bone Rush':90,'Razor Leaf':95,'Crabhammer':90,'Meteor Mash':90,'Magma Storm':75,'Fire Spin':85,'Sand Tomb':85,'Whirlpool':85,'Smog':70 };
 function moveAccuracy(canon) {
   if (!canon) return 100;
+  // Per-game patch accuracy first — a hack that retuned a move's hit chance
+  // (Clover-class rebalances) is the truth for that game.
+  try {
+    const patches = (typeof getActivePatches === 'function') ? getActivePatches() : null;
+    const pm = patches ? patches.moves.get(canon.toLowerCase().replace(/\s+/g, '-')) : null;
+    if (pm && pm.accuracy != null) return pm.accuracy;
+  } catch (e) {}
   const a = MOVE_ACCURACY[canon];
   if (a != null) return a;
   // Bundled movedex accuracy (fetch-move-stats.mjs row index 2) — before this,
@@ -12653,7 +12669,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-22 15:33';
+const APP_BUILD = '2026-08-22 15:41';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
