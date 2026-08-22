@@ -1165,7 +1165,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787436140623"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787436911242"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -1463,12 +1463,16 @@ function moveData(name) {
   // "unknown". Effect tags aren't included (curated-only), so it's a base score.
   else {
     const bundled = (slug && typeof NUZ_DATA !== 'undefined' && NUZ_DATA.moveStats) ? NUZ_DATA.moveStats[slug] : null;
-    if (bundled) base = [bundled[0] || 0, bundled[1], ''];
+    // moveStats rows grew from [power, cat] to [power, cat, accuracy, effTag]
+    // (fetch-move-stats.mjs derives the tag into scoreMove's vocabulary) — so
+    // the long tail of non-curated moves scores on real effects and accuracy
+    // instead of a flat "unknown". Old-shape rows fall back gracefully.
+    if (bundled) base = [bundled[0] || 0, bundled[1], bundled[3] || ''];
     else {
       // Tier 3: live PokeAPI backfill — only for moves the bundle lacks (brand-new /
       // fakemon / custom hack moves).
       const bf = slug ? backfilledMoves[slug] : null;
-      if (bf && typeof bf === 'object' && bf.category) base = [bf.power || 0, bf.category, ''];
+      if (bf && typeof bf === 'object' && bf.category) base = [bf.power || 0, bf.category, bf.eff || ''];
     }
   }
   // ROM-hack power/category overrides (e.g. Blaze Black gives Gen-5 BPs — Vine Whip
@@ -1543,7 +1547,19 @@ function scoreMove(name, ownerTypes, ownerStats) {
       'rain':40, 'sun':40,
       'hazard':50, 'atkdown':35, 'defdown':35, 'spddown':40, 'accdown':25
     };
-    const base = utilScores[eff] !== undefined ? utilScores[eff] : 30;
+    let base = utilScores[eff];
+    if (base === undefined) {
+      // Derived-vocabulary fallback (fetch-move-stats emits e.g. 'sdfup+2',
+      // 'spaup+sdfup', 'accdown' beyond the hand-curated keys): stat boosts
+      // and drops score by shape so no tagged status move ever falls to the
+      // flat unknown floor — which is what made every non-curated status move
+      // the automatic drop recommendation.
+      if (/up\+[a-z]{3}up$/.test(eff)) base = 60;      // two-stat boost (Dragon Dance shape)
+      else if (/up\+2$/.test(eff)) base = 55;          // sharp single-stat boost
+      else if (/up$/.test(eff)) base = 40;             // single-stage boost
+      else if (/down$/.test(eff)) base = 35;           // foe stat drop
+      else base = eff ? 40 : 30;
+    }
     // An unreliable status move (e.g. Hypnosis 60%) is worth less than a sure one.
     const score = Math.round(base * acc / 100);
     return { score, label: 'Utility', role: 'util' };
@@ -6038,7 +6054,45 @@ async function fetchMoveFromApi(name, gen) {
     // value stays game-agnostic — a single source of truth for the split decision.
     const catLetter = category === 'physical' ? 'P' : category === 'special' ? 'S' : 'U';
 
-    const result = { type: type || null, power: power || null, category: catLetter, slug };
+    // Accuracy + a derived effect tag, mirroring fetch-move-stats.mjs's
+    // deriveEff so live-fetched moves score identically to bundled ones
+    // (keep the two derivations in sync).
+    let eff = '';
+    try {
+      const meta = data.meta || {};
+      const ail = meta.ailment && meta.ailment.name;
+      const SK = { attack: 'atk', 'special-attack': 'spa', speed: 'spd', defense: 'def', 'special-defense': 'sdf', accuracy: 'acc' };
+      if (catLetter === 'U') {
+        if (ail === 'sleep' || ail === 'freeze') eff = 'sleep';
+        else if (ail === 'paralysis') eff = 'paralysis';
+        else if (ail === 'burn') eff = 'burn';
+        else if (ail === 'poison') eff = 'badpoison';
+        else if (ail === 'confusion') eff = 'confuse';
+        else if (ail === 'trap') eff = 'trap';
+        else if ((meta.healing || 0) >= 40) eff = 'heal50';
+        else {
+          const self = (data.stat_changes || []).filter(s => s.change > 0).map(s => ({ k: SK[s.stat.name], c: s.change })).filter(s => s.k);
+          if (self.length >= 2) eff = self.slice(0, 2).map(s => s.k + 'up').join('+');
+          else if (self.length) eff = self[0].k + 'up' + (self[0].c >= 2 ? '+2' : '');
+          else {
+            const down = (data.stat_changes || []).filter(s => s.change < 0).map(s => SK[s.stat.name]).filter(Boolean);
+            if (down.length) eff = down[0] + 'down';
+          }
+        }
+      } else {
+        const t = [];
+        if ((data.priority || 0) > 0) t.push('priority');
+        if ((meta.drain || 0) > 0) t.push('drain');
+        if ((meta.drain || 0) < 0) t.push(meta.drain <= -40 ? 'recoil-huge' : 'recoil');
+        if ((meta.flinch_chance || 0) > 0) t.push('flinch');
+        if ((meta.crit_rate || 0) > 0) t.push('high-crit');
+        if ((meta.min_hits || 0) >= 2) t.push('multi');
+        if (data.accuracy == null) t.push('no-miss');
+        eff = t.join(',');
+      }
+    } catch (e) {}
+    const result = { type: type || null, power: power || null, category: catLetter, slug,
+                     accuracy: data.accuracy == null ? null : data.accuracy, eff };
     backfilledMoves[slug] = result;
     fireBackfill();
     return result;
@@ -8472,7 +8526,21 @@ function moveHasPriority(canon) {
 const MOVE_ACCURACY = {
   'Hypnosis':60,'Sing':55,'Grass Whistle':55,'Sleep Powder':75,'Lovely Kiss':75,'Dark Void':50,'Sweet Kiss':75,'Poison Powder':75,'Stun Spore':75,'Will-O-Wisp':85,'Thunder Wave':90,
   'Stone Edge':80,'Rock Slide':90,'Focus Blast':70,'Fire Blast':85,'Hydro Pump':80,'Blizzard':70,'Thunder':70,'Hurricane':70,'Megahorn':85,'Play Rough':90,'Iron Tail':75,'Cross Chop':80,'Dynamic Punch':50,'Zap Cannon':50,'Inferno':50,'Gunk Shot':80,'Power Whip':85,'Sky Attack':90,'High Jump Kick':90,'Jump Kick':95,'Bounce':85,'Air Slash':95,'Overheat':90,'Leaf Storm':90,'Draco Meteor':90,'Mud Bomb':85,'Muddy Water':85,'Bone Rush':90,'Razor Leaf':95,'Crabhammer':90,'Meteor Mash':90,'Magma Storm':75,'Fire Spin':85,'Sand Tomb':85,'Whirlpool':85,'Smog':70 };
-function moveAccuracy(canon) { if (!canon) return 100; const a = MOVE_ACCURACY[canon]; return a == null ? 100 : a; }
+function moveAccuracy(canon) {
+  if (!canon) return 100;
+  const a = MOVE_ACCURACY[canon];
+  if (a != null) return a;
+  // Bundled movedex accuracy (fetch-move-stats.mjs row index 2) — before this,
+  // every non-curated 75%-accuracy move scored as if it were a sure hit.
+  try {
+    const slug = (typeof moveSlug === 'function') ? moveSlug(canon) : null;
+    const bundled = (slug && typeof NUZ_DATA !== 'undefined' && NUZ_DATA.moveStats) ? NUZ_DATA.moveStats[slug] : null;
+    if (bundled && bundled.length > 2 && bundled[2] != null) return bundled[2];
+    const bf = slug ? backfilledMoves[slug] : null;
+    if (bf && typeof bf === 'object' && bf.accuracy != null) return bf.accuracy;
+  } catch (e) {}
+  return 100;
+}
 // Type-boosting held items (incenses/plates/etc.) → ×1.2 to that type's moves.
 const TYPE_BOOST_ITEM = { charcoal:'Fire',mysticwater:'Water',seaincense:'Water',waveincense:'Water',miracleseed:'Grass',roseincense:'Grass',magnet:'Electric',nevermeltice:'Ice',icicleplate:'Ice',blackbelt:'Fighting',fistplate:'Fighting',poisonbarb:'Poison',toxicplate:'Poison',softsand:'Ground',earthplate:'Ground',sharpbeak:'Flying',skyplate:'Flying',twistedspoon:'Psychic',mindplate:'Psychic',oddincense:'Psychic',silverpowder:'Bug',insectplate:'Bug',hardstone:'Rock',stoneplate:'Rock',rockincense:'Rock',spelltag:'Ghost',spookyplate:'Ghost',dragonfang:'Dragon',dracoplate:'Dragon',blackglasses:'Dark',dreadplate:'Dark',metalcoat:'Steel',ironplate:'Steel',silkscarf:'Normal',pixieplate:'Fairy' };
 // Damage-multiplying items NOT already baked into stats. Choice Band/Specs/Scarf,
@@ -12565,7 +12633,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-22 15:02';
+const APP_BUILD = '2026-08-22 15:15';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -15323,9 +15391,11 @@ function pokeView(p, idx) {
     const upPwr = movePower(m.name);
     const upCat = moveCategory(m.name);
     const stab = upType && ownTypes.includes(upType) && (upCat === 'P' || upCat === 'S');
+    const upAcc = moveAccuracy(resolveMove(m.name) || m.name);
     const metaBits = [
       upType,
       upPwr ? `${upPwr} BP` : null,
+      upAcc < 100 ? `${upAcc}% acc` : null,
       upCat === 'P' ? 'physical' : upCat === 'S' ? 'special' : (upCat === 'U' ? 'status' : null),
       stab ? 'STAB' : null,
     ].filter(Boolean).join(' · ');
@@ -15334,13 +15404,57 @@ function pokeView(p, idx) {
     // empty slot and don't flag any replacement. Only when the set is full (4 moves)
     // do we suggest replacing the lowest-scoring slot the new move clearly beats.
     const currentScored = moveList.map(mv => ({ name: mv, ...scoreMove(mv, ownTypes, ownStats) }));
+    // SET-AWARE adjustment: a slot's worth depends on its teammates, not just
+    // its own score. (a) Redundant coverage — a damaging move whose type and
+    // category are covered by an equal-or-better teammate is the right drop,
+    // not the set's only status move. (b) Sole utility — the only worthwhile
+    // status move in the set gets a protection bonus ("some statuses are
+    // really good to keep" — field request). Ties break toward keeping the
+    // earlier slot so the pair can't discount each other symmetrically.
+    const adj = currentScored.map(c => ({ ...c, adjScore: c.score, reason: '' }));
+    const _atkTypeCat = nm => {
+      const t = getMoveType(nm);
+      return { t, c: effectiveCategory(moveCategory(nm), t) };
+    };
+    for (let i = 0; i < adj.length; i++) {
+      const a = adj[i];
+      if (!a.name || (a.role !== 'attack' && a.role !== 'pivot')) continue;
+      const A = _atkTypeCat(a.name);
+      for (let j = 0; j < adj.length; j++) {
+        if (i === j || !adj[j].name) continue;
+        const b = adj[j];
+        if (b.role !== 'attack' && b.role !== 'pivot') continue;
+        const B = _atkTypeCat(b.name);
+        if (A.t && A.t === B.t && A.c === B.c && (b.score > a.score || (b.score === a.score && j < i))) {
+          a.adjScore = Math.round(a.score * 0.65);
+          a.reason = 'redundant with ' + b.name;
+          break;
+        }
+      }
+    }
+    const _utils = adj.filter(c => c.name && c.role === 'util');
+    if (_utils.length === 1 && _utils[0].score >= 45) {
+      _utils[0].adjScore += 8;
+      _utils[0].reason = 'only status move';
+    }
+    // The NEW move is judged against the set too: if it duplicates coverage the
+    // set already has at least as well, its effective value drops the same way.
+    let upAdj = upScore.score;
+    if (upScore.role === 'attack' || upScore.role === 'pivot') {
+      const U = _atkTypeCat(m.name);
+      for (const c of adj) {
+        if (!c.name || (c.role !== 'attack' && c.role !== 'pivot')) continue;
+        const C = _atkTypeCat(c.name);
+        if (U.t && U.t === C.t && U.c === C.c && c.score >= upScore.score) { upAdj = Math.round(upScore.score * 0.65); break; }
+      }
+    }
     let firstEmpty = -1;
     for (let i = 0; i < 4; i++) { if (!moveList[i]) { firstEmpty = i; break; } }
     const hasEmpty = firstEmpty >= 0;
     let bestSlot = -1, bestDelta = 0;
     if (!hasEmpty) {
-      for (let i = 0; i < currentScored.length; i++) {
-        const delta = upScore.score - currentScored[i].score;
+      for (let i = 0; i < adj.length; i++) {
+        const delta = upAdj - adj[i].adjScore;
         if (delta > bestDelta && delta >= 15) { bestSlot = i; bestDelta = delta; }
       }
     }
@@ -15348,17 +15462,18 @@ function pokeView(p, idx) {
     for (let i = 0; i < 4; i++) {
       const cur = moveList[i];
       if (cur) {
-        const c = currentScored[i];
+        const c = adj[i];
         const cType = getMoveType(cur);
         const cPwr = movePower(cur);
         const cCat = moveCategory(cur);
-        const cMeta = [cType, cPwr ? `${cPwr} BP` : null, cCat === 'P' ? 'Ph' : cCat === 'S' ? 'Sp' : 'St'].filter(Boolean).join(' · ');
+        const cAcc = moveAccuracy(resolveMove(cur) || cur);
+        const cMeta = [cType, cPwr ? `${cPwr} BP` : null, cAcc < 100 ? `${cAcc}%` : null, cCat === 'P' ? 'Ph' : cCat === 'S' ? 'Sp' : 'St'].filter(Boolean).join(' · ');
         const isRec = i === bestSlot;
         slotRows.push(`<div class="nmp-slot${isRec ? ' recommended' : ''}">
           <div class="nmp-slot-info">
             ${cType ? `<span class="type-badge t-${cType}">${cType}</span>` : ''}
             <span class="nmp-slot-name">${cur}</span>
-            <span class="nmp-slot-meta">${cMeta} · score ${c.score}</span>
+            <span class="nmp-slot-meta">${cMeta} · score ${c.adjScore}${c.reason ? ` — ${c.reason}` : ''}</span>
           </div>
           <button class="nmp-btn replace" onclick="learnMoveReplace(${idx}, ${i})">Replace${isRec ? ' (recommended)' : ''}</button>
         </div>`);
