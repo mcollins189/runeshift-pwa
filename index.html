@@ -1165,7 +1165,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787422969807"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787424586003"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -7059,6 +7059,7 @@ async function doLogin() {
     if ((data.version === 2 || data.version === 3) && data.runs && data.currentRunId) {
       runs = data.runs;
       currentRunId = data.currentRunId;
+      _liveResetForRunChange();
     } else if (data.team !== undefined || data.routes !== undefined) {
       // Old single-run format → migrate to multi-run
       const game = data.game || chosenGame || 'shining_pearl';
@@ -7074,11 +7075,13 @@ async function doLogin() {
         }
       };
       currentRunId = runId;
+      _liveResetForRunChange();
       structuralChange = true;
     } else if (data.runs && Object.keys(data.runs).length) {
       // Local cache shape (no version field) — treat as v3.
       runs = data.runs;
       currentRunId = data.currentRunId || Object.keys(data.runs)[0] || null;
+      _liveResetForRunChange();
     } else {
       // Brand new save
       const game = chosenGame || 'shining_pearl';
@@ -7094,6 +7097,7 @@ async function doLogin() {
         }
       };
       currentRunId = runId;
+      _liveResetForRunChange();
       structuralChange = true;
     }
     saveKey = key;
@@ -7139,6 +7143,7 @@ function doLogout() {
   if (!confirm('Switch save key? Your data is safe in the cloud.')) return;
   clearTimeout(saveTimer); saveKey = null;
   runs = {}; currentRunId = null;
+  _liveResetForRunChange();
   localStorage.removeItem('nuzlocke_key');
   document.getElementById('app').style.display = 'none';
   document.getElementById('login-screen').style.display = 'flex';
@@ -7180,9 +7185,23 @@ window.nuzRestoreSnapshot = function (index) {
   if (!snap) { console.log('[nuz] no such snapshot'); return; }
   takeRunSnapshot('before restore');
   runs = snap.runs; currentRunId = snap.currentRunId;
+  _liveResetForRunChange();
   save(); render(); populateRunSelect();
   console.log('[nuz] restored snapshot from ' + new Date(snap.at).toLocaleString());
 };
+
+// Every live-tracking claim is scoped to the run it was made in. switchRun
+// clears them, but currentRunId is also assigned DIRECTLY on ~8 other paths
+// (login/import, undo restore, new run, delete run, cloud resync, restore) —
+// each of those was carrying counters, pins, a held box list and a 120s
+// route claim into the new run.
+function _liveResetForRunChange() {
+  try { _trackArmedRun = null; } catch (e) {}
+  try { NUZ_LIVE.clearManualPin(); } catch (e) {}
+  try { NUZ_LIVE.clearBox(); } catch (e) {}
+  try { _liveAddSeen = {}; } catch (e) {}
+  try { _lastEncSeen = null; } catch (e) {}
+}
 
 function switchRun(val) {
   if (val === '__new__') {
@@ -7207,20 +7226,9 @@ function switchRun(val) {
     // Choosing a run by hand answers "which run for this game?" as definitively
     // as the chooser does — remember it so the bridge stops asking.
     if (typeof _nuzRememberRunPick === 'function') _nuzRememberRunPick(runs[val].game, val);
-    // Switching runs DISARMS post-Play tracking. The armed-run latch survived a
-    // switch away and back, so a run Play mode was ever opened on re-armed
-    // itself silently whenever it became current again — live writes with the
-    // panel closed and no user action. Reopening Play re-arms deliberately.
-    // The manual route pin belongs to the run it was made in, so it goes too.
-    try { _trackArmedRun = null; } catch (e) {}
-    try { NUZ_LIVE.clearManualPin(); } catch (e) {}
-    // An unknown-mon count accrued in one run must not carry into another.
-    try { _liveAddSeen = {}; } catch (e) {}
-    // A held box list belongs to the cartridge/run it came from.
-    try { NUZ_LIVE.clearBox(); } catch (e) {}
-    // A 120s "the player just saw X on route Y" claim must not survive into
-    // another run — it routes an auto-add and burns an encounter slot there.
-    try { _lastEncSeen = null; } catch (e) {}
+    // Live-tracking claims are scoped to the run they were made in — see
+    // _liveResetForRunChange above for what goes and why.
+    _liveResetForRunChange();
     save(); render();
   }
 }
@@ -7319,6 +7327,7 @@ function submitNewRun() {
   const runId = makeRunId();
   runs[runId] = { name, game, team:[], routes:[], cap:null, created: Date.now(), version, variant, toolsUnlocked: {} };
   currentRunId = runId;
+  _liveResetForRunChange();
   save();
   closeModal();
   populateRunSelect();
@@ -7344,6 +7353,7 @@ function promptDeleteRun() {
   if (!confirm(`Delete the run "${curRun().name}" permanently? This cannot be undone.`)) return;
   delete runs[currentRunId];
   currentRunId = Object.keys(runs)[0];
+  _liveResetForRunChange();
   save(); render();
   showToast('Run deleted','error');
 }
@@ -7454,6 +7464,7 @@ if (typeof document !== 'undefined') {
               migrateLegacyLocationNames(cloud);
               runs = cloud.runs;
               currentRunId = cloud.currentRunId;
+              _liveResetForRunChange();
               loadedAt = cloudTs;
               setSaveStatus('saved',`Loaded ${fmtTime(loadedAt)}`);
               render();
@@ -7512,6 +7523,7 @@ async function importSave(input) {
   if (!confirm(`Restore ${runCount} run(s) from this backup? This will replace your current state on this save key. (Your cloud copy is overwritten on the next save.)`)) return;
   runs = parsed.runs;
   currentRunId = parsed.currentRunId || Object.keys(runs)[0] || null;
+  _liveResetForRunChange();
   render();
   // Persist immediately so a refresh keeps the restored state.
   cloudSave(true);
@@ -12528,7 +12540,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-22 11:22';
+const APP_BUILD = '2026-08-22 11:49';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -16634,7 +16646,11 @@ function _liveFrameFitsGame(st) {
   if (!set || !set.size) return true;
   const mons = []
     .concat(Array.isArray(st.party) ? st.party : [])
-    .concat(Array.isArray(st.box) ? st.box : [])
+    // Gated on freshness like the mirroring loop: a held box list diluted the
+    // foreign-majority test exactly when the party was most likely to be
+    // savestate garbage (the bridge had stopped vouching for the box);
+    // freshness makes the contract uniform across both consumers of st.box.
+    .concat((typeof NUZ_LIVE !== 'undefined' && typeof NUZ_LIVE.boxFresh === 'function' && NUZ_LIVE.boxFresh() && Array.isArray(st.box)) ? st.box : [])
     .filter(m => m && m.species);
   if (mons.length < 3) return true;
   // A hack's own inventions count as native, obviously — and the species set above cannot
@@ -17403,7 +17419,11 @@ const NUZ_LIVE = (function () {
     // current forever, but the bridge deliberately OMITS the key to mean "PC
     // unknown" — stamp when the key actually arrived so consumers can tell a
     // live list from a held one.
-    if (next.box !== undefined) _boxAt = Date.now();
+    // The frame's OWN ts, not arrival time: a replayed snapshot carries its
+    // ORIGINAL ts, and stamping arrival time marked an hours-old box list as
+    // fresh. Same-device clocks (localhost) make the frame's ts the honest
+    // source.
+    if (next.box !== undefined) _boxAt = (typeof next.ts === 'number' ? next.ts : Date.now());
     state = merged;
 
     if (merged.source !== prev.source) emit('source-changed', { source: merged.source, prev: prev.source });
@@ -17653,6 +17673,11 @@ const NUZ_BRIDGE = (function () {
     // A 120s "the player just saw X on route Y" claim must not survive into
     // another run — it routes an auto-add and burns an encounter slot there.
     try { _lastEncSeen = null; } catch (e) {}
+    // A deliberate stop ends the timeline. Repointing at a different bridge
+    // endpoint (setUrl goes through stop) whose clock is behind used to drop
+    // every frame for up to 10 minutes with no self-heal. NOT reset in
+    // restart() — same bridge, same timeline.
+    _lastBridgeTs = 0;
     NUZ_LIVE.apply({ source: 'manual', encounter: null });
   }
   // Reconnect WITHOUT stop()'s side effects: no LS_ON change, no
@@ -18148,7 +18173,7 @@ function pmRender() {
   const isStale = (st.source !== 'manual' && frameAge !== null && frameAge > 8000) ||
                   (bs === 'connected' && frameAge === null && _openAge !== null && _openAge > 8000);
   const dotCls = isStale ? 'wait' : (bs === 'connected' ? 'live' : (bs === 'connecting' || bs === 'retrying' ? 'wait' : 'off'));
-  const dotTitle = isStale ? `No update for ${Math.round(frameAge / 1000)}s`
+  const dotTitle = isStale ? (frameAge === null ? 'Connected — nothing received from the game yet' : `No update for ${Math.round(frameAge / 1000)}s`)
     : (bs === 'connected' ? `Live via ${st.source}` : `Manual (bridge: ${bs})`);
   // Declared BEFORE staleBanner, which reads it. It used to be declared after, and
   // because `const` is hoisted-but-uninitialised that read threw a ReferenceError the
@@ -18180,8 +18205,13 @@ function pmRender() {
         ? `<button class="pm-chip" onclick="NUZ_BRIDGE.reconcile(null, null)">switch to ${gname(detectedGame)}</button>`
         : `<button class="pm-chip" onclick="NUZ_BRIDGE.restart();pmRender()">ask the bridge again</button>`}
     </div>` : '';
-  const pillLabel = isStale ? 'STALE'
-                  : bs === 'connected' ? (tracking ? (st.source === 'ocr' ? 'OCR' : 'TRACKING') : 'PAUSED')
+  // PAUSED outranks STALE. On a wrong-cartridge hold the app itself withholds
+  // frames, so after 8s the pill used to flip from the accurate PAUSED to
+  // STALE — but PAUSED is the truth when the app is the one holding frames;
+  // STALE blames the feed.
+  const pillLabel = bs === 'connected' && !tracking ? 'PAUSED'
+                  : isStale ? 'STALE'
+                  : bs === 'connected' ? (st.source === 'ocr' ? 'OCR' : 'TRACKING')
                   : (bs === 'connecting' || bs === 'retrying') ? '…'
                   : 'OFF';
   const head = `
@@ -19209,11 +19239,15 @@ NUZ_LIVE.on('state', (s, st) => {
       // died for the whole session, party adds included. Eviction keeps only
       // counters that are actually in progress.
       for (const k in _liveAddSeen) if (_liveAddSeen[k].frame < _liveAddFrameNo - 5) delete _liveAddSeen[k];
-      // Per-frame add cap, shared by the box and party add loops below. A mass
+      // Per-frame add caps for the box and party add loops below. A mass
       // import (49 unknown boxed mons) used to land in one pass with 49 toasts;
       // the debounce already spreads legitimate adds across frames, so a cap of
-      // 5/frame only throttles the pathological case.
-      let _addsThisFrame = 0;
+      // 5/frame only throttles the pathological case. SEPARATE budgets: the box
+      // loop runs first, and a shared cap let a PC dump (measured: 87 frames)
+      // starve a party catch behind it — a party catch is the time-sensitive
+      // event (route attribution has a 120s window) and must not queue behind
+      // box imports.
+      let _boxAddsThisFrame = 0, _partyAddsThisFrame = 0;
       const _addReady = key => {
         const rec = _liveAddSeen[key];
         if (rec && rec.frame === _liveAddFrameNo - 1) { rec.n++; rec.frame = _liveAddFrameNo; }
@@ -19260,7 +19294,7 @@ NUZ_LIVE.on('state', (s, st) => {
           _normSpeciesName(p.species) === _normSpeciesName(l.species)));
         if (known) continue;
         if (!_addReady('b|' + k + '|' + _normSpeciesName(l.species))) continue;
-        if (_addsThisFrame >= 5) continue;   // per-frame cap — see above
+        if (_boxAddsThisFrame >= 5) continue;   // per-frame cap — see above
         const recentEnc = _lastEncSeen &&
           (Date.now() - _lastEncSeen.at) < 120000 &&
           _normSpeciesName(_lastEncSeen.species) === _normSpeciesName(l.species)
@@ -19288,7 +19322,7 @@ NUZ_LIVE.on('state', (s, st) => {
         }
         if (origin) add.route = origin;
         curTeam().push(add);
-        _addsThisFrame++;
+        _boxAddsThisFrame++;
         const bIdx = curTeam().length - 1;
         changed = true;
         if (origin) {
@@ -19328,7 +19362,7 @@ NUZ_LIVE.on('state', (s, st) => {
           _normSpeciesName(p.species) === _normSpeciesName(l.species)));
         if (known) continue;
         if (!_addReady('p|' + k + '|' + _normSpeciesName(l.species))) continue;
-        if (_addsThisFrame >= 5) continue;   // per-frame cap — see above
+        if (_partyAddsThisFrame >= 5) continue;   // per-frame cap — see above
         // Where it came from. A mon that shows up in the party right after an
         // encounter with the SAME species was caught there, so it inherits that
         // route and the encounter grid marks the location as caught.
@@ -19362,7 +19396,7 @@ NUZ_LIVE.on('state', (s, st) => {
         if (Array.isArray(l.ivs)) add.ivs = l.ivs.slice();
         if (Array.isArray(l.stats)) add.gameStats = l.stats.slice();
         curTeam().push(add);
-        _addsThisFrame++;
+        _partyAddsThisFrame++;
         const addedIdx = curTeam().length - 1;
         changed = true;
         // A wild catch belongs in the route log, not just the roster — that log
@@ -19496,7 +19530,13 @@ setInterval(() => {
   // No frame yet is not "nothing to say": the connected-but-never-produced
   // fallback (socket open time) also needs the panel repainted to surface.
   if (!_lastFrameAt && !(typeof NUZ_BRIDGE.openedAt === 'function' && NUZ_BRIDGE.openedAt())) return;
-  const age = Date.now() - _lastFrameAt;
+  const age = _lastFrameAt ? (Date.now() - _lastFrameAt) : null;
+  // With no frame ever accepted the openedAt fallback drives the banner, so
+  // repaint every tick — the panel is open and 2s repaints are what the
+  // responsive window does anyway. (With _lastFrameAt === 0 the subtraction
+  // was the wall-clock epoch: the 8-14s window was unreachable and the %10
+  // fallback was a phase lottery the 2000ms interval loses half the time.)
+  if (age === null) { try { pmRender(); } catch (e) {} return; }
   // Redraw around the threshold, then occasionally so the counter keeps moving.
   if (age > 8000 && age < 14000) { try { pmRender(); } catch (e) {} }
   else if (age > 14000 && Math.floor(age / 1000) % 10 === 0) { try { pmRender(); } catch (e) {} }
