@@ -1165,7 +1165,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787440002253"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787440885481"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -1552,7 +1552,9 @@ function scoreMove(name, ownerTypes, ownerStats) {
       // Set-combination tags: solo base values — the prompt's SYNERGY_RULES
       // add the pairing math (Leech Seed chips + enables stall cores;
       // Nightmare/Sleep Talk are dependency moves discounted alone there).
-      'leech':60, 'needs-sleep':45, 'needs-rest':45
+      // 'drain' is the CURATED spelling of Leech Seed's tag (field report:
+      // it fell to the generic 40 floor and read as a drop candidate).
+      'leech':60, 'drain':60, 'needs-sleep':45, 'needs-rest':45
     };
     let base = utilScores[eff];
     if (base === undefined) {
@@ -12669,7 +12671,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-22 16:06';
+const APP_BUILD = '2026-08-22 16:21';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -15481,25 +15483,31 @@ function pokeView(p, idx) {
     // drop candidate on a Hex user — it is the enabler. Confusion is volatile
     // and deliberately not an enabler.
     const _eff = nm => moveEffect(resolveMove(nm) || nm) || '';
+    // `tags` lists every vocabulary spelling a rule answers to — the curated
+    // MOVE_DATA predates the derived tags and says 'status-2x' where the
+    // bundle says 'vs-status', 'sleep-only' for 'needs-sleep' (field report:
+    // Hex showed no pairing because only the derived spelling was matched).
     const SYNERGY_RULES = [
       // dependency moves: near-worthless without the partner
-      { tag: 'needs-sleep', partner: e => /^sleep/.test(e), alone: { mult: 0.35, why: 'needs a sleep move' }, paired: { add: 10, why: 'pairs with sleep' }, partnerGets: { add: 6, why: 'enables Dream Eater' } },
-      { tag: 'needs-rest', partner: e => e.includes('heal100'), alone: { mult: 0.35, why: 'needs Rest' }, paired: { add: 10, why: 'pairs with Rest' }, partnerGets: { add: 6, why: 'enables Sleep Talk' } },
+      { tags: ['needs-sleep', 'sleep-only'], partner: e => /^sleep/.test(e), alone: { mult: 0.35, why: 'needs a sleep move' }, paired: { add: 10, why: 'pairs with sleep' }, partnerGets: { add: 6, why: 'enables Dream Eater' } },
+      { tags: ['needs-rest'], partner: e => e.includes('heal100'), alone: { mult: 0.35, why: 'needs Rest' }, paired: { add: 10, why: 'pairs with Rest' }, partnerGets: { add: 6, why: 'enables Sleep Talk' } },
       // amplified alongside the partner
-      { tag: 'vs-status', partner: e => /^(sleep|paralysis|burn|badpoison)/.test(e), paired: { add: 15, why: 'doubles on status' }, partnerGets: { add: 10, why: 'enables it' } },
-      { tag: 'rain-boosted', partner: e => e === 'rain', paired: { add: 12, why: 'perfect accuracy in rain' }, partnerGets: { add: 8, why: 'powers rain moves' } },
-      { tag: 'sun-boosted', partner: e => e === 'sun', paired: { add: 12, why: 'no charge turn in sun' }, partnerGets: { add: 8, why: 'powers sun moves' } },
-      { tag: 'weather-boosted', partner: e => e === 'rain' || e === 'sun', paired: { add: 10, why: 'weather-boosted' } },
-      // stall core: chip damage makes defensive turns profitable
-      { tag: 'protect', partner: e => /^(badpoison|burn|leech)/.test(e), paired: { add: 10, why: 'stalls with chip damage' } },
-      { tag: 'sub', partner: e => /^(badpoison|burn|leech)/.test(e), paired: { add: 8, why: 'stalls behind chip damage' } },
+      { tags: ['vs-status', 'status-2x'], partner: e => /^(sleep|paralysis|burn|badpoison)/.test(e), paired: { add: 15, why: 'doubles on status' }, partnerGets: { add: 10, why: 'enables it' } },
+      { tags: ['rain-boosted'], partner: e => e === 'rain', paired: { add: 12, why: 'perfect accuracy in rain' }, partnerGets: { add: 8, why: 'powers rain moves' } },
+      { tags: ['sun-boosted'], partner: e => e === 'sun', paired: { add: 12, why: 'no charge turn in sun' }, partnerGets: { add: 8, why: 'powers sun moves' } },
+      { tags: ['weather-boosted'], partner: e => e === 'rain' || e === 'sun', paired: { add: 10, why: 'weather-boosted' } },
+      // stall core: chip damage makes defensive turns profitable ('drain' on a
+      // STATUS move is Leech Seed-class chip)
+      { tags: ['protect'], partner: e => /^(badpoison|burn|leech|drain)/.test(e), paired: { add: 10, why: 'stalls with chip damage' } },
+      { tags: ['sub'], partner: e => /^(badpoison|burn|leech|drain)/.test(e), paired: { add: 8, why: 'stalls behind chip damage' } },
     ];
+    const _hasTag = (e, rule) => rule.tags.some(t => e.includes(t));
     const slotEffs = adj.map(c => c.name ? _eff(c.name) : '');
     for (const rule of SYNERGY_RULES) {
       const partnerIdx = slotEffs.findIndex((e, k) => adj[k].name && rule.partner(e));
       for (let k = 0; k < adj.length; k++) {
         const c = adj[k];
-        if (!c.name || !slotEffs[k].includes(rule.tag)) continue;
+        if (!c.name || !_hasTag(slotEffs[k], rule)) continue;
         if (partnerIdx >= 0) {
           if (rule.paired) { c.adjScore += rule.paired.add; if (!c.reason) c.reason = rule.paired.why; }
           if (rule.partnerGets) { const p = adj[partnerIdx]; p.adjScore += rule.partnerGets.add; if (!p.reason) p.reason = rule.partnerGets.why === 'enables it' ? 'enables ' + c.name : rule.partnerGets.why; }
@@ -15544,7 +15552,7 @@ function pokeView(p, idx) {
         if (already) continue;
         for (let k = 0; k < adj.length; k++) {
           const c = adj[k];
-          if (!c.name || !slotEffs[k].includes(rule.tag)) continue;
+          if (!c.name || !_hasTag(slotEffs[k], rule)) continue;
           if (rule.alone) {
             c.adjScore = Math.max(c.adjScore, Math.round(c.score * 0.7));
             c.reason = `${fut.name} arrives at Lv ${fut.lv}`;
@@ -15579,13 +15587,24 @@ function pokeView(p, idx) {
     {
       const upEff = _eff(m.name);
       for (const rule of SYNERGY_RULES) {
-        if (upEff.includes(rule.tag)) {
+        if (_hasTag(upEff, rule)) {
           const partnerIdx = slotEffs.findIndex((e, k) => adj[k].name && rule.partner(e));
-          if (partnerIdx >= 0) { if (rule.paired) upAdj += rule.paired.add; }
+          if (partnerIdx >= 0) {
+            if (rule.paired) upAdj += rule.paired.add;
+            // The enabling SLOT earns its credit from the INCOMING move too —
+            // Will-O-Wisp must read "enables Hex" when Hex is what's being
+            // offered, not only when Hex already occupies a slot (field
+            // report: the reason was missing at the exact moment it mattered).
+            if (rule.partnerGets) {
+              const p = adj[partnerIdx];
+              p.adjScore += rule.partnerGets.add;
+              if (!p.reason) p.reason = 'enables ' + m.name;
+            }
+          }
           else if (rule.alone) upAdj = Math.round(upAdj * rule.alone.mult);
         }
         if (rule.partnerGets && rule.partner(upEff) &&
-            slotEffs.some((e, k) => adj[k].name && e.includes(rule.tag))) {
+            slotEffs.some((e, k) => adj[k].name && _hasTag(e, rule))) {
           upAdj += rule.partnerGets.add;
         }
       }
@@ -15597,7 +15616,7 @@ function pokeView(p, idx) {
       // a stopgap.
       if (comingEffs.length) {
         for (const rule of SYNERGY_RULES) {
-          if (!upEff.includes(rule.tag)) continue;
+          if (!_hasTag(upEff, rule)) continue;
           if (slotEffs.some((e, k) => adj[k].name && rule.partner(e))) continue;
           const fut = comingEffs.find(f => rule.partner(f.e));
           if (fut) {
@@ -15660,7 +15679,7 @@ function pokeView(p, idx) {
           ${upType ? `<span class="type-badge t-${upType}">${upType}</span>` : ''}
           <span class="nmp-meta-text">${metaBits || 'unknown'} · score ${upAdj}${upAdj !== upScore.score ? ` (base ${upScore.score})` : ''}</span>
         </div>
-        ${comingEffs.length ? `<div class="nmp-meta-line"><span class="nmp-meta-text" style="opacity:.75">Coming up: ${comingEffs.slice(0, 3).map(f => `${f.name} (Lv ${f.lv})`).join(', ')}</span></div>` : ''}
+        ${comingEffs.length ? `<div class="nmp-meta-line"><span class="nmp-meta-text" style="opacity:.75" title="Moves this Pokémon learns in the next ${FORESIGHT_LV} levels in THIS game — the scores above already weigh them (a soon-to-arrive better move marks the current one a stopgap; a soon-to-arrive partner protects its enabler).">Learns soon: ${comingEffs.slice(0, 3).map(f => `${f.name} (Lv ${f.lv})`).join(', ')} — already weighed into the scores</span></div>` : ''}
         <div class="nmp-tip">${hasEmpty
           ? 'You have an open slot — teach it there for free; no need to give anything up.'
           : (bestSlot >= 0
