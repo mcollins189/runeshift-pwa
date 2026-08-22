@@ -3,7 +3,7 @@
 Starter
 Coastal Road|pidgey,jigglypuff,oddish,poochyena,zigzagoon,wingull,magikarp,carvanha,staryu,wailmer,seadra,gyarados,chinchou,sharpedo
 Fibernia Prom.|rattata,venonat,grimer,koffing,wooper,gulpin
-Seaside Grotto|zubat,paras,geodude,krabby,dunsparce,corphish,makuhita,nosepass,poliwag,magikarp,feebas,poliwhirl,gyarados
+Seaside Grotto|zubat,paras,geodude,krabby,dunsparce,corphish,makuhita,walking-wake,nosepass,poliwag,magikarp,feebas,poliwhirl,gyarados
 Varley Woods|natu,yanma,skitty,roselia,slakoth,ralts
 Waterfall Wood|oddish,psyduck,slowpoke,lickitung,marill,surskit,goldeen,magikarp,feebas,poliwag,poliwhirl,gyarados
 Yggdrasil|abra,drowzee,tangela,teddiursa,houndour,spoink
@@ -12,18 +12,30 @@ Northern Atoll|mankey,krabby,exeggcute,dratini,wingull,meditite,magikarp,carvanh
 Jagged Mountain|ponyta,doduo,sudowoodo,tyrogue,swablu,beldum,tentacool,magikarp,shellder,corsola,horsea,seadra,gyarados
 Arundel Woods|seel,sneasel,swinub,smoochum,spheal,snorunt
 Maple Island|nidorina,nidorino,scyther,pinsir,furret,spinarak,hoppip
-Second Stratum|ekans,diglett,cubone,skarmory,trapinch,lileep,anorith,phanpy,larvitar
+Second Stratum|ekans,diglett,cubone,skarmory,trapinch,lileep,anorith,phanpy,larvitar,sandshrew,gligar,baltoy,numel,cacnea
 Sandy Caves|gastly,cubone,misdreavus,baltoy,sableye,trapinch,kabuto,omanyte,relicanth
 Des. of Golgonda|sandshrew,murkrow,baltoy,trapinch,numel,cacnea,cubone,rhyhorn,magikarp,barboach,psyduck,golduck,gyarados,whiscash
 Brigit Farm|pikachu,eevee,mareep,miltank,surskit,electrike
-Third Stratum|vulpix,golbat,machop,wobbuffet,slugma,aron
+Third Stratum|vulpix,golbat,machop,wobbuffet,slugma,aron,growlithe,magby,torkoal,lunatone,solrock,geodude,graveler,machoke,onix,loudred,magmar,bagon
 Fourth Stratum|gloom,weepinbell,kecleon,tropius,seviper,zangoose,dratini,marill,wooper,quagsire,lombre,nuzleaf,magikarp,feebas,poliwag,barboach,golduck,poliwhirl,slowpoke,gyarados,nidorina,nidorino,venomoth,girafarig,linoone,absol,dodrio,chansey,tangela,swellow
 Auburn Thicket|butterfree,beedrill,scyther,pinsir,heracross,beautifly,dustox,castform
 Fifth Stratum|magneton,houndoom,sableye,manectric,grumpig,metang,kadabra,hypno,claydol,lunatone,solrock,electrode,marowak,mr-mime,jynx,banette,gardevoir,clefable,wigglytuff,alakazam,slowbro,muk,xatu
-Sixth Stratum|slowbro,tauros,stantler,ambipom,sealeo,absol,golduck,ponyta,sneasel,glalie,medicham,swalot
+Sixth Stratum|slowbro,tauros,stantler,ambipom,sealeo,absol,golduck,ponyta,sneasel,glalie,medicham,swalot,piloswine,weavile,snorunt,loudred,lairon,machoke,graveler,ursaring,hariyama,aggron
 Seventh Stratum|ratreecate,ampharos,bellossom,azumarill,breloom,claydol,arbok,marowak,scizor,pupitar,swalot,ninetales,vileplume,alakazam,tyranitar,altaria,fearow,gliscor,metagross
 Porcelain Cave|golbat,golem,haunter,probopass,exploud,dudunsparce-two-segment
 Eighth Stratum|jynx,dragonite,tangrowth,yanmega,sableye,swalot,arbok,ampharos,dusknoir,absol,gengar,mismagius,dusclops,parasect,ariados,houndoom,ursaluna
 Aqua Resort|magikarp,corsola,horsea,gyarados,mantine
 Pirate Island|tentacool,magikarp,horsea,remoraid,tentacruel,seadra,gyarados
 Gorge of Zanado|spearow,exeggcute,natu,hoppip,aipom
+Abandoned Lab|pikachu,magnemite,grimer,voltorb,koffing,elekid
+Talrega Farm|paras,exeggcute,eevee,mareep,marill,snubbull
+First Stratum|caterpie,weedle,farfetchd,sunkern,wurmple,taillow,shroomish,ledyba,spinarak,pineco,volbeat,illumise
+Etria Graveyard|haunter,ariados,murkrow,duskull,shuppet,chimecho
+Azure Cave|golbat,psyduck,misdreavus,nosepass,mawile,loudred,poliwag,magikarp,slowpoke,golduck,gyarados
+Lost Woods|parasect,haunter,mightyena,dusclops,vigoroth,shuppet
+Cave of Ages|scream-tail,sandy-shocks,flut-mane,great-tusk,roar-moon
+Acuity Lakefront|sneasel,ursaring,piloswine,froslass,sealeo,snorunt
+Lake of Rage|ratreecate,venomoth,furret,noctowl,ampharos,farigiraf,magikarp,feebas,poliwag,poliwhirl,gyarados
+Mt. Chimney|machoke,magmar,pupitar,torkoal,camerupt,lairon
+Deep Shrine|ivysaur,pidgeotto,blastoise
+Krabby Club|ivysaur
