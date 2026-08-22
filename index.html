@@ -1165,7 +1165,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787421296401"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787422969807"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -7216,6 +7216,11 @@ function switchRun(val) {
     try { NUZ_LIVE.clearManualPin(); } catch (e) {}
     // An unknown-mon count accrued in one run must not carry into another.
     try { _liveAddSeen = {}; } catch (e) {}
+    // A held box list belongs to the cartridge/run it came from.
+    try { NUZ_LIVE.clearBox(); } catch (e) {}
+    // A 120s "the player just saw X on route Y" claim must not survive into
+    // another run — it routes an auto-add and burns an encounter slot there.
+    try { _lastEncSeen = null; } catch (e) {}
     save(); render();
   }
 }
@@ -12523,7 +12528,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-22 10:54';
+const APP_BUILD = '2026-08-22 11:22';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -17394,6 +17399,11 @@ const NUZ_LIVE = (function () {
       }
       if (fromProducer && resolved !== null) _lastProducerRoute = resolved;
     }
+    // Box freshness clock: the whitelist merge above keeps the last box list
+    // current forever, but the bridge deliberately OMITS the key to mean "PC
+    // unknown" — stamp when the key actually arrived so consumers can tell a
+    // live list from a held one.
+    if (next.box !== undefined) _boxAt = Date.now();
     state = merged;
 
     if (merged.source !== prev.source) emit('source-changed', { source: merged.source, prev: prev.source });
@@ -17436,6 +17446,7 @@ const NUZ_LIVE = (function () {
 
   let _manualPin = null;          // { route, producerRouteAtPin }
   let _lastProducerRoute = null;
+  let _boxAt = 0;                 // when a frame last CARRIED the box key
   function setManualRoute(loc) {
     _manualPin = { route: loc, producerRouteAtPin: _lastProducerRoute };
     return apply({ route: loc });
@@ -17448,6 +17459,11 @@ const NUZ_LIVE = (function () {
   function clearManualPin() { _manualPin = null; _lastProducerRoute = null; }
   return {
     on, apply, resolveLocation, setManualRoute, clearManualPin,
+    // The bridge re-emits box at least every 2.5s (heartbeat) while it actually
+    // knows the PC, so >10s without the key means the bridge is saying
+    // "unknown" and the held list is history, not truth.
+    boxFresh: () => _boxAt !== 0 && (Date.now() - _boxAt) < 10000,
+    clearBox: () => { _boxAt = 0; if (state && state.box !== undefined) state.box = undefined; },
     get: () => state,
     isLive: () => state.source !== 'manual'
   };
@@ -17484,7 +17500,14 @@ const NUZ_BRIDGE = (function () {
     catch (e) { console.warn('[bridge] bad url', e); setStatus('error'); return; }
     ws = sock;
     setStatus('connecting');
-    sock.onopen = () => { if (ws !== sock) return; backoff = 1000; setStatus('connected'); sendConfig(true); };
+    sock.onopen = () => {
+      if (ws !== sock) return;
+      // Stamp the open time (drives the pre-first-frame staleness fallback) and
+      // seed the half-open guard so it is armed from open and does not inherit
+      // a stale value across sockets.
+      _sockOpenedAt = Date.now(); _lastSockAt = Date.now();
+      backoff = 1000; setStatus('connected'); sendConfig(true);
+    };
     sock.onmessage = ev => {
       if (ws !== sock) { try { sock.close(); } catch (e) {} return; }
       let msg; try { msg = JSON.parse(ev.data); } catch (e) { return; }
@@ -17625,6 +17648,11 @@ const NUZ_BRIDGE = (function () {
     _awaitingRun = false;
     // An unknown-mon count accrued in one run must not carry into another.
     try { _liveAddSeen = {}; } catch (e) {}
+    // A held box list belongs to the cartridge/run it came from.
+    try { NUZ_LIVE.clearBox(); } catch (e) {}
+    // A 120s "the player just saw X on route Y" claim must not survive into
+    // another run — it routes an auto-add and burns an encounter slot there.
+    try { _lastEncSeen = null; } catch (e) {}
     NUZ_LIVE.apply({ source: 'manual', encounter: null });
   }
   // Reconnect WITHOUT stop()'s side effects: no LS_ON change, no
@@ -17698,6 +17726,7 @@ const NUZ_BRIDGE = (function () {
   let _detectedContent = null;
   let _lastBridgeTs = 0;   // last applied bridge-frame ts, for the replay guard
   let _lastSockAt = 0;     // last time ANY parsed message arrived on the current socket
+  let _sockOpenedAt = 0;   // when the CURRENT socket opened — a once-per-socket clock
   function onDetect(game, content) {
     if (!game || !GAMES[game]) return;
     _detected = game;
@@ -17842,6 +17871,7 @@ const NUZ_BRIDGE = (function () {
 
   window._nuzRememberRunPick = rememberRunPick;
   return { start, stop, restart, setUrl, connect, url, enabled, status: () => status, syncGame: () => sendConfig(false),
+           openedAt: () => _sockOpenedAt,
            // reconcile is USER-INITIATED (the "switch to X" banner button, or
            // opening Play on a mismatch) — a request to be asked again, so it
            // clears the hold that "Stay on this run" leaves up. Without this the
@@ -18109,7 +18139,14 @@ function pmRender() {
   // as "it shows the wrong Pokémon / won't update HP / thinks I'm in a battle" —
   // all one failure: frozen data presented as current. Age it explicitly.
   const frameAge = _lastFrameAt ? (Date.now() - _lastFrameAt) : null;
-  const isStale = st.source !== 'manual' && frameAge !== null && frameAge > 8000;
+  // v174 made _lastFrameAt mean "accepted state frame", which fixed reconnect
+  // chatter masking a dead feed but left the pre-first-frame case invisible — a
+  // bridge that connects and never produces showed a green TRACKING pill
+  // forever. The socket's open time is a once-per-socket clock that cannot be
+  // refreshed by chatter, so it backstops the connected-but-never-produced case.
+  const _openAge = (typeof NUZ_BRIDGE.openedAt === 'function' && NUZ_BRIDGE.openedAt()) ? (Date.now() - NUZ_BRIDGE.openedAt()) : null;
+  const isStale = (st.source !== 'manual' && frameAge !== null && frameAge > 8000) ||
+                  (bs === 'connected' && frameAge === null && _openAge !== null && _openAge > 8000);
   const dotCls = isStale ? 'wait' : (bs === 'connected' ? 'live' : (bs === 'connecting' || bs === 'retrying' ? 'wait' : 'off'));
   const dotTitle = isStale ? `No update for ${Math.round(frameAge / 1000)}s`
     : (bs === 'connected' ? `Live via ${st.source}` : `Manual (bridge: ${bs})`);
@@ -18120,8 +18157,8 @@ function pmRender() {
   // The && short-circuit hid it: isStale false never evaluates the operand.
   const tracking = trackingActive();
   const staleBanner = (isStale && !(bs === 'connected' && !tracking)) ? `<div class="pm-stalefeed">
-      <span>⚠ Not updating — last read ${frameAge < 60000 ? Math.round(frameAge / 1000) + 's' : Math.round(frameAge / 60000) + 'm'} ago.
-      What's shown below is the last thing the game reported, not what's happening now.</span>
+      <span>⚠ Not updating — ${frameAge === null ? 'connected but nothing received yet' : `last read ${frameAge < 60000 ? Math.round(frameAge / 1000) + 's' : Math.round(frameAge / 60000) + 'm'} ago`}.
+      ${frameAge === null ? 'The bridge is connected but the memory reader has not produced a frame.' : `What's shown below is the last thing the game reported, not what's happening now.`}</span>
       <button class="pm-chip" onclick="NUZ_BRIDGE.restart();pmRender();">reconnect</button>
     </div>` : '';
   // Tracking state is its own thing, and more important than the socket's: connected but
@@ -19166,7 +19203,17 @@ NUZ_LIVE.on('state', (s, st) => {
       // before it is written. A real gift/catch clears that in a few seconds;
       // savestate garbage never survives the RAM walk.
       _liveAddFrameNo++;
-      if (Object.keys(_liveAddSeen).length > 50) _liveAddSeen = {};
+      // Evict STALE counters instead of wiping the cache. The size-triggered
+      // WIPE ran every frame once >50 unknown mons were visible (a full PC of
+      // HM slaves), resetting every counter to 1 forever — auto-add silently
+      // died for the whole session, party adds included. Eviction keeps only
+      // counters that are actually in progress.
+      for (const k in _liveAddSeen) if (_liveAddSeen[k].frame < _liveAddFrameNo - 5) delete _liveAddSeen[k];
+      // Per-frame add cap, shared by the box and party add loops below. A mass
+      // import (49 unknown boxed mons) used to land in one pass with 49 toasts;
+      // the debounce already spreads legitimate adds across frames, so a cap of
+      // 5/frame only throttles the pathological case.
+      let _addsThisFrame = 0;
       const _addReady = key => {
         const rec = _liveAddSeen[key];
         if (rec && rec.frame === _liveAddFrameNo - 1) { rec.n++; rec.frame = _liveAddFrameNo; }
@@ -19201,7 +19248,11 @@ NUZ_LIVE.on('state', (s, st) => {
       //     invisible: the run's most important event, silently unrecorded.
       //     Boxed mons are added benched, and are matched into the same dedupe
       //     as the party pass so withdrawing one later doesn't duplicate it.
-      const boxList = Array.isArray(st.box) ? st.box.filter(m => m && m.species) : [];
+      // Freshness contract (NUZ_LIVE.boxFresh): the bridge omits the box key to
+      // mean "PC unknown", and the whitelist merge holds the last list forever —
+      // a held list must not mint adds (or advance the debounce) for a PC the
+      // bridge is no longer vouching for.
+      const boxList = (NUZ_LIVE.boxFresh() && Array.isArray(st.box)) ? st.box.filter(m => m && m.species) : [];
       for (const l of boxList) {
         const k = liveKey(l);
         const known = curTeam().some(p => p && p.species && (
@@ -19209,6 +19260,7 @@ NUZ_LIVE.on('state', (s, st) => {
           _normSpeciesName(p.species) === _normSpeciesName(l.species)));
         if (known) continue;
         if (!_addReady('b|' + k + '|' + _normSpeciesName(l.species))) continue;
+        if (_addsThisFrame >= 5) continue;   // per-frame cap — see above
         const recentEnc = _lastEncSeen &&
           (Date.now() - _lastEncSeen.at) < 120000 &&
           _normSpeciesName(_lastEncSeen.species) === _normSpeciesName(l.species)
@@ -19236,6 +19288,7 @@ NUZ_LIVE.on('state', (s, st) => {
         }
         if (origin) add.route = origin;
         curTeam().push(add);
+        _addsThisFrame++;
         const bIdx = curTeam().length - 1;
         changed = true;
         if (origin) {
@@ -19275,6 +19328,7 @@ NUZ_LIVE.on('state', (s, st) => {
           _normSpeciesName(p.species) === _normSpeciesName(l.species)));
         if (known) continue;
         if (!_addReady('p|' + k + '|' + _normSpeciesName(l.species))) continue;
+        if (_addsThisFrame >= 5) continue;   // per-frame cap — see above
         // Where it came from. A mon that shows up in the party right after an
         // encounter with the SAME species was caught there, so it inherits that
         // route and the encounter grid marks the location as caught.
@@ -19308,6 +19362,7 @@ NUZ_LIVE.on('state', (s, st) => {
         if (Array.isArray(l.ivs)) add.ivs = l.ivs.slice();
         if (Array.isArray(l.stats)) add.gameStats = l.stats.slice();
         curTeam().push(add);
+        _addsThisFrame++;
         const addedIdx = curTeam().length - 1;
         changed = true;
         // A wild catch belongs in the route log, not just the roster — that log
@@ -19437,7 +19492,10 @@ if (typeof onBackfill === 'function') onBackfill(() => { if (pmIsOpen()) pmRende
 // when the feed dies. This ticks the panel so a stalled bridge surfaces itself
 // instead of waiting for a frame that is never coming.
 setInterval(() => {
-  if (!pmIsOpen() || !_lastFrameAt) return;
+  if (!pmIsOpen()) return;
+  // No frame yet is not "nothing to say": the connected-but-never-produced
+  // fallback (socket open time) also needs the panel repainted to surface.
+  if (!_lastFrameAt && !(typeof NUZ_BRIDGE.openedAt === 'function' && NUZ_BRIDGE.openedAt())) return;
   const age = Date.now() - _lastFrameAt;
   // Redraw around the threshold, then occasionally so the counter keeps moving.
   if (age > 8000 && age < 14000) { try { pmRender(); } catch (e) {} }
