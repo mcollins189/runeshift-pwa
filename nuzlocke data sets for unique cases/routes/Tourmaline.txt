@@ -1,0 +1,51 @@
+# First-cut rail: ordered by min grass level (fishing-only maps last).
+# Hand-adjust to story order; re-running the emitter will NOT overwrite this file.
+Starter|chespin,tepig,popplio
+Route 103|poochyena,zigzagoon,wingull,tentacool,pelipper,magikarp,wailmer,sharpedo
+Route 81|rattata,spearow,mankey,goldeen,seaking,magikarp,corphish,crawdaunt
+Quartz Cave|geodude,wynaut,woobat,nosepass
+Route 104|marill,poochyena,wurmple,taillow,wingull,pelipper,magikarp,bulbasaur,pidgey,ge
+Reseda Woods|caterpie,metapod,weedle,kakuna,rattata,goldeen,seaking,magikarp,corphish,crawdaunt
+Route 83|caterpie,weedle,rattata,spearow
+Shuckle Spring|paras,woobat,shuckle
+Fortree City|charmander,charmeleon,charizard,squirtle
+Altering Cave|zubat
+Route 87|onix,gligar,steelix,numel,hippopotas,silicobra
+Meridia Temple|sandshrew,baltoy,chingling
+Route 78|bellsprout,lotad,budew,buizel,ptropa
+Mirage Tower|sandshrew,trapinch
+Route 80|rattata,raticate,spearow,fearow,jigglypuff,mankey,beldum
+Aurora Temple|jigglypuff,chingling,woobat
+Dream Resort|shuppet,duskull
+Route 91|spearow,growlithe,swablu,bronzor,volbeat,morelull,aipom,pineco,starly
+Mt. Pyre|shuppet,duskull,chimecho
+New Mauville|magnemite,voltorb
+Vesper Temple|chingling,bronzor,morelull
+Mt Shiro|swinub,makuhita,spheal,vanillite,sealeo,magikarp,barboach,whiscash
+Route 96|spearow,bellsprout,farfetchd,eevee,wingull,munna
+Route 92|growlithe,aipom,pineco,swablu,starly,volbeat,morelull
+Shoal Cave|zubat,golbat,spheal,tentacool,magikarp,wailmer
+Route 97|swinub,makuhita,snover,shiftry,vanillite
+Safari Zone|oddish,gloom,natu,xatu,heracross,phanpy,geodude,hoothoot,spinarak,mareep,aipom,sunkern,gligar,snubbull,stantler,marill,wooper,quagsire,goldeen,magikarp,remoraid,octillery
+Magma Hideout|geodude,graveler,torkoal
+Seafloor Cavern|zubat,golbat,tentacool,magikarp,wailmer
+Cave of Origin|zubat,golbat,sableye
+Route 70|geodude,graveler,magmar,miasmite,woobat,swoobat
+Klopt Chamber|unown
+Steel Mill|magnemite,magneton,grimer,muk,bronzor,bronzong,cufant
+Wisteria City|fearow,ekans,arbok,machoke,graveler,koffing,weezing,bronzor,shiinotic,goldeen,seaking,magikarp,corphish,crawdaunt
+Desert Underpass|ditto,whismur,loudred
+Mirage Palace|misdreavus,baltoy,claydol,chimecho,chingling,deino
+Dusk Mountain|geodude,graveler,onix,steelix,makuhita,hariyama,woobat,swoobat
+Victory Road|graveler,hariyama,sealeo,swoobat,magikarp,barboach,whiscash,relicanth,volkritter,skrelp,dragalge
+Cobalt City|tentacool,tentacruel,wingull,pelipper,magikarp,carvanha,skrelp,dragalge
+Route 98|tentacool,tentacruel,wingull,pelipper,magikarp,carvanha,luvdisc
+Route 73|tentacool,tentacruel,wingull,pelipper,magikarp,shellder,carvanha,cloyster
+Route 77|tentacool,tentacruel,wingull,pelipper,magikarp,carvanha,skrelp,dragalge
+Sunken Isle|tentacool,tentacruel,wingull,pelipper,magikarp,shellder,carvanha,cloyster,skrelp,dragalge
+Underground City|grimer,muk,dreepy
+Route 127|tentacool,wingull,pelipper,magikarp,wailmer,sharpedo
+Route 132|tentacool,wingull,pelipper,magikarp,wailmer,horsea,sharpedo
+Lilycove City|tentacool,wingull,pelipper,magikarp,wailmer,staryu
+Dewford Town|tentacool,wingull,pelipper,magikarp,wailmer
+Sootopolis City|magikarp,tentacool,gyarados

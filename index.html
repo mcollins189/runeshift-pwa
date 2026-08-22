@@ -1165,7 +1165,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787356365459"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787367935189"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -2735,6 +2735,26 @@ const GAMES = {
     // and Sky Pillar across three locations.
     name: 'Pisces', short: 'Pisces', gen: 3, category: 'Other ROM hacks',
     dataSources: { routes: 'Pisces', encounterTables: 'Pisces', patches: 'Pisces', learnsets: 'Pisces' }
+  },
+  'tourmaline': {
+    // Tourmaline - BPEE, 32MB expansion, 1316 species through Gen 8. Emerald MAPSEC
+    // layout is retained but heavily rewritten: 187 region names, and casing tells you
+    // nothing about which are original (UMBER TOWN is this hack's own and is all-caps,
+    // while the nine mixed-case entries are all vanilla Hoenn names).
+    //
+    // Encounter data was NOT reachable by the usual scan: this build keeps no single
+    // gWildMonHeaders table, so headers are found by scanning the whole ROM for records
+    // whose map coords exist in gMapGroups AND whose pools resolve to real species
+    // names. Range-checking ids alone let junk through as slugs like '67676670r7e77-jy'.
+    // 59 locations, verified against live play: standing on Route 81 the game reported
+    // section 134, and the extracted Route 81 table reads Rattata 40 / Spearow 40 /
+    // Mankey 20 at levels 2-4, matching the header read out of the cartridge.
+    //
+    // Three difficulty modes exist in game (normal / hardcore / insane). Not modelled
+    // yet - that needs per-mode encounter or trainer data to actually differ.
+    // No leagues data yet.
+    name: 'Tourmaline', short: 'Tourmaline', gen: 8, category: 'Other ROM hacks',
+    dataSources: { routes: 'Tourmaline', encounterTables: 'Tourmaline' }
   },
   'tre_johto': {
     // TRE Johto (Apr 30 2025) — a SEPARATE GAME from 'team_rocket_edition' above, which
@@ -12482,7 +12502,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-21 16:52';
+const APP_BUILD = '2026-08-21 20:05';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
