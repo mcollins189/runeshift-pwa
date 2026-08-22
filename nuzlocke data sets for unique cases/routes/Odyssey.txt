@@ -39,3 +39,30 @@ Lake of Rage|ratreecate,venomoth,furret,noctowl,ampharos,farigiraf,magikarp,feeb
 Mt. Chimney|machoke,magmar,pupitar,torkoal,camerupt,lairon
 Deep Shrine|ivysaur,pidgeotto,blastoise
 Krabby Club|ivysaur
+# Visitable places with no wild encounters, so they never came from the encounter
+# tables. Without them the live feed had no entry to land on and prefix-matched
+# Talrega onto "Talrega Farm" -- a different map. Names taken from the ROM's own
+# section table; vanilla FireRed leftovers still in that table (CELADON DEPT.,
+# SILPH CO., SEVII ISLE 6-9, SAFARI ZONE ...) are deliberately NOT here.
+Talrega
+Arundel
+Etria
+Fibernia
+Fibernia Woods
+Gorenil
+Varley
+Charon
+Claret Hollows
+Abyssal Chamber
+Abyssal Fortress
+Abyssal Palace
+Abyssal Shard
+3rd Stratum Base
+6th Stratum Base
+Porcelain Lab
+Thieves Lair
+MooMoo Cafe
+Sea of Galazeah
+Rade of Carcino
+Underg. City
+Limbo

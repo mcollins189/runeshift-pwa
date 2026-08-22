@@ -1165,7 +1165,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787378158919"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787379149106"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -12502,7 +12502,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-21 22:55';
+const APP_BUILD = '2026-08-21 23:12';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -17286,7 +17286,19 @@ const NUZ_LIVE = (function () {
   // which already strips apostrophe/case/whitespace differences across our own
   // data files) → prefix. Returns null when nothing plausible matches, which is
   // treated as "don't change the route" rather than "clear it".
-  function resolveLocation(raw) {
+  // `exact` = this name came from memory, not from reading pixels.
+  //
+  // The prefix fallback below exists for OCR, which sees partial and misread text and is
+  // right to guess. A memory frame is a different kind of claim: the producer reads the
+  // section id out of gMapHeader and looks it up in the game's own table, so the name is
+  // exact by construction. Guessing on top of that can only ever move the player somewhere
+  // they are not -- standing in Talrega, which has no wild encounters and so never reached
+  // the rail, "talrega farm".startsWith("talrega") resolved to Talrega Farm, a different
+  // map. Reported as "I am in Talrega but it reads as Talrega Farm".
+  //
+  // So for memory: exact match, or the name as given. A location with no encounter data is
+  // an honest empty panel; a confidently wrong location is a lie the player has to catch.
+  function resolveLocation(raw, exact) {
     if (!raw) return null;
     const known = playLocationList();
     if (!known.length) return raw;
@@ -17294,6 +17306,7 @@ const NUZ_LIVE = (function () {
     const target = _normLocName(raw);
     let hit = known.find(n => _normLocName(n) === target);
     if (hit) return hit;
+    if (exact) return raw;
     hit = known.find(n => _normLocName(n).startsWith(target) || target.startsWith(_normLocName(n)));
     return hit || null;
   }
@@ -17335,7 +17348,7 @@ const NUZ_LIVE = (function () {
     // frame reverted the tap instantly. The pin clears the moment the producer
     // reports something NEW (a real transition) or agrees with the pin.
     if (next.route !== undefined) {
-      const resolved = next.route === null ? null : resolveLocation(next.route);
+      const resolved = next.route === null ? null : resolveLocation(next.route, merged.source === 'memory');
       const fromProducer = next.source === 'memory' || next.source === 'ocr';
       if (fromProducer && _manualPin) {
         if (resolved === _manualPin.route) {
