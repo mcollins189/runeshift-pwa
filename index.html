@@ -1165,7 +1165,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787437771951"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787437995405"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -6484,6 +6484,22 @@ function curLearnsetOverride() {
 // the renderer pins to the top — same convention as the PokeAPI path's isEvo.
 function buildLearnsetFromOverride(list) {
   return list.map(([lv, mslug]) => ({ lv, name: prettifyMoveName(mslug), isEvo: lv === 0 }));
+}
+// Upcoming level-up moves for a roster mon in THE CURRENT GAME, within a level
+// horizon. Synchronous by design (called from render paths): the game's own
+// ROM-extracted learnset when it exists — which makes the foresight
+// hack-accurate automatically — else whatever the PokeAPI cache already holds.
+// Never fetches.
+function upcomingLearnMoves(p, horizon) {
+  try {
+    const lvNow = p.level || 1;
+    let list = null;
+    const ov = curLearnsetOverride();
+    if (ov) { const sl = speciesSlug(p.species); if (ov[sl]) list = buildLearnsetFromOverride(ov[sl]); }
+    if (!list && Array.isArray(learnsetCache[p.species])) list = learnsetCache[p.species];
+    if (!list) return [];
+    return list.filter(e => e.lv > lvNow && e.lv <= lvNow + horizon).sort((a, b) => a.lv - b.lv);
+  } catch (e) { return []; }
 }
 
 async function fetchLearnset(species) {
@@ -12637,7 +12653,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-22 15:29';
+const APP_BUILD = '2026-08-22 15:33';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -15489,6 +15505,47 @@ function pokeView(p, idx) {
         else if (/^spaup/.test(e) && !hasSpec) { c.adjScore = Math.round(c.adjScore * 0.5); if (!c.reason) c.reason = 'no special attacks to boost'; }
       }
     }
+    // ── Foresight: the set is a TRAJECTORY (field request). Look ahead in
+    // THIS game's learnset (hack-accurate by construction) a dozen levels:
+    //  (a) a partner arriving soon lands its pairing credit early, scaled —
+    //      "keep Will-O-Wisp: Hex at Lv 20" is Jackie's own history; a
+    //      dependency move's alone-discount is softened when its partner is
+    //      inbound ("take Rest: Snore in 5 levels");
+    //  (b) obsolescence — a strictly better same-type+category attack arriving
+    //      soon marks the current one a stopgap, so a contested slot goes to
+    //      the move with the future.
+    const FORESIGHT_LV = 12;
+    const _coming = upcomingLearnMoves(p, FORESIGHT_LV).filter(e => e.name !== m.name);
+    const comingEffs = _coming.map(e => ({
+      lv: e.lv, name: e.name, e: _eff(e.name),
+      score: scoreMove(e.name, ownTypes, ownStats).score, tc: _atkTypeCat(e.name),
+    }));
+    if (comingEffs.length) {
+      for (const rule of SYNERGY_RULES) {
+        const fut = comingEffs.find(f => rule.partner(f.e));
+        if (!fut) continue;
+        const already = slotEffs.some((e, j) => adj[j].name && rule.partner(e));
+        if (already) continue;
+        for (let k = 0; k < adj.length; k++) {
+          const c = adj[k];
+          if (!c.name || !slotEffs[k].includes(rule.tag)) continue;
+          if (rule.alone) {
+            c.adjScore = Math.max(c.adjScore, Math.round(c.score * 0.7));
+            c.reason = `${fut.name} arrives at Lv ${fut.lv}`;
+          } else if (rule.paired) {
+            c.adjScore += Math.round(rule.paired.add / 2);
+            if (!c.reason) c.reason = `${fut.name} at Lv ${fut.lv} will pair`;
+          }
+        }
+      }
+      for (let k = 0; k < adj.length; k++) {
+        const c = adj[k];
+        if (!c.name || (c.role !== 'attack' && c.role !== 'pivot')) continue;
+        const T = _atkTypeCat(c.name);
+        const better = comingEffs.find(f => f.tc.t && f.tc.t === T.t && f.tc.c === T.c && f.score >= c.score + 15);
+        if (better) { c.adjScore -= 8; if (!c.reason) c.reason = `outclassed by ${better.name} at Lv ${better.lv}`; }
+      }
+    }
     // The NEW move is judged against the set too: if it duplicates coverage the
     // set already has at least as well, its effective value drops the same way.
     let upAdj = upScore.score;
@@ -15518,6 +15575,26 @@ function pokeView(p, idx) {
       }
       if (/^atkup/.test(upEff) && !adj.some((c, k) => c.name && (c.role === 'attack' || c.role === 'pivot') && _atkTypeCat(c.name).c === 'P')) upAdj = Math.round(upAdj * 0.5);
       else if (/^spaup/.test(upEff) && !adj.some((c, k) => c.name && (c.role === 'attack' || c.role === 'pivot') && _atkTypeCat(c.name).c === 'S')) upAdj = Math.round(upAdj * 0.5);
+      // Foresight for the incoming move: a partner arriving soon rescues a
+      // dependency pick ("take Rest — Snore in 5 levels") or scales a pairing
+      // up; a strictly better same-coverage move arriving soon makes this one
+      // a stopgap.
+      if (comingEffs.length) {
+        for (const rule of SYNERGY_RULES) {
+          if (!upEff.includes(rule.tag)) continue;
+          if (slotEffs.some((e, k) => adj[k].name && rule.partner(e))) continue;
+          const fut = comingEffs.find(f => rule.partner(f.e));
+          if (fut) {
+            if (rule.alone) upAdj = Math.max(upAdj, Math.round(upScore.score * 0.7));
+            else if (rule.paired) upAdj += Math.round(rule.paired.add / 2);
+          }
+        }
+        if (upScore.role === 'attack' || upScore.role === 'pivot') {
+          const uT = _atkTypeCat(m.name);
+          const uBetter = comingEffs.find(f => f.tc.t && f.tc.t === uT.t && f.tc.c === uT.c && f.score >= upScore.score + 15);
+          if (uBetter) upAdj -= 8;
+        }
+      }
     }
     let firstEmpty = -1;
     for (let i = 0; i < 4; i++) { if (!moveList[i]) { firstEmpty = i; break; } }
@@ -15565,8 +15642,9 @@ function pokeView(p, idx) {
         </div>
         <div class="nmp-meta-line">
           ${upType ? `<span class="type-badge t-${upType}">${upType}</span>` : ''}
-          <span class="nmp-meta-text">${metaBits || 'unknown'} · score ${upScore.score}</span>
+          <span class="nmp-meta-text">${metaBits || 'unknown'} · score ${upAdj}${upAdj !== upScore.score ? ` (base ${upScore.score})` : ''}</span>
         </div>
+        ${comingEffs.length ? `<div class="nmp-meta-line"><span class="nmp-meta-text" style="opacity:.75">Coming up: ${comingEffs.slice(0, 3).map(f => `${f.name} (Lv ${f.lv})`).join(', ')}</span></div>` : ''}
         <div class="nmp-tip">${hasEmpty
           ? 'You have an open slot — teach it there for free; no need to give anything up.'
           : (bestSlot >= 0
