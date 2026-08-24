@@ -1172,7 +1172,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787604772403"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787606516668"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -12740,7 +12740,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-24 13:52';
+const APP_BUILD = '2026-08-24 14:21';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -19677,10 +19677,13 @@ NUZ_LIVE.on('state', (s, st) => {
     // fresh [] when the run or team is missing, so auto-adds pushed into it
     // vanished while the route log still recorded a caught entry with
     // linkedTeamIdx -1.
-    // And never during a live battle (_inBattleFrame): partner multi battles
-    // put the ally's mons in the party struct, and this block is what rostered
-    // them. Adds/membership resume on the first overworld frame.
-    if (!_inBattleFrame && st.party.length && typeof curRun === 'function' && curRun() && Array.isArray(curRun().team)) {
+    // The battle gate applies to ADDS ONLY (see below). Membership still tracks
+    // live in battle when pids identify the mons: a partner multi battle where
+    // you pick three has the game holding exactly those three, and freezing
+    // membership left Play mode showing the whole roster as "out" mid-fight.
+    // Ally mons cannot corrupt this - they are not in the roster, so they match
+    // no entry; only YOUR mons' pids can flip YOUR flags.
+    if (st.party.length && typeof curRun === 'function' && curRun() && Array.isArray(curRun().team)) {
       // ── Auto-add debounce ────────────────────────────────────────────────
       // Adding a roster entry (and burning an encounter slot as 'caught') is
       // the one live write with no undo, and it used to happen on a SINGLE
@@ -19734,7 +19737,11 @@ NUZ_LIVE.on('state', (s, st) => {
         // pid outranks the name heuristics when both sides carry it — with two
         // same-species mons (one in party, one benched) the species-set match
         // wrongly flagged both as in-party.
-        const inGame = (p.pid && livePids.size) ? livePids.has(p.pid)
+        const pidKnown = !!(p.pid && livePids.size);
+        // In battle, ONLY a pid match may move the flag. The name/species
+        // fallbacks would read an ally's same-species mon as yours.
+        if (_inBattleFrame && !pidKnown) continue;
+        const inGame = pidKnown ? livePids.has(p.pid)
           : (liveKeys.has(rosterKey(p)) ||
              liveSpecies.has(_normSpeciesName(p.species)));
         if (!!p.inParty !== inGame) { p.inParty = inGame; changed = true; }
@@ -19749,7 +19756,9 @@ NUZ_LIVE.on('state', (s, st) => {
       // mean "PC unknown", and the whitelist merge holds the last list forever —
       // a held list must not mint adds (or advance the debounce) for a PC the
       // bridge is no longer vouching for.
-      const boxList = (NUZ_LIVE.boxFresh() && Array.isArray(st.box)) ? st.box.filter(m => m && m.species) : [];
+      // ADDS are still frozen mid-battle: a mon can never legitimately JOIN the
+      // party during a fight, and the ally's team sits in the party struct.
+      const boxList = (!_inBattleFrame && NUZ_LIVE.boxFresh() && Array.isArray(st.box)) ? st.box.filter(m => m && m.species) : [];
       for (const l of boxList) {
         const k = liveKey(l);
         // Identity-aware dedupe: when BOTH sides carry a pid, only a pid match
@@ -19848,7 +19857,7 @@ NUZ_LIVE.on('state', (s, st) => {
       //    gifts, in-game trades, and catches logged straight from the game.
       //    Matched against the WHOLE roster (including boxed and fallen mons)
       //    so a benched or dead mon is never silently duplicated.
-      for (const l of st.party) {
+      for (const l of (_inBattleFrame ? [] : st.party)) {
         if (!l || !l.species) continue;
         const k = liveKey(l);
         // Species counts as "already known" even when nicknames differ. Adding
