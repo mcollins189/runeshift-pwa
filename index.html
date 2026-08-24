@@ -1172,7 +1172,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787603476402"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787603988682"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -2872,6 +2872,9 @@ const GAMES = {
     // (species + rates + methods) is ROM-extracted into a single shared encounter-tables
     // file; Normal/Expert have IDENTICAL wild data so one table serves both variants.
     name: 'Unbound', short: 'Unbound', gen: 6, category: 'Other ROM hacks',
+    // Shadow/Ruin admin fights are real progression walls here, not flavour -
+    // surface them in the boss list (capless info tier).
+    showEvilTeam: true,
     variants: { N: 'Vanilla', E: 'Difficult', I: 'Insane' },
     defaultVariant: 'N',
     dataSources: {
@@ -3612,6 +3615,15 @@ function peelVariant(srcConfig, game, variant) {
 const CAP_BATTLE_TYPES = new Set(['gym-leader','elite-four','champion']);
 const INFO_BATTLE_TYPES = new Set(['rival','mini-boss']);
 const SHOWN_BATTLE_TYPES = new Set([...CAP_BATTLE_TYPES, ...INFO_BATTLE_TYPES]);
+// ...but a ROM hack can opt IN with `showEvilTeam: true`. The exclusion above is
+// right for mainline (Rocket grunts are flavour) and wrong for hacks whose
+// villain-team fights ARE the walls: Unbound's Shadow admins gate Cinder Volcano
+// and much of the story, and a player standing on that map found the fight simply
+// absent from the boss list. Promoted to the INFO tier - shown, never a cap.
+const infoTypesFor = g => (g && g.showEvilTeam)
+  ? new Set([...INFO_BATTLE_TYPES, 'evil-team']) : INFO_BATTLE_TYPES;
+const shownTypesFor = g => (g && g.showEvilTeam)
+  ? new Set([...SHOWN_BATTLE_TYPES, 'evil-team']) : SHOWN_BATTLE_TYPES;
 // Strength rank for tie-breaking when one trainer key appears in multiple route
 // files with different tags: cap-tier (2) > info-tier (1) > anything else (0).
 function battleTypeRank(bt) { return CAP_BATTLE_TYPES.has(bt) ? 2 : (INFO_BATTLE_TYPES.has(bt) ? 1 : 0); }
@@ -3630,7 +3642,7 @@ function getBosses(gameKey) {
     // Barry, B2W2 Hugh, USUM Hau) and side mini-bosses are invisible. Derive
     // just the capless info-battles from the routes + leagues data and splice
     // them into the list, ordered by their team's ace level.
-    const info = deriveBossesFromData(game, gameKey, INFO_BATTLE_TYPES);
+    const info = deriveBossesFromData(game, gameKey, infoTypesFor(game));
     if (info.length) {
       const have = new Set(bosses.map(b => b.name));
       for (const ib of info) if (!have.has(ib.name)) bosses.push(ib);
@@ -3824,7 +3836,7 @@ const BOSS_NOTES = {
 
 function deriveBossesFromData(game, gameKey, typesFilter) {
   if (typeof window === 'undefined' || !window.NUZ_DATA) return [];
-  typesFilter = typesFilter || SHOWN_BATTLE_TYPES;
+  typesFilter = typesFilter || shownTypesFor(game);
   const sources = game.dataSources || {};
   const variant = curVariant();
   const leagueKey = resolveDataSource(sources.leagues, game, game.defaultVersion, variant);
@@ -11171,7 +11183,7 @@ function renderMatchup() {
   const hasRematch = Array.isArray(realBoss.rematch) && realBoss.rematch.length;
   const showRematch = hasRematch && (_rematchView != null ? _rematchView : isChampionDefeated());
   _rematchShown = showRematch;
-  const isInfo = INFO_BATTLE_TYPES.has(realBoss.battleType);
+  const isInfo = infoTypesFor(GAMES[curGame()]).has(realBoss.battleType);
   // Starter-branched battles (rivals, the Striaton trio gym, Blue/Kukui/Leon-style
   // champions, Ilima, Insurgence's 4-way rivals…) ship a team variant per starter —
   // narrow to the one you'll actually face. No-op for normal fixed-team battles, so
@@ -12709,7 +12721,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-24 13:31';
+const APP_BUILD = '2026-08-24 13:39';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
