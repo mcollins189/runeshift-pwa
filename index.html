@@ -1172,7 +1172,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787442713067"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787553316133"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -1489,7 +1489,11 @@ function moveData(name) {
   const pm = patches ? patches.moves.get((name || '').toLowerCase().replace(/\s+/g, '-')) : null;
   if (pm && (pm.power != null || pm.category || pm.eff)) {
     base = base ? base.slice() : [0, null, ''];
-    if (pm.power != null) base[0] = pm.power;
+    // power <= 1 is the cartridge's VARIABLE-POWER placeholder (Magnitude, Low
+    // Kick, Return store 1 in the stats table) — copying it clobbered the
+    // curated real value and made Magnitude score as a 1 BP move (field
+    // report: it became the false drop favorite over Rollout).
+    if (pm.power != null && pm.power > 1) base[0] = pm.power;
     if (pm.category) base[1] = pm.category;
     // Per-game mechanics tag: the hack changed what the move DOES, so its
     // patch row is the truth — outranks curated MOVE_DATA and the bundle.
@@ -1523,6 +1527,24 @@ function effectiveCategory(modernCat, type, gameKey) {
 // grab momentum and bring a teammate in safely. Value = base power + a pivot
 // bonus, scored even when the move isn't in MOVE_DATA (Volt Switch/Flip Turn).
 const PIVOT_MOVES = { 'U-turn': 70, 'Volt Switch': 70, 'Flip Turn': 60 };
+// Variable-power moves store a PLACEHOLDER (0/1) in ROM tables and null in
+// PokeAPI — score them at a representative expected power instead of the
+// 30-point unknown floor (Magnitude averages ~71; field report: it read as
+// "1 BP" and became the drop recommendation).
+const VARIABLE_POWER = {
+  'Magnitude': 70, 'Low Kick': 60, 'Grass Knot': 60, 'Return': 80, 'Frustration': 60,
+  'Flail': 60, 'Reversal': 60, 'Electro Ball': 60, 'Gyro Ball': 60, 'Heavy Slam': 80,
+  'Heat Crash': 80, 'Water Spout': 100, 'Eruption': 100, 'Hidden Power': 60,
+  'Stored Power': 50, 'Power Trip': 50, 'Punishment': 60, 'Wring Out': 60,
+  'Crush Grip': 60, 'Trump Card': 60, 'Beat Up': 50, 'Spit Up': 60, 'Present': 50,
+  'Natural Gift': 60,
+};
+// Multi-turn COMMITMENT moves: locked in for several turns, no switching, a
+// miss resets the chain, and the opponent gets free setup — a real death risk
+// in a nuzlocke, so they pay for the lock (field judgment: Rollout was the
+// right drop over Magnitude despite the raw numbers).
+const COMMIT_MOVES = { 'Rollout': -14, 'Ice Ball': -14, 'Thrash': -10, 'Outrage': -10,
+  'Petal Dance': -10, 'Uproar': -8, 'Bide': -15 };
 // Score a move for "how worth a slot is this move?" — used in suggestions
 // Returns object: { score, label, role }
 function scoreMove(name, ownerTypes, ownerStats) {
@@ -1581,7 +1603,9 @@ function scoreMove(name, ownerTypes, ownerStats) {
     return { score, label: 'Utility', role: 'util' };
   }
   // Damaging
-  let score = power || 30;
+  let pw = power;
+  if ((!pw || pw <= 1) && VARIABLE_POWER[canon] !== undefined) pw = VARIABLE_POWER[canon];
+  let score = pw || 30;
   if (isSTAB) score = Math.round(score * 1.5);
   score = Math.round(score * acc / 100); // expected damage weighting
   // Modifiers
@@ -1598,6 +1622,8 @@ function scoreMove(name, ownerTypes, ownerStats) {
   else if (eff && eff.includes('recoil')) score -= Math.round((power || 0) * 0.20);
   if (eff && eff.includes('recharge')) score -= 15;
   if (eff && eff.includes('charge')) score -= 10;
+  if (eff && eff.includes('confuse-self')) score -= 8;     // Outrage-class hangover
+  if (COMMIT_MOVES[canon] !== undefined) score += COMMIT_MOVES[canon];
   if (eff && eff.includes('multi')) score += 8; // counts each hit
   // Stat-mismatched moves get penalized if owner stats are known. Uses the
   // EFFECTIVE category so pre-split (Gen ≤3) games judge phys/special by TYPE,
@@ -12678,7 +12704,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-22 16:51';
+const APP_BUILD = '2026-08-23 23:35';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -15437,9 +15463,16 @@ function pokeView(p, idx) {
     const upCat = moveCategory(m.name);
     const stab = upType && ownTypes.includes(upType) && (upCat === 'P' || upCat === 'S');
     const upAcc = moveAccuracy(resolveMove(m.name) || m.name);
+    // Variable-power moves display their representative value ("~70 BP"), not
+    // the cartridge's placeholder.
+    const _dispPwr = (nm, pwr) => {
+      const cn = resolveMove(nm) || nm;
+      if ((!pwr || pwr <= 1) && VARIABLE_POWER[cn] !== undefined) return `~${VARIABLE_POWER[cn]} BP`;
+      return pwr ? `${pwr} BP` : null;
+    };
     const metaBits = [
       upType,
-      upPwr ? `${upPwr} BP` : null,
+      _dispPwr(m.name, upPwr),
       upAcc < 100 ? `${upAcc}% acc` : null,
       upCat === 'P' ? 'physical' : upCat === 'S' ? 'special' : (upCat === 'U' ? 'status' : null),
       stab ? 'STAB' : null,
@@ -15657,7 +15690,7 @@ function pokeView(p, idx) {
         const cPwr = movePower(cur);
         const cCat = moveCategory(cur);
         const cAcc = moveAccuracy(resolveMove(cur) || cur);
-        const cMeta = [cType, cPwr ? `${cPwr} BP` : null, cAcc < 100 ? `${cAcc}%` : null, cCat === 'P' ? 'Ph' : cCat === 'S' ? 'Sp' : 'St'].filter(Boolean).join(' · ');
+        const cMeta = [cType, _dispPwr(cur, cPwr), cAcc < 100 ? `${cAcc}%` : null, cCat === 'P' ? 'Ph' : cCat === 'S' ? 'Sp' : 'St'].filter(Boolean).join(' · ');
         const isRec = i === bestSlot;
         slotRows.push(`<div class="nmp-slot${isRec ? ' recommended' : ''}">
           <div class="nmp-slot-info">
