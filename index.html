@@ -1172,7 +1172,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787603988682"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787604772403"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -3856,17 +3856,24 @@ function deriveBossesFromData(game, gameKey, typesFilter) {
   // occurrence across all version files wins, so a gym-leader marker in one
   // version's file isn't shadowed by a rival marker in the other.
   const tierByKey = {};
+  // Rail position = STORY order. The routes file is hand-ordered to the story
+  // (see the handoff), so it is the authority on when a fight happens; ace level
+  // is not. Sorting purely by level put Cinder Volcano's Ivory BEFORE the Marlon
+  // fight she shares a scene with (her ace is a level lower), and put both after
+  // a gym they precede.
+  let _railSeq = 0;
   for (const rk of routeKeys) {
     const routeData = window.NUZ_DATA.routes?.[rk];
     if (!routeData) continue;
     for (const loc of routeData.locations) {
       for (const t of (loc.trainers || [])) {
+        const seq = _railSeq++;
         const existing = tierByKey[t.key];
         // Prefer the strongest tier when keys collide across files (e.g. a
         // trainer tagged gym-leader in one version's file and rival in the
         // other). cap-tier outranks info-tier outranks anything else.
         if (!existing || battleTypeRank(t.battleType) > battleTypeRank(existing.battleType)) {
-          tierByKey[t.key] = { battleType: t.battleType, location: loc.name };
+          tierByKey[t.key] = { battleType: t.battleType, location: loc.name, railIdx: seq };
         }
       }
     }
@@ -3922,6 +3929,7 @@ function deriveBossesFromData(game, gameKey, typesFilter) {
       location: tier?.location || trainer.location || null,
       cap: isCap ? aceLv : null,
       sortLv: aceLv,
+      railIdx: tier?.railIdx ?? null,
       theme,
       battleType: battleType || trainer.section || null,
       double: isDouble,
@@ -3995,7 +4003,18 @@ function deriveBossesFromData(game, gameKey, typesFilter) {
   // for capless info-battles — so rivals/mini-bosses interleave at the right
   // point in progression. Matches the "earliest fight first" feel of the
   // hand-coded BDSP list.
-  raw.sort((a,b) => ((a.cap ?? a.sortLv) || 0) - ((b.cap ?? b.sortLv) || 0));
+  // Ace level orders the progression; RAIL POSITION breaks ties, because the
+  // routes file is hand-ordered to the story. That pairing is deliberate:
+  // rail-first looked right but the routes parser groups markers by LOCATION,
+  // so a late return to an early map (Zeph back at Cinder Volcano, L33) would
+  // inherit that map's early slot and jump the gym it comes after. Level-first
+  // keeps him in place, and the tie-break still puts the Cinder Volcano admins
+  // ahead of the same-level gym leader they precede.
+  raw.sort((a,b) => {
+    const d = ((a.cap ?? a.sortLv) || 0) - ((b.cap ?? b.sortLv) || 0);
+    if (d) return d;
+    return (a.railIdx ?? Infinity) - (b.railIdx ?? Infinity);
+  });
   return raw;
 }
 
@@ -12721,7 +12740,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-24 13:39';
+const APP_BUILD = '2026-08-24 13:52';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
