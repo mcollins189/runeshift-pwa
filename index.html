@@ -1172,7 +1172,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787553473988"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787554009017"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -12709,7 +12709,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-23 23:37';
+const APP_BUILD = '2026-08-23 23:46';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -19336,6 +19336,14 @@ NUZ_LIVE.on('state', (s, st) => {
     // and the second silently overwrote the first's level and moves. Skipping the second
     // is right: an entry that cannot be attributed unambiguously should not be written
     // at all, the same principle the matches.length===1 checks already apply.
+    // Battle-active flag for this frame. NPC-partner multi battles put the
+    // ALLY's Pokemon into the player's own party struct for the duration, so
+    // while a battle is live: roster ADDS are held (a mon can never join the
+    // party mid-battle — catches land as the battle ends, so the first
+    // overworld frame adds them with nothing lost), membership flips wait
+    // (multi battles shuffle slots), and sync trusts pid matches only.
+    // Deliberately NOT a prune: released/graveyarded mons must stay recorded.
+    const _inBattleFrame = !!st.encounter;
     const claimedRoster = new Set();
     for (const l of st.party) {
       if (!l || !l.species || typeof l.level !== 'number') continue;
@@ -19374,7 +19382,15 @@ NUZ_LIVE.on('state', (s, st) => {
       const byNick = liveNick ? curTeam().filter(p => p.alive && p.nickname &&
         _normSpeciesName(p.nickname) === liveNick &&
         (!p.species || _normSpeciesName(p.species) === _normSpeciesName(l.species))) : [];
+      // MID-BATTLE, identity only: NPC-partner multi battles write the ALLY's
+      // Pokemon into the player's own party struct (field report: opening the
+      // in-battle switch screen rostered the partner's team). A pid match is
+      // provably OUR mon (levelling up mid-fight — keep syncing that); the
+      // nickname/species fallbacks could claim a roster entry for an ally's
+      // same-species mon and overwrite its moves, so they wait for the
+      // overworld frame.
       const matches = byPid.length === 1 ? byPid
+        : _inBattleFrame ? []
         : byNick.length === 1 ? byNick : curTeam().filter(p => p.alive && p.species &&
         _normSpeciesName(p.species) === _normSpeciesName(l.species));
       if (matches.length === 1) {
@@ -19615,7 +19631,10 @@ NUZ_LIVE.on('state', (s, st) => {
     // fresh [] when the run or team is missing, so auto-adds pushed into it
     // vanished while the route log still recorded a caught entry with
     // linkedTeamIdx -1.
-    if (st.party.length && typeof curRun === 'function' && curRun() && Array.isArray(curRun().team)) {
+    // And never during a live battle (_inBattleFrame): partner multi battles
+    // put the ally's mons in the party struct, and this block is what rostered
+    // them. Adds/membership resume on the first overworld frame.
+    if (!_inBattleFrame && st.party.length && typeof curRun === 'function' && curRun() && Array.isArray(curRun().team)) {
       // ── Auto-add debounce ────────────────────────────────────────────────
       // Adding a roster entry (and burning an encounter slot as 'caught') is
       // the one live write with no undo, and it used to happen on a SINGLE
