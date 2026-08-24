@@ -1172,7 +1172,7 @@
      rAF (post first-paint), so the splash is visible for the whole load, then the app boots
      on the bundle's onload (window.__nuzAppReady). Safe: no top-level app code reads NUZ_DATA
      at parse time (all reads are inside guarded functions). -->
-<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787554009017"></script>
+<script id="nuz-bundle-src" type="text/nuz-deferred" src="data.bundle.js?v=1787601791862"></script>
 <script>
 (function () {
   function bootBundle() {
@@ -12709,7 +12709,7 @@ const TAB_SWIPE_ORDER = ['roster','active','matchup','encounters','routes','grav
    through the same setRule() helper. */
 // Visible build tag (shown in Rules → Display) so it's unambiguous which version is
 // actually running on a device — bump alongside SHELL_CACHE on each deploy.
-const APP_BUILD = '2026-08-23 23:46';
+const APP_BUILD = '2026-08-24 13:03';
 const DEFAULT_RULES = {
   nuzlockeMode: true,       // Master switch — when off, no rule enforcement at all
   ignoreCapForMatchups: false,
@@ -17969,6 +17969,11 @@ const NUZ_BRIDGE = (function () {
     sock.onclose = () => {
       if (ws !== sock) return;   // an older socket's close must not touch the current one
       ws = null;
+      // The open-clock dies with the socket. Left set, it kept the 2s stale
+      // ticker's "connected but nothing received" branch true forever — a
+      // permanent repaint loop on a DISCONNECTED bridge (closing-audit
+      // finding; it burns battery on a handheld for nothing).
+      _sockOpenedAt = 0;
       if (!enabled()) { setStatus('off'); return; }
       setStatus('retrying');
       timer = setTimeout(connect, backoff);
@@ -18035,6 +18040,7 @@ const NUZ_BRIDGE = (function () {
     try { NUZ_LIVE.clearManualPin(); } catch (e) {}
     try { _trackArmedRun = null; } catch (e) {}
     _awaitingRun = false;
+    _sockOpenedAt = 0;   // see onclose — no open socket, no repaint clock
     // An unknown-mon count accrued in one run must not carry into another.
     try { _liveAddSeen = {}; } catch (e) {}
     // A held box list belongs to the cartridge/run it came from.
@@ -19208,6 +19214,10 @@ function _looksLikeStarter(st) {
   } catch (e) { return false; }
 }
 NUZ_LIVE.on('state', (s, st) => {
+  // Reset at ENTRY, not at the tail: the wrong-cartridge veto and several
+  // other guards `return` mid-subscriber, which would strand the flag true
+  // and suppress a later frame's only repaint.
+  _pmRenderedThisFrame = false;
   // AUTO-LEVEL-SYNC: live memory levels are exact, so a level-up updates the
   // ROSTER too (the summary row already showed the live level but the detail
   // modal kept the stale stored one — field report). Raise-only (a misread
@@ -19252,6 +19262,11 @@ NUZ_LIVE.on('state', (s, st) => {
     //
     // Cheap by construction: the producer broadcasts on CHANGE, so a frame arriving here
     // means something actually moved. Idle play sends nothing but the slow heartbeat.
+    // ONE render per frame: the subscriber's tail also repaints, so this used to
+    // rebuild the whole panel TWICE per frame — 5 full innerHTML parses/second
+    // during a battle (400ms polling) for one frame's worth of new data. The
+    // flag lets the tail skip the duplicate.
+    _pmRenderedThisFrame = true;
     try { pmRender(); } catch (e) {}
   }
   // Wrong-cartridge veto. Everything below writes to the run — levels, moves,
@@ -19899,7 +19914,7 @@ NUZ_LIVE.on('state', (s, st) => {
     }
     if (changed) { save(); render(); }
   }
-  if (pmIsOpen()) pmRender();
+  if (pmIsOpen() && !_pmRenderedThisFrame) pmRender();
 });
 // Every data mutation in the app funnels through render() — piggyback on it so
 // Play mode reflects catches, edits, party toggles, and faints made anywhere
@@ -19929,6 +19944,7 @@ let _levelLowerSeen = new Map(); // species → {level, count}: pending downward
 // already have cleared — remembering it for a short window is what lets a wild
 // catch be told apart from a gift.
 let _lastFrameAt = 0;            // when a producer frame last arrived (staleness)
+let _pmRenderedThisFrame = false; // one Play-mode repaint per frame, not two
 let _lastEncSeen = null;         // { species, route, at }
 // Auto-add debounce state: unknown mons must survive N consecutive applied
 // frames before the roster write happens (see the mirroring subscriber).
@@ -20000,12 +20016,18 @@ setInterval(() => {
   // fallback (socket open time) also needs the panel repainted to surface.
   if (!_lastFrameAt && !(typeof NUZ_BRIDGE.openedAt === 'function' && NUZ_BRIDGE.openedAt())) return;
   const age = _lastFrameAt ? (Date.now() - _lastFrameAt) : null;
-  // With no frame ever accepted the openedAt fallback drives the banner, so
-  // repaint every tick — the panel is open and 2s repaints are what the
-  // responsive window does anyway. (With _lastFrameAt === 0 the subtraction
-  // was the wall-clock epoch: the 8-14s window was unreachable and the %10
-  // fallback was a phase lottery the 2000ms interval loses half the time.)
-  if (age === null) { try { pmRender(); } catch (e) {} return; }
+  // No frame ever accepted: the openedAt fallback drives the banner. Repaint
+  // only across the 8s THRESHOLD — that banner's text is static (no counter to
+  // tick), so repainting forever afterwards was pure battery burn on a
+  // handheld. (With _lastFrameAt === 0 the old subtraction was the wall-clock
+  // epoch: the 8-14s window was unreachable and the %10 fallback was a phase
+  // lottery the 2000ms interval loses half the time.)
+  if (age === null) {
+    const oa = (typeof NUZ_BRIDGE.openedAt === 'function') ? NUZ_BRIDGE.openedAt() : 0;
+    const openAge = oa ? Date.now() - oa : 0;
+    if (openAge > 8000 && openAge < 14000) { try { pmRender(); } catch (e) {} }
+    return;
+  }
   // Redraw around the threshold, then occasionally so the counter keeps moving.
   if (age > 8000 && age < 14000) { try { pmRender(); } catch (e) {} }
   else if (age > 14000 && Math.floor(age / 1000) % 10 === 0) { try { pmRender(); } catch (e) {} }
